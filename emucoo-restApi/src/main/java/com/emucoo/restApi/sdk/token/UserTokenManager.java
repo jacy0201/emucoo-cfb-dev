@@ -1,16 +1,17 @@
 package com.emucoo.restApi.sdk.token;
 
-import com.emucoo.common.base.redis.RedisCachedUtil;
-import com.emucoo.common.util.StringUtil;
-import com.emucoo.dto.base.ISystem;
-import com.emucoo.model.SysUser;
-import com.emucoo.restApi.utils.SpringContextUtil;
-import com.emucoo.service.sys.SysUserService;
-import com.emucoo.utils.DESUtil;
-import org.springframework.context.ApplicationContext;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.emucoo.restApi.utils.RedisClusterClient;
+import org.springframework.context.ApplicationContext;
+
+import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.base.ISystem;
+import com.emucoo.model.User;
+import com.emucoo.restApi.utils.SpringContextUtil;
+import com.emucoo.service.sys.UserService;
+import com.emucoo.utils.DESUtil;
 
 /**
  * 〈一句话功能简述〉
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class UserTokenManager {
 	
-    private SysUserService userService;
+    private UserService userService;
 	
 	
 	private static UserTokenManager instance;
@@ -34,23 +35,28 @@ public class UserTokenManager {
 	
 //	private Map<String,String> cache = new HashMap<String,String>();
 	private Map<String,String> userCache = new ConcurrentHashMap<String,String>();
-	
+
+	// 这个类这样用有问题，既然是个单例，又用了spring，就不要用这种方式来实现单例了。
 	public synchronized static UserTokenManager getInstance()
 	{
-//		synchronized (instance) 
+//		synchronized (instance)
 //		{
 			if(null == instance)
 			{
 				instance = new UserTokenManager();
 			}
 //		}
-		
+
 		return instance;
 	}
 
 	/*public String saveUserToken(String userToken){
         return RedisCachedUtil.set(ISystem.IUSER.USER_TOKEN,userToken,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
     }*/
+
+
+	private RedisClusterClient redisClient = SpringContextUtil.getApplicationContext().getBean(RedisClusterClient.class);
+
     public String saveUserToken(Long userId){
         String userToken = null;
         try {
@@ -58,7 +64,7 @@ public class UserTokenManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RedisCachedUtil.set(ISystem.IUSER.USER_TOKEN + userId,userToken,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
+        redisClient.set(ISystem.IUSER.USER_TOKEN + userId,userToken,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
         return userToken;
     }
 
@@ -109,7 +115,7 @@ public class UserTokenManager {
 		if ( user == null) {
 			// 获取Service
 			ApplicationContext context = SpringContextUtil.getApplicationContext();
-			userService = context.getBean(SysUserService.class);
+			userService = context.getBean(UserService.class);
 
 			user = userService.findById(Long.valueOf(userID));
 			if ( user == null) {
@@ -122,10 +128,10 @@ public class UserTokenManager {
 
     }*/
 
-	public SysUser currUser(String userToken) {
+	public User currUser(String userToken) {
 
 		String token = userToken;
-		SysUser user = null;
+		User user = null;
 		if (StringUtil.isBlank(token)) {
 			return user;
 		}
@@ -138,17 +144,17 @@ public class UserTokenManager {
 			return user;
 		}
 
-		 user = RedisCachedUtil.getObject(ISystem.IUSER.USER + userID, SysUser.class);
+		 user = redisClient.getObject(ISystem.IUSER.USER + userID, User.class);
 		if ( user == null) {
 			// 获取Service
 			ApplicationContext context = SpringContextUtil.getApplicationContext();
-			userService = context.getBean(SysUserService.class);
+			userService = context.getBean(UserService.class);
 
 			user = userService.findById(Long.valueOf(userID));
 			if ( user == null) {
 				return user;
 			}
-			RedisCachedUtil.set(ISystem.IUSER.USER + userID, user, ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
+			redisClient.set(ISystem.IUSER.USER + userID, user, ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
 		}
 
 		return user;

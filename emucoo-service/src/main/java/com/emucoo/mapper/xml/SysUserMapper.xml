@@ -28,33 +28,44 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+    <select id="findPushTokenByIds" parameterType="string" resultType="string">
+        select push_token
+        from sys_user
+        where id in
+        <foreach close=")" collection="list" item="id" open="(" separator=",">
+            #{id}
+        </foreach>
+        and is_use = 1 and push_token is not null
+    </select>
 
 
-  <select id="findById" parameterType="Long" resultType="com.emucoo.model.SysUser">
-    SELECT * FROM sys_user u WHERE u.id = #{id}
-  </select>
+    <select id="findById" parameterType="Long" resultType="com.emucoo.model.SysUser">
+        SELECT * FROM sys_user u WHERE u.id = #{id}
+    </select>
 
-  <select id="findByUserName" resultMap="BaseResultMap">
-    SELECT * FROM sys_user u WHERE  u.username = #{username}
-  </select>
+    <select id="findByUserName" resultMap="BaseResultMap">
+        SELECT * FROM sys_user u WHERE  u.username = #{username}
+    </select>
 
 
-  <select id="getUserLogin" resultType="com.emucoo.dto.modules.user.UserLogin">
-    SELECT
-    s.id, s.username, s.head_img_url
-    <!--         	, t.dpt_id, k.dptname, k.type -->
-    FROM sys_user s
-    <!--         left join t_dept_role_union t on t.user_id = s.id -->
-    <!--         left join t_department k on k.id = t.dpt_id -->
-    WHERE s.mobile = #{mobile} and s.password = #{password}
-  </select>
+    <select id="getUserLogin" resultType="com.emucoo.dto.modules.user.UserLogin">
+        SELECT
+        s.id, s.username, s.head_img_url
+        <!--         	, t.dpt_id, k.dptname, k.type -->
+        FROM sys_user s
+        <!--         left join t_dept_role_union t on t.user_id = s.id -->
+        <!--         left join t_department k on k.id = t.dpt_id -->
+        WHERE s.mobile = #{mobile} and s.password = #{password}
+    </select>
 
-  <update id="resetPwd">
-    UPDATE sys_user s SET s.password = #{password} WHERE s.mobile = #{mobile}
-  </update>
+    <update id="resetPwd">
+        UPDATE sys_user s SET s.password = #{password} WHERE s.mobile = #{mobile}
+    </update>
 
-  <update id="loginOut">
-    UPDATE sys_user s SET s.push_token = null WHERE s.push_token = #{pushToken}
-  </update>
+    <update id="loginOut">
+        UPDATE sys_user s SET s.push_token = null WHERE s.push_token = #{pushToken}
+    </update>
+
+
 
 </mapper>
