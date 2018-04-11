@@ -1,17 +1,16 @@
 package com.emucoo.restApi.sdk.token;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.emucoo.restApi.utils.RedisClusterClient;
-import org.springframework.context.ApplicationContext;
-
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ISystem;
-import com.emucoo.model.User;
+import com.emucoo.model.SysUser;
+import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.restApi.utils.SpringContextUtil;
 import com.emucoo.service.sys.UserService;
 import com.emucoo.utils.DESUtil;
+import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 〈一句话功能简述〉
@@ -128,10 +127,10 @@ public class UserTokenManager {
 
     }*/
 
-	public User currUser(String userToken) {
+	public SysUser currUser(String userToken) {
 
 		String token = userToken;
-		User user = null;
+		SysUser user = null;
 		if (StringUtil.isBlank(token)) {
 			return user;
 		}
@@ -144,7 +143,7 @@ public class UserTokenManager {
 			return user;
 		}
 
-		 user = redisClient.getObject(ISystem.IUSER.USER + userID, User.class);
+		 user = redisClient.getObject(ISystem.IUSER.USER + userID, SysUser.class);
 		if ( user == null) {
 			// 获取Service
 			ApplicationContext context = SpringContextUtil.getApplicationContext();

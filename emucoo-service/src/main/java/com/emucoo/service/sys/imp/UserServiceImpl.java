@@ -1,29 +1,26 @@
 package com.emucoo.service.sys.imp;
 
-import java.util.List;
-
+import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.mapper.SysRoleMapper;
 import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.mapper.SysUserRoleMapper;
 import com.emucoo.model.SysRole;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserRole;
+import com.emucoo.service.sys.UserService;
+import com.emucoo.utils.SHA1Util;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.xiaoleilu.hutool.crypto.SecureUtil;
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.emucoo.common.base.service.impl.BaseServiceImpl;
-import com.emucoo.utils.SHA1Util;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
-import com.emucoo.service.sys.UserService;
-import com.xiaoleilu.hutool.crypto.SecureUtil;
-import com.xiaoleilu.hutool.date.DateUtil;
-
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
+
+import java.util.List;
 
 /**
  *

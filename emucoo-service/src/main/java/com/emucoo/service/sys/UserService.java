@@ -1,13 +1,11 @@
 package com.emucoo.service.sys;
 
+import com.emucoo.common.base.service.BaseService;
 import com.emucoo.model.SysUser;
 import com.github.pagehelper.PageInfo;
-import com.emucoo.common.base.service.BaseService;
-import com.emucoo.model.User;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
-
-import tk.mybatis.mapper.entity.Example;
 
 /**
  * Created by fujg on 2017/1/19.

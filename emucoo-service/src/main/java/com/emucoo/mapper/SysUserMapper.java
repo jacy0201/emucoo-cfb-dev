@@ -43,4 +43,12 @@ public interface SysUserMapper extends MyMapper<SysUser> {
      */
     void loginOut(@Param("pushToken") String pushToken);
 
+
+    List<SysUser> listUserVo(@Param("username") String username,
+                          @Param("realName") String realName,
+                          @Param("mobile") String mobile,
+                          @Param("email") String email,
+                          @Param("labels") List<Long> labels,
+                          @Param("status") Integer status);
+
 }
