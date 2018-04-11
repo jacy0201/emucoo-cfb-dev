@@ -11,8 +11,6 @@ import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.utils.SHA1Util;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.emucoo.mapper.UserMapper;
-import com.emucoo.model.User;
 import com.emucoo.service.sys.UserService;
 import com.xiaoleilu.hutool.crypto.SecureUtil;
 import com.xiaoleilu.hutool.date.DateUtil;

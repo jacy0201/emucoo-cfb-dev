@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TLoopPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TLoopPlan" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="dpt_id" property="dptId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="plan_start_date" property="planStartDate" jdbcType="DATE" />
+    <result column="plan_end_date" property="planEndDate" jdbcType="DATE" />
+    <result column="plan_cycle" property="planCycle" jdbcType="INTEGER" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
+    <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
+    <result column="is_del" property="isDel" jdbcType="BIT" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+  </resultMap>
+</mapper>

@@ -1,7 +1,6 @@
 package com.emucoo.manager.config.shiro;
 
 
-import com.emucoo.mapper.UserMapper;
 import com.emucoo.model.User;
 import com.xiaoleilu.hutool.log.Log;
 import com.xiaoleilu.hutool.log.LogFactory;

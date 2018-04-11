@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.SysLogMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.SysLog" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="log_type" property="logType" jdbcType="TINYINT" />
+    <result column="log_source" property="logSource" jdbcType="TINYINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="operation" property="operation" jdbcType="VARCHAR" />
+    <result column="method_name" property="methodName" jdbcType="VARCHAR" />
+    <result column="request_method" property="requestMethod" jdbcType="VARCHAR" />
+    <result column="request_params" property="requestParams" jdbcType="VARCHAR" />
+    <result column="request_ip" property="requestIp" jdbcType="VARCHAR" />
+    <result column="request_uri" property="requestUri" jdbcType="VARCHAR" />
+    <result column="exception_code" property="exceptionCode" jdbcType="VARCHAR" />
+    <result column="exception_detail" property="exceptionDetail" jdbcType="VARCHAR" />
+    <result column="time_consuming" property="timeConsuming" jdbcType="BIGINT" />
+    <result column="user_agent" property="userAgent" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>

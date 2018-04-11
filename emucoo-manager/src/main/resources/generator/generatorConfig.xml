@@ -23,9 +23,9 @@
 
         <!--数据库连接 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/emucoo-2.1"
-                        userId="root"
-                        password="111111">
+                        connectionURL="jdbc:mysql://192.168.16.173:3306/emucoo-cfb"
+                        userId="emotwo"
+                        password="emu2018two">
         </jdbcConnection>
 
         <javaModelGenerator targetPackage="com.emucoo.model" targetProject="D:\generator">
@@ -42,7 +42,7 @@
         <javaClientGenerator targetPackage="com.emucoo.mapper" targetProject="D:\generator"
                              type="XMLMAPPER"/>
 
-        <table tableName="sys_log">
+        <table tableName="%">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>

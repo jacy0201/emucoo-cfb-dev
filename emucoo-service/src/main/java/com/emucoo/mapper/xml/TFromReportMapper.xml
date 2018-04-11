@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFromReportMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TFromReport" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="form_main_id" property="formMainId" jdbcType="VARCHAR" />
+    <result column="from_config_id" property="fromConfigId" jdbcType="BIGINT" />
+    <result column="form_config_value" property="formConfigValue" jdbcType="VARCHAR" />
+    <result column="form_report_id" property="formReportId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>

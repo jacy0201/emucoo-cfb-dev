@@ -2,7 +2,6 @@ package com.emucoo.manager.config.shiro;
 
 import com.emucoo.common.ExecStatus;
 import com.emucoo.common.util.WebUtil;
-import com.emucoo.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
