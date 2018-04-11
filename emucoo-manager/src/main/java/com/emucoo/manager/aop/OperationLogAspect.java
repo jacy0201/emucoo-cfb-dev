@@ -3,7 +3,6 @@ package com.emucoo.manager.aop;
 import com.emucoo.common.Constant;
 import com.emucoo.common.annotation.OperationLog;
 import com.emucoo.common.exception.BaseException;
-import com.emucoo.model.Log;
 import com.emucoo.service.log.LogService;
 import com.xiaoleilu.hutool.http.HttpUtil;
 import com.xiaoleilu.hutool.json.JSONUtil;
