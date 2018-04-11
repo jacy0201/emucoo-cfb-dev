@@ -6,6 +6,7 @@ import com.emucoo.mapper.DepartmentMapper;
 import com.emucoo.mapper.DeptRoleUnionMapper;
 import com.emucoo.model.Department;
 import com.emucoo.model.DeptRoleUnion;
+import com.emucoo.model.SysDept;
 import com.emucoo.model.TreeNode;
 import com.emucoo.service.sys.DeptService;
 import com.emucoo.utils.TreeUtil;
@@ -29,7 +30,7 @@ import static com.emucoo.dto.base.ISystem.*;
  * @modified by:
  */
 @Service
-public class DeptServiceImpl extends BaseServiceImpl<Department> implements DeptService {
+public class DeptServiceImpl extends BaseServiceImpl<SysDept> implements DeptService {
 
     @Resource
     private DepartmentMapper departmentMapper;
@@ -38,26 +39,26 @@ public class DeptServiceImpl extends BaseServiceImpl<Department> implements Dept
     private DeptRoleUnionMapper deptRoleUnionMapper;
 
     @Override
-    public List<Department> listSubDept(Long pid){
+    public List<SysDept> listSubDept(Long pid){
         return departmentMapper.listSubDept(pid);
     }
 
     @Override
-    public List<Department> queryDept(String dptName, Integer dptType, List<Long> dptLbs) {
+    public List<SysDept> queryDept(String dptName, Integer dptType, List<Long> dptLbs) {
         return departmentMapper.queryDept(dptName,dptType,dptLbs);
     }
 
     @Override
     public Boolean updateSubDepts(Long deptId, List<String> subDeptIds) {
 
-        Example delExmp = new Example (Department.class);
+        Example delExmp = new Example (SysDept.class);
         delExmp.createCriteria().andEqualTo ("parentId",deptId);
 
-        Department department = new Department ();
+        SysDept department = new SysDept ();
         department.setParentId (SYS_DEFALT_DEPT);
         departmentMapper.updateByExampleSelective (department,delExmp);
 
-        Example addExmp = new Example (Department.class);
+        Example addExmp = new Example (SysDept.class);
         addExmp.createCriteria().andIn ("id",subDeptIds);
         department.setParentId (deptId);
         departmentMapper.updateByExampleSelective (department,addExmp);
@@ -72,9 +73,9 @@ public class DeptServiceImpl extends BaseServiceImpl<Department> implements Dept
 
     @Override
     public int updateLabels(Long deptId, String lbIds) {
-        Example example = new Example (Department.class);
+        Example example = new Example (SysDept.class);
         example.createCriteria().andEqualTo ("id",deptId);
-        Department department = new Department ();
+        SysDept department = new SysDept ();
         department.setLbIds(lbIds);
         return departmentMapper.updateByExampleSelective (department,example);
     }

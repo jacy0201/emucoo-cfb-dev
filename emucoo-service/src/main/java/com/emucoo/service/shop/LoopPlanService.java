@@ -8,6 +8,8 @@ import com.emucoo.model.CheckSheet;
 import com.emucoo.model.FrontPlan;
 import com.emucoo.model.LoopPlan;
 import com.emucoo.model.LoopPlanSrc;
+import com.emucoo.model.TFrontPlan;
+import com.emucoo.model.TLoopPlan;
 
 import java.util.Date;
 import java.util.List;
@@ -18,14 +20,14 @@ import java.util.List;
  * @author zhangxq
  * @date 2018-03-23
  */
-public interface LoopPlanService extends BaseService<LoopPlanSrc> {
+public interface LoopPlanService extends BaseService<TLoopPlan> {
 
     List<CheckSheet> listCheckSheets();
 
     //获取巡店计划未安排的店面集合
     List<LoopPlanSrc>  getLoopPlanAddList();
 
-    List<FrontPlan> listFrontPlan(Long userId, Date needDate);
+    List<TFrontPlan> listFrontPlan(Long userId, Date needDate);
 
     int countFrontPlan(Long userId, Date needDate);
 }

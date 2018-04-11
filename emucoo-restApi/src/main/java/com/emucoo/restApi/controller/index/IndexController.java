@@ -4,18 +4,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import com.emucoo.dto.modules.index.*;
-import com.emucoo.dto.modules.report.ReportVo;
+import com.emucoo.common.util.RegexMatcher;
 import com.emucoo.model.*;
 import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.shop.LoopPlanService;
+import com.emucoo.service.sys.DeptService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -40,11 +38,8 @@ import com.emucoo.dto.modules.user.UserVo_I;
 import com.emucoo.model.ReportItem;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
-import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.models.sms.SMSDao;
 import com.emucoo.restApi.models.sms.SMSService;
-import com.emucoo.restApi.sdk.token.UserTokenManager;
-import com.emucoo.restApi.utils.HttpRequestUtils;
 import com.emucoo.service.index.IndexService;
 import com.emucoo.service.sys.DeptRoleUnionService;
 import com.emucoo.service.sys.UserService;
@@ -71,8 +66,12 @@ public class IndexController extends AppBaseController {
 
     @Resource
     private SMSDao smsDao;
+
     @Resource
     private DeptRoleUnionService deptRoleUnionService;
+
+    @Autowired
+    private DeptService deptService;
 
     @Resource
 	private LoopPlanService loopPlanService;
@@ -85,7 +84,19 @@ public class IndexController extends AppBaseController {
 
         checkParam(mobile,"缺少 mobile");
         checkParam(password,"缺少 password");
-        SysUser user = userService.findUserByMobile(mobile);
+
+        SysUser user = null;
+        if(RegexMatcher.isPhoneNumber(mobile)) {
+			user = userService.findUserByMobile(mobile);
+		}
+		if(user == null && RegexMatcher.isEmail(mobile)) {
+        	user = userService.findByEmail(mobile);
+		}
+		if(user == null) {
+            user = userService.findByUserName(mobile);
+        }
+        if(user == null)
+            return AppResult.busErrorRes("用户名或者密码错误");
 
         if(!StringUtils.equalsIgnoreCase(password,user.getPassword())){
            return AppResult.busErrorRes("用户名或者密码错误");
@@ -214,8 +225,8 @@ public class IndexController extends AppBaseController {
 		// 后面通过 userToken 获取
         Long submitUserId =  UserTokenManager.getInstance().getUserIdFromToken(userToken);
         checkParam(submitUserId, "没有此用户");
-		List<LoopWork> loopWorks = loopWorkService.list(submitUserId, needDate);
-		List<FrontPlan> frontPlans = loopPlanService.listFrontPlan(submitUserId, needDate);
+		List<TLoopWork> loopWorks = loopWorkService.list(submitUserId, needDate);
+		List<TFrontPlan> frontPlans = loopPlanService.listFrontPlan(submitUserId, needDate);
 		List<WorkVo_O.Work> inspections = frontPlans.stream().map(frontPlan -> {
 		    WorkVo_O.Work work = new WorkVo_O.Work();
 		    work.setId(frontPlan.getId());
@@ -223,25 +234,34 @@ public class IndexController extends AppBaseController {
 		    work.setWorkType(ITask.INSPECTION);
 		    work.setSubID("");
 //            work.getInspection().setInspEndTime(frontPlan);
-            work.getInspection().setInspStartTime(frontPlan.getPlanTime());
-            work.getInspection().setInspStatus(frontPlan.getStatus());
-            work.getInspection().setInspTitle(frontPlan.getDeptName()+ "巡检安排");
+//            work.getInspection().setInspStartTime(frontPlan.getPlanTime());
+            work.getInspection().setInspStartTime(frontPlan.getPlanDate());
+            work.getInspection().setInspStatus(frontPlan.getStatus()?1:0);
+            TLoopPlan loopPlan = loopPlanService.findById(frontPlan.getLoopPlanId());
+            if(loopPlan != null) {
+                SysDept dept = deptService.findById(loopPlan.getDptId());
+                work.getInspection().setInspTitle(dept == null?dept.getDptName():""+ "巡检安排");
+            }
 		    return work;
         }).collect(Collectors.toList());
-		List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((LoopWork t) -> {
+
+		List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
 			WorkVo_O.Work work = new WorkVo_O.Work();
 			work.setId(t.getId());
-			work.setWorkID(t.getWorkid());
+			work.setWorkID(t.getWorkId());
 			work.setWorkType(t.getType());
-			work.setSubID(t.getSubWorkid());
-            work.getTask().setTaskTitle(t.getName());
+			work.setSubID(t.getSubWorkId());
+			TTask tt = loopWorkService.fetchTaskById(t.getTaskId());
+
+            work.getTask().setTaskTitle(tt.getName());
             work.getTask().setTaskStatus(t.getWorkStatus());
             work.getTask().setTaskResult(t.getWorkResult());
-            work.getTask().setTaskSourceType(t.getTaskSourceType());
-            work.getTask().setTaskSourceName(t.getTaskSourceName());
-            work.getTask().setTaskDeadline(t.getSubmitDeadline());
-            work.getTask().setTaskSubHeadUrl(t.getHeadImgUrl());
-            work.getTask().setTaskSubName(t.getSubmitUserName());
+//            work.getTask().setTaskSourceType(t.getTaskSourceType());
+//            work.getTask().setTaskSourceName(t.getTaskSourceName());
+            work.getTask().setTaskDeadline(t.getExecuteDeadline());
+            SysUser u = userService.findById(t.getExcuteUserId());
+            work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
+            work.getTask().setTaskSubName(u.getRealName());
             return work;
 		}).collect(Collectors.toList());
 		works.addAll(inspections);
@@ -261,35 +281,38 @@ public class IndexController extends AppBaseController {
 	public AppResult<WorkVo_O> pendingReview(@RequestHeader("userToken") String userToken) {
         Long auditUserId =  UserTokenManager.getInstance().getUserIdFromToken(userToken);
         checkParam(auditUserId, "没有此用户");
-		List<LoopWork> loopWorks = loopWorkService.listPendingReview(auditUserId);
-		List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((LoopWork t) -> {
+		List<TLoopWork> loopWorks = loopWorkService.listPendingReview(auditUserId);
+		List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
 			WorkVo_O.Work work = new WorkVo_O.Work();
 			work.setId(t.getId());
-			work.setWorkID(t.getWorkid());
-			work.setSubID(t.getSubWorkid());
+			work.setWorkID(t.getWorkId());
+			work.setSubID(t.getSubWorkId());
 			work.setWorkType(t.getType());
+            TTask tt = loopWorkService.fetchTaskById(t.getTaskId());
 			if (ITask.COMMON == t.getType() || ITask.ASSIGN == t.getType() || ITask.IMPROVE == t.getType()) {
-				work.getTask().setTaskTitle(t.getName());
+
+				work.getTask().setTaskTitle(tt.getName());
 				work.getTask().setTaskStatus(t.getWorkStatus());
 				work.getTask().setTaskResult(t.getWorkResult());
-				work.getTask().setTaskSourceType(t.getTaskSourceType());
-				work.getTask().setTaskSourceName(t.getTaskSourceName());
-				work.getTask().setTaskDeadline(t.getSubmitDeadline());
-				work.getTask().setTaskSubHeadUrl(t.getHeadImgUrl());
-				work.getTask().setTaskSubName(t.getSubmitUserName());
+//				work.getTask().setTaskSourceType(t.getTaskSourceType());
+//				work.getTask().setTaskSourceName(t.getTaskSourceName());
+				work.getTask().setTaskDeadline(t.getAuditDeadline());
+				SysUser u = userService.findById(t.getAuditUserId());
+				work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
+				work.getTask().setTaskSubName(u.getRealName());
 				return work;
 			}
 			if (ITask.INSPECTION == t.getType()) {
-				work.getInspection().setInspEndTime(t.getEndTime());
-				work.getInspection().setInspStartTime(t.getStartTime());
+				work.getInspection().setInspEndTime(t.getExecuteBeginDate());
+				work.getInspection().setInspStartTime(t.getExecuteEndDate());
 				work.getInspection().setInspStatus(t.getWorkStatus());
-				work.getInspection().setInspTitle(t.getName());
+				work.getInspection().setInspTitle(tt.getName());
 				return work;
 			}
 			work.getMemo().setImportStatus(t.getWorkStatus());
 			work.getMemo().setMemoContent("I don't konw where to get it");
-			work.getMemo().setMemoEndTime(t.getEndTime());
-			work.getMemo().setMemoStartTime(t.getStartTime());
+			work.getMemo().setMemoEndTime(t.getExecuteBeginDate());
+			work.getMemo().setMemoStartTime(t.getExecuteEndDate());
 			return work;
 		}).collect(Collectors.toList());
 		WorkVo_O workVo_o = new WorkVo_O();

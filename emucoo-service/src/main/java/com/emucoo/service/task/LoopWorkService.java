@@ -14,28 +14,28 @@ import org.apache.commons.lang3.StringUtils;
  * @author river
  * @date 2018/3/14 14:18
  */
-public interface LoopWorkService extends BaseService<LoopWork> {
-    List<LoopWork> list(Long submitUserId , Date date);
+public interface LoopWorkService extends BaseService<TLoopWork> {
+    List<TLoopWork> list(Long submitUserId , Date date);
 
-    List<LoopWork> listPendingReview(Long auditUserId);
+    List<TLoopWork> listPendingReview(Long auditUserId);
     int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
     int fetchPendingReviewWorkNum(Long submitUserId);
 
-    void add(LoopWork loopWork);
+    void add(TLoopWork loopWork);
 
-    void modify(LoopWork loopWork);
+    void modify(TLoopWork loopWork);
 
-    LoopWork fetchByWorkId(String workId, String subWorkId, int workType);
+    TLoopWork fetchByWorkId(String workId, String subWorkId, int workType);
     List<WorkImgAppend> fetchSubmitImgs(String workId, String subWorkId);
 
     WorkAudit fetchAssignWorkAudit(String workId, String subWorkId);
 
-    List<Comment> fetchAssignWorkAnswers(String workId, String subWorkId);
+    List<TTaskComment> fetchAssignWorkAnswers(String workId, String subWorkId);
 
     List<WorkDataAppend> fetchAssignTaskHistory(String workId, String subWorkId, int workType);
 
     void submitAssignTask(AssignTaskSubmitVo_I voi);
-    void auditAssignTask(User user, AssignTaskAuditVo_I atai);
+    void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai);
     
     TaskImproveSubmit getTaskImproveSubmit(String workId, String subWorkId);
     
@@ -45,5 +45,7 @@ public interface LoopWorkService extends BaseService<LoopWork> {
 
     void createAssignTask(AssignTaskCreationVo_I assignTaskCreationVo_i);
 
-    List<LoopWork> fetchExeHistory(String workType, String workId);
+    List<TLoopWork> fetchExeHistory(String workType, String workId);
+
+    TTask fetchTaskById(long id);
 }

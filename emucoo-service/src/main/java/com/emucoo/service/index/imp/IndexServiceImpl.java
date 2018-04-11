@@ -2,8 +2,10 @@ package com.emucoo.service.index.imp;
 
 import javax.annotation.Resource;
 
+import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.mapper.UserOfReportMapper;
 import com.emucoo.model.ReportItem;
+import com.emucoo.model.SysUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +20,10 @@ import java.util.List;
 
 @Transactional
 @Service
-public class IndexServiceImpl extends BaseServiceImpl<User> implements IndexService {
+public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexService {
 
 	@Resource
-	private UserMapper userMapper;
+	private SysUserMapper userMapper;
 
 	@Resource
 	private UserOfReportMapper userOfReportMapper;

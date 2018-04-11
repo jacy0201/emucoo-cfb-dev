@@ -28,7 +28,7 @@ import javax.annotation.Resource;
  * @date 2018/3/14 14:19
  */
 @Service
-public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements LoopWorkService {
+public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements LoopWorkService {
 
     @Resource
     private LoopWorkMapper loopWorkMapper;
@@ -61,12 +61,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
      * @return
      */
     @Override
-    public List<LoopWork> list(Long submitUserId, Date date){
+    public List<TLoopWork> list(Long submitUserId, Date date){
         return loopWorkMapper.list(submitUserId,date);
     }
 
     @Override
-    public List<LoopWork> listPendingReview(Long auditUserId){
+    public List<TLoopWork> listPendingReview(Long auditUserId){
         Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
         Date rdt = DateUtil.dateAddDay(ldt, 1);
         return loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
@@ -82,17 +82,17 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
     }
 
 	@Override
-	public void add(LoopWork loopWork) {
+	public void add(TLoopWork loopWork) {
 		loopWorkMapper.add(loopWork);
 	}
 
 	@Override
-	public void modify(LoopWork loopWork) {
+	public void modify(TLoopWork loopWork) {
 		loopWorkMapper.update(loopWork);
 	}
 	
     @Override
-    public LoopWork fetchByWorkId(String workId, String subWorkId, int workType) {
+    public TLoopWork fetchByWorkId(String workId, String subWorkId, int workType) {
         return loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
     }
 
@@ -119,7 +119,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
     @Override
     @Transactional
     public void submitAssignTask(AssignTaskSubmitVo_I voi) {
-        LoopWork lw = new LoopWork();
+        TLoopWork lw = new TLoopWork();
         lw.setType(voi.getWorkType());
         lw.setWorkid(voi.getWorkID());
         lw.setSubWorkid(voi.getSubID());
@@ -160,7 +160,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
 
     @Override
     public void auditAssignTask(User user, AssignTaskAuditVo_I atai) {
-        LoopWork loopWork = new LoopWork();
+        TLoopWork loopWork = new TLoopWork();
         loopWork.setWorkid(atai.getWorkID());
         loopWork.setType(atai.getWorkType());
         loopWork.setSubWorkid(atai.getSubID());
@@ -215,7 +215,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
         List<Date> dts = genDatesByRepeatType(voi);
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         for(Date dt : dts) {
-            LoopWork lw = new LoopWork();
+            TLoopWork lw = new TLoopWork();
             lw.setWorkStatus(1);
             lw.setAuditUserId(voi.getAuditorID());
             lw.setWorkid(uniWorkId);
@@ -324,7 +324,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<LoopWork> implements Lo
     }
 
     @Override
-    public List<LoopWork> fetchExeHistory(String workType, String workId) {
+    public List<TLoopWork> fetchExeHistory(String workType, String workId) {
         return loopWorkMapper.fetchExeHistory(workType, workId);
+    }
+
+    @Autowired
+    private TTaskMapper taskMapper;
+    @Override
+    public TTask fetchTaskById(long id) {
+        return taskMapper.selectByPrimaryKey(id);
     }
 }

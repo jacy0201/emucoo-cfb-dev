@@ -3,6 +3,7 @@ package com.emucoo.service.sys;
 import com.emucoo.common.base.service.BaseService;
 import com.emucoo.dto.modules.sys.TreeNodeVo;
 import com.emucoo.model.Department;
+import com.emucoo.model.SysDept;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,10 +14,10 @@ import java.util.List;
  * @date: created at 2018/1/30 17:49
  * @modified by:
  */
-public interface DeptService extends BaseService<Department> {
-    List<Department> listSubDept(Long pid);
+public interface DeptService extends BaseService<SysDept> {
+    List<SysDept> listSubDept(Long pid);
 
-    List<Department> queryDept(String dptName, Integer dptType, List<Long> dptLbs);
+    List<SysDept> queryDept(String dptName, Integer dptType, List<Long> dptLbs);
 
     Boolean updateSubDepts(Long deptId, List<String> subDeptIds);
 

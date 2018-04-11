@@ -15,4 +15,6 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     List<String> findPushTokenByIds(List<Integer> asList);
 
     List<SysUser> listUserVo(String username, String realName, String mobile, String email, List<Long> labels, Integer status);
+
+
 }

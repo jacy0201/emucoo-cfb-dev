@@ -1,5 +1,6 @@
 package com.emucoo.service.sys;
 
+import com.emucoo.model.SysUser;
 import com.github.pagehelper.PageInfo;
 import com.emucoo.common.base.service.BaseService;
 import com.emucoo.model.User;
@@ -11,7 +12,7 @@ import tk.mybatis.mapper.entity.Example;
 /**
  * Created by fujg on 2017/1/19.
  */
-public interface UserService extends BaseService<User> {
+public interface UserService extends BaseService<SysUser> {
     /**
      *
      * @param pageNum  当前页码
@@ -22,23 +23,23 @@ public interface UserService extends BaseService<User> {
      * @return
      * @throws Exception
      */
-    PageInfo<User> findPage(Integer pageNum ,Integer pageSize ,String username, String startTime, String endTime) throws Exception;
+    PageInfo<SysUser> findPage(Integer pageNum ,Integer pageSize ,String username, String startTime, String endTime) throws Exception;
 
-    List<User> listUser( String username, String realName, String mobile, String email, List<Long> labels, Integer status);
+    List<SysUser> listUser( String username, String realName, String mobile, String email, List<Long> labels, Integer status);
 
     /**
      * 根据用户名查询用户
      * @param username
      * @return
      */
-    User findByUserName(String username) throws Exception;
+    SysUser findByUserName(String username);
 
     /**
      * 保存用户信息和关联用户和角色
      * @param user    用户对象
      * @param roleId  角色ID
      */
-    Boolean saveUserAndUserRole(User user, Long roleId) throws Exception;
+    Boolean saveUserAndUserRole(SysUser user, Long roleId) throws Exception;
 
     /**
      * 更新用户信息和关联用户和角色
@@ -48,13 +49,15 @@ public interface UserService extends BaseService<User> {
      * @return
      * @throws Exception
      */
-    Boolean updateUserAndUserRole(User user, Long oldRoleId, Long roleId) throws Exception;
+    Boolean updateUserAndUserRole(SysUser user, Long oldRoleId, Long roleId) throws Exception;
 
     int updateLabels(Long id, String labels);
 
-    Integer updateByExampleSelective(User record, Example example);
+    Integer updateByExampleSelective(SysUser record, Example example);
 
-    User findUserByMobile(String mobile);
+    SysUser findUserByMobile(String mobile);
 
     String encryPasswor(String password);
+
+    SysUser findByEmail(String mobile);
 }

@@ -2,6 +2,12 @@ package com.emucoo.service.sys.imp;
 
 import java.util.List;
 
+import com.emucoo.mapper.SysRoleMapper;
+import com.emucoo.mapper.SysUserMapper;
+import com.emucoo.mapper.SysUserRoleMapper;
+import com.emucoo.model.SysRole;
+import com.emucoo.model.SysUser;
+import com.emucoo.model.SysUserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,12 +17,7 @@ import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.utils.SHA1Util;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.emucoo.mapper.RoleMapper;
-import com.emucoo.mapper.UserMapper;
-import com.emucoo.mapper.UserRoleMapper;
-import com.emucoo.model.Role;
-import com.emucoo.model.User;
-import com.emucoo.model.UserRole;
+
 import com.emucoo.service.sys.UserService;
 import com.xiaoleilu.hutool.crypto.SecureUtil;
 import com.xiaoleilu.hutool.date.DateUtil;
@@ -30,19 +31,19 @@ import tk.mybatis.mapper.entity.Example.Criteria;
  */
 @Transactional
 @Service
-public class UserServiceImpl extends BaseServiceImpl<User> implements UserService{
+public class UserServiceImpl extends BaseServiceImpl<SysUser> implements UserService{
 
     @Autowired
-    private UserMapper userMapper;
+    private SysUserMapper userMapper;
     @Autowired
-    private UserRoleMapper userRoleMapper;
+    private SysUserRoleMapper userRoleMapper;
     @Autowired
-    private RoleMapper roleMapper;
+    private SysRoleMapper roleMapper;
 
     @Transactional(readOnly=true)
     @Override
-    public PageInfo<User> findPage(Integer pageNum, Integer pageSize, String username, String startTime, String endTime) throws Exception {
-        Example example = new Example(User.class);
+    public PageInfo<SysUser> findPage(Integer pageNum, Integer pageSize, String username, String startTime, String endTime) throws Exception {
+        Example example = new Example(SysUser.class);
         Criteria criteria = example.createCriteria();
         if (StringUtils.isNotEmpty(username)) {
             criteria.andLike("username", "%" + username + "%");
@@ -51,19 +52,19 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             criteria.andBetween("createTime", DateUtil.beginOfDay(DateUtil.parse(startTime)), DateUtil.endOfDay(DateUtil.parse(endTime)));
         }
         PageHelper.startPage(pageNum, pageSize);
-        List<User> userList = this.selectByExample(example);
+        List<SysUser> userList = this.selectByExample(example);
 
-        for (User user : userList) {
-            Role role = roleMapper.findByUserId(user.getId());
+        for (SysUser user : userList) {
+            SysRole role = roleMapper.findByUserId(user.getId());
             if (null != role) {
-                user.setRealName(role.getName());
+//                user.setRealName(role.getName()); 把角色名当做真实姓名有什么意思？
             }
         }
-        return new PageInfo<User>(userList);
+        return new PageInfo<SysUser>(userList);
     }
 
     @Override
-    public List<User> listUser(String username, String realName,
+    public List<SysUser> listUser(String username, String realName,
                                String mobile, String email, List<Long> labels,
                                Integer status) {
         return userMapper.listUserVo(username, realName, mobile, email, labels, status);
@@ -71,20 +72,20 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Transactional(readOnly=true)
     @Override
-    public User findByUserName(String username) {
-        User user = new User();
+    public SysUser findByUserName(String username) {
+        SysUser user = new SysUser();
         user.setUsername(username);
         return this.findOne(user);
     }
 
     @Override
-    public Boolean saveUserAndUserRole(User user, Long roleId) throws Exception{
+    public Boolean saveUserAndUserRole(SysUser user, Long roleId) throws Exception{
         int count = 0;
         //加密
         user.setPassword(SecureUtil.md5().digestHex(user.getPassword()));
         user.setIsLock(false);
         user.setIsDel(false);
-        Role role = roleMapper.selectByPrimaryKey(roleId);
+        SysRole role = roleMapper.selectByPrimaryKey(roleId);
 //        if(Role.ROLE_TYPE.equalsIgnoreCase(role.getPerms())){
 //            user.setIsAdmin(true);
 //        }else {
@@ -93,7 +94,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         count = this.save(user);
 
         //关联用户和角色信息
-        UserRole userRole = new UserRole();
+        SysUserRole userRole = new SysUserRole();
         userRole.setRoleId(roleId);
         userRole.setUserId(user.getId());
         userRole.setCreateTime(user.getCreateTime());
@@ -104,7 +105,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     }
 
     @Override
-    public Boolean updateUserAndUserRole(User user, Long oldRoleId, Long roleId) throws Exception {
+    public Boolean updateUserAndUserRole(SysUser user, Long oldRoleId, Long roleId) throws Exception {
         int count = 0;
         //加密
         user.setPassword(SecureUtil.md5().digestHex(user.getPassword()));
@@ -120,10 +121,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
         //更新用户角色信息
         if(!oldRoleId.equals(roleId)){
-            UserRole userRole = new UserRole();
+            SysUserRole userRole = new SysUserRole();
             userRole.setRoleId(oldRoleId);
             userRole.setUserId(user.getId());
-            UserRole ur = userRoleMapper.selectOne(userRole);
+            SysUserRole ur = userRoleMapper.selectOne(userRole);
             ur.setRoleId(roleId);
             ur.setModifyTime(user.getModifyTime());
             count = userRoleMapper.updateByPrimaryKeySelective(ur);
@@ -133,23 +134,23 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Override
     public int updateLabels(Long id , String labels){
-        User user = new User();
+        SysUser user = new SysUser();
         user.setId(id);
-        user.setLbIds(labels);
+//        user.setLbIds(labels);
         return userMapper.updateByPrimaryKeySelective(user);
     }
     @Override
-    public Integer updateByExampleSelective(User record,Example example){
+    public Integer updateByExampleSelective(SysUser record,Example example){
         return userMapper.updateByExampleSelective(record,example);
     }
     @Override
-    public User findUserByMobile(String mobile){
+    public SysUser findUserByMobile(String mobile){
         if(StringUtils.isBlank(mobile)){
             return null;
         }
-        Example example = new Example(User.class);
+        Example example = new Example(SysUser.class);
         example.createCriteria().andEqualTo("mobile",mobile);
-        List<User> userList = userMapper.selectByExample(example);
+        List<SysUser> userList = userMapper.selectByExample(example);
         if(userList.isEmpty()) {
             return null;
         }
@@ -158,5 +159,19 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     public String encryPasswor(String password) {
         return SHA1Util.encodeBase64(password.toLowerCase ().substring(4, 28) + "emucoo").substring(4, 24);
+    }
+
+    @Override
+    public SysUser findByEmail(String email) {
+        if(StringUtils.isBlank(email)){
+            return null;
+        }
+        Example example = new Example(SysUser.class);
+        example.createCriteria().andEqualTo("email", email);
+        List<SysUser> userList = userMapper.selectByExample(example);
+        if(userList.isEmpty()) {
+            return null;
+        }
+        return userList.get(0);
     }
 }
