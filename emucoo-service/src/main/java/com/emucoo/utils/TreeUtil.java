@@ -1,6 +1,7 @@
 package com.emucoo.utils;
 
 import com.emucoo.dto.modules.sys.TreeNodeVo;
+import com.emucoo.model.TreeNode;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;

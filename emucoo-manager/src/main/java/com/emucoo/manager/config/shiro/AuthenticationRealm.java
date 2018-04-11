@@ -1,7 +1,12 @@
 package com.emucoo.manager.config.shiro;
 
 
-import com.emucoo.model.User;
+import com.emucoo.mapper.SysMenuMapper;
+import com.emucoo.mapper.SysRoleMapper;
+import com.emucoo.mapper.SysUserMapper;
+import com.emucoo.model.SysMenu;
+import com.emucoo.model.SysRole;
+import com.emucoo.model.SysUser;
 import com.xiaoleilu.hutool.log.Log;
 import com.xiaoleilu.hutool.log.LogFactory;
 import org.apache.shiro.SecurityUtils;
@@ -26,12 +31,12 @@ public class AuthenticationRealm extends AuthorizingRealm {
 
     protected final static Log log = LogFactory.get(AuthenticationRealm.class);
 
-    @Resource	
-    private UserMapper userMapper;
     @Resource
-    private PermissionMapper permissionMapper;
+    private SysUserMapper userMapper;
     @Resource
-    private RoleMapper roleMapper;
+    private SysMenuMapper sysMenuMapper;
+    @Resource
+    private SysRoleMapper roleMapper;
     /**
      * 认证  校验用户身份是否合法
      */
@@ -42,7 +47,7 @@ public class AuthenticationRealm extends AuthorizingRealm {
         log.info("##################执行Shiro权限认证##################");
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
 
-        User record = null;
+        SysUser record = null;
         try {
             record = userMapper.findByUserName(token.getUsername());
         } catch (Exception e) {
@@ -56,10 +61,10 @@ public class AuthenticationRealm extends AuthorizingRealm {
             throw new LockedAccountException(); // 帐号锁定
         }
 
-        Role role = roleMapper.findByUserId(record.getId());
+        SysRole role = roleMapper.findByUserId(record.getId());
 
         //设置角色名称
-        record.setRealName(role.getName());
+        record.setRealName(role.getRoleName());
 
         //将此用户存放到登录认证info中，无需自己做密码对比，Shiro使用CredentialsMatcher会为我们进行密码对比校验
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -79,14 +84,14 @@ public class AuthenticationRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         log.info("=========执行授权===========");
         //获取主身份信息
-        User user = (User) principalCollection.getPrimaryPrincipal();
+        SysUser user = (SysUser) principalCollection.getPrimaryPrincipal();
 
-        List<Permission> permissionList = permissionMapper.findListPermissionByUserId(user.getId());
+        List<SysMenu> permissionList =sysMenuMapper.findListPermissionByUserId(user.getId());
 
         //单独定一个集合对象
         List<String> permissions = new ArrayList<String>();
         if(permissionList!=null){
-            for(Permission permission:permissionList){
+            for(SysMenu permission:permissionList){
                 //将数据库中的权限标签 符放入集合
                 permissions.add(permission.getPerms());
             }
@@ -103,10 +108,10 @@ public class AuthenticationRealm extends AuthorizingRealm {
     /**
      * 清除当前用户认证缓存信息
      */
-  	public void clearCachedAuthenticationInfo() {
-  		PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
-  		super.clearCachedAuthenticationInfo(principals);
-  	}
+    public void clearCachedAuthenticationInfo() {
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        super.clearCachedAuthenticationInfo(principals);
+    }
 
     /**
      * 清除当前用户授权缓存信息

@@ -1,16 +1,16 @@
 package com.emucoo.restApi.sdk.token;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.context.ApplicationContext;
-
 import com.emucoo.common.base.redis.RedisCachedUtil;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ISystem;
+import com.emucoo.model.SysUser;
 import com.emucoo.restApi.utils.SpringContextUtil;
-import com.emucoo.service.sys.UserService;
+import com.emucoo.service.sys.SysUserService;
 import com.emucoo.utils.DESUtil;
+import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 〈一句话功能简述〉
@@ -24,7 +24,7 @@ import com.emucoo.utils.DESUtil;
  */
 public class UserTokenManager {
 	
-    private UserService userService;
+    private SysUserService userService;
 	
 	
 	private static UserTokenManager instance;
@@ -109,7 +109,7 @@ public class UserTokenManager {
 		if ( user == null) {
 			// 获取Service
 			ApplicationContext context = SpringContextUtil.getApplicationContext();
-			userService = context.getBean(UserService.class);
+			userService = context.getBean(SysUserService.class);
 
 			user = userService.findById(Long.valueOf(userID));
 			if ( user == null) {
@@ -122,10 +122,10 @@ public class UserTokenManager {
 
     }*/
 
-	public User currUser(String userToken) {
+	public SysUser currUser(String userToken) {
 
 		String token = userToken;
-		User user = null;
+		SysUser user = null;
 		if (StringUtil.isBlank(token)) {
 			return user;
 		}
@@ -138,11 +138,11 @@ public class UserTokenManager {
 			return user;
 		}
 
-		 user = RedisCachedUtil.getObject(ISystem.IUSER.USER + userID, User.class);
+		 user = RedisCachedUtil.getObject(ISystem.IUSER.USER + userID, SysUser.class);
 		if ( user == null) {
 			// 获取Service
 			ApplicationContext context = SpringContextUtil.getApplicationContext();
-			userService = context.getBean(UserService.class);
+			userService = context.getBean(SysUserService.class);
 
 			user = userService.findById(Long.valueOf(userID));
 			if ( user == null) {

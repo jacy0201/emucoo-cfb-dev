@@ -2,6 +2,7 @@ package com.emucoo.manager.config.shiro;
 
 import com.emucoo.common.ExecStatus;
 import com.emucoo.common.util.WebUtil;
+import com.emucoo.model.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
@@ -30,7 +31,7 @@ import java.util.Map;
  * 1.读取当前登录用户名，获取在缓存中的sessionId队列
  * 2.判断队列的长度，大于最大登录限制的时候，按踢出规则将之前的sessionId中的session域中存入kickout：true，并更新队列缓存
  * 3.判断当前登录的session域中的kickout如果为true，想将其做退出登录处理，然后再重定向到踢出登录提示页面
- * @author fujg 
+ * @author fujg
  * @date 2017/7/24 22:59
  * @version V1.0.0
  */
@@ -95,7 +96,7 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
         }
 
         Session session = subject.getSession();
-        User user = (User) subject.getPrincipal();
+        SysUser user = (SysUser) subject.getPrincipal();
         String username = user.getUsername();
         Serializable sessionId = session.getId();
 

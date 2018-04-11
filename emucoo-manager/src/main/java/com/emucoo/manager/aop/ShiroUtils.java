@@ -1,5 +1,6 @@
 package com.emucoo.manager.aop;
 
+import com.emucoo.model.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -15,21 +16,21 @@ public class ShiroUtils {
 	private ShiroUtils(){}
 
 	public static Session getSession() {
-        return SecurityUtils.getSubject().getSession();
+		return SecurityUtils.getSubject().getSession();
 	}
 
 	public static Subject getSubject() {
 		return SecurityUtils.getSubject();
 	}
 
-	public static User getUserEntity() {
-		return (User)SecurityUtils.getSubject().getPrincipal();
+	public static SysUser getUserEntity() {
+		return (SysUser)SecurityUtils.getSubject().getPrincipal();
 	}
 
 	public static Long getUserId() {
 		return getUserEntity().getId();
 	}
-	
+
 	public static void setSessionAttribute(Object key, Object value) {
 		getSession().setAttribute(key, value);
 	}
@@ -45,7 +46,7 @@ public class ShiroUtils {
 	public static void logout() {
 		SecurityUtils.getSubject().logout();
 	}
-	
+
 	public static String getKaptcha(String key) {
 		String kaptcha = getSessionAttribute(key).toString();
 		getSession().removeAttribute(key);

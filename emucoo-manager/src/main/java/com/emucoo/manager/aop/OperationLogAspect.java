@@ -3,7 +3,8 @@ package com.emucoo.manager.aop;
 import com.emucoo.common.Constant;
 import com.emucoo.common.annotation.OperationLog;
 import com.emucoo.common.exception.BaseException;
-import com.emucoo.service.log.LogService;
+import com.emucoo.model.SysLog;
+import com.emucoo.service.sys.SysLogService;
 import com.xiaoleilu.hutool.http.HttpUtil;
 import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.StrUtil;
@@ -36,13 +37,13 @@ public class OperationLogAspect {
 	private static final Logger logger = LoggerFactory.getLogger(OperationLogAspect.class);
 	private ThreadLocal<Long> startTime = new ThreadLocal<Long>();
 
-	private ThreadLocal<Log> localLog = new ThreadLocal<Log>();
+	private ThreadLocal<SysLog> localLog = new ThreadLocal<SysLog>();
 
 	/**
 	 * 注入soaClient用于把日志保存数据库
 	 */
 	@Resource
-	private LogService logService;
+	private SysLogService logService;
 	@Resource
 	private HttpServletRequest request; //这里可以获取到request
 
@@ -69,13 +70,13 @@ public class OperationLogAspect {
 			Object[] args = joinPoint.getArgs();
 
 			//*========数据库日志=========*//
-			Log log = new Log();
+			SysLog log = new SysLog();
 			log.setAppName("");
 			String userName = ShiroUtils.getUserEntity()==null?"":ShiroUtils.getUserEntity().getUsername();
 
 			log.setUsername(StrUtil.isEmpty(userName)?"APP":userName);
-			log.setLogType(0);
-			log.setLogSource(0);
+			log.setLogType(Byte.valueOf("0"));
+			log.setLogSource(Byte.valueOf("0"));
 			log.setMethodName(getFullMethodName(joinPoint));
 			log.setRequestMethod(request.getMethod());
 			log.setParams(request.getParameterMap());
@@ -104,7 +105,7 @@ public class OperationLogAspect {
 	public void doAfterReturning(Object ret) throws Throwable {
 		// 处理完请求，返回内容
 
-		Log log = localLog.get();
+		SysLog log = localLog.get();
 		log.setTimeConsuming(System.currentTimeMillis() - startTime.get());
 
 		//从request中获取controller中set的日志参数
@@ -118,7 +119,7 @@ public class OperationLogAspect {
 	 * 从request中获取controller中set的日志参数
 	 * @param log
 	 */
-	private void reWriteLogParams(Log log) {
+	private void reWriteLogParams(SysLog log) {
 		//从Request 中取到用户操作内容记入日志，如未取到，则保留Tag中的内容
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
@@ -156,11 +157,11 @@ public class OperationLogAspect {
 
 			try {
 				/*==========数据库日志=========*/
-				Log log = localLog.get();
+				SysLog log = localLog.get();
 
 				log.setTimeConsuming(System.currentTimeMillis() - startTime.get());
-				log.setLogType(1);
-				log.setLogSource(0);
+				log.setLogType(Byte.valueOf("1"));
+				log.setLogSource(Byte.valueOf("0"));
 				log.setExceptionCode(e.getClass().getName());
 				log.setExceptionDetail(e.getMessage());
 				

@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class TOperateOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /**
      * 操作项名称
@@ -84,14 +84,14 @@ public class TOperateOption extends BaseEntity {
     /**
      * @return id
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
