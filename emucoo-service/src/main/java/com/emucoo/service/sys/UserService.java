@@ -2,6 +2,7 @@ package com.emucoo.service.sys;
 
 import com.github.pagehelper.PageInfo;
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.model.User;
 
 import java.util.List;
 

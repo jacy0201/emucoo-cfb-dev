@@ -28,4 +28,14 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+    <select id="findPushTokenByIds" parameterType="string" resultType="string">
+        select push_token
+        from sys_user
+        where id in
+        <foreach close=")" collection="list" item="id" open="(" separator=",">
+            #{id}
+        </foreach>
+        and is_use = 1 and push_token is not null
+    </select>
 </mapper>

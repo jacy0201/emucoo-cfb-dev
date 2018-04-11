@@ -1,12 +1,16 @@
 package com.emucoo.restApi.config.interceptor;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
 import com.emucoo.restApi.controller.demo.AppResult;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author fujg
@@ -17,7 +21,7 @@ public class ApiInterceptor implements HandlerInterceptor {
 
     /**
      * (non-Javadoc)
-     * @see org.springframework.web.servlet.HandlerInterceptor#preHandle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
+     * @see HandlerInterceptor#preHandle(HttpServletRequest, HttpServletResponse, Object)
      */
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception 
