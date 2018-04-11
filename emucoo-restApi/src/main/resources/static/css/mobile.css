@@ -1,0 +1,182 @@
+body{
+	max-width: 1242px;
+	margin:0 auto;
+	background: #f5f5f5;
+}
+
+.header {
+	width: 100%;
+	height: 1.3rem;
+	background: #2c5498;
+
+}
+
+.return {
+	
+	top:0;
+	left: 0;
+	display: block;
+	width: 2rem;
+	height: 1.3rem;
+	
+	box-sizing: border-box;
+	position: absolute;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color:#fff;
+	font-size: .52rem;
+	padding:0 .2rem;
+}
+
+.return img {
+	width: .3rem;
+	height: .55rem;
+}
+
+.header h1 {
+	text-align: center;
+	font-size: .52rem;
+	color:#fff;
+	line-height: 1.3rem;
+}
+
+.roadshow-item {
+	display: flex;
+	margin-bottom: .1rem;
+	height: 3.38rem;
+	justify-content: space-between;
+	padding:.5rem;
+	background: #fff;
+	position: relative;
+}
+
+.roadshow-item .text {
+	width: 7.8rem;
+	height: 100%;
+	
+
+}
+
+
+.roadshow-item .text p{
+	width: 7.8rem;
+	height: .8rem;
+	line-height: .8rem;
+	overflow: hidden;
+	font-size: .48rem;
+}
+.roadshow-item .text h2{
+	font-size: .36rem;
+	color:#b1b1b1;
+	margin-top:.2rem;
+}
+
+.roadshow-item .show {
+	width: 3.16rem;
+	height: 1.8rem;
+	margin-top:.2rem;
+}
+.roadshow-item .play {
+	position: absolute;
+	right: 1.6rem;
+	top:1.2rem;
+	z-index: 100;
+	width: .9rem;
+	height: .9rem;
+}
+
+.full-video {
+	display: block;
+	width: 100%;
+}
+   
+
+
+.detail {
+	padding:.6rem;
+}
+
+.detail p {
+	color:#676767;
+	font-size: .4rem;
+	line-height: .6rem;
+}
+
+.detail .date {
+	color:#b1b1b1;
+	font-size: .36rem;
+	line-height: 1rem;
+}
+
+.detail .title {
+	color:#333333;
+	font-size: .48rem;
+
+}
+
+
+.detail img {
+	width: 11.18rem;
+	display: block;
+	margin:.3rem auto;
+
+}
+
+.logo {
+	width: 2.95rem;
+	height: 2.95rem;
+	margin:1rem auto;
+	display: block;
+}
+
+.ppp {
+	padding:.5rem;
+	
+}
+
+.ppp p {
+	color:#4b4b4b;
+	font-size: .48rem;
+	line-height: .8rem;
+	text-indent: 1rem;
+	margin-bottom: .3rem;
+}
+
+.footbg {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	left: 0;
+	text-align: center;
+	height: 4.81rem;
+	background-size: cover;
+	padding-top: 2rem;
+}
+
+.footbg img {
+	display: block;
+	width: 100%;
+}
+
+.footbg h1 {
+	color:#2c5498;
+	font-size: .48rem;
+}
+
+.help {
+	background: #fff;
+	padding:.5rem;
+}
+
+.help h1{
+	font-size: .48rem;
+	color:#333;
+	margin-bottom: .2rem;
+}
+
+.help p{
+	font-size: .48rem;
+	color:#666;
+	margin-bottom: 1rem;
+}

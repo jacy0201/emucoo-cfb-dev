@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: emu2
+    password: ${password}
+    url: jdbc:mysql://123.59.72.69:3306/emucoo2?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
+  redis:
+    cluster:
+      nodes: 106.75.64.72:7000,106.75.64.72:7001,106.75.64.72:7002,106.75.64.72:7003,106.75.64.72:7004,106.75.64.72:7005
+
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJ8hIQck8O61Ev0F8C3YLQv6qwhZ7G4oMy53jwwiL/8L2n3aEHRtUySJlRDSV891M7+IksolgtHoyou9LaIJP9sCAwEAAQ==
+password: gh9C+z6OhPoMFfBm0/oZXhidM9a5NBDIcqIgEXV4EH2pO8chIOEnJjMlrAb7uvlJHyUfwlrp2J+jjiEqylDAtw==
+
+

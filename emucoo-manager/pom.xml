@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>emucoo</groupId>
+    <artifactId>emucoo-cfb</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>emucoo-manager</artifactId>
+  
+  <name>emucoo-manager</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	<java.version>1.8</java.version>
+  </properties>
+  
+  
+  <dependencies>
+
+	<dependency>
+	    <groupId>emucoo-service</groupId>
+	    <artifactId>emucoo-service</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>emucoo-dto</groupId>
+	    <artifactId>emucoo-dto</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.5</version>
+    </dependency>
+    
+    <dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-actuator</artifactId>
+	</dependency>
+	
+	<dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-config</artifactId>
+    </dependency>
+    
+    <!-- 第三方组件 -->
+	<dependency>
+		<groupId>com.sendcloud</groupId>
+		<artifactId>sdk</artifactId>
+		<version>1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>com.qiniu</groupId>
+		<artifactId>qiniu-java-sdk</artifactId>
+		<version>7.2.7</version>
+	</dependency>
+	<dependency>
+		<groupId>cn.jpush.api</groupId>
+		<artifactId>jpush-client</artifactId>
+		<version>3.2.17</version>
+	</dependency>
+	<dependency>
+		<groupId>com.xiaomi.miliao</groupId>
+		<artifactId>xmpush-server-api</artifactId>
+		<version>0.0.9</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+	</dependency>
+	
+	
+  </dependencies>
+  
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+	    <groupId>org.springframework.cloud</groupId>
+	    <artifactId>spring-cloud-dependencies</artifactId>
+	    <version>Dalston.SR4</version>
+	    <type>pom</type>
+	    <scope>import</scope>
+	</dependency>
+    </dependencies>
+ </dependencyManagement>
+  
+  <build>
+        <finalName>${artifactId}</finalName>
+        <plugins>
+           <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                &lt;!&ndash;排除对二进制文件的过滤,解决字体图标无法显示&ndash;&gt;
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        &lt;!&ndash; fonts &ndash;&gt;
+                        <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>org.springframework</groupId>-->
+                        <!--<artifactId>springloaded</artifactId>-->
+                        <!--<version>1.2.5.RELEASE</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+                
+            </plugin>
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>${mysql.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>tk.mybatis</groupId>
+                        <artifactId>mapper</artifactId>
+                        <version>3.4.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+  
+  
+</project>
