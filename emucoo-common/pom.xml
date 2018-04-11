@@ -12,5 +12,12 @@
 	<artifactId>emucoo-common</artifactId>
 	<version>0.0.9</version>
 	<packaging>jar</packaging>
+	<dependencies>
+	<dependency>
+		<groupId>com.xiaoleilu</groupId>
+		<artifactId>hutool</artifactId>
+		<version>2.16.0</version>
+	</dependency>
+	</dependencies>
 
 </project>
