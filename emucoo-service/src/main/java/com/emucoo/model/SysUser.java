@@ -1,11 +1,11 @@
 package com.emucoo.model;
 
-import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 @Table(name = "sys_user")
-public class SysUser {
+public class SysUser implements Serializable {
     /**
      * 用户ID
      */
