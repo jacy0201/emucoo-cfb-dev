@@ -38,11 +38,11 @@ public class SwaggerConfig {
      */
     private ApiInfo apiInfo(){
         ApiInfo apiInfo= (new ApiInfoBuilder())
-                .title("EMUCOO2.0后台管理系统API")  ////大标题
+                .title("EMUCOO2.0后台API")  ////大标题
 //                .description("xxx") ////详细描述
 //                .termsOfServiceUrl("NO terms of service")
 //                .contact(new Contact("cent","","jk@invest.cn"))//作者
-                .version("1.0") //版本
+                .version("2.0") //版本
                 .build();
         return apiInfo;
     }

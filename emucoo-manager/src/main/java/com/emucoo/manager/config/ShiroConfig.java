@@ -32,7 +32,7 @@ public class ShiroConfig {
         sessionManager.setSessionValidationSchedulerEnabled(true);
         sessionManager.setSessionIdUrlRewritingEnabled(false);
 
-        //如果开启redis缓存且renren.shiro.redis=true，则shiro session存到redis里
+        //如果开启redis缓存且emucoo.shiro.redis=true，则shiro session存到redis里
         if(redisOpen && shiroRedis){
             sessionManager.setSessionDAO(redisShiroSessionDAO);
         }
