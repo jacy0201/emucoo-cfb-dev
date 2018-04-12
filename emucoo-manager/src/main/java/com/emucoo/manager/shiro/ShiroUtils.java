@@ -1,11 +1,17 @@
 package com.emucoo.manager.shiro;
 
-import com.emucoo.common.exception.BaseException;
 import com.emucoo.model.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.web.session.mgt.WebSessionKey;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Shiro工具类
@@ -28,12 +34,22 @@ public class ShiroUtils {
 		return SecurityUtils.getSubject();
 	}
 
-	public static SysUser getUserEntity() {
-		return (SysUser) SecurityUtils.getSubject().getPrincipal();
+	public static SysUser getCurrentUser() {
+		 SysUser  currentUser=(SysUser) SecurityUtils.getSubject().getPrincipal();
+		if(currentUser!=null){
+			Session  session =getSession();
+			SysUser user =(SysUser)session.getAttribute("currentUser");
+			if(user==null){
+				session.setAttribute("currentUser", currentUser);
+			}
+			return currentUser;
+		}else{
+			return null;
+		}
 	}
 
 	public static Long getUserId() {
-		return getUserEntity().getId();
+		return getCurrentUser().getId();
 	}
 	
 	public static void setSessionAttribute(Object key, Object value) {
@@ -50,15 +66,6 @@ public class ShiroUtils {
 
 	public static void logout() {
 		SecurityUtils.getSubject().logout();
-	}
-	
-	public static String getKaptcha(String key) {
-		Object kaptcha = getSessionAttribute(key);
-		if(kaptcha == null){
-			throw new BaseException("验证码已失效");
-		}
-		getSession().removeAttribute(key);
-		return kaptcha.toString();
 	}
 
 }

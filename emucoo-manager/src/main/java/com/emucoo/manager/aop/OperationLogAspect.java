@@ -73,7 +73,7 @@ public class OperationLogAspect {
 			//*========数据库日志=========*//
 			SysLog log = new SysLog();
 			log.setAppName("");
-			String userName = ShiroUtils.getUserEntity()==null?"": ShiroUtils.getUserEntity().getUsername();
+			String userName = ShiroUtils.getCurrentUser()==null?"": ShiroUtils.getCurrentUser().getUsername();
 
 			log.setUsername(StrUtil.isEmpty(userName)?"APP":userName);
 			log.setLogType(Byte.valueOf("0"));
