@@ -5,7 +5,8 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_operate_data_for_work")
-public class TOperateDataForWork extends BaseEntity {
+public class TOperateDataForWork {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

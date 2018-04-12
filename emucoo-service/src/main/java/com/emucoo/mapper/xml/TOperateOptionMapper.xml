@@ -19,5 +19,9 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="preinstall_score" property="preinstallScore" jdbcType="VARCHAR" />
     <result column="preinstall_weight" property="preinstallWeight" jdbcType="VARCHAR" />
+    <result column="task_id" property="taskId" jdbcType="BIGINT" />
+    <result column="feedback_need_text" property="feedbackNeedText" jdbcType="BIT" />
+    <result column="feedback_img_type" property="feedbackImgType" jdbcType="BIT" />
+    <result column="feedback_need_num" property="feedbackNeedNum" jdbcType="BIT" />
   </resultMap>
 </mapper>

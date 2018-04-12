@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_role_menu")
-public class SysRoleMenu extends BaseEntity {
+public class SysRoleMenu {
     /**
      * 主键
      */

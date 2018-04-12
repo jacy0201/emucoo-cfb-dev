@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_img_append")
-public class TImgAppend extends BaseEntity {
+public class TImgAppend {
     /**
      * 主键PK
      */

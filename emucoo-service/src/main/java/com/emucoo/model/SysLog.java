@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.persistence.*;
 
 @Table(name = "sys_log")
-public class SysLog extends BaseEntity {
+public class SysLog {
     /**
      * 日志ID
      */
@@ -416,6 +416,8 @@ public class SysLog extends BaseEntity {
         this.modifyTime = modifyTime;
     }
 
+
+
     public void setParams(Map<String, String[]> paramMap) {
         if (paramMap == null) {
             return;
@@ -430,4 +432,5 @@ public class SysLog extends BaseEntity {
         }
         this.requestParams = params.toString();
     }
+
 }

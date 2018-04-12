@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_dpt_area")
-public class SysDptArea extends BaseEntity {
+public class SysDptArea {
     /**
      * PK
      */

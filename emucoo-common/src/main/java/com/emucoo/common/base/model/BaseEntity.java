@@ -1,29 +1,6 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2014-2016 abel533@gmail.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package com.emucoo.common.base.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -35,8 +12,6 @@ import java.util.Date;
 /**
  * 基础信息
  *
- * @author liuzh
- * @since 2016-01-31 21:42
  */
 @Data
 public abstract class BaseEntity implements java.io.Serializable{
@@ -45,7 +20,38 @@ public abstract class BaseEntity implements java.io.Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 数据创建人ID
+     */
+    @Column(name = "create_user_id")
+    private Long createUserId;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+
+    /**
+     * 数据修改人ID
+     */
+    @Column(name = "modify_user_id")
+    private Long modifyUserId;
+
+    /**
+     * 修改时间
+     */
+    @Column(name = "modify_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date modifyTime;
+
+    /**
+     * 是否逻辑删除0：正常1：逻辑删除
+     */
+    @Column(name = "is_del")
+    private Boolean isDel;
+
+
 }

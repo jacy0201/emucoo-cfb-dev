@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel
-public class SaveReportIn extends BaseEntity {
+public class SaveReportIn {
     private String patrolShopArrangeID;
     private String reportValue;
     private String reporterID;

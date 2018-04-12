@@ -15,7 +15,7 @@ import java.util.List;
 
 @Transactional
 @Service
-public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
+public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
 	@Autowired
 	private MyMapper<T> mapper;
@@ -86,8 +86,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 	 * @return
 	 */
 	public Integer save(T record) {
-		record.setCreateTime(new Date());
-		record.setModifyTime(record.getCreateTime());
 		return this.mapper.insert(record);
 	}
 
@@ -98,8 +96,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 	 * @return
 	 */
 	public Integer saveSelective(T record) {
-		record.setCreateTime(new Date());
-		record.setModifyTime(record.getCreateTime());
 		return this.mapper.insertSelective(record);
 	}
 
@@ -114,7 +110,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 	 * @return
 	 */
 	public Integer update(T record) {
-		record.setModifyTime(new Date());
 		return this.mapper.updateByPrimaryKey(record);
 	}
 
@@ -125,7 +120,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 	 * @return
 	 */
 	public Integer updateSelective(T record) {
-		record.setModifyTime(new Date());
 		return this.mapper.updateByPrimaryKeySelective(record);
 	}
 

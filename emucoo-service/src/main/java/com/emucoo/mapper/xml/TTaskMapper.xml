@@ -12,19 +12,19 @@
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="execute_deadline" property="executeDeadline" jdbcType="VARCHAR" />
     <result column="execute_remind_time" property="executeRemindTime" jdbcType="VARCHAR" />
+    <result column="audit_user_id" property="auditUserId" jdbcType="BIGINT" />
     <result column="audit_deadline" property="auditDeadline" jdbcType="VARCHAR" />
-    <result column="executor_dpt_ids" property="executorDptIds" jdbcType="BIGINT" />
-    <result column="executor_position_ids" property="executorPositionIds" jdbcType="BIGINT" />
-    <result column="executor_shop_ids" property="executorShopIds" jdbcType="BIGINT" />
-    <result column="cc_position_ids" property="ccPositionIds" jdbcType="BIGINT" />
+    <result column="executor_dpt_id" property="executorDptId" jdbcType="BIGINT" />
+    <result column="execute_user_ids" property="executeUserIds" jdbcType="VARCHAR" />
+    <result column="executor_position_ids" property="executorPositionIds" jdbcType="VARCHAR" />
+    <result column="executor_shop_ids" property="executorShopIds" jdbcType="VARCHAR" />
+    <result column="cc_user_ids" property="ccUserIds" jdbcType="VARCHAR" />
+    <result column="cc_position_ids" property="ccPositionIds" jdbcType="VARCHAR" />
     <result column="score_type" property="scoreType" jdbcType="TINYINT" />
     <result column="is_use" property="isUse" jdbcType="BIT" />
-    <result column="operate_ids" property="operateIds" jdbcType="VARCHAR" />
     <result column="duration_time_type" property="durationTimeType" jdbcType="BIT" />
-    <result column="duration_start_time" property="durationStartTime" jdbcType="VARCHAR" />
-    <result column="duration_end_time" property="durationEndTime" jdbcType="VARCHAR" />
-    <result column="loop_start_date" property="loopStartDate" jdbcType="DATE" />
-    <result column="loop_end_date" property="loopEndDate" jdbcType="DATE" />
+    <result column="task_start_date" property="taskStartDate" jdbcType="DATE" />
+    <result column="task_end_date" property="taskEndDate" jdbcType="DATE" />
     <result column="loop_cycle_type" property="loopCycleType" jdbcType="BIT" />
     <result column="loop_cycle_value" property="loopCycleValue" jdbcType="VARCHAR" />
     <result column="work_id" property="workId" jdbcType="VARCHAR" />
@@ -36,7 +36,7 @@
     <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="audit_dpt_id" property="auditDptId" jdbcType="BIGINT" />
-    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
     <result column="preinstall_score" property="preinstallScore" jdbcType="VARCHAR" />
     <result column="preinstall_weight" property="preinstallWeight" jdbcType="VARCHAR" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />

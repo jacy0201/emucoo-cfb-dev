@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_label")
-public class TLabel extends BaseEntity {
+public class TLabel {
     /**
      * ID
      */

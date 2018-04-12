@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_report")
-public class TReport extends BaseEntity {
+public class TReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

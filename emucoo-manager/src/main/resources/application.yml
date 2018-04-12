@@ -7,18 +7,6 @@ server:
   tomcat:
     maxHttpPostSize: 0
 
-#调用配置中心配置
-management:
-  security:
-    enabled:　false
-    
-endpoints:
-  shutdown:
-    enabled: true
-    sensitive: false
-  restart:
-    enabled: true
-
 spring:
   application:
     name: emucoo-manager
@@ -102,6 +90,13 @@ spring:
     # 属性为NULL 不序列化
     default-property-inclusion: non_null
 
+
+emucoo:
+    redis:
+        open: false  # 是否开启redis缓存  true开启   false关闭
+    shiro:
+        redis: false # true表示shiro session存到redis里，需要开启redis，才会生效【分布式场景】
+
 #mybatis
 mybatis:
   #指定目录类型别名扫描
@@ -126,16 +121,15 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-
+#日志等级
 logging:
   level:
     com.emucoo.mapper: debug
 
-
-#是否发短信  
+#是否发短信
 sms:
   send: false #是否发送短信
-  
+
 jiguangPush:
   appKey: b248954a569bdce27832e88b
   masterSecret: a769f455149fcfa03e665b29
@@ -144,7 +138,7 @@ jiguangPush:
 rongcloud:
   appKey: vnroth0kvdlho
   appSecret: 2XF06Z5BzIYN
-  
+
 xiaomiPush:
   appId: 2882303761517592004
   appkey: 5671759280004
@@ -154,14 +148,14 @@ huaweiPush:
   appId: 100035409
   appSecret: ae956eb5b43f5285d1f86df2a9a4d566
   packageName: com.emucoo.app
-  
+
 qiniu:
   accessKey: WH4Ly7TkEhWKXcKIY5rbyJwa-cFK-ACx4szTWKjW
   secretKey: 9JRWG2I2VwEPARRraN9EpfXen8cZuR_C3U7HSN3n
   baseUrl: http://img.emucoo.net
   bucket: files
   expires: 3600
-  
+
 gaoDe:
   userKey: 5d377810ae041e65dc6041ffef682631
 

@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_operate_option")
-public class TOperateOption extends BaseEntity {
+public class TOperateOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -80,6 +80,18 @@ public class TOperateOption extends BaseEntity {
      */
     @Column(name = "preinstall_weight")
     private String preinstallWeight;
+
+    @Column(name = "task_id")
+    private Long taskId;
+
+    @Column(name = "feedback_need_text")
+    private Boolean feedbackNeedText;
+
+    @Column(name = "feedback_img_type")
+    private Boolean feedbackImgType;
+
+    @Column(name = "feedback_need_num")
+    private Boolean feedbackNeedNum;
 
     /**
      * @return id
@@ -319,5 +331,61 @@ public class TOperateOption extends BaseEntity {
      */
     public void setPreinstallWeight(String preinstallWeight) {
         this.preinstallWeight = preinstallWeight;
+    }
+
+    /**
+     * @return task_id
+     */
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * @param taskId
+     */
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
+    /**
+     * @return feedback_need_text
+     */
+    public Boolean getFeedbackNeedText() {
+        return feedbackNeedText;
+    }
+
+    /**
+     * @param feedbackNeedText
+     */
+    public void setFeedbackNeedText(Boolean feedbackNeedText) {
+        this.feedbackNeedText = feedbackNeedText;
+    }
+
+    /**
+     * @return feedback_img_type
+     */
+    public Boolean getFeedbackImgType() {
+        return feedbackImgType;
+    }
+
+    /**
+     * @param feedbackImgType
+     */
+    public void setFeedbackImgType(Boolean feedbackImgType) {
+        this.feedbackImgType = feedbackImgType;
+    }
+
+    /**
+     * @return feedback_need_num
+     */
+    public Boolean getFeedbackNeedNum() {
+        return feedbackNeedNum;
+    }
+
+    /**
+     * @param feedbackNeedNum
+     */
+    public void setFeedbackNeedNum(Boolean feedbackNeedNum) {
+        this.feedbackNeedNum = feedbackNeedNum;
     }
 }

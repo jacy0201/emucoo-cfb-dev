@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_task_comment")
-public class TTaskComment extends BaseEntity {
+public class TTaskComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

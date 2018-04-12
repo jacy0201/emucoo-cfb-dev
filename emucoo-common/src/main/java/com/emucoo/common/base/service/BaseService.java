@@ -9,7 +9,7 @@ import java.util.List;
  * @author fujg
  * Created by fujg on 2017/1/18.
  */
-public interface BaseService<T extends BaseEntity> {
+public interface BaseService<T> {
     /**
      * 根据id查询数据
      *

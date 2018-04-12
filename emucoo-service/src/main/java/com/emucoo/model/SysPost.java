@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_post")
-public class SysPost extends BaseEntity {
+public class SysPost {
     /**
      * 主键
      */
@@ -47,6 +47,11 @@ public class SysPost extends BaseEntity {
      */
     @Column(name = "modify_time")
     private Date modifyTime;
+
+    /**
+     * 1：部门岗位，2：店铺岗位
+     */
+    private Boolean type;
 
     /**
      * 数据修改人ID
@@ -192,6 +197,24 @@ public class SysPost extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    /**
+     * 获取1：部门岗位，2：店铺岗位
+     *
+     * @return type - 1：部门岗位，2：店铺岗位
+     */
+    public Boolean getType() {
+        return type;
+    }
+
+    /**
+     * 设置1：部门岗位，2：店铺岗位
+     *
+     * @param type 1：部门岗位，2：店铺岗位
+     */
+    public void setType(Boolean type) {
+        this.type = type;
     }
 
     /**

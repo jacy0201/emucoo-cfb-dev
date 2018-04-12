@@ -3,8 +3,9 @@ package com.emucoo.manager.aop;
 import com.emucoo.common.Constant;
 import com.emucoo.common.annotation.OperationLog;
 import com.emucoo.common.exception.BaseException;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysLog;
-import com.emucoo.service.sys.SysLogService;
+import com.emucoo.service.sys.LogService;
 import com.xiaoleilu.hutool.http.HttpUtil;
 import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.StrUtil;
@@ -43,7 +44,7 @@ public class OperationLogAspect {
 	 * 注入soaClient用于把日志保存数据库
 	 */
 	@Resource
-	private SysLogService logService;
+	private LogService logService;
 	@Resource
 	private HttpServletRequest request; //这里可以获取到request
 
@@ -72,7 +73,7 @@ public class OperationLogAspect {
 			//*========数据库日志=========*//
 			SysLog log = new SysLog();
 			log.setAppName("");
-			String userName = ShiroUtils.getUserEntity()==null?"":ShiroUtils.getUserEntity().getUsername();
+			String userName = ShiroUtils.getUserEntity()==null?"": ShiroUtils.getUserEntity().getUsername();
 
 			log.setUsername(StrUtil.isEmpty(userName)?"APP":userName);
 			log.setLogType(Byte.valueOf("0"));

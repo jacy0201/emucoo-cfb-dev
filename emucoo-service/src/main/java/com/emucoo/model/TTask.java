@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_task")
-public class TTask extends BaseEntity {
+public class TTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,34 +44,52 @@ public class TTask extends BaseEntity {
     private String executeRemindTime;
 
     /**
+     * 审核人ids
+     */
+    @Column(name = "audit_user_id")
+    private Long auditUserId;
+
+    /**
      * 审核截止时间
      */
     @Column(name = "audit_deadline")
     private String auditDeadline;
 
     /**
-     * 执行人部门ids
+     * 执行人部门id
      */
-    @Column(name = "executor_dpt_ids")
-    private Long executorDptIds;
+    @Column(name = "executor_dpt_id")
+    private Long executorDptId;
+
+    /**
+     * 执行人ids
+     */
+    @Column(name = "execute_user_ids")
+    private String executeUserIds;
 
     /**
      * 执行人岗位ids
      */
     @Column(name = "executor_position_ids")
-    private Long executorPositionIds;
+    private String executorPositionIds;
 
     /**
      * 执行人店铺ids
      */
     @Column(name = "executor_shop_ids")
-    private Long executorShopIds;
+    private String executorShopIds;
 
     /**
-     * 抄送人岗位id
+     * 抄送人ids
+     */
+    @Column(name = "cc_user_ids")
+    private String ccUserIds;
+
+    /**
+     * 抄送人岗位ids
      */
     @Column(name = "cc_position_ids")
-    private Long ccPositionIds;
+    private String ccPositionIds;
 
     /**
      * 评分方式（1：任务评分，2：操作项评分）
@@ -86,40 +104,22 @@ public class TTask extends BaseEntity {
     private Boolean isUse;
 
     /**
-     * 操作项ids
-     */
-    @Column(name = "operate_ids")
-    private String operateIds;
-
-    /**
      * 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
     @Column(name = "duration_time_type")
     private Boolean durationTimeType;
 
     /**
-     * 指定的任务持续开始时间
-     */
-    @Column(name = "duration_start_time")
-    private String durationStartTime;
-
-    /**
-     * 指定的任务持续结束时间
-     */
-    @Column(name = "duration_end_time")
-    private String durationEndTime;
-
-    /**
      * 重复任务开始日期
      */
-    @Column(name = "loop_start_date")
-    private Date loopStartDate;
+    @Column(name = "task_start_date")
+    private Date taskStartDate;
 
     /**
      * 重复任务结束日期
      */
-    @Column(name = "loop_end_date")
-    private Date loopEndDate;
+    @Column(name = "task_end_date")
+    private Date taskEndDate;
 
     /**
      * 循环周期类型（1：隔X天一次，2：周循环，3：月循环）
@@ -186,7 +186,7 @@ public class TTask extends BaseEntity {
     /**
      * 版本
      */
-    private String version;
+    private Integer version;
 
     /**
      * 预设的满分
@@ -326,6 +326,24 @@ public class TTask extends BaseEntity {
     }
 
     /**
+     * 获取审核人ids
+     *
+     * @return audit_user_id - 审核人ids
+     */
+    public Long getAuditUserId() {
+        return auditUserId;
+    }
+
+    /**
+     * 设置审核人ids
+     *
+     * @param auditUserId 审核人ids
+     */
+    public void setAuditUserId(Long auditUserId) {
+        this.auditUserId = auditUserId;
+    }
+
+    /**
      * 获取审核截止时间
      *
      * @return audit_deadline - 审核截止时间
@@ -344,21 +362,39 @@ public class TTask extends BaseEntity {
     }
 
     /**
-     * 获取执行人部门ids
+     * 获取执行人部门id
      *
-     * @return executor_dpt_ids - 执行人部门ids
+     * @return executor_dpt_id - 执行人部门id
      */
-    public Long getExecutorDptIds() {
-        return executorDptIds;
+    public Long getExecutorDptId() {
+        return executorDptId;
     }
 
     /**
-     * 设置执行人部门ids
+     * 设置执行人部门id
      *
-     * @param executorDptIds 执行人部门ids
+     * @param executorDptId 执行人部门id
      */
-    public void setExecutorDptIds(Long executorDptIds) {
-        this.executorDptIds = executorDptIds;
+    public void setExecutorDptId(Long executorDptId) {
+        this.executorDptId = executorDptId;
+    }
+
+    /**
+     * 获取执行人ids
+     *
+     * @return execute_user_ids - 执行人ids
+     */
+    public String getExecuteUserIds() {
+        return executeUserIds;
+    }
+
+    /**
+     * 设置执行人ids
+     *
+     * @param executeUserIds 执行人ids
+     */
+    public void setExecuteUserIds(String executeUserIds) {
+        this.executeUserIds = executeUserIds;
     }
 
     /**
@@ -366,7 +402,7 @@ public class TTask extends BaseEntity {
      *
      * @return executor_position_ids - 执行人岗位ids
      */
-    public Long getExecutorPositionIds() {
+    public String getExecutorPositionIds() {
         return executorPositionIds;
     }
 
@@ -375,7 +411,7 @@ public class TTask extends BaseEntity {
      *
      * @param executorPositionIds 执行人岗位ids
      */
-    public void setExecutorPositionIds(Long executorPositionIds) {
+    public void setExecutorPositionIds(String executorPositionIds) {
         this.executorPositionIds = executorPositionIds;
     }
 
@@ -384,7 +420,7 @@ public class TTask extends BaseEntity {
      *
      * @return executor_shop_ids - 执行人店铺ids
      */
-    public Long getExecutorShopIds() {
+    public String getExecutorShopIds() {
         return executorShopIds;
     }
 
@@ -393,25 +429,43 @@ public class TTask extends BaseEntity {
      *
      * @param executorShopIds 执行人店铺ids
      */
-    public void setExecutorShopIds(Long executorShopIds) {
+    public void setExecutorShopIds(String executorShopIds) {
         this.executorShopIds = executorShopIds;
     }
 
     /**
-     * 获取抄送人岗位id
+     * 获取抄送人ids
      *
-     * @return cc_position_ids - 抄送人岗位id
+     * @return cc_user_ids - 抄送人ids
      */
-    public Long getCcPositionIds() {
+    public String getCcUserIds() {
+        return ccUserIds;
+    }
+
+    /**
+     * 设置抄送人ids
+     *
+     * @param ccUserIds 抄送人ids
+     */
+    public void setCcUserIds(String ccUserIds) {
+        this.ccUserIds = ccUserIds;
+    }
+
+    /**
+     * 获取抄送人岗位ids
+     *
+     * @return cc_position_ids - 抄送人岗位ids
+     */
+    public String getCcPositionIds() {
         return ccPositionIds;
     }
 
     /**
-     * 设置抄送人岗位id
+     * 设置抄送人岗位ids
      *
-     * @param ccPositionIds 抄送人岗位id
+     * @param ccPositionIds 抄送人岗位ids
      */
-    public void setCcPositionIds(Long ccPositionIds) {
+    public void setCcPositionIds(String ccPositionIds) {
         this.ccPositionIds = ccPositionIds;
     }
 
@@ -452,24 +506,6 @@ public class TTask extends BaseEntity {
     }
 
     /**
-     * 获取操作项ids
-     *
-     * @return operate_ids - 操作项ids
-     */
-    public String getOperateIds() {
-        return operateIds;
-    }
-
-    /**
-     * 设置操作项ids
-     *
-     * @param operateIds 操作项ids
-     */
-    public void setOperateIds(String operateIds) {
-        this.operateIds = operateIds;
-    }
-
-    /**
      * 获取任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      *
      * @return duration_time_type - 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
@@ -488,75 +524,39 @@ public class TTask extends BaseEntity {
     }
 
     /**
-     * 获取指定的任务持续开始时间
-     *
-     * @return duration_start_time - 指定的任务持续开始时间
-     */
-    public String getDurationStartTime() {
-        return durationStartTime;
-    }
-
-    /**
-     * 设置指定的任务持续开始时间
-     *
-     * @param durationStartTime 指定的任务持续开始时间
-     */
-    public void setDurationStartTime(String durationStartTime) {
-        this.durationStartTime = durationStartTime;
-    }
-
-    /**
-     * 获取指定的任务持续结束时间
-     *
-     * @return duration_end_time - 指定的任务持续结束时间
-     */
-    public String getDurationEndTime() {
-        return durationEndTime;
-    }
-
-    /**
-     * 设置指定的任务持续结束时间
-     *
-     * @param durationEndTime 指定的任务持续结束时间
-     */
-    public void setDurationEndTime(String durationEndTime) {
-        this.durationEndTime = durationEndTime;
-    }
-
-    /**
      * 获取重复任务开始日期
      *
-     * @return loop_start_date - 重复任务开始日期
+     * @return task_start_date - 重复任务开始日期
      */
-    public Date getLoopStartDate() {
-        return loopStartDate;
+    public Date getTaskStartDate() {
+        return taskStartDate;
     }
 
     /**
      * 设置重复任务开始日期
      *
-     * @param loopStartDate 重复任务开始日期
+     * @param taskStartDate 重复任务开始日期
      */
-    public void setLoopStartDate(Date loopStartDate) {
-        this.loopStartDate = loopStartDate;
+    public void setTaskStartDate(Date taskStartDate) {
+        this.taskStartDate = taskStartDate;
     }
 
     /**
      * 获取重复任务结束日期
      *
-     * @return loop_end_date - 重复任务结束日期
+     * @return task_end_date - 重复任务结束日期
      */
-    public Date getLoopEndDate() {
-        return loopEndDate;
+    public Date getTaskEndDate() {
+        return taskEndDate;
     }
 
     /**
      * 设置重复任务结束日期
      *
-     * @param loopEndDate 重复任务结束日期
+     * @param taskEndDate 重复任务结束日期
      */
-    public void setLoopEndDate(Date loopEndDate) {
-        this.loopEndDate = loopEndDate;
+    public void setTaskEndDate(Date taskEndDate) {
+        this.taskEndDate = taskEndDate;
     }
 
     /**
@@ -762,7 +762,7 @@ public class TTask extends BaseEntity {
      *
      * @return version - 版本
      */
-    public String getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
@@ -771,7 +771,7 @@ public class TTask extends BaseEntity {
      *
      * @param version 版本
      */
-    public void setVersion(String version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
