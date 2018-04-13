@@ -15,10 +15,6 @@ import java.util.Date;
  */
 @Data
 public abstract class BaseEntity implements java.io.Serializable{
-    @Id
-    @Column(name = "Id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     /**
      * 数据创建人ID
