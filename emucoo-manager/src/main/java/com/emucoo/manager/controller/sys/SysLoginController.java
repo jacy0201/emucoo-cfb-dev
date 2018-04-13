@@ -1,16 +1,16 @@
 package com.emucoo.manager.controller.sys;
 
 import com.emucoo.common.util.R;
-import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserService;
 import com.emucoo.service.sys.SysUserTokenService;
-import org.apache.shiro.authc.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -19,6 +19,7 @@ import java.io.IOException;
  * 登录相关
  */
 @RestController
+@Api(tags="登录接口" )
 public class SysLoginController {
 
 	@Autowired
@@ -32,7 +33,12 @@ public class SysLoginController {
 	/**
 	 * 登录
 	 */
-	@RequestMapping(value = "/sys/login", method = RequestMethod.POST)
+	@PostMapping(value = "/sys/login")
+	@ApiOperation(value="用户登录")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="username",value="账号",required=true,paramType="query"),
+			@ApiImplicitParam(name="password",value="密码",required=true,paramType="query")
+	})
 	public R login(String username, String password)throws IOException {
 
 		//用户信息
