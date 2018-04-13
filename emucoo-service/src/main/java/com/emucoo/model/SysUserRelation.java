@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_user_relation")
-public class SysUserRelation {
+public class SysUserRelation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

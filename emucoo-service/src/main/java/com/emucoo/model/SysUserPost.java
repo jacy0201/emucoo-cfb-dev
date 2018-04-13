@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_user_post")
-public class SysUserPost {
+public class SysUserPost extends BaseEntity {
     /**
      * 主键
      */

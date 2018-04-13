@@ -1,7 +1,6 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
-import com.emucoo.model.SysLog;
 import com.github.pagehelper.PageInfo;
 
 public interface LogService extends BaseService<SysLog> {

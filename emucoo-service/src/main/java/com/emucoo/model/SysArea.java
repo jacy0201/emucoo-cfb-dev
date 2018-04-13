@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_area")
-public class SysArea {
+public class SysArea extends BaseEntity {
     /**
      * 主键
      */

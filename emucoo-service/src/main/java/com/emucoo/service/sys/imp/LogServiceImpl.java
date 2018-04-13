@@ -1,6 +1,5 @@
 package com.emucoo.service.sys.imp;
 
-import com.emucoo.model.SysLog;
 import com.emucoo.service.sys.LogService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;

@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_task")
-public class TTask {
+public class TTask extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,8 +13,8 @@ public class TTask {
     /**
      * 任务说明图片id
      */
-    @Column(name = "illustration_img_id")
-    private Long illustrationImgId;
+    @Column(name = "illustration_img_ids")
+    private String illustrationImgIds;
 
     /**
      * 任务名称
@@ -204,6 +204,18 @@ public class TTask {
     private Long orgId;
 
     /**
+     * 报告id
+     */
+    @Column(name = "report_id")
+    private Long reportId;
+
+    /**
+     * 巡店安排
+     */
+    @Column(name = "front_plan_id")
+    private Long frontPlanId;
+
+    /**
      * @return id
      */
     public Long getId() {
@@ -220,19 +232,19 @@ public class TTask {
     /**
      * 获取任务说明图片id
      *
-     * @return illustration_img_id - 任务说明图片id
+     * @return illustration_img_ids - 任务说明图片id
      */
-    public Long getIllustrationImgId() {
-        return illustrationImgId;
+    public String getIllustrationImgIds() {
+        return illustrationImgIds;
     }
 
     /**
      * 设置任务说明图片id
      *
-     * @param illustrationImgId 任务说明图片id
+     * @param illustrationImgIds 任务说明图片id
      */
-    public void setIllustrationImgId(Long illustrationImgId) {
-        this.illustrationImgId = illustrationImgId;
+    public void setIllustrationImgIds(String illustrationImgIds) {
+        this.illustrationImgIds = illustrationImgIds;
     }
 
     /**
@@ -823,5 +835,41 @@ public class TTask {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    /**
+     * 获取报告id
+     *
+     * @return report_id - 报告id
+     */
+    public Long getReportId() {
+        return reportId;
+    }
+
+    /**
+     * 设置报告id
+     *
+     * @param reportId 报告id
+     */
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
+
+    /**
+     * 获取巡店安排
+     *
+     * @return front_plan_id - 巡店安排
+     */
+    public Long getFrontPlanId() {
+        return frontPlanId;
+    }
+
+    /**
+     * 设置巡店安排
+     *
+     * @param frontPlanId 巡店安排
+     */
+    public void setFrontPlanId(Long frontPlanId) {
+        this.frontPlanId = frontPlanId;
     }
 }

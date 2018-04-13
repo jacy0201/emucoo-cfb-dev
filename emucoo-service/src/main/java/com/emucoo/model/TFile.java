@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_file")
-public class TFile {
+public class TFile extends BaseEntity {
     /**
      * 主键PK
      */

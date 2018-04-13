@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_dept")
-public class SysDept {
+public class SysDept extends BaseEntity {
     /**
      * 机构ID
      */

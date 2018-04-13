@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_shop_info")
-public class TShopInfo {
+public class TShopInfo extends BaseEntity {
     /**
      * 主键PK
      */

@@ -1,10 +1,11 @@
 package com.emucoo.model;
 
-import javax.persistence.*;
+import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import javax.persistence.*;
 
 @Table(name = "t_task_label")
-public class TTaskLabel {
+public class TTaskLabel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

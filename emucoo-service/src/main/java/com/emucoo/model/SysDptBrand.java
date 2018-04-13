@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_dpt_brand")
-public class SysDptBrand {
+public class SysDptBrand extends BaseEntity {
     /**
      * PK
      */
