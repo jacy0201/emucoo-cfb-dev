@@ -1,6 +1,7 @@
 package com.emucoo.manager.controller.sys;
 
 import com.emucoo.common.util.R;
+import com.emucoo.manager.controller.AbstractController;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserService;
 import com.emucoo.service.sys.SysUserTokenService;
@@ -19,8 +20,8 @@ import java.io.IOException;
  * 登录相关
  */
 @RestController
-@Api(tags="登录接口" )
-public class SysLoginController {
+@Api(description="登录接口" )
+public class SysLoginController extends AbstractController {
 
 	@Autowired
 	private SysUserTokenService sysUserTokenService;
