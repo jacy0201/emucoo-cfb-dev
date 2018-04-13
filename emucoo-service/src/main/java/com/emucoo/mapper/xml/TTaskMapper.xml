@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="illustration_img_id" property="illustrationImgId" jdbcType="BIGINT" />
+    <result column="illustration_img_ids" property="illustrationImgIds" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -40,5 +40,7 @@
     <result column="preinstall_score" property="preinstallScore" jdbcType="VARCHAR" />
     <result column="preinstall_weight" property="preinstallWeight" jdbcType="VARCHAR" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="report_id" property="reportId" jdbcType="BIGINT" />
+    <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
   </resultMap>
 </mapper>
