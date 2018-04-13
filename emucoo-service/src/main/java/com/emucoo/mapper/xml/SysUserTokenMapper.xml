@@ -10,4 +10,9 @@
     <result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <select id="queryByToken" resultType="com.emucoo.model.SysUserToken">
+    select * from sys_user_token where token = #{value}
+  </select>
+
 </mapper>
