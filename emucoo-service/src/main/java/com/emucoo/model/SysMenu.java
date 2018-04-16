@@ -63,8 +63,10 @@ public class SysMenu extends BaseEntity {
      * ztree属性
 
      */
+    @Transient
     private Boolean open;
 
+    @Transient
     private List<?> list;
 
 
