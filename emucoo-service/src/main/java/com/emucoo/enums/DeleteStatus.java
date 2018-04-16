@@ -4,9 +4,9 @@ package com.emucoo.enums;
  * Created by sj on 2018/4/16.
  */
 public enum DeleteStatus {
-    COMMON(true,"正常"),
+    COMMON(false,"正常"),
 
-    DELETED(false,"删除");
+    DELETED(true,"删除");
 
 
     private final boolean code;
