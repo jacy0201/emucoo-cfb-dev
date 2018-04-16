@@ -4,9 +4,11 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.shop.ShopPlanListVO;
 import com.emucoo.dto.modules.shop.ShopPlanListVO_I;
 import com.emucoo.dto.modules.shop.ShopPlanProgressVO;
+import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.shop.ShopPlanService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +42,7 @@ public class ShopPlanController extends AppBaseController {
      */
     @PostMapping("/progress")
     public AppResult<ShopPlanProgressVO> getShopPlanProgress(){
-        User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         return success(shopPlanService.getShopPlanProgress(user.getId()));
     }
 

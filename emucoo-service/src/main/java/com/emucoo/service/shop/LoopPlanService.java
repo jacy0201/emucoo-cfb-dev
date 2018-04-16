@@ -1,6 +1,7 @@
 package com.emucoo.service.shop;
 
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.model.CheckSheet;
 import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TLoopPlan;
 
@@ -18,4 +19,6 @@ public interface LoopPlanService extends BaseService<TLoopPlan> {
     int countFrontPlan(Long userId, Date needDate);
 
     List<TFrontPlan> listFrontPlan(Long submitUserId, Date needDate);
+
+    List<CheckSheet> listCheckSheets();
 }

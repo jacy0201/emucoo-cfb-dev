@@ -2,6 +2,7 @@ package com.emucoo.service.shop.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.mapper.TFrontPlanMapper;
+import com.emucoo.model.CheckSheet;
 import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.service.shop.LoopPlanService;
@@ -29,5 +30,10 @@ public class LoopPlanServiceImpl extends BaseServiceImpl<TLoopPlan> implements L
 	@Override
 	public List<TFrontPlan> listFrontPlan(Long submitUserId, Date needDate) {
 		 return frontPlanMapper.listTodayPlanOfUser(submitUserId, needDate);
+	}
+
+	@Override
+	public List<CheckSheet> listCheckSheets() {
+		return null;
 	}
 }
