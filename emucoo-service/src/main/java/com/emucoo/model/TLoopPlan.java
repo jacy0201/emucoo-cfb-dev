@@ -1,11 +1,16 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_loop_plan")
+@ApiModel()
 public class TLoopPlan extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,22 +19,26 @@ public class TLoopPlan extends BaseEntity {
     /**
      * 任务计划名
      */
+    @ApiModelProperty(name = "name", value = "计划名称")
     private String name;
 
     /**
      * 描述说明
      */
+    @ApiModelProperty(name = "description", value = "描述")
     private String description;
 
     /**
      * 所选择的部门ID
      */
     @Column(name = "dpt_id")
+    @ApiModelProperty(name = "dptId", value = "部门id")
     private Long dptId;
 
     /**
      * 状态 0：启用 1：停用
      */
+    @ApiModelProperty(name = "status", value = "状态",example = "状态 0：启用 1：停用")
     private Boolean status;
 
     /**
@@ -39,18 +48,21 @@ public class TLoopPlan extends BaseEntity {
             3：年循环
      */
     @Column(name = "plan_start_date")
+    @ApiModelProperty(name = "planStartDate", value = "计划期间开始日期")
     private Date planStartDate;
 
     /**
      * 计划结束月份
      */
     @Column(name = "plan_end_date")
+    @ApiModelProperty(name = "planEndDate", value = "计划期间结束日期")
     private Date planEndDate;
 
     /**
      * 巡店周期(月)
      */
     @Column(name = "plan_cycle")
+    @ApiModelProperty(name = "planCycle", value = "计划周期")
     private Integer planCycle;
 
     /**
@@ -84,6 +96,7 @@ public class TLoopPlan extends BaseEntity {
     private Boolean isDel;
 
     @Transient
+    @ApiModelProperty(name = "planFormRelationList", value = "计划添加的表单数组")
     List<TPlanFormRelation> planFormRelationList;
 
     @Column(name = "org_id")

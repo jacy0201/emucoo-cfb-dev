@@ -11,6 +11,9 @@ import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.service.manage.TLoopPlanManageService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +39,7 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+    @ApiOperation(value = "新增计划")
     @PostMapping(value = "addPlan")
     @ResponseBody
     public ApiResult<String> addPlan(@RequestBody ParamVo<TLoopPlan> param){
@@ -67,6 +71,8 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+    @ApiOperation(value = "更新计划")
+    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "updatePlanById")
     @ResponseBody
     public ApiResult<String> updatePlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -101,6 +107,8 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+    @ApiOperation(value = "启用计划")
+    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "startPlanById")
     @ResponseBody
     public ApiResult<String> startPlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -118,6 +126,8 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+    @ApiOperation(value = "停用计划")
+    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "stopPlanById")
     @ResponseBody
     public ApiResult<String> stopPlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -129,6 +139,13 @@ public class PlanManageController extends BaseResource {
         return success("success");
     }
 
+    /**
+     * 删除计划
+     * @param param
+     * @return
+     */
+    @ApiOperation(value = "删除计划")
+    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "deletePlanById")
     @ResponseBody
     public ApiResult<String> deletePlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -145,6 +162,7 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+    @ApiOperation(value = "根据条件查询计划列表", response = TLoopPlan.class)
     @PostMapping(value = "planListByCondition")
     @ResponseBody
     public ApiResult findPlanListByCondition(@RequestBody ParamVo<TLoopPlan> param) {

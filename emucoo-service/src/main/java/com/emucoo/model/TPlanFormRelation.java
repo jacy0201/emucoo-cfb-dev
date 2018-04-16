@@ -1,10 +1,14 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_plan_form_relation")
+@ApiModel
 public class TPlanFormRelation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +24,14 @@ public class TPlanFormRelation extends BaseEntity {
      * 表单id
      */
     @Column(name = "form_main_id")
+    @ApiModelProperty(name = "formMainId", value = "添加的表单id")
     private Long formMainId;
 
     /**
      * 表单引用次数
      */
     @Column(name = "fom_use_count")
+    @ApiModelProperty(name = "formUseCount", value = "该表单周期内使用次数")
     private Long formUseCount;
 
     @Column(name = "create_time")
