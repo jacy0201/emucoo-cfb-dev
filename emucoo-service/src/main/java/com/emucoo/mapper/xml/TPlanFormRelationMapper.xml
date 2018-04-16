@@ -12,4 +12,18 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <insert id="addPlanFormRelation" parameterType="list">
+    INSERT INTO t_plan_form_relation
+    (
+    plan_id,
+    form_main_id,
+    form_use_count,
+    create_time,
+    modify_time
+    )VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.planId},#{item.formMainId},#{item.formUseCount},#{item.createTime},#{item.modifyTime})
+    </foreach>
+  </insert>
 </mapper>

@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_loop_plan")
@@ -81,6 +82,9 @@ public class TLoopPlan extends BaseEntity {
      */
     @Column(name = "is_del")
     private Boolean isDel;
+
+    @Transient
+    List<TPlanFormRelation> planFormRelationList;
 
     @Column(name = "org_id")
     private Long orgId;
@@ -235,6 +239,14 @@ public class TLoopPlan extends BaseEntity {
      */
     public void setPlanCycle(Integer planCycle) {
         this.planCycle = planCycle;
+    }
+
+    public List<TPlanFormRelation> getPlanFormRelationList() {
+        return planFormRelationList;
+    }
+
+    public void setPlanFormRelationList(List<TPlanFormRelation> planFormRelationList) {
+        this.planFormRelationList = planFormRelationList;
     }
 
     /**

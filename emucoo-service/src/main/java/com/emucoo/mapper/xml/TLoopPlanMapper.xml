@@ -20,4 +20,61 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+  <insert id="addPlan" parameterType="com.emucoo.model.TLoopPlan">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO t_loop_plan
+    (
+      name,
+      description,
+      dpt_id,
+      status,
+      is_del,
+      plan_start_date,
+      plan_end_date,
+      plan_cycle,
+      org_id,
+      create_time,
+      modify_time
+    ) VALUES (
+      #{name},
+      #{description},
+      #{dptId},
+      #{status},
+      #{isDel},
+      #{planStartDate},
+      #{planEndDate},
+      #{planCycle},
+      #{orgId},
+      #{createTime},
+      #{modifyTime}
+    )
+  </insert>
+
+  <update id="updatePlanById" parameterType="com.emucoo.model.TLoopPlan">
+    UPDATE t_loop_plan
+    SET name=#{name},
+    description=#{description},
+    dpt_id=#{dptId},
+    plan_start_date=#{planStartDate},
+    plan_end_date=#{planEndDate},
+    plan_cycle=#{planCycle},
+    modify_time=#{modifyTime}
+    WHERE id=#{id}
+  </update>
+
+  <update id="modifyPlanStatusById" parameterType="com.emucoo.model.TLoopPlan">
+    UPDATE t_loop_plan
+    SET status=#{status},
+    modify_time=#{modifyTime}
+    WHERE id=#{id}
+  </update>
+
+  <update id="deletePlanById" parameterType="com.emucoo.model.TLoopPlan">
+    UPDATE t_loop_plan
+    SET is_del=#{isDel},
+    modify_time=#{modifyTime}
+    WHERE id=#{id}
+  </update>
 </mapper>

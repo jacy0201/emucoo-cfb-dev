@@ -26,7 +26,7 @@ public class TPlanFormRelation extends BaseEntity {
      * 表单引用次数
      */
     @Column(name = "fom_use_count")
-    private Long fomUseCount;
+    private Long formUseCount;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -84,22 +84,12 @@ public class TPlanFormRelation extends BaseEntity {
         this.formMainId = formMainId;
     }
 
-    /**
-     * 获取表单引用次数
-     *
-     * @return fom_use_count - 表单引用次数
-     */
-    public Long getFomUseCount() {
-        return fomUseCount;
+    public Long getFormUseCount() {
+        return formUseCount;
     }
 
-    /**
-     * 设置表单引用次数
-     *
-     * @param fomUseCount 表单引用次数
-     */
-    public void setFomUseCount(Long fomUseCount) {
-        this.fomUseCount = fomUseCount;
+    public void setFormUseCount(Long formUseCount) {
+        this.formUseCount = formUseCount;
     }
 
     /**
