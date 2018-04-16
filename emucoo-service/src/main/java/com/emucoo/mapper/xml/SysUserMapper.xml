@@ -45,40 +45,8 @@
   </select>
 
 
-  <select id="listUser" resultType="com.emucoo.dto.modules.user.UserVo">
-    SELECT t1.id, t1.username,  t1.remark,  t1.real_name,
-    t1.mobile,  t1.email, t1.is_use,  t1.sex , t1.lb_ids,
-    (
-    SELECT group_concat(role_name)
-    FROM t_dept_role_union
-    WHERE user_id = t1.id
-    AND role_id != - 1
-    and role_id is not null
-    GROUP BY user_id
-    ) as roleNames,
-    (
-    SELECT count(u_parent_id)
-    from t_user_of_user
-    where u_parent_id = t1.id
-    )as subNum
-    FROM t_user t1
-    WHERE 1=1
-    <if test="username != null  and username!=''">
-      and username = #{username}
-    </if>
-    <if test="realName != null  and realName!=''">
-      and real_name = #{realName}
-    </if>
-    <if test="email != null  and email!=''">
-      and email = #{email}
-    </if>
-    <if test="mobile != null  and mobile!=''">
-      and mobile = #{mobile}
-    </if>
-
-    <if test="dptId != null">
-      and dpt_id = #{dptId}
-    </if>
+  <select id="listUser" resultType="com.emucoo.model.SysUser">
+       SELECT * from sys_user
 
   </select>
 

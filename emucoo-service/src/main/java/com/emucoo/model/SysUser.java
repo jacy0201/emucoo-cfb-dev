@@ -128,32 +128,6 @@ public class SysUser extends BaseEntity {
     @Transient
     private String dptName;
 
-    /**
-     * 店铺信息
-     */
-    @Transient
-    private List<UserVo.ShopInfo> shopList;
-
-
-    /**
-     * 岗位信息
-     */
-    @Transient
-    private List<UserVo.PostInfo> postList;
-
-
-    /**
-     * 分区信息
-     */
-    @Transient
-    private List<UserVo.AreaInfo> AreaList;
-
-
-    /**
-     * 品牌信息
-     */
-    @Transient
-    private List<UserVo.BrandInfo> BrandList;
 
     /**
      * 获取用户ID

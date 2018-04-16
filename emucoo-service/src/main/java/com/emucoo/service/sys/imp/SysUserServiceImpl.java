@@ -38,7 +38,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 	@Override
 	public List<UserVo> listUser(String realName,String username,String mobile,String email,String dptId,String shopId,String postId,Integer status) {
-		return sysUserMapper.listUser( realName, username, mobile, email, dptId, shopId, postId, status);
+		return sysUserMapper.listUser( realName, username, mobile, email, dptId, shopId, postId,status);
 	}
 
 }
