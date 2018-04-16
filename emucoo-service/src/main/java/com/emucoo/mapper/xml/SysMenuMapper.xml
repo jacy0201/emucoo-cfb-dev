@@ -20,4 +20,13 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+  <select id="queryListParentId" resultType="com.emucoo.model.SysMenu">
+    select * from sys_menu where parent_id = #{parentId} order by order_num asc
+  </select>
+
+  <select id="queryNotButtonList" resultType="com.emucoo.model.SysMenu">
+    select * from sys_menu where type != 2 order by order_num asc
+  </select>
+
 </mapper>

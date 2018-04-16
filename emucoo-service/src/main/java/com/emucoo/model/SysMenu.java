@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "sys_menu")
@@ -10,6 +11,13 @@ public class SysMenu extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
+    /**
+     * 菜单名称
+     */
+    private String name;
+
     /**
      * 父菜单ID，一级菜单为0
      */
@@ -17,9 +25,12 @@ public class SysMenu extends BaseEntity {
     private Long parentId;
 
     /**
-     * 菜单名称
+     * 父菜单名称
      */
-    private String name;
+
+    private String parentName;
+
+
 
     /**
      * 菜单URL
@@ -46,6 +57,20 @@ public class SysMenu extends BaseEntity {
      */
     @Column(name = "order_num")
     private Integer orderNum;
+
+
+    /**
+     * ztree属性
+
+     */
+    @Transient
+    private Boolean open;
+
+    @Transient
+    private List<?> list;
+
+
+
 
     /**
      * 创建时间
@@ -322,5 +347,29 @@ public class SysMenu extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
+
+    public List<?> getList() {
+        return list;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }

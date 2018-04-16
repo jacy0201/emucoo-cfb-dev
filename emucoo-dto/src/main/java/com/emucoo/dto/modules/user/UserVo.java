@@ -1,18 +1,16 @@
 package com.emucoo.dto.modules.user;
 
-import java.util.Date;
-
-import com.emucoo.dto.modules.demo.demoVo;
-
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserVo {
 
-	/**
-     * 用户ID
+    /**
+     * 用户Id
      */
     private Long id;
 
@@ -21,14 +19,44 @@ public class UserVo {
      */
     private String username;
 
-    private String password;
-
+    /**
+     * 用户描述
+     */
     private String remark;
 
     /**
-     * 盐值
+     * 部门id ,关联sys_dept表主键
      */
-    private String salt;
+    private Long dptId;
+
+    /**
+     * 部门名称
+     */
+    private String dptName;
+
+    /**
+     * 店铺信息
+     */
+    private List<ShopInfo> shopList=new ArrayList<ShopInfo>();
+
+
+    /**
+     * 岗位信息
+     */
+    private List<PostInfo> postList=new ArrayList<PostInfo>();
+
+
+    /**
+     * 分区信息
+     */
+    private List<AreaInfo> AreaList=new ArrayList<AreaInfo>();
+
+
+    /**
+     * 品牌信息
+     */
+    private List<BrandInfo> BrandList=new ArrayList<BrandInfo>();
+
 
     /**
      * 真实姓名
@@ -36,9 +64,9 @@ public class UserVo {
     private String realName;
 
     /**
-     * 性别
+     * 性别： 1-男  ； 2-女 ；3-其他
      */
-    private String sex;
+    private Byte sex;
 
     /**
      * 手机号码
@@ -56,9 +84,9 @@ public class UserVo {
     private Boolean isLock;
 
     /**
-     * 是否逻辑删除0：正常1：逻辑删除
+     * 0：停用     1：启用
      */
-    private Boolean isDel;
+    private Boolean isUse;
 
     /**
      * 是否是管理员1：是管理员 其它不是管理员
@@ -66,17 +94,69 @@ public class UserVo {
     private Boolean isAdmin;
 
     /**
-     * 登录时间
+     * 是否逻辑删除0：正常1：逻辑删除
      */
-    private Date loginTime;
+    private Boolean isDel;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+    private Long orgId;
 
-    /**
-     * 修改时间
-     */
-    private Date modifyTime;
+    @Data
+    public class ShopInfo{
+        /**
+         * 店铺id
+         */
+        private Long shopId;
+
+        /**
+         * 店铺名称
+         */
+        private String shopName;
+    }
+
+    @Data
+    public class PostInfo{
+
+        /**
+         * 岗位id
+         */
+        private String postId;
+
+        /**
+         * 岗位名称
+         */
+        private String postName;
+
+    }
+
+    @Data
+    public class AreaInfo{
+
+        /**
+         * 分区id
+         */
+        private String areaId;
+
+        /**
+         * 分区名称
+         */
+        private String areaName;
+
+    }
+
+
+    @Data
+    public class BrandInfo{
+
+        /**
+         * 品牌id
+         */
+        private String brandId;
+
+        /**
+         * 品牌名称
+         */
+        private String brandName;
+
+    }
+
 }

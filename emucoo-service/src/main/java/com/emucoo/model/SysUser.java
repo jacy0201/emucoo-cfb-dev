@@ -1,7 +1,11 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import com.emucoo.dto.modules.user.UserVo;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "sys_user")
@@ -116,6 +120,14 @@ public class SysUser extends BaseEntity {
 
     @Column(name = "org_id")
     private Long orgId;
+
+
+    /**
+     * 部门名称
+     */
+    @Transient
+    private String dptName;
+
 
     /**
      * 获取用户ID

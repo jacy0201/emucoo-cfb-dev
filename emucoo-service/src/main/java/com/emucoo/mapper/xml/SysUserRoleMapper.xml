@@ -14,4 +14,15 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
   </resultMap>
+
+  <select id="queryRoleIdList" resultType="long">
+    select role_id from sys_user_role where user_id = #{value}
+  </select>
+
+  <delete id="deleteBatch">
+    delete from sys_user_role where role_id in
+    <foreach item="roleId" collection="array" open="(" separator="," close=")">
+      #{roleId}
+    </foreach>
+  </delete>
 </mapper>

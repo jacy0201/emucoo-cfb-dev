@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "sys_dept")
@@ -71,6 +72,20 @@ public class SysDept extends BaseEntity {
      */
     @Column(name = "is_use")
     private Boolean isUse;
+
+    //上级部门名称
+    private String parentName;
+
+
+
+    /**
+     * ztree属性
+     */
+    @Transient
+    private Boolean open;
+    @Transient
+    private List<?> list;
+
 
     /**
      * 创建时间
@@ -402,5 +417,29 @@ public class SysDept extends BaseEntity {
      */
     public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
+
+    public List<?> getList() {
+        return list;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
     }
 }
