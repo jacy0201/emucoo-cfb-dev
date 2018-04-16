@@ -50,4 +50,20 @@
 
   </select>
 
+  <!-- 查询用户的所有权限 -->
+  <select id="queryAllPerms" resultType="string">
+    select m.perms from sys_user_role ur
+    LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+    LEFT JOIN sys_menu m on rm.menu_id = m.menu_id
+    where ur.user_id = #{userId}
+  </select>
+
+  <update id="resetPwd" parameterType="java.lang.String">
+    update sys_user set password = #{password} where mobile=#{mobile}
+  </update>
+
+  <update id="loginOut">
+    UPDATE sys_user SET push_token = null WHERE push_token = #{pushToken}
+  </update>
+
 </mapper>

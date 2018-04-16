@@ -40,7 +40,7 @@
 	<dependency>
 	  <groupId>com.emucoo</groupId>
 	  <artifactId>emucoo-common</artifactId>
-	  <version>0.0.9</version>
+        <version>${project.version}</version>
 	</dependency>
     <dependency>
       <groupId>emucoo-dto</groupId>

@@ -29,6 +29,12 @@ public class TReport extends BaseEntity {
     private String reporterName;
 
     /**
+     * 打表人的id
+     */
+    @Column(name = "reporter_id")
+    private String reporterId;
+
+    /**
      * 打表人部门名
      */
     @Column(name = "reporter_dpt_name")
@@ -87,6 +93,10 @@ public class TReport extends BaseEntity {
 
     @Column(name = "org_id")
     private Long orgId;
+
+
+    @Transient
+    private Boolean isRead;
 
     /**
      * @return id
@@ -344,5 +354,21 @@ public class TReport extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public Boolean getRead() {
+        return isRead;
+    }
+
+    public void setRead(Boolean read) {
+        isRead = read;
+    }
+
+    public String getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(String reporterId) {
+        this.reporterId = reporterId;
     }
 }

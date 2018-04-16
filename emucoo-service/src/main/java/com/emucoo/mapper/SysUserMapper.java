@@ -1,7 +1,6 @@
 package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
-import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.dto.modules.user.UserVo;
 import com.emucoo.model.SysUser;
 
@@ -33,4 +32,8 @@ public interface SysUserMapper extends MyMapper<SysUser> {
      * @return
      */
     List<UserVo> listUser(String realName,String username,String mobile,String email,String dptId,String shopId,String postId,Integer status) ;
+
+    void resetPwd(String mobile, String password);
+
+    void loginOut(String pushToken);
 }

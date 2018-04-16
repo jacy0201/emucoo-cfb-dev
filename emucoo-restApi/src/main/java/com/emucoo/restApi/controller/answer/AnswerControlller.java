@@ -1,19 +1,18 @@
 package com.emucoo.restApi.controller.answer;
 
-import javax.annotation.Resource;
-
+import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.answer.AnswerAddIn;
+import com.emucoo.model.SysUser;
+import com.emucoo.restApi.controller.demo.AppBaseController;
+import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.answer.AnswerService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.answer.AnswerAddIn;
-import com.emucoo.model.User;
-import com.emucoo.restApi.controller.demo.AppBaseController;
-import com.emucoo.restApi.controller.demo.AppResult;
-import com.emucoo.restApi.sdk.token.UserTokenManager;
-import com.emucoo.service.answer.AnswerService;
+import javax.annotation.Resource;
 
 /**
  * 
@@ -30,13 +29,13 @@ public class AnswerControlller extends AppBaseController {
 	/**
 	 * 事务回复
 	 * 
-	 * @param request
+	 * @param
 	 * @param base
 	 */
 	@PostMapping(value = "add")
 	public AppResult<String> add(@RequestBody ParamVo<AnswerAddIn> base) {
 		AnswerAddIn vo = base.getData();
-		User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
 		answerService.add(vo, user);
 		return success("");
 	}
