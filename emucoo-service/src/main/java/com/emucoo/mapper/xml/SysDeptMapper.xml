@@ -23,4 +23,8 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
   </resultMap>
+
+  <select id="queryDetpIdList" resultType="long">
+    select id from sys_dept where parent_id = #{value} and is_del = 0
+  </select>
 </mapper>
