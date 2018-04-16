@@ -6,7 +6,6 @@ import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.WorkStatus;
 import com.emucoo.mapper.TLoopPlanMapper;
 import com.emucoo.mapper.TPlanFormRelationMapper;
-import com.emucoo.model.TFormMain;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.service.manage.TLoopPlanManageService;
@@ -87,5 +86,10 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         plan.setIsDel(DeleteStatus.DELETED.getCode());
         plan.setModifyTime(now);
         tLoopPlanMapper.deletePlanById(plan);
+    }
+
+    public List<TLoopPlan> findPlanListByCondition(TLoopPlan plan) {
+        List<TLoopPlan> planList = tLoopPlanMapper.findPlanListByCondition(plan);
+        return planList;
     }
 }

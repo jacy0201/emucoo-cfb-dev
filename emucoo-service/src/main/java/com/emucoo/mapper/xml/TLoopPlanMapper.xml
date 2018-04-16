@@ -77,4 +77,20 @@
     modify_time=#{modifyTime}
     WHERE id=#{id}
   </update>
+
+  <select id="findPlanListByCondition" parameterType="com.emucoo.model.TLoopPlan" resultType="com.emucoo.model.TLoopPlan">
+    SELECT
+    id,
+    name,
+    description
+    FROM t_loop_plan
+    <where>
+      <if test="name != null and name != ''">
+        name like '%${name}%'
+      </if>
+      <if test="status != null">
+        and status = #{status}
+      </if>
+    </where>
+  </select>
 </mapper>

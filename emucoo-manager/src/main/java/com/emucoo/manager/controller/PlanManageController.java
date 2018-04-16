@@ -9,6 +9,8 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.service.manage.TLoopPlanManageService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -136,5 +138,25 @@ public class PlanManageController extends BaseResource {
         }
         tLoopPlanManageService.deletePlanById(plan);
         return success("success");
+    }
+
+    /**
+     * 根据条件搜索计划列表
+     * @param param
+     * @return
+     */
+    @PostMapping(value = "planListByCondition")
+    @ResponseBody
+    public ApiResult findPlanListByCondition(@RequestBody ParamVo<TLoopPlan> param) {
+        if(param.getPageNumber() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "当前页码不能为空！");
+        }
+        if (param.getPageSize() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "页记录数不能为空！");
+        }
+        TLoopPlan plan = param.getData();
+        PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
+        List<TLoopPlan> tLoopPlans = tLoopPlanManageService.findPlanListByCondition(plan);
+        return success(new PageInfo<>(tLoopPlans));
     }
 }

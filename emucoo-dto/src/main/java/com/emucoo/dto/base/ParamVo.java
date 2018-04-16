@@ -37,10 +37,10 @@ public class ParamVo<E> {
 	protected String respMsg;
 	
 	@ApiModelProperty(name="pageSize",value="每页数据条数", example="10")
-	protected Long pageSize = 10l;
+	protected Integer pageSize = 10;
 	
 	@ApiModelProperty(name="pageNumber",value="当前页数", example="1")
-	protected Long pageNumber = 1l;
+	protected Integer pageNumber = 1;
 	
 	@ApiModelProperty(name="sign",value="签名", example="@#42334i！@34")
 	protected String sign;
@@ -54,19 +54,23 @@ public class ParamVo<E> {
 	public void setReSubmitToken(String reSubmitToken) {
 		this.reSubmitToken = reSubmitToken;
 	}*/
-	
-	public Long getPageSize() {
+
+	public Integer getPageSize() {
 		return pageSize;
 	}
-	public void setPageSize(Long pageSize) {
+
+	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
-	public Long getPageNumber() {
+
+	public Integer getPageNumber() {
 		return pageNumber;
 	}
-	public void setPageNumber(Long pageNumber) {
+
+	public void setPageNumber(Integer pageNumber) {
 		this.pageNumber = pageNumber;
 	}
+
 	public String getPageType() {
 		return pageType;
 	}

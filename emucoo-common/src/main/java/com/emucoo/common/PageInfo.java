@@ -5,18 +5,15 @@ import lombok.Data;
 @Data
 public class PageInfo {
 	//每页记录数
-	private Long pageSize;
+	private Integer pageSize;
 	//当前页数
-	private Long pageNumber;
+	private Integer pageNumber;
 	//总记录数
-	private Long totalCount;
+	private Integer totalCount;
 
 	//总页数
-	private Long totalPage;
+	private Integer totalPage;
 
 	//数据集
 	private Object data;
-
-
-	
 }
