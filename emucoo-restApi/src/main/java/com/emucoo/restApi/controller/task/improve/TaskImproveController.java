@@ -1,75 +1,56 @@
 package com.emucoo.restApi.controller.task.improve;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.task.*;
+import com.emucoo.model.SysUser;
+import com.emucoo.restApi.controller.demo.AppBaseController;
+import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.task.TaskImproveService;
+import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.task.TaskChancePointInfo;
-import com.emucoo.dto.modules.task.TaskImproveAuditIn;
-import com.emucoo.dto.modules.task.TaskImproveDetailIn;
-import com.emucoo.dto.modules.task.TaskImproveDetailOut;
-import com.emucoo.dto.modules.task.TaskImproveSubmitIn;
-import com.emucoo.dto.modules.task.TaskImproveVo;
-import com.emucoo.model.User;
-import com.emucoo.restApi.controller.demo.AppBaseController;
-import com.emucoo.restApi.controller.demo.AppResult;
-import com.emucoo.restApi.sdk.token.UserTokenManager;
-import com.emucoo.service.task.TaskDesignService;
-import com.emucoo.service.task.TaskImproveService;
-import com.emucoo.service.task.TaskTemplateService;
-import com.emucoo.service.task.TaskTypeService;
-import com.google.gson.Gson;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/task/improve")
 public class TaskImproveController extends AppBaseController {
 
-	@Resource
-	private TaskDesignService taskDesignService;
-
-	@Resource
-	private TaskTemplateService taskTemplateService;
-
-	@Resource
-	private TaskTypeService taskTypeService;
-
-	@Resource
+	@Autowired
 	private TaskImproveService taskImproveService;
 
 	@PostMapping("/save")
 	public AppResult<String> save(@RequestBody ParamVo<TaskImproveVo> base) {
 		TaskImproveVo vo = base.getData();
-		User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-		taskImproveService.save(vo, user);
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		taskImproveService.createImproveTask(vo, user);
 		return success("");
 	}
 
 	@PostMapping("/submit")
 	public AppResult<String> submit(@RequestBody ParamVo<TaskImproveSubmitIn> base) {
 		TaskImproveSubmitIn vo = base.getData();
-		User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-		taskImproveService.submit(vo, user);
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		taskImproveService.submitImproveTask(vo, user);
 		return success("");
 	}
 
 	@PostMapping("/audit")
 	public AppResult<String> audit(@RequestBody ParamVo<TaskImproveAuditIn> base) {
 		TaskImproveAuditIn vo = base.getData();
-		User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-		taskImproveService.audit(vo, user);
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		taskImproveService.auditImproveTask(vo, user);
 		return success("");
 	}
 
 	@PostMapping("/detail")
 	public AppResult<TaskImproveDetailOut> detail(@RequestBody ParamVo<TaskImproveDetailIn> base) {
 		TaskImproveDetailIn vo = base.getData();
-		TaskImproveDetailOut out = taskImproveService.detail(vo);
+		TaskImproveDetailOut out = taskImproveService.viewImproveTaskDetail(vo);
 		return success(out);
 	}
 

@@ -1,24 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.emucoo.mapper.TReportMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TReport" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
-    <result column="shopkeeper_name" property="shopkeeperName" jdbcType="VARCHAR" />
-    <result column="reporter_name" property="reporterName" jdbcType="VARCHAR" />
-    <result column="reporter_dpt_name" property="reporterDptName" jdbcType="VARCHAR" />
-    <result column="check_form_time" property="checkFormTime" jdbcType="DATE" />
-    <result column="reporter_position" property="reporterPosition" jdbcType="VARCHAR" />
-    <result column="form_report_ids" property="formReportIds" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
-    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
-    <result column="shopkeeper_id" property="shopkeeperId" jdbcType="BIGINT" />
-    <result column="reporter_dpt_id" property="reporterDptId" jdbcType="BIGINT" />
-    <result column="reporter_position_id" property="reporterPositionId" jdbcType="BIGINT" />
-    <result column="org_id" property="orgId" jdbcType="BIGINT" />
-  </resultMap>
+<mapper namespace="com.emucoo.mapper.TReportMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TReport">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="shopkeeper_name" property="shopkeeperName" jdbcType="VARCHAR"/>
+        <result column="reporter_id" property="reporterId" jdbcType="BIGINT" />
+        <result column="reporter_name" property="reporterName" jdbcType="VARCHAR"/>
+        <result column="reporter_dpt_name" property="reporterDptName" jdbcType="VARCHAR"/>
+        <result column="check_form_time" property="checkFormTime" jdbcType="DATE"/>
+        <result column="reporter_position" property="reporterPosition" jdbcType="VARCHAR"/>
+        <result column="form_report_ids" property="formReportIds" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
+        <result column="shopkeeper_id" property="shopkeeperId" jdbcType="BIGINT"/>
+        <result column="reporter_dpt_id" property="reporterDptId" jdbcType="BIGINT"/>
+        <result column="reporter_position_id" property="reporterPositionId" jdbcType="BIGINT"/>
+        <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="fetchUnReadReport" resultType="com.emucoo.dto.modules.index.ReportItemVo">
+        select a.is_read as isRead,
+            b.id as reportId,
+            b.reporter_name as reporterName,
+            c.head_img_url as reporterHeadUrl,
+            d.dpt_name as reportSourceName,
+            0 as reportSourceType
+        from t_report_user a
+            left join t_report b on a.report_id=b.id
+            left join sys_user c on b.reporter_id=c.id
+            left join sys_dept d on b.reporter_dpt_id=d.id;
+        where
+            a.user_id = #{userId} and a.is_read=0
+    </select>
+
+    <select id="countUnReadReport" resultType="java.lang.Integer">
+        select count(b.id)
+        from t_report_user a
+            left join t_report b on a.report_id=b.id
+            left join sys_user c on b.reporter_id=c.id
+            left join sys_dept d on b.reporter_dpt_id=d.id;
+        where
+            a.user_id = #{userId} and a.is_read=0
+    </select>
 </mapper>

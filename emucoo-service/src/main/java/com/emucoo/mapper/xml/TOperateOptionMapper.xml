@@ -24,4 +24,8 @@
     <result column="feedback_img_type" property="feedbackImgType" jdbcType="BIT" />
     <result column="feedback_need_num" property="feedbackNeedNum" jdbcType="BIT" />
   </resultMap>
+
+  <select id="fetchOneByTaskId" resultMap="BaseResultMap">
+    select * from t_operate_option where task_id=#{taskId} limit 1
+  </select>
 </mapper>

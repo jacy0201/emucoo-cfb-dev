@@ -5,6 +5,7 @@ import com.emucoo.dto.base.ISystem;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.restApi.utils.SpringContextUtil;
+import com.emucoo.service.sys.UserService;
 import com.emucoo.utils.DESUtil;
 import org.springframework.context.ApplicationContext;
 

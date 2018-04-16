@@ -25,4 +25,8 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+  <select id="fetchShopsOfUser" resultMap="BaseResultMap">
+    select a.* from t_shop_info a right join sys_user_shop b on a.id=b.shop_id where b.user_id=#{id}
+  </select>
 </mapper>

@@ -1,9 +1,10 @@
 package com.emucoo.service.sys.imp;
 
+import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.model.SysLog;
 import com.emucoo.service.sys.LogService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.xiaoleilu.hutool.date.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -35,4 +36,6 @@ public class LogServiceImpl extends BaseServiceImpl<SysLog> implements LogServic
 
         return new PageInfo<SysLog>(logList);
     }
+
+
 }

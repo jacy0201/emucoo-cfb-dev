@@ -9,6 +9,7 @@ import com.emucoo.service.sys.LogService;
 import com.xiaoleilu.hutool.http.HttpUtil;
 import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.StrUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 使用aop实现系统操作日志
@@ -80,7 +82,9 @@ public class OperationLogAspect {
 			log.setLogSource(Byte.valueOf("0"));
 			log.setMethodName(getFullMethodName(joinPoint));
 			log.setRequestMethod(request.getMethod());
-			log.setParams(request.getParameterMap());
+			log.setRequestParams(request.getParameterMap().entrySet().stream().map(entry -> {
+				return entry.getKey() + "=" + StringUtils.join(entry.getValue(), ",");
+			}).collect(Collectors.toList()).stream().reduce((acc, item) -> acc + "|" + item).get());
 			log.setOperation(getMethodDescription(joinPoint));
 			log.setRequestIp(HttpUtil.getClientIP(request));
 			log.setRequestUri(request.getRequestURI());

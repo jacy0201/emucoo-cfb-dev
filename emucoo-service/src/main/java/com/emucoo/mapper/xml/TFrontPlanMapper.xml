@@ -27,4 +27,15 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+  <select id="countTodayPlanOfUser" resultType="java.lang.Integer" >
+    select count(id)
+    from t_front_plan
+    where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+  </select>
+
+  <select id="listTodayPlanOfUser" resultMap="BaseResultMap">
+    select * from t_front_plan
+    where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+  </select>
 </mapper>
