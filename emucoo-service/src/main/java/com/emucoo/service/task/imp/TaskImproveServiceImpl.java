@@ -245,10 +245,10 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         odw.setNumOptionType(oo.getFeedbackNumType());
         odw.setNumOptionValue(Double.toString(submitIn.getDigitalItemValue()));
         odw.setWorkTxt(submitIn.getWorkText());
-        odw.setCreateUserId(user.getId());
+//        odw.setCreateUserId(user.getId());
         odw.setCreateTime(DateUtil.currentDate());
         odw.setModifyTime(DateUtil.currentDate());
-        odw.setModifyUserId(user.getId());
+//        odw.setModifyUserId(user.getId());
         operateDataForWorkMapper.insert(odw);
 
     }

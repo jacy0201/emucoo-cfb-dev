@@ -71,8 +71,8 @@ public class CommentControlller extends AppBaseController {
 	@PostMapping("select")
 	public AppResult<List<CommentSelectOut>> select(@RequestBody ParamVo<CommentSelectIn> base) {
 		CommentSelectIn vo = base.getData();
-		vo.setPageNum(base.getPageNumber());
-		vo.setPageSize(base.getPageSize());
+		vo.setPageNum(Integer.toUnsignedLong(base.getPageNumber()));
+		vo.setPageSize(Integer.toUnsignedLong(base.getPageSize()));
 		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
 		List<CommentSelectOut> outList = commentService.select(vo, user);
 
