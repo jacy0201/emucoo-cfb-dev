@@ -26,6 +26,13 @@ public class TOpportunity extends BaseEntity {
     @Column(name = "is_del")
     private Boolean isDel;
 
+
+    /**
+     * 是否启用：0=停用， 1=启用
+     */
+    @Column(name = "is_use")
+    private Boolean isUse;
+
     /**
      * 机会点描述
      */
@@ -130,6 +137,20 @@ public class TOpportunity extends BaseEntity {
      */
     public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
+    }
+
+    /**
+     * 是否启用：0=停用， 1=启用
+     */
+    public Boolean getDel() {
+        return isDel;
+    }
+
+    /**
+     * 是否启用：0=停用， 1=启用
+     */
+    public void setDel(Boolean del) {
+        isDel = del;
     }
 
     /**

@@ -1,17 +1,20 @@
 package com.emucoo.manager.controller.sys;
 
-import com.emucoo.common.util.R;
+import com.emucoo.common.base.rest.ApiResult;
+import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.manager.controller.AbstractController;
 import com.emucoo.model.SysPost;
 import com.emucoo.service.sys.SysPostService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -20,23 +23,29 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys/post")
-public class SysPostController extends AbstractController {
+@Api(description="岗位管理接口" )
+public class SysPostController extends BaseResource {
 	@Autowired
 	private SysPostService sysPostService;
 	
 	/**
 	 * 岗位列表查询
 	 */
-	@GetMapping  ("/list")
+	@PostMapping ("/list")
 	@RequiresPermissions("sys:post:list")
-	public R list(@RequestBody ParamVo<SysPost> param){
+	@ApiOperation(value="查询岗位列表")
+	@ResponseBody
+	public ApiResult list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
-		example.createCriteria().andLike("postName",sysPost.getPostName());
-		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create time desc");
+		if(null!=sysPost.getPostName()) {
+			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");
+		}
+		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysPost> postList = sysPostService.selectByExample(example);
 		PageInfo<SysPost> pageInfo=new PageInfo(postList);
-	    return  R.ok().put("data",pageInfo);
+		return success(pageInfo);
+
 	}
 
 
@@ -45,30 +54,39 @@ public class SysPostController extends AbstractController {
 	 */
 	@PostMapping ("/save")
 	@RequiresPermissions("sys:post:save")
-	public R save(@RequestBody SysPost post){
-		sysPostService.save(post);
-
-		return R.ok();
+	@ApiOperation(value="添加岗位")
+	public ApiResult save(@RequestBody SysPost post){
+		post.setCreateTime(new Date());
+		post.setCreateUserId(1L);
+		post.setIsDel(false);
+		post.setStatus(0);
+		sysPostService.saveSelective(post);
+		return success("success");
 	}
 
 	/**
 	 * 修改岗位
 	 */
-	@PutMapping ("/update")
+	@PostMapping ("/update")
 	@RequiresPermissions("sys:post:update")
-	public R update(@RequestBody SysPost post){
-		sysPostService.update(post);
-		return R.ok();
+	@ApiOperation(value="修改岗位")
+	public ApiResult update(@RequestBody SysPost post){
+		if(post.getId()==null){return fail("id 参数不能为空!");}
+		post.setModifyTime(new Date());
+		post.setModifyUserId(1L);
+		sysPostService.updateSelective(post);
+		return success("success");
 	}
 
 	/**
 	 * 删除岗位
 	 */
-	@DeleteMapping ("/delete")
+	@PostMapping ("/delete")
 	@RequiresPermissions("sys:post:delete")
-	public R delete(Long id){
+	@ApiOperation(value="删除岗位")
+	public ApiResult delete(Long id){
+		if(id==null){return fail("id 参数不能为空!");}
 		sysPostService.deleteById(id);
-
-		return R.ok();
+		return success("success");
 	}
 }
