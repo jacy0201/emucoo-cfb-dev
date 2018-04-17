@@ -39,7 +39,7 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         Date now = new Date();
         plan.setCreateTime(now);
         plan.setModifyTime(now);
-        plan.setStatus(WorkStatus.STOP_USE.getCode());
+        plan.setIsUse(WorkStatus.STOP_USE.getCode());
         plan.setIsDel(DeleteStatus.COMMON.getCode());
         plan.setOrgId(Constant.orgId);
         // 保存计划信息
@@ -72,16 +72,8 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         tPlanFormRelationMapper.addPlanFormRelation(plan.getPlanFormRelationList());
     }
 
-    public void startPlanById(TLoopPlan plan) {
+    public void modifyPlanUseById(TLoopPlan plan) {
         Date now = new Date();
-        plan.setStatus(WorkStatus.START_USE.getCode());
-        plan.setModifyTime(now);
-        tLoopPlanMapper.modifyPlanStatusById(plan);
-    }
-
-    public void stopPlanById(TLoopPlan plan) {
-        Date now = new Date();
-        plan.setStatus(WorkStatus.STOP_USE.getCode());
         plan.setModifyTime(now);
         tLoopPlanMapper.modifyPlanStatusById(plan);
     }

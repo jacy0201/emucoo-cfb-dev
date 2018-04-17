@@ -107,16 +107,19 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
-    @ApiOperation(value = "启用计划")
+    @ApiOperation(value = "启用/停用计划")
     @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
-    @PostMapping(value = "startPlanById")
+    @PostMapping(value = "modifyPlanUseById")
     @ResponseBody
     public ApiResult<String> startPlanById(@RequestBody ParamVo<TLoopPlan> param) {
         TLoopPlan plan = param.getData();
         if (plan.getId() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "计划id不能为空！");
         }
-        tLoopPlanManageService.startPlanById(plan);
+        if (plan.getIsUse() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "计划使用状态不能为空！");
+        }
+        tLoopPlanManageService.modifyPlanUseById(plan);
         return success("success");
     }
 
@@ -126,7 +129,7 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
-    @ApiOperation(value = "停用计划")
+    /*@ApiOperation(value = "停用计划")
     @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "stopPlanById")
     @ResponseBody
@@ -137,7 +140,7 @@ public class PlanManageController extends BaseResource {
         }
         tLoopPlanManageService.stopPlanById(plan);
         return success("success");
-    }
+    }*/
 
     /**
      * 删除计划
@@ -165,7 +168,7 @@ public class PlanManageController extends BaseResource {
     @ApiOperation(value = "根据条件查询计划列表", response = TLoopPlan.class)
     @PostMapping(value = "planListByCondition")
     @ResponseBody
-    public ApiResult findPlanListByCondition(@RequestBody ParamVo<TLoopPlan> param) {
+    public ApiResult<PageInfo> findPlanListByCondition(@RequestBody ParamVo<TLoopPlan> param) {
         if(param.getPageNumber() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "当前页码不能为空！");
         }

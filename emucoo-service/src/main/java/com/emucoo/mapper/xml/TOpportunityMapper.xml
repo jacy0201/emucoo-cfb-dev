@@ -17,4 +17,35 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+  <update id="removeByIds" parameterType="java.util.List">
+    update t_opportunity set is_del = 1
+    <where>
+      id in
+      <foreach collection="list" item="it" open="(" close=")" separator=",">
+        #{it}
+      </foreach>
+    </where>
+  </update>
+
+  <update id="enableByIds" parameterType="java.util.List">
+    update t_opportunity set is_use = 1
+    <where>
+      id in
+      <foreach collection="list" item="it" open="(" close=")" separator=",">
+        #{it}
+      </foreach>
+    </where>
+  </update>
+
+  <update id="disableByIds" parameterType="java.util.List">
+    update t_opportunity set is_use = 0
+    <where>
+      id in
+      <foreach collection="list" item="it" open="(" close=")" separator=",">
+        #{it}
+      </foreach>
+    </where>
+  </update>
+
 </mapper>
