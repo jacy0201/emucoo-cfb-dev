@@ -32,7 +32,7 @@ public class ChancePointController extends BaseResource {
         return success(opptList);
     }
 
-    @ApiOperation(value = "edit", httpMethod = "POST")
+    @ApiOperation(value = "编辑机会点", httpMethod = "POST")
     @PostMapping("/edit")
     public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<Long> param) {
         Long id = param.getData();

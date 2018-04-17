@@ -34,6 +34,12 @@ public class TOpportunity extends BaseEntity {
     private Boolean isUse;
 
     /**
+     * 创建来源类型：1=前端创建， 2=后台创建
+     */
+    @Column(name = "create_type")
+    private Integer createType;
+
+    /**
      * 机会点描述
      */
     private String description;
@@ -137,20 +143,6 @@ public class TOpportunity extends BaseEntity {
      */
     public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
-    }
-
-    /**
-     * 是否启用：0=停用， 1=启用
-     */
-    public Boolean getDel() {
-        return isDel;
-    }
-
-    /**
-     * 是否启用：0=停用， 1=启用
-     */
-    public void setDel(Boolean del) {
-        isDel = del;
     }
 
     /**
@@ -273,5 +265,22 @@ public class TOpportunity extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+
+    public Boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(Boolean use) {
+        isUse = use;
+    }
+
+    public Integer getCreateType() {
+        return createType;
+    }
+
+    public void setCreateType(Integer createType) {
+        this.createType = createType;
     }
 }
