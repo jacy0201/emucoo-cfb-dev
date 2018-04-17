@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys/post")
-@Api(description="岗位管理接口" )
+@Api(description="岗位管理" )
 public class SysPostController extends BaseResource {
 	@Autowired
 	private SysPostService sysPostService;
@@ -84,9 +84,9 @@ public class SysPostController extends BaseResource {
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:post:delete")
 	@ApiOperation(value="删除岗位")
-	public ApiResult delete(Long id){
-		if(id==null){return fail("id 参数不能为空!");}
-		sysPostService.deleteById(id);
+	public ApiResult delete(@RequestBody SysPost post){
+		if(post.getId()==null){return fail("id 参数不能为空!");}
+		sysPostService.deleteById(post.getId());
 		return success("success");
 	}
 }
