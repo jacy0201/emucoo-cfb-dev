@@ -38,4 +38,29 @@
     select * from t_front_plan
     where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
   </select>
+
+  <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">
+    INSERT INTO t_front_plan
+    (
+      shop_id,
+      loop_plan_id,
+      status,
+      create_time,
+      modify_time,
+      create_user_id,
+      modify_user_id,
+      org_id,
+      is_del
+    ) values (
+      #{shop.id},
+      #{loopPlanId},
+      #{status},
+      #{createTime},
+      #{modifyTime},
+      #{createUserId},
+      #{modifyUserId},
+      #{orgId},
+      #{isDel}
+    )
+  </insert>
 </mapper>

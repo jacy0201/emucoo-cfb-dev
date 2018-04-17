@@ -10,4 +10,6 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
     int countTodayPlanOfUser(Long userId, Date needDate);
 
     List<TFrontPlan> listTodayPlanOfUser(Long submitUserId, Date needDate);
+
+    void addUnArrangeToPlan(TFrontPlan tFrontPlan);
 }
