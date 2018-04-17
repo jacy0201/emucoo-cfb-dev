@@ -82,9 +82,9 @@ public class SysAreaController extends BaseResource {
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:area:delete")
 	@ApiOperation(value="删除分区")
-	public ApiResult delete(Long id){
-		sysAreaService.deleteById(id);
-
+	public ApiResult delete(@RequestBody SysArea area){
+		if(area.getId()==null){return fail("id 参数不能为空!");}
+		sysAreaService.deleteById(area.getId());
 		return success("success");
 	}
 }

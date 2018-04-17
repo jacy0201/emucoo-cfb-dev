@@ -82,8 +82,9 @@ public class SysBrandController extends BaseResource {
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:brand:delete")
 	@ApiOperation(value="删除品牌")
-	public ApiResult delete(Long id){
-		sysBrandService.deleteById(id);
+	public ApiResult delete(@RequestBody TBrandInfo brand){
+		if(brand.getId()==null){return fail("id 参数不能为空!");}
+		sysBrandService.deleteById(brand.getId());
 		return success("success");
 	}
 }
