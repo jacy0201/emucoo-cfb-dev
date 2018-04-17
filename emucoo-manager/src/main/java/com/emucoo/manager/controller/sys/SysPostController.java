@@ -51,7 +51,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:save")
 	@ResponseBody
 	public ApiResult save(@RequestBody SysPost post){
-		sysPostService.save(post);
+		sysPostService.saveSelective(post);
 
 		return success("success");
 	}
@@ -63,7 +63,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:update")
 	@ResponseBody
 	public ApiResult update(@RequestBody SysPost post){
-		sysPostService.update(post);
+		sysPostService.updateSelective(post);
 		return success("success");
 	}
 
