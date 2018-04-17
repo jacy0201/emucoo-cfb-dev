@@ -13,9 +13,7 @@ public interface TLoopPlanManageService {
 
     void updatePlanById(TLoopPlan plan);
 
-    void startPlanById(TLoopPlan plan);
-
-    void stopPlanById(TLoopPlan plan);
+    void modifyPlanUseById(TLoopPlan plan);
 
     void deletePlanById(TLoopPlan plan);
 
