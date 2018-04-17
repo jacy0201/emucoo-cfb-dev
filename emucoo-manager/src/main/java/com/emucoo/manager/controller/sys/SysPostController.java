@@ -7,6 +7,8 @@ import com.emucoo.model.SysPost;
 import com.emucoo.service.sys.SysPostService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys/post")
+@Api(description="岗位管理接口" )
 public class SysPostController extends BaseResource {
 	@Autowired
 	private SysPostService sysPostService;
@@ -30,6 +33,7 @@ public class SysPostController extends BaseResource {
 	 */
 	@PostMapping ("/list")
 	@RequiresPermissions("sys:post:list")
+	@ApiOperation(value="查询岗位列表")
 	@ResponseBody
 	public ApiResult list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
@@ -50,7 +54,7 @@ public class SysPostController extends BaseResource {
 	 */
 	@PostMapping ("/save")
 	@RequiresPermissions("sys:post:save")
-	@ResponseBody
+	@ApiOperation(value="添加岗位")
 	public ApiResult save(@RequestBody SysPost post){
 		post.setCreateTime(new Date());
 		post.setCreateUserId(1L);
@@ -65,8 +69,9 @@ public class SysPostController extends BaseResource {
 	 */
 	@PostMapping ("/update")
 	@RequiresPermissions("sys:post:update")
-	@ResponseBody
+	@ApiOperation(value="修改岗位")
 	public ApiResult update(@RequestBody SysPost post){
+		if(post.getId()==null){return fail("id 参数不能为空!");}
 		post.setModifyTime(new Date());
 		post.setModifyUserId(1L);
 		sysPostService.updateSelective(post);
@@ -78,10 +83,10 @@ public class SysPostController extends BaseResource {
 	 */
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:post:delete")
-	@ResponseBody
+	@ApiOperation(value="删除岗位")
 	public ApiResult delete(Long id){
+		if(id==null){return fail("id 参数不能为空!");}
 		sysPostService.deleteById(id);
-
 		return success("success");
 	}
 }
