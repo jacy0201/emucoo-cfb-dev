@@ -27,6 +27,33 @@ public class TFormMain extends BaseEntity {
     private Date modifyTime;
 
     /**
+     * 预设总分
+     */
+    @Column(name = "total_score")
+    private Integer totalScore;
+
+    /**
+     * 表单是否允许添加机会点
+     */
+    @Column(name = "can_add_oppt")
+    private Boolean canAddOppt;
+
+    /**
+     * 抄送范围
+     */
+    @Column(name = "cc_dpt_ids")
+    private String ccDptIds;
+
+    @Column(name = "create_user_id")
+    private Long createUserId;
+
+    @Column(name = "modify_user_id")
+    private Long modifyUserId;
+
+    @Column(name = "org_id")
+    private Long orgId;
+
+    /**
      * @return id
      */
     public Long getId() {
@@ -102,5 +129,101 @@ public class TFormMain extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    /**
+     * 获取预设总分
+     *
+     * @return total_score - 预设总分
+     */
+    public Integer getTotalScore() {
+        return totalScore;
+    }
+
+    /**
+     * 设置预设总分
+     *
+     * @param totalScore 预设总分
+     */
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    /**
+     * 获取表单是否允许添加机会点
+     *
+     * @return can_add_oppt - 表单是否允许添加机会点
+     */
+    public Boolean getCanAddOppt() {
+        return canAddOppt;
+    }
+
+    /**
+     * 设置表单是否允许添加机会点
+     *
+     * @param canAddOppt 表单是否允许添加机会点
+     */
+    public void setCanAddOppt(Boolean canAddOppt) {
+        this.canAddOppt = canAddOppt;
+    }
+
+    /**
+     * 获取抄送范围
+     *
+     * @return cc_dpt_ids - 抄送范围
+     */
+    public String getCcDptIds() {
+        return ccDptIds;
+    }
+
+    /**
+     * 设置抄送范围
+     *
+     * @param ccDptIds 抄送范围
+     */
+    public void setCcDptIds(String ccDptIds) {
+        this.ccDptIds = ccDptIds;
+    }
+
+    /**
+     * @return create_user_id
+     */
+    public Long getCreateUserId() {
+        return createUserId;
+    }
+
+    /**
+     * @param createUserId
+     */
+    public void setCreateUserId(Long createUserId) {
+        this.createUserId = createUserId;
+    }
+
+    /**
+     * @return modify_user_id
+     */
+    public Long getModifyUserId() {
+        return modifyUserId;
+    }
+
+    /**
+     * @param modifyUserId
+     */
+    public void setModifyUserId(Long modifyUserId) {
+        this.modifyUserId = modifyUserId;
+    }
+
+    /**
+     * @return org_id
+     */
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    /**
+     * @param orgId
+     */
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 }

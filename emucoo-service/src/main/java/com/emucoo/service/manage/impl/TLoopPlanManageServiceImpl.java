@@ -4,8 +4,10 @@ import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.WorkStatus;
+import com.emucoo.mapper.TFormMainMapper;
 import com.emucoo.mapper.TLoopPlanMapper;
 import com.emucoo.mapper.TPlanFormRelationMapper;
+import com.emucoo.model.TFormMain;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.service.manage.TLoopPlanManageService;
@@ -28,6 +30,9 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
 
     @Autowired
     private TPlanFormRelationMapper tPlanFormRelationMapper;
+
+    @Autowired
+    private TFormMainMapper tFormMainMapper;
 
     @Transactional
     public void addPlan(TLoopPlan plan) {
@@ -91,5 +96,16 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
     public List<TLoopPlan> findPlanListByCondition(TLoopPlan plan) {
         List<TLoopPlan> planList = tLoopPlanMapper.findPlanListByCondition(plan);
         return planList;
+    }
+
+    public TLoopPlan findPlanById(TLoopPlan plan) {
+        TLoopPlan tLoopPlan = tLoopPlanMapper.findPlanById(plan);
+        if(tLoopPlan.getPlanFormRelationList() != null) {
+            for(TPlanFormRelation tPlanFormRelation : tLoopPlan.getPlanFormRelationList()) {
+                TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(tPlanFormRelation.getFormMainId());
+                tPlanFormRelation.setName(tFormMain.getName());
+            }
+        }
+        return tLoopPlan;
     }
 }

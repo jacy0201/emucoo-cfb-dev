@@ -20,4 +20,6 @@ public interface TLoopPlanManageService {
     void deletePlanById(TLoopPlan plan);
 
     List<TLoopPlan> findPlanListByCondition(TLoopPlan plan);
+
+    TLoopPlan findPlanById(TLoopPlan plan);
 }

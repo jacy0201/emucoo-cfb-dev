@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.emucoo.mapper.TLoopPlanMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TLoopPlan" >
-    <!--
-      WARNING - @mbg.generated
-    -->
+  <resultMap id="planMap" type="com.emucoo.model.TLoopPlan" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -19,6 +16,10 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <collection property="planFormRelationList" ofType="com.emucoo.model.TPlanFormRelation" javaType="ArrayList">
+      <id column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
+      <result column="form_use_count" property="formUseCount" jdbcType="INTEGER"/>
+    </collection>
   </resultMap>
   <insert id="addPlan" parameterType="com.emucoo.model.TLoopPlan">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -89,8 +90,27 @@
         name like '%${name}%'
       </if>
       <if test="status != null">
-        and status = #{status}
+        AND status = #{status}
       </if>
+      AND is_del = 0
     </where>
+  </select>
+
+  <select id="findPlanById" parameterType="com.emucoo.model.TLoopPlan" resultMap="planMap">
+    SELECT
+    plan.id,
+    plan.name,
+    plan.description,
+    plan.dpt_id,
+    plan.plan_start_date,
+    plan.plan_end_date,
+    plan.plan_cycle,
+    pf.form_main_id,
+    pf.form_use_count
+    FROM t_loop_plan plan
+    INNER JOIN t_plan_form_relation pf
+    ON pf.plan_id = plan.id
+    WHERE plan.id=#{id}
+
   </select>
 </mapper>

@@ -27,6 +27,9 @@ public class TPlanFormRelation extends BaseEntity {
     @ApiModelProperty(name = "formMainId", value = "添加的表单id")
     private Long formMainId;
 
+    @Transient
+    private String name;
+
     /**
      * 表单引用次数
      */
@@ -52,6 +55,14 @@ public class TPlanFormRelation extends BaseEntity {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
