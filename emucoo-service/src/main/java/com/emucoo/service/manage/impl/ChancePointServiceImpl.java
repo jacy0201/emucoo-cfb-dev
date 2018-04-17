@@ -6,10 +6,12 @@ import com.emucoo.service.manage.ChancePointService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
+@Service
 public class ChancePointServiceImpl implements ChancePointService {
 
     @Autowired
