@@ -8,10 +8,7 @@ import com.emucoo.service.sys.SysMenuService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 导航菜单
 	 */
-	@RequestMapping("/nav")
+	@PostMapping("/nav")
 	public R nav(){
 		List<SysMenu> menuList = sysMenuService.getUserMenuList(getUserId());
 		return R.ok().put("menuList", menuList);
@@ -36,7 +33,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 所有菜单列表
 	 */
-	@RequestMapping("/list")
+	@PostMapping("/list")
 	@RequiresPermissions("sys:menu:list")
 	public List<SysMenu> list(){
 		List<SysMenu> menuList = sysMenuService.findAll();
@@ -54,7 +51,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 菜单信息
 	 */
-	@RequestMapping("/info/{menuId}")
+	@PostMapping("/info/{menuId}")
 	@RequiresPermissions("sys:menu:info")
 	public R info(@PathVariable("menuId") Long menuId){
 		SysMenu menu = sysMenuService.findById(menuId);
@@ -64,7 +61,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 保存
 	 */
-	@RequestMapping("/save")
+	@PostMapping("/save")
 	@RequiresPermissions("sys:menu:save")
 	public R save(@RequestBody SysMenu menu){
 		//数据校验
@@ -78,7 +75,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 修改
 	 */
-	@RequestMapping("/update")
+	@PostMapping("/update")
 	@RequiresPermissions("sys:menu:update")
 	public R update(@RequestBody SysMenu menu){
 		//数据校验
@@ -92,7 +89,7 @@ public class SysMenuController extends AbstractController {
 	/**
 	 * 删除
 	 */
-	@RequestMapping("/delete")
+	@PostMapping("/delete")
 	@RequiresPermissions("sys:menu:delete")
 	public R delete(long menuId){
 		if(menuId <= 31){

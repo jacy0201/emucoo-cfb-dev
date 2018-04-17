@@ -6,10 +6,7 @@ import com.emucoo.model.SysDept;
 import com.emucoo.service.sys.SysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +24,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 列表
 	 */
-	@RequestMapping("/list")
+	@PostMapping("/list")
 	@RequiresPermissions("sys:dept:list")
 	public List<SysDept> list(){
 		List<SysDept> deptList = sysDeptService.queryList(new HashMap<String, Object>());
@@ -37,7 +34,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 选择部门(添加、修改菜单)
 	 */
-	@RequestMapping("/select")
+	@PostMapping("/select")
 	@RequiresPermissions("sys:dept:select")
 	public R select(){
 		List<SysDept> deptList = sysDeptService.queryList(new HashMap<String, Object>());
@@ -58,7 +55,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 上级部门Id(管理员则为0)
 	 */
-	@RequestMapping("/info")
+	@PostMapping("/info")
 	@RequiresPermissions("sys:dept:list")
 	public R info(){
 		long deptId = 0;
@@ -84,7 +81,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 信息
 	 */
-	@RequestMapping("/info/{deptId}")
+	@PostMapping("/info/{deptId}")
 	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDept dept = sysDeptService.findById(deptId);
@@ -94,7 +91,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 保存
 	 */
-	@RequestMapping("/save")
+	@PostMapping("/save")
 	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDept dept){
 		sysDeptService.save(dept);
@@ -105,7 +102,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 修改
 	 */
-	@RequestMapping("/update")
+	@PostMapping("/update")
 	@RequiresPermissions("sys:dept:update")
 	public R update(@RequestBody SysDept dept){
 		sysDeptService.updateSelective(dept);
@@ -115,7 +112,7 @@ public class SysDeptController extends AbstractController {
 	/**
 	 * 删除
 	 */
-	@RequestMapping("/delete")
+	@PostMapping("/delete")
 	@RequiresPermissions("sys:dept:delete")
 	public R delete(long deptId){
 		//判断是否有子部门

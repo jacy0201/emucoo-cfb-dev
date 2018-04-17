@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Shiro配置
  */
-@Configuration
+//@Configuration
 public class ShiroConfig {
 
     @Bean("sessionManager")
