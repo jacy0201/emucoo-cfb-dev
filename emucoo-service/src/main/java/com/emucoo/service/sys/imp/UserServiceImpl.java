@@ -66,7 +66,7 @@ public class UserServiceImpl extends BaseServiceImpl<SysUser> implements UserSer
         int count = 0;
         //加密
         user.setPassword(SecureUtil.md5().digestHex(user.getPassword()));
-        user.setIsLock(false);
+        user.setStatus(0);
         user.setIsDel(false);
         SysRole role = roleMapper.selectByPrimaryKey(roleId);
 //        if(Role.ROLE_TYPE.equalsIgnoreCase(role.getPerms())){
