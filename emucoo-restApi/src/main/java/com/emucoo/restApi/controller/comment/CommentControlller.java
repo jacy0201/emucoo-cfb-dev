@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.emucoo.model.SysDept;
+import com.emucoo.model.SysUser;
+import com.emucoo.model.TTaskComment;
+import com.emucoo.service.comment.CommentService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +20,9 @@ import com.emucoo.dto.modules.comment.CommentDeleteIn;
 import com.emucoo.dto.modules.comment.CommentSelectIn;
 import com.emucoo.dto.modules.comment.CommentSelectOut;
 import com.emucoo.dto.modules.comment.CommentSelectOut.ImgUrl;
-import com.emucoo.model.Comment;
-import com.emucoo.model.User;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
-import com.emucoo.service.comment.CommentService;
 
 /**
  * 
@@ -33,7 +34,7 @@ import com.emucoo.service.comment.CommentService;
 public class CommentControlller extends AppBaseController {
 
 	@Resource
-	private CommentService commentService; 
+	private CommentService commentService;
 
 	/**
 	 * 事务回复
@@ -44,7 +45,7 @@ public class CommentControlller extends AppBaseController {
 	@PostMapping(value = "add")
 	public AppResult<String> add(@RequestBody ParamVo<CommentAddIn> base) {
 		CommentAddIn vo = base.getData();
-		User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
 		commentService.add(vo, user);
 		return success("");
 	}
@@ -70,30 +71,11 @@ public class CommentControlller extends AppBaseController {
 	@PostMapping("select")
 	public AppResult<List<CommentSelectOut>> select(@RequestBody ParamVo<CommentSelectIn> base) {
 		CommentSelectIn vo = base.getData();
-		vo.setPageNum(base.getPageNumber());
-		vo.setPageSize(base.getPageSize());
-		List<Comment> list = commentService.select(vo);
-		List<CommentSelectOut> outList = new ArrayList<CommentSelectOut>();
-		for (Comment comment : list) {
-			CommentSelectOut out = new CommentSelectOut();
-			out.setReplyID(comment.getId());
-			out.setReplyContent(comment.getContent());
-			out.setReplyTime(comment.getCreateTime().getTime());
-			out.setAnswerID(comment.getUserId());
-			out.setAnswerName(comment.getUserName());
-			
-			User user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-			out.setAnswerHeadUrl(user.getHeadImgUrl());
-			List<ImgUrl> imgList = new ArrayList<ImgUrl>();
-			String[] str = comment.getImgUrls().split(",");
-			for (int i = 0; i < str.length; i++) {
-				ImgUrl imgUrl = new ImgUrl();
-				imgUrl.setImgUrl(str[i]);
-				imgList.add(imgUrl);
-			}
-			out.setReplyImgArr(imgList);
-			outList.add(out);
-		}
+		vo.setPageNum(Integer.toUnsignedLong(base.getPageNumber()));
+		vo.setPageSize(Integer.toUnsignedLong(base.getPageSize()));
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		List<CommentSelectOut> outList = commentService.select(vo, user);
+
 		return success(outList);
 	}
 

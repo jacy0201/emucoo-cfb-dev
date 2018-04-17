@@ -80,7 +80,7 @@ public class TOperateDataForWork extends BaseEntity {
      * 1合格 2不合格
      */
     @Column(name = "audit_result")
-    private Boolean auditResult;
+    private Integer auditResult;
 
     /**
      * 审核图片id，多个图片间用【,】分割
@@ -316,7 +316,7 @@ public class TOperateDataForWork extends BaseEntity {
      *
      * @return audit_result - 1合格 2不合格
      */
-    public Boolean getAuditResult() {
+    public Integer getAuditResult() {
         return auditResult;
     }
 
@@ -325,7 +325,7 @@ public class TOperateDataForWork extends BaseEntity {
      *
      * @param auditResult 1合格 2不合格
      */
-    public void setAuditResult(Boolean auditResult) {
+    public void setAuditResult(Integer auditResult) {
         this.auditResult = auditResult;
     }
 

@@ -125,7 +125,7 @@ public class TTask extends BaseEntity {
      * 循环周期类型（1：隔X天一次，2：周循环，3：月循环）
      */
     @Column(name = "loop_cycle_type")
-    private Boolean loopCycleType;
+    private Integer loopCycleType;
 
     /**
      * 循环周期的值，和loop_cycle_type配合使用
@@ -145,7 +145,7 @@ public class TTask extends BaseEntity {
      * 1：操作项审核 2：整体审核
      */
     @Column(name = "audit_type")
-    private Boolean auditType;
+    private Integer auditType;
 
     /**
      * 是否删除
@@ -576,7 +576,7 @@ public class TTask extends BaseEntity {
      *
      * @return loop_cycle_type - 循环周期类型（1：隔X天一次，2：周循环，3：月循环）
      */
-    public Boolean getLoopCycleType() {
+    public Integer getLoopCycleType() {
         return loopCycleType;
     }
 
@@ -585,7 +585,7 @@ public class TTask extends BaseEntity {
      *
      * @param loopCycleType 循环周期类型（1：隔X天一次，2：周循环，3：月循环）
      */
-    public void setLoopCycleType(Boolean loopCycleType) {
+    public void setLoopCycleType(Integer loopCycleType) {
         this.loopCycleType = loopCycleType;
     }
 
@@ -638,7 +638,7 @@ public class TTask extends BaseEntity {
      *
      * @return audit_type - 1：操作项审核 2：整体审核
      */
-    public Boolean getAuditType() {
+    public Integer getAuditType() {
         return auditType;
     }
 
@@ -647,7 +647,7 @@ public class TTask extends BaseEntity {
      *
      * @param auditType 1：操作项审核 2：整体审核
      */
-    public void setAuditType(Boolean auditType) {
+    public void setAuditType(Integer auditType) {
         this.auditType = auditType;
     }
 

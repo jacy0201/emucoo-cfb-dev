@@ -37,7 +37,7 @@ public class TOperateOption extends BaseEntity {
      * 反馈数字类型（1数值 2百分比 3货币）
      */
     @Column(name = "feedback_num_type")
-    private Boolean feedbackNumType;
+    private Integer feedbackNumType;
 
     /**
      * 反馈图片名称
@@ -88,7 +88,7 @@ public class TOperateOption extends BaseEntity {
     private Boolean feedbackNeedText;
 
     @Column(name = "feedback_img_type")
-    private Boolean feedbackImgType;
+    private Integer feedbackImgType;
 
     @Column(name = "feedback_need_num")
     private Boolean feedbackNeedNum;
@@ -184,7 +184,7 @@ public class TOperateOption extends BaseEntity {
      *
      * @return feedback_num_type - 反馈数字类型（1数值 2百分比 3货币）
      */
-    public Boolean getFeedbackNumType() {
+    public Integer getFeedbackNumType() {
         return feedbackNumType;
     }
 
@@ -193,7 +193,7 @@ public class TOperateOption extends BaseEntity {
      *
      * @param feedbackNumType 反馈数字类型（1数值 2百分比 3货币）
      */
-    public void setFeedbackNumType(Boolean feedbackNumType) {
+    public void setFeedbackNumType(Integer feedbackNumType) {
         this.feedbackNumType = feedbackNumType;
     }
 
@@ -364,14 +364,14 @@ public class TOperateOption extends BaseEntity {
     /**
      * @return feedback_img_type
      */
-    public Boolean getFeedbackImgType() {
+    public Integer getFeedbackImgType() {
         return feedbackImgType;
     }
 
     /**
      * @param feedbackImgType
      */
-    public void setFeedbackImgType(Boolean feedbackImgType) {
+    public void setFeedbackImgType(Integer feedbackImgType) {
         this.feedbackImgType = feedbackImgType;
     }
 

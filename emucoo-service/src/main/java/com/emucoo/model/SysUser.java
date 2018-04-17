@@ -59,18 +59,20 @@ public class SysUser extends BaseEntity {
     private String email;
 
     /**
-     * 是否锁 0：正常 1：锁定
+     * 用户状态：0-启用；1-停用；2-锁定
      */
-    @Column(name = "is_lock")
-    private Boolean isLock;
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     /**
-     * 0：停用     1：启用
-     */
-    @Column(name = "is_use")
-    private Boolean isUse;
 
-    /**
      * 是否是管理员1：是管理员 其它不是管理员
      */
     @Column(name = "is_admin")
@@ -301,41 +303,6 @@ public class SysUser extends BaseEntity {
         this.email = email;
     }
 
-    /**
-     * 获取是否锁 0：正常 1：锁定
-     *
-     * @return is_lock - 是否锁 0：正常 1：锁定
-     */
-    public Boolean getIsLock() {
-        return isLock;
-    }
-
-    /**
-     * 设置是否锁 0：正常 1：锁定
-     *
-     * @param isLock 是否锁 0：正常 1：锁定
-     */
-    public void setIsLock(Boolean isLock) {
-        this.isLock = isLock;
-    }
-
-    /**
-     * 获取0：停用     1：启用
-     *
-     * @return is_use - 0：停用     1：启用
-     */
-    public Boolean getIsUse() {
-        return isUse;
-    }
-
-    /**
-     * 设置0：停用     1：启用
-     *
-     * @param isUse 0：停用     1：启用
-     */
-    public void setIsUse(Boolean isUse) {
-        this.isUse = isUse;
-    }
 
     /**
      * 获取是否是管理员1：是管理员 其它不是管理员

@@ -22,4 +22,33 @@
     <result column="score" property="score" jdbcType="VARCHAR" />
     <result column="audit_content" property="auditContent" jdbcType="LONGVARCHAR" />
   </resultMap>
+
+  <select id="fetchOneByLoopWorkId" resultMap="BaseResultMap">
+    select * from t_operate_data_for_work where loop_work_id=#{loopWorkId} limit 1
+  </select>
+
+    <update id="auditOperateData" parameterType="com.emucoo.model.TOperateDataForWork">
+        update t_operate_data_for_work
+        <set>
+            <if test="auditUserId != null">
+                audit_user_id = #{auditUserId}
+            </if>
+            <if test="auditResult != null">
+                audit_result = #{auditResult}
+            </if>
+            <if test="auditImgIds != null ">
+                audit_img_ids = #{auditImgIds}
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="fetchOneByWorkIds" resultMap="BaseResultMap">
+        select d.*
+        from t_loop_work w left join t_operate_data_for_work d on w.id=d.loop_work_id
+        where w.work_id=#{workId} and w.sub_work_id=#{subWorkId}
+    </select>
 </mapper>

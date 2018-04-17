@@ -67,6 +67,18 @@ public class TFile extends BaseEntity {
     private String imgUrl;
 
     /**
+     * 上传文件的客户端的位置
+     */
+    @Column(name = "location")
+    private String location;
+
+    /**
+     * 上传文件的时间信息
+     */
+    @Column(name = "file_date")
+    private Date fileDate;
+
+    /**
      * 获取主键PK
      *
      * @return id - 主键PK
@@ -244,5 +256,37 @@ public class TFile extends BaseEntity {
      */
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    /**
+     * 获取拍照的地址
+     * @return
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * 设置拍照位置
+     * @param location
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    /**
+     * 拍照日期
+     * @return
+     */
+    public Date getFileDate() {
+        return fileDate;
+    }
+
+    /**
+     * 拍照日期
+     * @param fileDate
+     */
+    public void setFileDate(Date fileDate) {
+        this.fileDate = fileDate;
     }
 }

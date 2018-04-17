@@ -36,4 +36,6 @@ public class LogServiceImpl extends BaseServiceImpl<SysLog> implements LogServic
 
         return new PageInfo<SysLog>(logList);
     }
+
+
 }

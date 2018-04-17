@@ -67,7 +67,7 @@ public class TLoopWork extends BaseEntity {
      * 抄送人用户ID,多个抄送人用【，】分割
      */
     @Column(name = "send_user_ids")
-    private Long sendUserIds;
+    private String sendUserIds;
 
     /**
      * 1：未提交 2：已提交 3：已过期
@@ -321,7 +321,7 @@ public class TLoopWork extends BaseEntity {
      *
      * @return send_user_ids - 抄送人用户ID,多个抄送人用【，】分割
      */
-    public Long getSendUserIds() {
+    public String getSendUserIds() {
         return sendUserIds;
     }
 
@@ -330,7 +330,7 @@ public class TLoopWork extends BaseEntity {
      *
      * @param sendUserIds 抄送人用户ID,多个抄送人用【，】分割
      */
-    public void setSendUserIds(Long sendUserIds) {
+    public void setSendUserIds(String sendUserIds) {
         this.sendUserIds = sendUserIds;
     }
 

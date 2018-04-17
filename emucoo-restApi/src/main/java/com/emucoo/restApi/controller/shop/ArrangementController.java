@@ -4,7 +4,7 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.report.*;
 import com.emucoo.dto.modules.shop.*;
 import com.emucoo.model.CheckSheet;
-import com.emucoo.model.shop.TRemind;
+import com.emucoo.model.TRemind;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
