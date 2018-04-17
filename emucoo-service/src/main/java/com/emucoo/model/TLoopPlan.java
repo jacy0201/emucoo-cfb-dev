@@ -38,14 +38,14 @@ public class TLoopPlan extends BaseEntity {
     /**
      * 状态 0：启用 1：停用
      */
-    @ApiModelProperty(name = "status", value = "状态 0：启用 1：停用",example = "0")
-    private Boolean status;
+    @ApiModelProperty(name = "status", value = "状态 false：停用 true：启用",example = "false")
+    private Boolean isUse;
 
     /**
      * 计划开始月份
-            1：月循环
-            2：季度循环
-            3：年循环
+     1：月循环
+     2：季度循环
+     3：年循环
      */
     @Column(name = "plan_start_date")
     @ApiModelProperty(name = "planStartDate", value = "计划期间开始日期")
@@ -170,34 +170,24 @@ public class TLoopPlan extends BaseEntity {
         this.dptId = dptId;
     }
 
-    /**
-     * 获取状态 0：启用 1：停用
-     *
-     * @return status - 状态 0：启用 1：停用
-     */
-    public Boolean getStatus() {
-        return status;
+    public Boolean getIsUse() {
+        return isUse;
     }
 
-    /**
-     * 设置状态 0：启用 1：停用
-     *
-     * @param status 状态 0：启用 1：停用
-     */
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
     }
 
     /**
      * 获取计划开始月份
-            1：月循环
-            2：季度循环
-            3：年循环
+     1：月循环
+     2：季度循环
+     3：年循环
      *
      * @return plan_start_date - 计划开始月份
-            1：月循环
-            2：季度循环
-            3：年循环
+    1：月循环
+    2：季度循环
+    3：年循环
      */
     public Date getPlanStartDate() {
         return planStartDate;
@@ -205,14 +195,14 @@ public class TLoopPlan extends BaseEntity {
 
     /**
      * 设置计划开始月份
-            1：月循环
-            2：季度循环
-            3：年循环
+     1：月循环
+     2：季度循环
+     3：年循环
      *
      * @param planStartDate 计划开始月份
-            1：月循环
-            2：季度循环
-            3：年循环
+    1：月循环
+    2：季度循环
+    3：年循环
      */
     public void setPlanStartDate(Date planStartDate) {
         this.planStartDate = planStartDate;
