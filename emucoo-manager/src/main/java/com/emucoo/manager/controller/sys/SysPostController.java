@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -49,8 +50,11 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:save")
 	@ResponseBody
 	public ApiResult save(@RequestBody SysPost post){
+		post.setCreateTime(new Date());
+		post.setCreateUserId(1L);
+		post.setIsDel(false);
+		post.setStatus(0);
 		sysPostService.saveSelective(post);
-
 		return success("success");
 	}
 
@@ -61,6 +65,8 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:update")
 	@ResponseBody
 	public ApiResult update(@RequestBody SysPost post){
+		post.setModifyTime(new Date());
+		post.setModifyUserId(1L);
 		sysPostService.updateSelective(post);
 		return success("success");
 	}
