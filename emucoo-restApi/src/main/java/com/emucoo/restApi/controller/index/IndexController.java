@@ -162,7 +162,7 @@ public class IndexController extends AppBaseController {
 //            work.getInspection().setInspEndTime(frontPlan);
 //            work.getInspection().setInspStartTime(frontPlan.getPlanTime());
             work.getInspection().setInspStartTime(frontPlan.getPlanDate());
-            work.getInspection().setInspStatus(frontPlan.getStatus() ? 1 : 0);
+            work.getInspection().setInspStatus(frontPlan.getStatus().intValue() == 1 ? 1 : 0);
             TLoopPlan loopPlan = loopPlanService.findById(frontPlan.getLoopPlanId());
             if (loopPlan != null) {
                 SysDept dept = deptService.findById(loopPlan.getDptId());
