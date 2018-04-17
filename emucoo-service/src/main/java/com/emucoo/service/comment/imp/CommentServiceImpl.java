@@ -8,10 +8,12 @@ import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TTaskComment;
 import com.emucoo.service.comment.CommentService;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CommentServiceImpl implements CommentService {
     @Override
     public void add(CommentAddIn vo, SysUser user) {

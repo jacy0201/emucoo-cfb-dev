@@ -6,7 +6,9 @@ import com.emucoo.dto.modules.task.TaskCommonDetailOut;
 import com.emucoo.dto.modules.task.TaskCommonSubmitIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.task.TaskCommonService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TaskCommonServiceImpl implements TaskCommonService {
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn vo) {
