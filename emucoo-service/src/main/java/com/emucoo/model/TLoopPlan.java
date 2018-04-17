@@ -38,7 +38,7 @@ public class TLoopPlan extends BaseEntity {
     /**
      * 状态 0：启用 1：停用
      */
-    @ApiModelProperty(name = "status", value = "状态",example = "状态 0：启用 1：停用")
+    @ApiModelProperty(name = "status", value = "状态 0：启用 1：停用",example = "0")
     private Boolean status;
 
     /**
