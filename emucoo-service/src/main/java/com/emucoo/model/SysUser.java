@@ -123,6 +123,20 @@ public class SysUser extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    /**
+     * 是否是店长：0-否；1-是
+     *
+     */
+    @Column(name = "is_shop_manager")
+    private Boolean isShopManager;
+
+    public Boolean getShopManager() {
+        return isShopManager;
+    }
+
+    public void setShopManager(Boolean shopManager) {
+        isShopManager = shopManager;
+    }
 
     /**
      * 部门名称

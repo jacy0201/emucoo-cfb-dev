@@ -91,9 +91,9 @@ public class SysShopController extends BaseResource {
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:shop:delete")
 	@ApiOperation(value="删除店铺")
-	public ApiResult delete(Long id){
-		if(id==null){return fail("id 参数不能为空!");}
-		sysShopService.deleteById(id);
+	public ApiResult delete(@RequestBody TShopInfo shopInfo){
+		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
+		sysShopService.deleteById(shopInfo.getId());
 		return success("success");
 	}
 }
