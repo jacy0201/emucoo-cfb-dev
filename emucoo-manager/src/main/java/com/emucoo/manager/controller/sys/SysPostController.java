@@ -2,9 +2,7 @@ package com.emucoo.manager.controller.sys;
 
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
-import com.emucoo.common.util.R;
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.manager.controller.AbstractController;
 import com.emucoo.model.SysPost;
 import com.emucoo.service.sys.SysPostService;
 import com.github.pagehelper.PageHelper;
@@ -32,14 +30,14 @@ public class SysPostController extends BaseResource {
 	@PostMapping ("/list")
 	@RequiresPermissions("sys:post:list")
 	@ResponseBody
-	public R list(@RequestBody ParamVo<SysPost> param){
+	public ApiResult list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
 		example.createCriteria().andLike("postName",sysPost.getPostName());
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysPost> postList = sysPostService.selectByExample(example);
 		PageInfo<SysPost> pageInfo=new PageInfo(postList);
-		return R.ok().put("data",pageInfo);
+		return success(pageInfo);
 
 	}
 
