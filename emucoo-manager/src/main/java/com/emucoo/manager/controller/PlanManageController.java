@@ -177,4 +177,22 @@ public class PlanManageController extends BaseResource {
         List<TLoopPlan> tLoopPlans = tLoopPlanManageService.findPlanListByCondition(plan);
         return success(new PageInfo<>(tLoopPlans));
     }
+
+    /**
+     * 根据id查询计划详情
+     * @param param
+     * @return
+     */
+    @ApiOperation(value = "根据id查询计划详情", response = TLoopPlan.class)
+    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
+    @PostMapping(value = "findPlanById")
+    @ResponseBody
+    public ApiResult findPlanById(@RequestBody ParamVo<TLoopPlan> param) {
+        TLoopPlan plan = param.getData();
+        if (plan.getId() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "计划id不能为空！");
+        }
+        TLoopPlan tLoopPlan = tLoopPlanManageService.findPlanById(plan);
+        return success(tLoopPlan);
+    }
 }
