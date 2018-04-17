@@ -7,14 +7,14 @@
     <artifactId>emucoo-cfb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>emucoo-job</groupId>
+
   <artifactId>emucoo-job</artifactId>
   <name>emucoo-job</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>
     <dependency>
-	    <groupId>emucoo-service</groupId>
+	    <groupId>emucoo</groupId>
 	    <artifactId>emucoo-service</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
@@ -23,13 +23,13 @@
 	  <artifactId>xxl-job-core</artifactId>
 	  <version>1.9.0</version>
 	</dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+    <!--<dependency>-->
+      <!--<groupId>junit</groupId>-->
+      <!--<artifactId>junit</artifactId>-->
+      <!--<version>3.8.1</version>-->
+      <!--<scope>test</scope>-->
 
-    </dependency>
+    <!--</dependency>-->
     
   </dependencies>
 </project>

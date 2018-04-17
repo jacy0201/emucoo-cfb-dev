@@ -8,7 +8,7 @@
         <artifactId>emucoo-cfb</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>emucoo-dto</groupId>
+
     <artifactId>emucoo-dto</artifactId>
     <packaging>jar</packaging>
 
@@ -24,7 +24,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.emucoo</groupId>
+            <groupId>emucoo</groupId>
             <artifactId>emucoo-common</artifactId>
             <version>${project.version}</version>
         </dependency>

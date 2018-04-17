@@ -7,7 +7,7 @@
     <artifactId>emucoo-cfb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>emucoo-service</groupId>
+
   <artifactId>emucoo-service</artifactId>
 
   <name>emucoo-service</name>
@@ -21,29 +21,27 @@
   </properties>
   
   
-   <!-- 发布 -->
-  <distributionManagement>
-	<repository>
-		<id>releases</id>
-		<url>http://106.15.63.229:8081/nexus/content/repositories/releases</url>
-	</repository>
+   <!--&lt;!&ndash; 发布 &ndash;&gt;-->
+  <!--<distributionManagement>-->
+	<!--<repository>-->
+		<!--<id>releases</id>-->
+		<!--<url>http://106.15.63.229:8081/nexus/content/repositories/releases</url>-->
+	<!--</repository>-->
 
-	<snapshotRepository>
-		<id>snapshots</id>
-		<url>http://106.15.63.229:8081/nexus/content/repositories/snapshots</url>
-	</snapshotRepository>
-  </distributionManagement>
+	<!--<snapshotRepository>-->
+		<!--<id>snapshots</id>-->
+		<!--<url>http://106.15.63.229:8081/nexus/content/repositories/snapshots</url>-->
+	<!--</snapshotRepository>-->
+  <!--</distributionManagement>-->
   
   <dependencies>
-
-
 	<dependency>
-	  <groupId>com.emucoo</groupId>
+	  <groupId>emucoo</groupId>
 	  <artifactId>emucoo-common</artifactId>
         <version>${project.version}</version>
 	</dependency>
     <dependency>
-      <groupId>emucoo-dto</groupId>
+      <groupId>emucoo</groupId>
       <artifactId>emucoo-dto</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -60,12 +58,7 @@
           <artifactId>mapper-spring-boot-starter</artifactId>
           <version>1.2.0</version>
       </dependency>
-      <!--pagehelper-->
-      <dependency>
-          <groupId>com.github.pagehelper</groupId>
-          <artifactId>pagehelper-spring-boot-starter</artifactId>
-          <version>RELEASE</version>
-      </dependency>
+
 
 	
   </dependencies>

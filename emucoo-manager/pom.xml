@@ -17,12 +17,12 @@
   <dependencies>
 
 	<dependency>
-	    <groupId>emucoo-service</groupId>
+	    <groupId>emucoo</groupId>
 	    <artifactId>emucoo-service</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
 	<dependency>
-	    <groupId>emucoo-dto</groupId>
+	    <groupId>emucoo</groupId>
 	    <artifactId>emucoo-dto</artifactId>
 	    <version>${project.version}</version>
 	</dependency>

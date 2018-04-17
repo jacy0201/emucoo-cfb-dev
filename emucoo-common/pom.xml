@@ -8,7 +8,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.emucoo</groupId>
 	<artifactId>emucoo-common</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
