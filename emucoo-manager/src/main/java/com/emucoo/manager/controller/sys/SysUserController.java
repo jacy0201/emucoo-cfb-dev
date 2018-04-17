@@ -35,7 +35,7 @@ public class SysUserController extends AbstractController {
 	 * @param userQuery
 	 * @return
 	 */
-	@RequestMapping("/list")
+	@PostMapping("/list")
 	@RequiresPermissions("sys:user:list")
 	R list(Page page, UserQuery userQuery){
 		PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.getSortField() + " " + page.getSort());

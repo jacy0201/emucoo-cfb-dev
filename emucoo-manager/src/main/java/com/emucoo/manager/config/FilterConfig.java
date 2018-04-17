@@ -13,7 +13,7 @@ import javax.servlet.DispatcherType;
 @Configuration
 public class FilterConfig {
 
-    @Bean
+   /* @Bean
     public FilterRegistrationBean shiroFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new DelegatingFilterProxy("shiroFilter"));
@@ -23,7 +23,7 @@ public class FilterConfig {
         registration.setOrder(Integer.MAX_VALUE - 1);
         registration.addUrlPatterns("/*");
         return registration;
-    }
+    }*/
 
     @Bean
     public FilterRegistrationBean xssFilterRegistration() {

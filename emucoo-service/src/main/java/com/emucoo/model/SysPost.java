@@ -28,7 +28,7 @@ public class SysPost extends BaseEntity {
     /**
      * 状态（0正常 1删除 2停用）
      */
-    private Byte status;
+    private Integer status;
 
     /**
      * 创建时间
@@ -51,7 +51,7 @@ public class SysPost extends BaseEntity {
     /**
      * 1：部门岗位，2：店铺岗位
      */
-    private Boolean type;
+    private Integer type;
 
     /**
      * 数据修改人ID
@@ -132,7 +132,7 @@ public class SysPost extends BaseEntity {
      *
      * @return status - 状态（0正常 1删除 2停用）
      */
-    public Byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
@@ -141,7 +141,7 @@ public class SysPost extends BaseEntity {
      *
      * @param status 状态（0正常 1删除 2停用）
      */
-    public void setStatus(Byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -204,7 +204,7 @@ public class SysPost extends BaseEntity {
      *
      * @return type - 1：部门岗位，2：店铺岗位
      */
-    public Boolean getType() {
+    public Integer getType() {
         return type;
     }
 
@@ -213,7 +213,7 @@ public class SysPost extends BaseEntity {
      *
      * @param type 1：部门岗位，2：店铺岗位
      */
-    public void setType(Boolean type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
