@@ -83,7 +83,8 @@
     SELECT
     id,
     name,
-    description
+    description,
+    status
     FROM t_loop_plan
     <where>
       <if test="name != null and name != ''">

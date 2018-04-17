@@ -100,7 +100,7 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
 
     public TLoopPlan findPlanById(TLoopPlan plan) {
         TLoopPlan tLoopPlan = tLoopPlanMapper.findPlanById(plan);
-        if(tLoopPlan.getPlanFormRelationList() != null) {
+        if(tLoopPlan != null && tLoopPlan.getPlanFormRelationList() != null) {
             for(TPlanFormRelation tPlanFormRelation : tLoopPlan.getPlanFormRelationList()) {
                 TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(tPlanFormRelation.getFormMainId());
                 tPlanFormRelation.setName(tFormMain.getName());
