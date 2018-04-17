@@ -26,6 +26,7 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
     <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="is_shop_manager" property="isShopManager" jdbcType="BIT" />
   </resultMap>
 
   <!-- 查询用户的所有权限 -->
