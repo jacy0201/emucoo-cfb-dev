@@ -19,12 +19,15 @@ public class ChancePointServiceImpl implements ChancePointService {
 
     @Override
     public List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz) {
-        Example example = new Example(TOpportunity.class);
         if(StringUtils.isNotBlank(keyword)) {
-            example.createCriteria().andLike("name", "%" + keyword + "%");
+            Example example = new Example(TOpportunity.class);
+            if(StringUtils.isNotBlank(keyword)) {
+                example.createCriteria().andLike("name", "%" + keyword + "%");
+            }
+            return opportunityMapper.selectByExampleAndRowBounds(example, new RowBounds(pageSz*(pageNm-1), pageSz));
+        } else {
+            return opportunityMapper.selectByRowBounds(new TOpportunity(), new RowBounds(pageSz*(pageNm-1), pageSz));
         }
-
-        return opportunityMapper.selectByExampleAndRowBounds(example, new RowBounds(pageNm-1, pageSz));
     }
 
     @Override
