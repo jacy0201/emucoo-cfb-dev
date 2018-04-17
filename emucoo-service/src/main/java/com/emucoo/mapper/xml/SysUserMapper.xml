@@ -15,8 +15,6 @@
     <result column="sex" property="sex" jdbcType="TINYINT" />
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
-    <result column="is_lock" property="isLock" jdbcType="BIT" />
-    <result column="is_use" property="isUse" jdbcType="BIT" />
     <result column="is_admin" property="isAdmin" jdbcType="BIT" />
     <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR" />
     <result column="push_token" property="pushToken" jdbcType="VARCHAR" />
@@ -27,6 +25,7 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
   </resultMap>
 
   <!-- 查询用户的所有权限 -->
