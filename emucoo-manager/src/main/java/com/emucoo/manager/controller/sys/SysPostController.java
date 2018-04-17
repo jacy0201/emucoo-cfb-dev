@@ -27,7 +27,7 @@ public class SysPostController extends AbstractController {
 	/**
 	 * 岗位列表查询
 	 */
-	@GetMapping  ("/list")
+	@PostMapping ("/list")
 	@RequiresPermissions("sys:post:list")
 	public R list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
