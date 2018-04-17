@@ -20,7 +20,7 @@ import java.io.IOException;
  * 登录相关
  */
 @RestController
-@Api(description="登录接口" )
+@Api(description="用户登录" )
 public class SysLoginController extends AbstractController {
 
 	@Autowired

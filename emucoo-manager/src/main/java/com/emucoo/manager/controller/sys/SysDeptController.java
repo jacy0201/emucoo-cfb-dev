@@ -4,6 +4,7 @@ import com.emucoo.common.util.R;
 import com.emucoo.manager.controller.AbstractController;
 import com.emucoo.model.SysDept;
 import com.emucoo.service.sys.SysDeptService;
+import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys/dept")
+@Api(description="机构管理" )
 public class SysDeptController extends AbstractController {
 	@Autowired
 	private SysDeptService sysDeptService;

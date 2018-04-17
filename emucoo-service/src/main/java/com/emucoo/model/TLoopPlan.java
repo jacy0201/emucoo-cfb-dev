@@ -38,8 +38,8 @@ public class TLoopPlan extends BaseEntity {
     /**
      * 状态 0：启用 1：停用
      */
-    @ApiModelProperty(name = "status", value = "状态 false：停用 true：启用",example = "false")
-    private Boolean isUse;
+    @ApiModelProperty(name = "status", value = "状态 0：启用 1：停用",example = "0")
+    private Boolean status;
 
     /**
      * 计划开始月份
@@ -170,12 +170,22 @@ public class TLoopPlan extends BaseEntity {
         this.dptId = dptId;
     }
 
-    public Boolean getIsUse() {
-        return isUse;
+    /**
+     * 获取状态 0：启用 1：停用
+     *
+     * @return status - 状态 0：启用 1：停用
+     */
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setIsUse(Boolean isUse) {
-        this.isUse = isUse;
+    /**
+     * 设置状态 0：启用 1：停用
+     *
+     * @param status 状态 0：启用 1：停用
+     */
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     /**

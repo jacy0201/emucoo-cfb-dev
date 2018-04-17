@@ -26,6 +26,20 @@ public class TBrandInfo extends BaseEntity {
     private String brandName;
 
     /**
+     * 品牌描述
+     */
+    @Column(name = "brand_desc")
+    private String  brandDesc;
+
+    public String getBrandDesc() {
+        return brandDesc;
+    }
+
+    public void setBrandDesc(String brandDesc) {
+        this.brandDesc = brandDesc;
+    }
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")

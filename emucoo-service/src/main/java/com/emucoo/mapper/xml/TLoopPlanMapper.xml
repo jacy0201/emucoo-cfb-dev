@@ -6,7 +6,7 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="dpt_id" property="dptId" jdbcType="BIGINT" />
-    <result column="is_use" property="isUse" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="BIT" />
     <result column="plan_start_date" property="planStartDate" jdbcType="DATE" />
     <result column="plan_end_date" property="planEndDate" jdbcType="DATE" />
     <result column="plan_cycle" property="planCycle" jdbcType="INTEGER" />
@@ -30,7 +30,7 @@
       name,
       description,
       dpt_id,
-      is_use,
+      status,
       is_del,
       plan_start_date,
       plan_end_date,
@@ -42,7 +42,7 @@
       #{name},
       #{description},
       #{dptId},
-      #{isUse},
+      #{status},
       #{isDel},
       #{planStartDate},
       #{planEndDate},
@@ -67,7 +67,7 @@
 
   <update id="modifyPlanStatusById" parameterType="com.emucoo.model.TLoopPlan">
     UPDATE t_loop_plan
-    SET is_use=#{isUse},
+    SET status=#{status},
     modify_time=#{modifyTime}
     WHERE id=#{id}
   </update>
@@ -84,14 +84,14 @@
     id,
     name,
     description,
-    is_use
+    status
     FROM t_loop_plan
     <where>
       <if test="name != null and name != ''">
         name like '%${name}%'
       </if>
-      <if test="isUse != null">
-        AND is_use = #{isUse}
+      <if test="status != null">
+        AND status = #{status}
       </if>
       AND is_del = 0
     </where>
@@ -103,7 +103,6 @@
     plan.name,
     plan.description,
     plan.dpt_id,
-    plan.is_use,
     plan.plan_start_date,
     plan.plan_end_date,
     plan.plan_cycle,

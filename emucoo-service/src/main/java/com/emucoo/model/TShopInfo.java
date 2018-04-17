@@ -70,10 +70,40 @@ public class TShopInfo extends BaseEntity {
     private Long areaId;
 
     /**
+     * 分区名称
+     */
+    @Transient
+    private String areaName;
+
+    /**
      * 品牌id, 关联brand_info 表主键
      */
     @Column(name = "brand_id")
     private Long brandId;
+
+    public String getAreaName() {
+        return areaName;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    /**
+
+     * 品牌名称
+     */
+    @Transient
+    private String brandName;
+
 
     /**
      * 店铺电话
