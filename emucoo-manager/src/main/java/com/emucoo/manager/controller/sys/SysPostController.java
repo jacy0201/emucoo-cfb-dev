@@ -32,14 +32,14 @@ public class SysPostController extends BaseResource {
 	@PostMapping ("/list")
 	@RequiresPermissions("sys:post:list")
 	@ResponseBody
-	public ApiResult list(@RequestBody ParamVo<SysPost> param){
+	public R list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
 		example.createCriteria().andLike("postName",sysPost.getPostName());
-		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create time desc");
+		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysPost> postList = sysPostService.selectByExample(example);
 		PageInfo<SysPost> pageInfo=new PageInfo(postList);
-		return success(pageInfo);
+		return R.ok().put("data",pageInfo);
 
 	}
 
