@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,6 +30,8 @@ public class ChancePointController extends BaseResource {
         int pageSz = param.getPageSize();
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
 
+        if(opptList == null || opptList.size() == 0)
+            opptList = new ArrayList<>();
         return success(opptList);
     }
 
