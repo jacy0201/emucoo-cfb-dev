@@ -38,7 +38,7 @@ public class SysBrandController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<TBrandInfo> param){
 		TBrandInfo brandInfo = param.getData();
 		Example example=new Example(TBrandInfo.class);
-		if(null!=brandInfo.getBrandName()) {
+		if(null!=brandInfo && null!=brandInfo.getBrandName()) {
 			example.createCriteria().andLike("BrandName", "%"+brandInfo.getBrandName()+"%");
 		}
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");

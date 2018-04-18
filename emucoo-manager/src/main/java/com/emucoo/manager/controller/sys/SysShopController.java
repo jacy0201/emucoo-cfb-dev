@@ -38,14 +38,14 @@ public class SysShopController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<TShopInfo> param){
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
-		if(null!=shopInfo.getShopName()) {
+		if(null!=shopInfo && null!=shopInfo.getShopName()) {
 			example.createCriteria().andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
 
-		if(null!=shopInfo.getAreaId()){
+		if(null!=shopInfo && null!=shopInfo.getAreaId()){
 			example.createCriteria().andEqualTo("areaId", shopInfo.getAreaId());
 		}
-		if(null!=shopInfo.getBrandId()){
+		if(null!=shopInfo && null!=shopInfo.getBrandId()){
 			example.createCriteria().andEqualTo("brandId", shopInfo.getBrandId());
 		}
 

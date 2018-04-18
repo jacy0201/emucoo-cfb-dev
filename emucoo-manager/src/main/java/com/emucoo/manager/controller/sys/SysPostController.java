@@ -38,7 +38,7 @@ public class SysPostController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
-		if(null!=sysPost.getPostName()) {
+		if(null!=sysPost && null!=sysPost.getPostName()) {
 			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");
 		}
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");

@@ -39,7 +39,7 @@ public class SysAreaController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<SysArea> param){
 		SysArea sysArea = param.getData();
 		Example example=new Example(SysArea.class);
-		if(null!=sysArea.getAreaName()) {
+		if(null!=sysArea && null!=sysArea.getAreaName()) {
 			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
 		}
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
