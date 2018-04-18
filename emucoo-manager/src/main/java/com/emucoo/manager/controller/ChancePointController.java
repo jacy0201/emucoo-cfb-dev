@@ -5,6 +5,7 @@ import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +25,12 @@ public class ChancePointController extends BaseResource {
 
     @ApiOperation(value="机会点列表", httpMethod = "POST")
     @PostMapping("/list")
-    public ApiResult<List<TOpportunity>> listChancePoint(@RequestBody ParamVo<String> param) {
+    public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<String> param) {
         String keyword = param.getData();
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
-        return success(opptList);
+        return success(new PageInfo<>(opptList));
     }
 
     @ApiOperation(value = "编辑机会点", httpMethod = "POST")
