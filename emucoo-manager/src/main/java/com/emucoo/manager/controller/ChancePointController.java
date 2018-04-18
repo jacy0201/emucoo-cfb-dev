@@ -25,8 +25,8 @@ public class ChancePointController extends BaseResource {
 
     @ApiOperation(value="机会点列表", httpMethod = "POST")
     @PostMapping("/list")
-    public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<String> param) {
-        String keyword = param.getData();
+    public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<TOpportunity> param) {
+        String keyword = param.getData()==null?"":param.getData().getName();
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
@@ -35,8 +35,11 @@ public class ChancePointController extends BaseResource {
 
     @ApiOperation(value = "编辑机会点", httpMethod = "POST")
     @PostMapping("/edit")
-    public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<Long> param) {
-        Long id = param.getData();
+    public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<TOpportunity> param) {
+        TOpportunity oppt = param.getData();
+        if(oppt == null)
+            return fail("parameter is wrong");
+        Long id = oppt.getId();
         TOpportunity opportunity = chancePointService.fetchChancePointById(id);
         return success(opportunity);
     }
@@ -45,6 +48,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/create")
     public ApiResult<String> createChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
+        if(opportunity == null)
+            return fail("parameter is wrong");
         chancePointService.createChancePoint(opportunity);
         return success("ok");
     }
@@ -53,6 +58,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/update")
     public ApiResult<String> updateChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
+        if(opportunity == null)
+            return fail("parameter is wrong");
         chancePointService.updateChancePoint(opportunity);
         return success("ok");
     }
@@ -61,6 +68,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/delete")
     public ApiResult<String> deleteChancePoint(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.deleteChancePoints(ids);
         return success("ok");
     }
@@ -69,6 +78,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/enable")
     public ApiResult<String> enableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.enableChancePoints(ids);
         return success("ok");
     }
@@ -77,6 +88,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/disable")
     public ApiResult<String> disableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.disableChancePoints(ids);
         return success("ok");
     }
