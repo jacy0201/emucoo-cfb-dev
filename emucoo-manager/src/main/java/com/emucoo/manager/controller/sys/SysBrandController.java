@@ -29,12 +29,12 @@ public class SysBrandController extends BaseResource {
 	private SysBrandService sysBrandService;
 	
 	/**
-	 * 品牌列表查询
+	 * 分页查询品牌列表
 	 */
 	@PostMapping ("/list")
 	@RequiresPermissions("sys:brand:list")
 	@ResponseBody
-	@ApiOperation(value="查询品牌列表")
+	@ApiOperation(value="分页查询品牌")
 	public ApiResult list(@RequestBody ParamVo<TBrandInfo> param){
 		TBrandInfo brandInfo = param.getData();
 		Example example=new Example(TBrandInfo.class);
@@ -45,6 +45,23 @@ public class SysBrandController extends BaseResource {
 		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
 		PageInfo<TBrandInfo> pageInfo=new PageInfo(brandList);
 		return success(pageInfo);
+
+	}
+
+	/**
+	 * 查询品牌列表(不分页)
+	 */
+	@PostMapping ("/listAll")
+	@RequiresPermissions("sys:brand:listAll")
+	@ResponseBody
+	@ApiOperation(value="查询全部品牌")
+	public ApiResult listAll(@RequestBody TBrandInfo param){
+		Example example=new Example(TBrandInfo.class);
+		if(null!=param.getBrandName()) {
+			example.createCriteria().andLike("BrandName", "%"+param.getBrandName()+"%");
+		}
+		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
+		return success(brandList);
 
 	}
 

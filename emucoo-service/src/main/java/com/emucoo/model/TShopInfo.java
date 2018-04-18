@@ -1,12 +1,14 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_shop_info")
+@ApiModel
 public class TShopInfo extends BaseEntity {
     /**
      * 主键PK
