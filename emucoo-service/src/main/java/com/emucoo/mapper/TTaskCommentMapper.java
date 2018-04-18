@@ -6,5 +6,6 @@ import com.emucoo.model.TTaskComment;
 import java.util.List;
 
 public interface TTaskCommentMapper extends MyMapper<TTaskComment> {
-    List<TTaskComment> fetchByLoopWorkId(Long id);
+    List<TTaskComment> fetchByLoopWorkId(Long loopWorkId);
+
 }

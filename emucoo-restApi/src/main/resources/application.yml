@@ -5,7 +5,7 @@ server:
   context-path: /
   maxHttpPostSize: 0
   tomcat:
-    basedir: d:/log/king
+    basedir: /data/logs/king
     maxHttpPostSize: 0
     accesslog:
       enabled: true

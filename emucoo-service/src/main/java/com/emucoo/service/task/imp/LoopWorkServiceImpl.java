@@ -107,6 +107,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             timg.setCreateTime(DateUtil.currentDate());
             timg.setModifyTime(DateUtil.currentDate());
             timg.setImgUrl(WaterMarkUtils.genPicUrlWithWaterMark(assignTaskSubmitImgVo.getImgUrl(), assignTaskSubmitImgVo.getLocation(), DateUtil.dateToString(dt)));
+            timg.setLocation(assignTaskSubmitImgVo.getLocation());
+            timg.setFileDate(dt);
             fileMapper.insert(timg);
             imgids.add(Long.toString(timg.getId()));
         });
@@ -191,13 +193,16 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         stateVo.setFeedbackImg(too.getFeedbackNumType());
         stateVo.setFeedbackText(too.getFeedbackNeedText()?0:1);
 
-        List<TFile> timgs = fileMapper.selectByIds(task.getIllustrationImgIds());
         List<ImageUrlVo> ivs = new ArrayList<ImageUrlVo>();
-        timgs.forEach(tFile -> {
-            ImageUrlVo iv = new ImageUrlVo();
-            iv.setImgUrl(tFile.getImgUrl());
-            ivs.add(iv);
-        });
+        String timgIds = task.getIllustrationImgIds();
+        if(StringUtils.isNotBlank(timgIds)) {
+            List<TFile> timgs = fileMapper.selectByIds(timgIds);
+            timgs.forEach(tFile -> {
+                ImageUrlVo iv = new ImageUrlVo();
+                iv.setImgUrl(tFile.getImgUrl());
+                ivs.add(iv);
+            });
+        }
         stateVo.setTaskImgArr(ivs);
         result.setTaskStatement(stateVo);
 
@@ -208,36 +213,41 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         executorVo.setTaskSubPerID(loopWork.getExcuteUserId());
         executorVo.setTaskSubPerHeadUrl(executeUser==null?"":executeUser.getHeadImgUrl());
         executorVo.setTaskSubTime(loopWork.getExecuteBeginDate().getTime());
-        executorVo.setWorkText(todw.getWorkTxt());
-        executorVo.setDigitalItemValue(Double.parseDouble(todw.getNumOptionValue()));
+        executorVo.setWorkText(todw==null?"":todw.getWorkTxt());
+        executorVo.setDigitalItemValue(Double.parseDouble(todw==null?"0.0":todw.getNumOptionValue()));
 
         List<ImageUrlVo> svs = new ArrayList<ImageUrlVo>();
-        List<TFile> eimgs = fileMapper.selectByIds(todw.getImgIds());
-        eimgs.forEach(tFile -> {
-            ImageUrlVo sv = new ImageUrlVo();
-            sv.setImgUrl(tFile.getImgUrl());
-            svs.add(sv);
-        });
+        String eimgIds = todw==null?"":todw.getImgIds();
+        if(StringUtils.isNotBlank(eimgIds)) {
+            List<TFile> eimgs = fileMapper.selectByIds(eimgIds);
+            eimgs.forEach(tFile -> {
+                ImageUrlVo sv = new ImageUrlVo();
+                sv.setImgUrl(tFile.getImgUrl());
+                svs.add(sv);
+            });
+        }
         executorVo.setExecuteImgArr(svs);
         result.setTaskSubmit(executorVo);
 
         AssignTaskReviewVo reviewVo = new AssignTaskReviewVo();
-        reviewVo.setReviewResult(todw.getAuditResult());
-        reviewVo.setReviewID(todw.getId());
-        reviewVo.setReviewOpinion(todw.getAuditContent());
-        reviewVo.setReviewTime(todw.getModifyTime().getTime());
-        reviewVo.setAuditorID(todw.getAuditUserId());
-        SysUser u = userMapper.selectByPrimaryKey(todw.getAuditUserId());
-        reviewVo.setAuditorName(u.getRealName());
-        reviewVo.setAuditorHeadUrl(u.getHeadImgUrl());
-        List<TFile> rimgs = fileMapper.selectByIds(todw.getAuditImgIds());
-        List<ImageUrlVo> xvs = new ArrayList<ImageUrlVo>();
-        rimgs.forEach(tFile -> {
-            ImageUrlVo xv = new ImageUrlVo();
-            xv.setImgUrl(tFile.getImgUrl());
-            xvs.add(xv);
-        });
-        reviewVo.setReviewImgArr(xvs);
+        if(todw != null) {
+            reviewVo.setReviewResult(todw.getAuditResult());
+            reviewVo.setReviewID(todw.getId());
+            reviewVo.setReviewOpinion(todw.getAuditContent());
+            reviewVo.setReviewTime(todw.getModifyTime().getTime());
+            reviewVo.setAuditorID(todw.getAuditUserId());
+            SysUser u = userMapper.selectByPrimaryKey(todw.getAuditUserId());
+            reviewVo.setAuditorName(u.getRealName());
+            reviewVo.setAuditorHeadUrl(u.getHeadImgUrl());
+            List<TFile> rimgs = fileMapper.selectByIds(todw.getAuditImgIds());
+            List<ImageUrlVo> xvs = new ArrayList<ImageUrlVo>();
+            rimgs.forEach(tFile -> {
+                ImageUrlVo xv = new ImageUrlVo();
+                xv.setImgUrl(tFile.getImgUrl());
+                xvs.add(xv);
+            });
+            reviewVo.setReviewImgArr(xvs);
+        }
         result.setTaskReview(reviewVo);
 
 

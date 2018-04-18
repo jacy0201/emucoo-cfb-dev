@@ -74,6 +74,7 @@ public class SysDept extends BaseEntity {
     private Boolean isUse;
 
     //上级部门名称
+    @Transient
     private String parentName;
 
 
