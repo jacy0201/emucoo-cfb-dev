@@ -90,12 +90,6 @@ public class SysDept extends BaseEntity {
 
 
     /**
-     * 地址代码
-     */
-    @Column(name = "address_code")
-    private String addressCode;
-
-    /**
      * 详细地址
      */
     @Column(name = "address_detail")
@@ -247,23 +241,6 @@ public class SysDept extends BaseEntity {
         this.dptNo = dptNo;
     }
 
-    /**
-     * 获取地址代码
-     *
-     * @return address_code - 地址代码
-     */
-    public String getAddressCode() {
-        return addressCode;
-    }
-
-    /**
-     * 设置地址代码
-     *
-     * @param addressCode 地址代码
-     */
-    public void setAddressCode(String addressCode) {
-        this.addressCode = addressCode;
-    }
 
     /**
      * 获取详细地址

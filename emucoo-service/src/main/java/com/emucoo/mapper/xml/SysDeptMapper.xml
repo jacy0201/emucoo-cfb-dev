@@ -9,7 +9,6 @@
     <result column="parent_id" property="parentId" jdbcType="BIGINT" />
     <result column="dpt_name" property="dptName" jdbcType="VARCHAR" />
     <result column="dpt_no" property="dptNo" jdbcType="VARCHAR" />
-    <result column="address_code" property="addressCode" jdbcType="VARCHAR" />
     <result column="address_detail" property="addressDetail" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="leader" property="leader" jdbcType="VARCHAR" />
