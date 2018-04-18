@@ -29,9 +29,6 @@ public class ChancePointController extends BaseResource {
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
-
-        if(opptList == null || opptList.size() == 0)
-            opptList = new ArrayList<>();
         return success(opptList);
     }
 
