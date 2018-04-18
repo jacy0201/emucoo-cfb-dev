@@ -9,7 +9,6 @@
     <result column="parent_id" property="parentId" jdbcType="BIGINT" />
     <result column="dpt_name" property="dptName" jdbcType="VARCHAR" />
     <result column="dpt_no" property="dptNo" jdbcType="VARCHAR" />
-    <result column="address_code" property="addressCode" jdbcType="VARCHAR" />
     <result column="address_detail" property="addressDetail" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="leader" property="leader" jdbcType="VARCHAR" />
@@ -22,6 +21,11 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="district" property="district" jdbcType="VARCHAR" />
+    <result column="short_name" property="shortName" jdbcType="VARCHAR" />
+
   </resultMap>
 
   <select id="queryDetpIdList" resultType="long">

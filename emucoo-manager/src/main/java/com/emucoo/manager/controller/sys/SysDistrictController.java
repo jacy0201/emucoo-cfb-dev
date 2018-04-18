@@ -27,7 +27,7 @@ public class SysDistrictController extends BaseResource {
 	 */
 	@ResponseBody
 	@PostMapping (value = "get")
-	@ApiOperation(value="获取区域信息")
+	@ApiOperation(value="获取单个地区详情")
 	public SysDistrict get(@RequestBody SysDistrict sysDistrict) {
 		return sysDistrictService.findOne(sysDistrict);
 	}
