@@ -52,4 +52,14 @@
     UPDATE sys_user SET push_token = null WHERE push_token = #{pushToken}
   </update>
 
+  <select id="findPushTokenByIds" parameterType="string" resultType="string">
+    select push_token
+    from sys_user
+    where id in
+    <foreach close=")" collection="list" item="id" open="(" separator=",">
+      #{id}
+    </foreach>
+    and status = 0 and push_token is not null
+  </select>
+
 </mapper>
