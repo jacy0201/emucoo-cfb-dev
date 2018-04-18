@@ -45,13 +45,11 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 			SysUser u = new SysUser();
 			u.setMobile(mobile);
 			user = userMapper.selectOne(u);
-		}
-		if (user == null && RegexMatcher.isEmail(mobile)) {
+		} else if (RegexMatcher.isEmail(mobile)) {
 			SysUser u = new SysUser();
 			u.setEmail(mobile);
 			user = userMapper.selectOne(u);
-		}
-		if (user == null) {
+		} else {
 		    SysUser u = new SysUser();
 		    u.setUsername(mobile);
 			user = userMapper.selectOne(u);

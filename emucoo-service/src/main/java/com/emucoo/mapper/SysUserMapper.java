@@ -36,4 +36,7 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     void resetPwd(String mobile, String password);
 
     void loginOut(String pushToken);
+
+
+    List<String> findPushTokenByIds(List<Integer> asList);
 }

@@ -4,7 +4,7 @@ import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "t_task_comment")
+@Table(name = "t_comment")
 public class TTaskComment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,8 +13,11 @@ public class TTaskComment extends BaseEntity {
     /**
      * 任务事务ID
      */
-    @Column(name = "loop_work_id")
-    private Long loopWorkId;
+    @Column(name = "union_id")
+    private Long unionId;
+
+    @Column(name = "union_type")
+    private Integer unionType;
 
     /**
      * 评论用户ID
@@ -55,6 +58,9 @@ public class TTaskComment extends BaseEntity {
     @Column(name = "create_user_id")
     private Long createUserId;
 
+    @Column(name = "modify_user_id")
+    private Long modifyUserId;
+
     /**
      * 评论的文本内容
      */
@@ -74,23 +80,6 @@ public class TTaskComment extends BaseEntity {
         this.id = id;
     }
 
-    /**
-     * 获取任务事务ID
-     *
-     * @return loop_work_id - 任务事务ID
-     */
-    public Long getLoopWorkId() {
-        return loopWorkId;
-    }
-
-    /**
-     * 设置任务事务ID
-     *
-     * @param loopWorkId 任务事务ID
-     */
-    public void setLoopWorkId(Long loopWorkId) {
-        this.loopWorkId = loopWorkId;
-    }
 
     /**
      * 获取评论用户ID
@@ -240,5 +229,13 @@ public class TTaskComment extends BaseEntity {
      */
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(Long unionId) {
+        this.unionId = unionId;
     }
 }
