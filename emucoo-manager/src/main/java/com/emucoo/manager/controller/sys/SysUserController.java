@@ -9,12 +9,10 @@ import com.emucoo.service.sys.SysUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,9 +43,21 @@ public class SysUserController extends BaseResource {
 	}
 
 	/**
+	 * 根据用户id 获取用户详情
+	 */
+	@PostMapping("/getUserById")
+	@ApiOperation(value="根据用户id获取用户详情")
+	@ResponseBody
+	public ApiResult getUserById(@RequestBody SysUser sysUser){
+		if(null==sysUser.getId()){return fail("Id 不能为空!");}
+		return success(sysUserService.findById(sysUser.getId()));
+	}
+
+	/**
 	 * 查询是店长的用户
 	 */
 	@PostMapping("/getShopManagers")
+	@ApiOperation(value="获取店长信息集合")
 	public ApiResult getShopManagers(){
 		SysUser sysUser=new SysUser();
 		sysUser.setIsShopManager(true);
