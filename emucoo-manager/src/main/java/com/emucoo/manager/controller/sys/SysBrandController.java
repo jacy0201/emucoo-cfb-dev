@@ -39,7 +39,7 @@ public class SysBrandController extends BaseResource {
 		TBrandInfo brandInfo = param.getData();
 		Example example=new Example(TBrandInfo.class);
 		if(null!=brandInfo && null!=brandInfo.getBrandName()) {
-			example.createCriteria().andLike("BrandName", "%"+brandInfo.getBrandName()+"%");
+			example.createCriteria().andLike("brandName", "%"+brandInfo.getBrandName()+"%");
 		}
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
@@ -58,7 +58,7 @@ public class SysBrandController extends BaseResource {
 	public ApiResult listAll(@RequestBody TBrandInfo param){
 		Example example=new Example(TBrandInfo.class);
 		if(null!=param.getBrandName()) {
-			example.createCriteria().andLike("BrandName", "%"+param.getBrandName()+"%");
+			example.createCriteria().andLike("brandName", "%"+param.getBrandName()+"%");
 		}
 		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
 		return success(brandList);

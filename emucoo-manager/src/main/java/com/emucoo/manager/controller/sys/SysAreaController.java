@@ -59,7 +59,7 @@ public class SysAreaController extends BaseResource {
 	public ApiResult listAll(@RequestBody SysArea sysArea){
 		Example example=new Example(SysArea.class);
 		if(null!=sysArea.getAreaName()) {
-			example.createCriteria().andLike("AreaName", "%"+sysArea.getAreaName()+"%");
+			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
 		}
 		List<SysArea> areaList = sysAreaService.selectByExample(example);
 		return success(areaList);
