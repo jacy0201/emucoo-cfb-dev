@@ -11,4 +11,6 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
     int countTodayPlanOfUser(@Param("userId") Long userId, @Param("today") Date today);
 
     List<TFrontPlan> listTodayPlanOfUser(@Param("userId") Long userId, @Param("today") Date today);
+
+    void addUnArrangeToPlan(TFrontPlan tFrontPlan);
 }

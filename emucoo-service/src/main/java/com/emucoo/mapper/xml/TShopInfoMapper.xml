@@ -24,9 +24,22 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="is_use" property="isUse" jdbcType="BIT" />
   </resultMap>
 
   <select id="fetchShopsOfUser" resultMap="BaseResultMap">
     select a.* from t_shop_info a right join sys_user_shop b on a.id=b.shop_id where b.user_id=#{id}
+  </select>
+
+  <select id="selectShopListByUserAndArea" resultType="com.emucoo.model.TShopInfo">
+      SELECT
+      shop.id,
+      shop.shop_name,
+      shop.short_name,
+      shop.shop_desc
+      FROM t_shop_info shop
+      INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
+      AND userShop.user_id = #{userId}
+      WHERE shop.area_id = #{areaId}
   </select>
 </mapper>

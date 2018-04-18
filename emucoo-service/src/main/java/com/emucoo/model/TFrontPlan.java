@@ -31,7 +31,7 @@ public class TFrontPlan extends BaseEntity {
     /**
      * 状态 0：未安排，1：未巡店，2：已巡店
      */
-    private Boolean status;
+    private Byte status;
 
     /**
      * 修改时间
@@ -125,6 +125,9 @@ public class TFrontPlan extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    @Transient
+    private TShopInfo shop;
+
     /**
      * @return id
      */
@@ -193,21 +196,11 @@ public class TFrontPlan extends BaseEntity {
         this.planDate = planDate;
     }
 
-    /**
-     * 获取状态 0：未安排，1：未巡店，2：已巡店
-     *
-     * @return status - 状态 0：未安排，1：未巡店，2：已巡店
-     */
-    public Boolean getStatus() {
+    public Byte getStatus() {
         return status;
     }
 
-    /**
-     * 设置状态 0：未安排，1：未巡店，2：已巡店
-     *
-     * @param status 状态 0：未安排，1：未巡店，2：已巡店
-     */
-    public void setStatus(Boolean status) {
+    public void setStatus(Byte status) {
         this.status = status;
     }
 
@@ -389,6 +382,14 @@ public class TFrontPlan extends BaseEntity {
      */
     public void setActualRemindTime(Date actualRemindTime) {
         this.actualRemindTime = actualRemindTime;
+    }
+
+    public TShopInfo getShop() {
+        return shop;
+    }
+
+    public void setShop(TShopInfo shop) {
+        this.shop = shop;
     }
 
     /**

@@ -14,5 +14,5 @@ public class UserQuery {
     private String postId;
     private Integer pageNum;
     private Integer pageSize;
-
+    private String isShopManager;
 }

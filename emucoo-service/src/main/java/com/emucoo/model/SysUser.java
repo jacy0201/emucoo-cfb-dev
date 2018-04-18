@@ -1,12 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import com.emucoo.dto.modules.user.UserVo;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "sys_user")
 public class SysUser extends BaseEntity {
@@ -123,20 +120,20 @@ public class SysUser extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    public Boolean getIsShopManager() {
+        return isShopManager;
+    }
+
+    public void setIsShopManager(Boolean isShopManager) {
+        this.isShopManager = isShopManager;
+    }
+
     /**
      * 是否是店长：0-否；1-是
      *
      */
     @Column(name = "is_shop_manager")
     private Boolean isShopManager;
-
-    public Boolean getShopManager() {
-        return isShopManager;
-    }
-
-    public void setShopManager(Boolean shopManager) {
-        isShopManager = shopManager;
-    }
 
     /**
      * 部门名称
