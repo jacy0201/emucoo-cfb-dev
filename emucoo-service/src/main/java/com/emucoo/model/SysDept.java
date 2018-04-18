@@ -32,6 +32,63 @@ public class SysDept extends BaseEntity {
     @Column(name = "dpt_no")
     private String dptNo;
 
+
+    /**
+     * 机构简称
+     *
+     */
+    @Column(name = "short_name")
+    private String shortName;
+
+    /**
+     * 省份
+     */
+    private String province;
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    /**
+
+     * 市
+     */
+    private String city;
+
+    /**
+     * 区
+     */
+    private String district;
+
+
     /**
      * 地址代码
      */
