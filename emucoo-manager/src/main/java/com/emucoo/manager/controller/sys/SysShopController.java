@@ -96,4 +96,19 @@ public class SysShopController extends BaseResource {
 		sysShopService.deleteById(shopInfo.getId());
 		return success("success");
 	}
+
+	/**
+	 * 启用停用店铺
+	 */
+	@PostMapping ("/modifyShopUse")
+	@RequiresPermissions("sys:shop:use")
+	@ApiOperation(value="店铺启用/停用")
+	public ApiResult modifyShopUse(@RequestBody TShopInfo shopInfo){
+		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
+		if(shopInfo.getIsUse()==null){return fail("启用/停用 参数不能为空!");}
+		shopInfo.setModifyTime(new Date());
+		shopInfo.setModifyUserId(1L);
+		sysShopService.updateSelective(shopInfo);
+		return success("success");
+	}
 }

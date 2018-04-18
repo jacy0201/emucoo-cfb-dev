@@ -24,6 +24,7 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="is_use" property="isUse" jdbcType="BIT" />
   </resultMap>
 
   <select id="fetchShopsOfUser" resultMap="BaseResultMap">
