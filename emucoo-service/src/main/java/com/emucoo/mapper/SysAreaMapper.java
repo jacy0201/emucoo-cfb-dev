@@ -12,4 +12,6 @@ public interface SysAreaMapper extends MyMapper<SysArea> {
      * 根据机构查询分区信息
      */
     List<SysArea> listByDpt(HashMap paramMap);
+
+    List<SysArea> findAreaListByUserId(Long userId);
 }
