@@ -82,7 +82,7 @@ public class SysAreaController extends BaseResource {
 	}
 
 	/**
-	 * 修改岗位
+	 * 修改分区
 	 */
 	@PostMapping ("/update")
 	@RequiresPermissions("sys:area:update")
@@ -95,7 +95,7 @@ public class SysAreaController extends BaseResource {
 	}
 
 	/**
-	 * 删除岗位
+	 * 删除分区
 	 */
 	@PostMapping ("/delete")
 	@RequiresPermissions("sys:area:delete")

@@ -1,14 +1,23 @@
 package com.emucoo.manager.controller.sys;
-import com.emucoo.common.Constant;
-import com.emucoo.common.util.R;
-import com.emucoo.manager.controller.AbstractController;
+
+import com.emucoo.common.base.rest.ApiResult;
+import com.emucoo.common.base.rest.BaseResource;
+import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.model.SysDept;
+import com.emucoo.model.SysUser;
+import com.emucoo.model.SysUserRelation;
 import com.emucoo.service.sys.SysDeptService;
+import com.emucoo.service.sys.SysUserRelationService;
+import com.emucoo.service.sys.SysUserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,113 +28,178 @@ import java.util.List;
 @RestController
 @RequestMapping("/sys/dept")
 @Api(description="机构管理" )
-public class SysDeptController extends AbstractController {
+public class SysDeptController extends BaseResource {
 	@Autowired
 	private SysDeptService sysDeptService;
-	
+
+	@Autowired
+    private SysUserRelationService sysUserRelationService;
+
+    @Autowired
+    private SysUserService sysUserService;
+
+
 	/**
-	 * 列表
+	 * 查询机构列表
 	 */
+    @ApiOperation(value="查询机构列表")
 	@PostMapping("/list")
 	@RequiresPermissions("sys:dept:list")
-	public List<SysDept> list(){
-		List<SysDept> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-		return deptList;
+	@ResponseBody
+	public ApiResult list(@RequestBody DeptQuery DeptQuery){
+		List<SysDept> deptList = sysDeptService.queryList(DeptQuery);
+		return success(deptList);
 	}
 
-	/**
-	 * 选择部门(添加、修改菜单)
-	 */
-	@PostMapping("/select")
-	@RequiresPermissions("sys:dept:select")
-	public R select(){
-		List<SysDept> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-
-		//添加一级部门
-		if(getUserId() == Constant.SUPER_ADMIN){
-			SysDept root = new SysDept();
-			root.setId(0L);
-			root.setDptName("一级部门");
-			root.setParentId(-1L);
-			root.setOpen(true);
-			deptList.add(root);
-		}
-
-		return R.ok().put("deptList", deptList);
-	}
 
 	/**
-	 * 上级部门Id(管理员则为0)
+	 * 保存机构信息
 	 */
-	@PostMapping("/info")
-	@RequiresPermissions("sys:dept:list")
-	public R info(){
-		long deptId = 0;
-		if(getUserId() != Constant.SUPER_ADMIN){
-			List<SysDept> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-			Long parentId = null;
-			for(SysDept sysDeptEntity : deptList){
-				if(parentId == null){
-					parentId = sysDeptEntity.getParentId();
-					continue;
-				}
-
-				if(parentId > sysDeptEntity.getParentId().longValue()){
-					parentId = sysDeptEntity.getParentId();
-				}
-			}
-			deptId = parentId;
-		}
-
-		return R.ok().put("deptId", deptId);
-	}
-	
-	/**
-	 * 信息
-	 */
-	@PostMapping("/info/{deptId}")
-	@RequiresPermissions("sys:dept:info")
-	public R info(@PathVariable("deptId") Long deptId){
-		SysDept dept = sysDeptService.findById(deptId);
-		return R.ok().put("dept", dept);
-	}
-	
-	/**
-	 * 保存
-	 */
-	@PostMapping("/save")
+    @ApiOperation(value="创建机构")
+    @PostMapping("/save")
 	@RequiresPermissions("sys:dept:save")
-	public R save(@RequestBody SysDept dept){
-		sysDeptService.save(dept);
-		
-		return R.ok();
+	public ApiResult save(@RequestBody SysDept dept){
+		sysDeptService.saveDept(dept);
+		return success("success");
 	}
 	
 	/**
-	 * 修改
+	 * 更新机构信息
 	 */
+    @ApiOperation(value="更新机构")
 	@PostMapping("/update")
 	@RequiresPermissions("sys:dept:update")
-	public R update(@RequestBody SysDept dept){
-		sysDeptService.updateSelective(dept);
-		return R.ok();
+	public ApiResult update(@RequestBody SysDept dept){
+        if(dept.getId()==null){return fail("机构 id 不能为空!");}
+		sysDeptService.updateDept(dept);
+		return success("success");
 	}
+
+    /**
+     * 启用/停用机构信息
+     */
+    @ApiOperation(value="启用/停用 机构")
+    @PostMapping("/modifyUse")
+    @RequiresPermissions("sys:dept:use")
+    public ApiResult modifyUse(@RequestBody SysDept dept){
+        if(dept.getId()==null){return fail("机构 id 不能为空!");}
+        sysDeptService.updateDept(dept);
+        return success("success");
+    }
+
 	
 	/**
-	 * 删除
+	 * 删除机构信息
 	 */
+    @ApiOperation(value="删除机构")
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:dept:delete")
-	public R delete(long deptId){
+	public ApiResult delete(@RequestBody SysDept dept){
+        if(dept.getId()==null){return fail("机构 id 不能为空!");}
 		//判断是否有子部门
-		List<Long> deptList = sysDeptService.queryDetpIdList(deptId);
+		List<Long> deptList = sysDeptService.queryDetpIdList(dept.getId());
 		if(deptList.size() > 0){
-			return R.error("请先删除子部门");
+			return fail("请先删除子部门");
 		}
-
-		sysDeptService.deleteById(deptId);
-		
-		return R.ok();
+		sysDeptService.deleteDept(dept);
+        return success("success");
 	}
-	
+
+
+    /**
+     * 获取用户关系
+     * @return
+     */
+    @ApiOperation(value="获取用户关系")
+    @PostMapping("/listUserRelation")
+    @RequiresPermissions("sys:dept:relation")
+    public ApiResult listUserRelation(Long dptId){
+        if(dptId==null){return fail("机构 id 不能为空!");}
+        Example example=new Example(SysUserRelation.class);
+        example.createCriteria().andEqualTo("dptId",dptId);
+        List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
+        return success(list);
+    }
+
+    /**
+     * 添加下级用户
+     * @return
+     */
+    @ApiOperation(value="添加下级用户")
+    @PostMapping("/addChildUser")
+    public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
+        if(sysUserRelation.getDptId()==null){return fail("dptId 不能为空!");}
+        if(sysUserRelation.getUserId()==null){return fail("userId 不能为空!");}
+        if(sysUserRelation.getChildUserId()==null){return fail("childUserId 不能为空!");}
+        if(sysUserRelation.getPostId()==null){return fail("postId 不能为空!");}
+        sysUserRelation.setIsDel(false);
+        sysUserRelation.setCreateTime(new Date());
+        sysUserRelation.setCreateUserId(1L);
+        sysUserRelationService.saveSelective(sysUserRelation);
+        return success("success");
+    }
+
+	/**
+	 * 添加用户
+	 * @return
+	 */
+	@ApiOperation(value="添加用户")
+	@PostMapping("/addUser")
+	public ApiResult addUser(@RequestBody SysUserRelation sysUserRelation){
+		if(sysUserRelation.getDptId()==null){return fail("dptId 不能为空!");}
+		if(sysUserRelation.getUserId()==null){return fail("userId 不能为空!");}
+		if(sysUserRelation.getPostId()==null){return fail("postId 不能为空!");}
+		sysUserRelation.setIsDel(false);
+		sysUserRelation.setCreateTime(new Date());
+		sysUserRelation.setCreateUserId(1L);
+		sysUserRelationService.saveSelective(sysUserRelation);
+		return success("success");
+	}
+
+
+	/**
+	 * 删除下级
+	 * @return
+	 */
+	@ApiOperation(value="删除用户")
+	@PostMapping("/deleteUser")
+	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
+		if(sysUserRelation.getId()==null){return fail("Id 不能为空!");}
+		//检查该用户是否有下级，如果有下级需先删除下级用户
+		sysUserRelation=sysUserRelationService.findById(sysUserRelation.getId());
+		if(null!=sysUserRelation.getChildUserId()){return fail("请先删除下级用户!");}
+
+		sysUserRelationService.deleteById(sysUserRelation.getId());
+		return success("success");
+	}
+
+
+
+
+    /**
+     * 获取部门人员
+     * @param deptId
+     * @param realName
+     * @param postId
+     * @return
+     */
+    @ApiOperation(value="获取部门人员")
+    @PostMapping("/listUser")
+    public ApiResult listUser(Long deptId,String realName,Long postId ) {
+		List<SysUser> list=null;
+		if(deptId==null){ return fail("dptId 不能为空!"); }
+        if(postId!=null){
+        	HashMap map=new HashMap();
+			map.put("postId",postId);
+			map.put("dptId",deptId);
+			map.put("realName",realName);
+			list= sysUserService.listByPostId(map);
+        }else{
+			Example example=new Example(SysUser.class);
+			example.createCriteria().andEqualTo("dptId",deptId);
+			if(StringUtil.isNotEmpty(realName)){ example.createCriteria().andLike("realName","%"+realName+"%"); }
+			list=sysUserService.selectByExample(example);
+		}
+        return success(list);
+    }
 }

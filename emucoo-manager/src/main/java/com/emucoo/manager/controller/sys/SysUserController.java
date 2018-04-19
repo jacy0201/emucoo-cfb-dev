@@ -7,7 +7,6 @@ import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserRoleService;
 import com.emucoo.service.sys.SysUserService;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -38,15 +37,15 @@ public class SysUserController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<SysUser> param){
 		SysUser sysUser=param.getData();
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(),"create_time desc");
-		List<SysUser> userList = sysUserService.listUser(sysUser);
-		return success(new PageInfo<SysUser>(userList));
+	//	List<SysUser> userList = sysUserService.listUser(sysUser);
+		return success("success");
 	}
 
 	/**
 	 * 根据用户id 获取用户详情
 	 */
 	@PostMapping("/getUserById")
-	@ApiOperation(value="根据用户id获取用户详情")
+	@ApiOperation(value="获取用户详情")
 	@ResponseBody
 	public ApiResult getUserById(@RequestBody SysUser sysUser){
 		if(null==sysUser.getId()){return fail("Id 不能为空!");}
@@ -62,7 +61,9 @@ public class SysUserController extends BaseResource {
 		SysUser sysUser=new SysUser();
 		sysUser.setIsShopManager(true);
 		sysUser.setIsDel(false);
-		List<SysUser> listUser=sysUserService.listUser(sysUser);
+		List<SysUser> listUser=sysUserService.findListByWhere(sysUser);
 		return success(listUser);
 	}
+
+
 }

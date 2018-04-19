@@ -45,37 +45,21 @@ public class SysDept extends BaseEntity {
      */
     private String province;
 
-    public String getShortName() {
-        return shortName;
-    }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
+    /**
+     *分区集合
+     */
+    @Transient
+    private List<SysArea> areaList;
 
-    public String getProvince() {
-        return province;
-    }
 
-    public void setProvince(String province) {
-        this.province = province;
-    }
+    /**
 
-    public String getCity() {
-        return city;
-    }
+     *品牌集合
+     */
+    @Transient
+    private List<TBrandInfo> brandList;
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
-    }
 
     /**
 
@@ -400,6 +384,39 @@ public class SysDept extends BaseEntity {
         this.createUserId = createUserId;
     }
 
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
     /**
      * 获取修改时间
      *
@@ -476,5 +493,21 @@ public class SysDept extends BaseEntity {
 
     public void setList(List<?> list) {
         this.list = list;
+    }
+
+    public List<SysArea> getAreaList() {
+        return areaList;
+    }
+
+    public void setAreaList(List<SysArea> areaList) {
+        this.areaList = areaList;
+    }
+
+    public List<TBrandInfo> getBrandList() {
+        return brandList;
+    }
+
+    public void setBrandList(List<TBrandInfo> brandList) {
+        this.brandList = brandList;
     }
 }

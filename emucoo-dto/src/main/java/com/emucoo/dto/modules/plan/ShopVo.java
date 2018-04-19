@@ -9,4 +9,9 @@ import lombok.Data;
 public class ShopVo {
     private Long shopID;
     private String shopName;
+    private String brandName;
+    private Integer shopStatus;
+    private Long subID;
+    private Long patrolShopArrangeID;
+    private String exPatrloShopArrangeDate;
 }

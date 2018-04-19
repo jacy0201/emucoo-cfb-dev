@@ -39,6 +39,8 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         Date now = new Date();
         plan.setCreateTime(now);
         plan.setModifyTime(now);
+        plan.setPlanStartDate(plan.getPlanStartDate());
+        plan.setPlanEndDate(plan.getPlanEndDate());
         plan.setIsUse(WorkStatus.STOP_USE.getCode());
         plan.setIsDel(DeleteStatus.COMMON.getCode());
         plan.setOrgId(Constant.orgId);

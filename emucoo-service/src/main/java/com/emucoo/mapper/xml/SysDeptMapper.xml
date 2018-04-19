@@ -31,4 +31,37 @@
   <select id="queryDetpIdList" resultType="long">
     select id from sys_dept where parent_id = #{value} and is_del = 0
   </select>
+
+
+  <select id="listByBrand" parameterType="Map" resultType="com.emucoo.model.SysDept">
+    SELECT
+	t2.*
+    FROM
+	sys_dpt_brand t1
+    INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+      and  t1.brand_id= #{brandId}
+    <if test="dptName != null  and dptName!=''">
+      and t2.dpt_name LIKE "%"#{dptName}"%"
+    </if>
+    <if test="isUse != null">
+      and t2.is_use = #{isUse}
+    </if>
+  </select>
+
+
+  <select id="listByArea" parameterType="Map" resultType="com.emucoo.model.SysDept">
+    SELECT
+    t2.*
+    FROM
+    sys_dpt_area t1
+    INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+      and t1.area_id= #{areaId}
+    <if test="dptName != null  and dptName!=''">
+      and dpt_name LIKE "%"#{dptName}"%"
+    </if>
+    <if test="isUse != null">
+      and is_use = #{isUse}
+    </if>
+  </select>
+
 </mapper>

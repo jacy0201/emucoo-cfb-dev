@@ -2,6 +2,7 @@ package com.emucoo.dto.modules.plan;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +14,10 @@ public class ShopToPlanIn {
     private Long precinctID;
     // 管辖区域ID
     private Long planID;
+    // 计划年份
+    private String planYear;
+    // 计划月份
+    private String planMonth;
 
     private List<ShopVo> shopArr;
 

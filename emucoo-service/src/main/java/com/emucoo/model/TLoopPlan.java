@@ -39,6 +39,7 @@ public class TLoopPlan extends BaseEntity {
      * 状态 0：启用 1：停用
      */
     @ApiModelProperty(name = "status", value = "状态 false：停用 true：启用",example = "false")
+    @Column(name = "is_use")
     private Boolean isUse;
 
     /**
@@ -49,14 +50,14 @@ public class TLoopPlan extends BaseEntity {
      */
     @Column(name = "plan_start_date")
     @ApiModelProperty(name = "planStartDate", value = "计划期间开始日期")
-    private Date planStartDate;
+    private String planStartDate;
 
     /**
      * 计划结束月份
      */
     @Column(name = "plan_end_date")
     @ApiModelProperty(name = "planEndDate", value = "计划期间结束日期")
-    private Date planEndDate;
+    private String planEndDate;
 
     /**
      * 巡店周期(月)
@@ -64,6 +65,10 @@ public class TLoopPlan extends BaseEntity {
     @Column(name = "plan_cycle")
     @ApiModelProperty(name = "planCycle", value = "计划周期")
     private Integer planCycle;
+
+    @ApiModelProperty(name = "planCycleCount", value = "已执行周期次数")
+    @Column(name="plan_cycle_count")
+    private Integer planCycleCount;
 
     /**
      * 修改时间
@@ -178,51 +183,19 @@ public class TLoopPlan extends BaseEntity {
         this.isUse = isUse;
     }
 
-    /**
-     * 获取计划开始月份
-     1：月循环
-     2：季度循环
-     3：年循环
-     *
-     * @return plan_start_date - 计划开始月份
-    1：月循环
-    2：季度循环
-    3：年循环
-     */
-    public Date getPlanStartDate() {
+    public String getPlanStartDate() {
         return planStartDate;
     }
 
-    /**
-     * 设置计划开始月份
-     1：月循环
-     2：季度循环
-     3：年循环
-     *
-     * @param planStartDate 计划开始月份
-    1：月循环
-    2：季度循环
-    3：年循环
-     */
-    public void setPlanStartDate(Date planStartDate) {
+    public void setPlanStartDate(String planStartDate) {
         this.planStartDate = planStartDate;
     }
 
-    /**
-     * 获取计划结束月份
-     *
-     * @return plan_end_date - 计划结束月份
-     */
-    public Date getPlanEndDate() {
+    public String getPlanEndDate() {
         return planEndDate;
     }
 
-    /**
-     * 设置计划结束月份
-     *
-     * @param planEndDate 计划结束月份
-     */
-    public void setPlanEndDate(Date planEndDate) {
+    public void setPlanEndDate(String planEndDate) {
         this.planEndDate = planEndDate;
     }
 
@@ -242,6 +215,14 @@ public class TLoopPlan extends BaseEntity {
      */
     public void setPlanCycle(Integer planCycle) {
         this.planCycle = planCycle;
+    }
+
+    public Integer getPlanCycleCount() {
+        return planCycleCount;
+    }
+
+    public void setPlanCycleCount(Integer planCycleCount) {
+        this.planCycleCount = planCycleCount;
     }
 
     public List<TPlanFormRelation> getPlanFormRelationList() {

@@ -2,9 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.emucoo.mapper.TFrontPlanMapper" >
   <resultMap id="BaseResultMap" type="com.emucoo.model.TFrontPlan" >
-    <!--
-      WARNING - @mbg.generated
-    -->
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="loop_plan_id" property="loopPlanId" jdbcType="BIGINT" />
     <result column="shop_id" property="shopId" jdbcType="BIGINT" />
@@ -22,10 +19,15 @@
     <result column="actual_remind_time" property="actualRemindTime" jdbcType="TIMESTAMP" />
     <result column="arranger_id" property="arrangerId" jdbcType="BIGINT" />
     <result column="arrangee_id" property="arrangeeId" jdbcType="BIGINT" />
+    <result column="sub_plan_id" property="subPlanId" jdbcType="BIGINT"/>
     <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <association property="shop" javaType="com.emucoo.model.TShopInfo">
+      <id column="shop_id" property="id" jdbcType="BIGINT"/>
+      <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+    </association>
   </resultMap>
 
   <select id="countTodayPlanOfUser" resultType="java.lang.Integer" >
@@ -43,8 +45,10 @@
     INSERT INTO t_front_plan
     (
       shop_id,
-      loop_plan_id,
+      sub_plan_id,
       status,
+      arrange_year,
+      arrange_month,
       create_time,
       modify_time,
       create_user_id,
@@ -53,8 +57,10 @@
       is_del
     ) values (
       #{shop.id},
-      #{loopPlanId},
+      #{subPlanId},
       #{status},
+      #{arrangeYear},
+      #{arrangeMonth},
       #{createTime},
       #{modifyTime},
       #{createUserId},
@@ -63,4 +69,24 @@
       #{isDel}
     )
   </insert>
+
+  <select id="findArrangeListByAreaId" resultMap="BaseResultMap">
+    SELECT
+    plan.id,
+    plan.plan_date,
+    plan.status,
+    plan.shop_id,
+    plan.sub_plan_id,
+    shopinfo.shop_name
+    from t_front_plan plan
+    INNER JOIN t_shop_info shopinfo
+    ON plan.shop_id = shopinfo.id
+    WHERE plan.shop_id in
+    (
+      SELECT
+      shop.id
+      from t_shop_info shop WHERE shop.area_id = #{areaId}
+    )
+    AND plan.arrange_year = #{year} AND plan.arrange_month = #{month}
+  </select>
 </mapper>

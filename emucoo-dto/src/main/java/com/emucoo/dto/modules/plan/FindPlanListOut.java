@@ -1,11 +1,11 @@
-package com.emucoo.dto.modules.shop;
+package com.emucoo.dto.modules.plan;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ShopPlanListVO {
+public class FindPlanListOut {
     private List<PatrolShopCycle> patrolShopCycle;
     private List<PrecinctArr> precinctArr;
 }

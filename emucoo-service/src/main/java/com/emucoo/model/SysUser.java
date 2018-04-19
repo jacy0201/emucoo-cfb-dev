@@ -4,6 +4,7 @@ import com.emucoo.common.base.model.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "sys_user")
 public class SysUser extends BaseEntity {
@@ -59,6 +60,36 @@ public class SysUser extends BaseEntity {
      * 用户状态：0-启用；1-停用；2-锁定
      */
     private Integer status;
+
+    /**
+     * 用户拥有的岗位集合
+     */
+    @Transient
+    private List<SysPost> postList;
+
+
+    /**
+     * 用户负责的分区集合
+     */
+    @Transient
+    private List<SysArea> AreaList;
+
+
+    /**
+     * 用户负责的品牌集合
+     */
+    @Transient
+
+    private List<TBrandInfo> brandList;
+
+
+    /**
+     *用户所负责的店铺集合
+     */
+    @Transient
+    private List<TShopInfo> shopList;
+
+
 
     public Integer getStatus() {
         return status;
@@ -482,4 +513,38 @@ public class SysUser extends BaseEntity {
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
+
+
+    public List<SysPost> getPostList() {
+        return postList;
+    }
+
+    public void setPostList(List<SysPost> postList) {
+        this.postList = postList;
+    }
+
+    public List<SysArea> getAreaList() {
+        return AreaList;
+    }
+
+    public void setAreaList(List<SysArea> areaList) {
+        AreaList = areaList;
+    }
+
+    public List<TBrandInfo> getBrandList() {
+        return brandList;
+    }
+
+    public void setBrandList(List<TBrandInfo> brandList) {
+        this.brandList = brandList;
+    }
+
+    public List<TShopInfo> getShopList() {
+        return shopList;
+    }
+
+    public void setShopList(List<TShopInfo> shopList) {
+        this.shopList = shopList;
+    }
+
 }
