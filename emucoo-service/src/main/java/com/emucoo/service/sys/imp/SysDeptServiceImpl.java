@@ -1,6 +1,7 @@
 package com.emucoo.service.sys.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.SysDeptService;
@@ -31,37 +32,37 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 	private TBrandInfoMapper brandInfoMapper;
 
 	@Override
-	public List<SysDept> queryList(Map<String, Object> params){
+	public List<SysDept> queryList(DeptQuery deptQuery){
 		Example example=new Example(SysDept.class);
 		Long brandId=null;
 		Long areaId=null;
 		String dptName="";
 		Boolean isUse=null;
 		List<SysDept> deptList=null;
-		if(null!=params.get("dptName") && !"".equals(params.get("dptName").toString())){
-			dptName=params.get("dptName").toString();
+		if(null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
+			dptName=deptQuery.getDptName();
 			example.createCriteria().andLike("dptName","%"+dptName+"%");
 		}
-		if(null!=params.get("isUse")){
-			isUse=Boolean.valueOf(params.get("isUse")+"");
+		if(null!=deptQuery.getIsUse()){
+			isUse=deptQuery.getIsUse();
 			example.createCriteria().andEqualTo("isUse",isUse);
 		}
 
 		HashMap paramMap=null;
 		List listB=null;
 		List listA=null;
-		if(null!=params.get("brandId")){
+		if(null!=deptQuery.getBrandId()){
 			paramMap=new HashMap();
-			brandId=Long.parseLong(params.get("brandId").toString());
+			brandId=deptQuery.getBrandId();
 			paramMap.put("brandId",brandId);
 			paramMap.put("dptName",dptName);
 			paramMap.put("isUse",isUse);
 			listB=sysDeptMapper.listByBrand(paramMap);
 		}
 
-		if(null!=params.get("areaId")){
+		if(null!=deptQuery.getAreaId()){
 			paramMap=new HashMap();
-			areaId=Long.parseLong(params.get("areaId").toString());
+			areaId=deptQuery.getAreaId();
 			paramMap.put("areaId",areaId);
 			paramMap.put("dptName",dptName);
 			paramMap.put("isUse",isUse);

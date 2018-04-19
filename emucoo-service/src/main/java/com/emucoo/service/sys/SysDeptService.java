@@ -1,6 +1,7 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.model.SysDept;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public interface SysDeptService extends BaseService<SysDept> {
 
-	List<SysDept> queryList(Map<String, Object> map);
+	List<SysDept> queryList(DeptQuery deptQuery);
 
 	/**
 	 * 查询子部门ID列表

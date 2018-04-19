@@ -1,11 +1,9 @@
 package com.emucoo.manager.controller.sys;
 
-import com.emucoo.common.Constant;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
-import com.emucoo.common.util.R;
 import com.emucoo.common.util.StringUtil;
-import com.emucoo.manager.shiro.ShiroUtils;
+import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserRelation;
@@ -44,11 +42,12 @@ public class SysDeptController extends BaseResource {
 	/**
 	 * 查询机构列表
 	 */
+    @ApiOperation(value="查询机构列表")
 	@PostMapping("/list")
 	@RequiresPermissions("sys:dept:list")
 	@ResponseBody
-	public ApiResult list(@RequestBody HashMap paramMap){
-		List<SysDept> deptList = sysDeptService.queryList(paramMap);
+	public ApiResult list(@RequestBody DeptQuery DeptQuery){
+		List<SysDept> deptList = sysDeptService.queryList(DeptQuery);
 		return success(deptList);
 	}
 
