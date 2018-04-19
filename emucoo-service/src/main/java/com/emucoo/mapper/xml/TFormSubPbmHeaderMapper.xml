@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFormSubPbmHeaderMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormSubPbmHeader">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="form_problem_id" property="formProblemId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="findFormSubPbmHeadersByFormPbmId" resultMap="BaseResultMap">
+        select * from t_form_sub_pbm_header where form_problem_id=#{id}
+    </select>
+
+    <insert id="upsertMulti" parameterType="java.util.List">
+        insert into t_form_sub_pbm_header (id, name, form_problem_id, create_time, modify_time)
+        values
+        <foreach collection="list" item="it" separator=",">
+            (#{it.id}, #{it.name}, #{it.formProblemId}, #{it.createTime}, #{it.modifyTime))
+        </foreach>
+        on duplicate key update name=values(name), form_problem_id=values(form_problem_id),modify_time=values(modify_time)
+    </insert>
+</mapper>

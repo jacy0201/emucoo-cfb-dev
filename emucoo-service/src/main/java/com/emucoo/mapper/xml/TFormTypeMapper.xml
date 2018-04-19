@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFormTypeMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormType">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="type_name" property="typeName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="findFormTypesByFormMainId" resultMap="BaseResultMap">
+        select * from t_form_type where form_main_id=#{id}
+    </select>
+
+    <insert id="upsert" parameterType="com.emucoo.model.TFormType">
+        insert into t_form_type (id, type_name, create_time, modify_time, form_main_id)
+        values (#{id}, #{typeName}, #{createTime}, #{modifyTime}, #{formMainId})
+        on duplicate key update type_name=#{typeName}, modify_time=#{modifyTime}, form_main_id=#{formMainId}
+    </insert>
+</mapper>

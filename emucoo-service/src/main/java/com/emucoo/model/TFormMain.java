@@ -53,6 +53,12 @@ public class TFormMain extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    @Column(name = "is_del")
+    private Boolean isDel;
+
+    @Column(name = "is_use")
+    private Boolean isUse;
+
     /**
      * @return id
      */
@@ -225,5 +231,33 @@ public class TFormMain extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    /**
+     * @return is_del
+     */
+    public Boolean getIsDel() {
+        return isDel;
+    }
+
+    /**
+     * @param isDel
+     */
+    public void setIsDel(Boolean isDel) {
+        this.isDel = isDel;
+    }
+
+    /**
+     * @return is_use
+     */
+    public Boolean getIsUse() {
+        return isUse;
+    }
+
+    /**
+     * @param isUse
+     */
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
     }
 }
