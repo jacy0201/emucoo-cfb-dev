@@ -26,5 +26,22 @@ public interface SysDeptService extends BaseService<SysDept> {
 	List<Long> getSubDeptIdList(Long deptId);
 
 
+	/**
+	 * 保存机构信息
+	 * @param sysDept
+	 */
+	void saveDept(SysDept sysDept);
+
+	/**
+	 * 更新机构信息
+	 * @param sysDept
+	 */
+	void updateDept(SysDept sysDept);
+
+	/**
+	 * 删除机构信息
+	 * @param sysDept
+	 */
+	void deleteDept(SysDept sysDept);
 
 }

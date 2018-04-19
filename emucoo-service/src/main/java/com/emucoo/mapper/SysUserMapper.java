@@ -1,9 +1,9 @@
 package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
-import com.emucoo.dto.modules.user.UserVo;
 import com.emucoo.model.SysUser;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface SysUserMapper extends MyMapper<SysUser> {
@@ -20,18 +20,16 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     List<Long> queryAllMenuId(Long userId);
 
     /**
-     * 根据条件参数查询用户列表
-     * @param realName
-     * @param username
-     * @param mobile
-     * @param email
-     * @param dptId
-     * @param shopId
-     * @param postId
-     * @param status
+     * 根据岗位ID查询用户列表
      * @return
      */
-    List<UserVo> listUser(String realName,String username,String mobile,String email,String dptId,String shopId,String postId,Integer status) ;
+    List<SysUser> listByPostId(HashMap map) ;
+
+    /**
+     * 根据店铺ID查询用户列表
+     * @return
+     */
+    List<SysUser> listByShopId(HashMap map) ;
 
     void resetPwd(String mobile, String password);
 
