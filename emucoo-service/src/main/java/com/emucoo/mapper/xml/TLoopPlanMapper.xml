@@ -113,6 +113,5 @@
     INNER JOIN t_plan_form_relation pf
     ON pf.plan_id = plan.id
     WHERE plan.id=#{id}
-
   </select>
 </mapper>

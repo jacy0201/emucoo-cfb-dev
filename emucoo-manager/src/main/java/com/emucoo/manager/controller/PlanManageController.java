@@ -11,6 +11,7 @@ import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.service.manage.TLoopPlanManageService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +29,7 @@ import java.util.List;
  * Created by sj on 2018/4/13.
  */
 @Controller
+@Api(description = "计划管理")
 @RequestMapping(value = "planManage")
 public class PlanManageController extends BaseResource {
 
@@ -39,6 +41,7 @@ public class PlanManageController extends BaseResource {
      * @param param
      * @return
      */
+
     @ApiOperation(value = "新增计划")
     @PostMapping(value = "addPlan")
     @ResponseBody
