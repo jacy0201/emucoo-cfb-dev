@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TLoopSubPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TLoopSubPlan" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cycle_begin" property="cycleBegin" jdbcType="DATE" />
+    <result column="cycle_end" property="cycleEnd" jdbcType="DATE" />
+    <result column="plan_id" property="planId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="dpt_id" property="dptId" jdbcType="BIGINT" />
+  </resultMap>
+
+  <insert id="addLoopSubPlan" parameterType="com.emucoo.model.TLoopSubPlan">
+    INSERT INTO t_loop_sub_plan
+    (
+      cycle_begin,
+      cycle_end,
+      plan_id,
+      dpt_id,
+      create_time,
+      modify_time
+    ) VALUES (
+      #{cycleBegin},
+      #{cycleEnd},
+      #{planId},
+      #{dptId},
+      #{createTime},
+      #{modifyTime}
+    )
+  </insert>
+</mapper>

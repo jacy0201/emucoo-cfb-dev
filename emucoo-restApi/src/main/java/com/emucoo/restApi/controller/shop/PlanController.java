@@ -1,6 +1,8 @@
 package com.emucoo.restApi.controller.shop;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.plan.FindPlanListIn;
+import com.emucoo.dto.modules.plan.FindPlanListOut;
 import com.emucoo.dto.modules.plan.FindShopListIn;
 import com.emucoo.dto.modules.plan.FindShopListOut;
 import com.emucoo.dto.modules.plan.ShopToPlanIn;
@@ -11,14 +13,9 @@ import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.plan.PlanService;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.emucoo.dto.modules.shop.PlanShopAddListVO_I;
-import com.emucoo.dto.modules.shop.ShopPlanListVO;
-import com.emucoo.dto.modules.shop.ShopPlanListVO_I;
-import com.emucoo.dto.modules.shop.ShopPlanProgressVO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +67,7 @@ public class PlanController extends AppBaseController {
     }
 
     @PostMapping(value = "deleteShopInPlan")
-    public AppResult deleteShopInPlan(@RequestBody ParamVo<ShopToPlanIn> params, HttpServletRequest request) {
+    public AppResult deleteShopInPlan(@RequestBody ParamVo<ShopToPlanIn> params) {
         ShopToPlanIn shopToPlanIn = params.getData();
         checkParam(shopToPlanIn.getPlanID(), "计划id不能为空！");
         checkParam(shopToPlanIn.getPrecinctID(), "管理区域id不能为空！");
@@ -78,6 +75,14 @@ public class PlanController extends AppBaseController {
         //SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         planService.deleteShopInPlan(shopToPlanIn);
         return success("success");
+    }
+
+    @PostMapping(value = "list")
+    public AppResult listPlan(@RequestBody ParamVo<FindPlanListIn> params, HttpServletRequest request) {
+        FindPlanListIn findPlanListIn = params.getData();
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        FindPlanListOut findPlanListOut = planService.listPlan(user, findPlanListIn);
+        return success(findPlanListOut);
     }
 
 

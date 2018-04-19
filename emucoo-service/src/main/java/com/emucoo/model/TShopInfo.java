@@ -101,23 +101,6 @@ public class TShopInfo extends BaseEntity {
      */
     @Column(name = "brand_id")
     private Long brandId;
-
-    public String getAreaName() {
-        return areaName;
-    }
-
-    public void setAreaName(String areaName) {
-        this.areaName = areaName;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
-    }
-
     /**
 
      * 品牌名称
@@ -252,6 +235,22 @@ public class TShopInfo extends BaseEntity {
      */
     public void setShopDesc(String shopDesc) {
         this.shopDesc = shopDesc;
+    }
+
+    public String getAreaName() {
+        return areaName;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 
     /**
