@@ -1,11 +1,16 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_form_main")
+@ApiModel
 public class TFormMain extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,11 +18,13 @@ public class TFormMain extends BaseEntity {
     /**
      * 表单名
      */
+    @ApiModelProperty(name = "name", value="表单名")
     private String name;
 
     /**
      * 描述
      */
+    @ApiModelProperty(name = "description", value = "表单描述")
     private String description;
 
     @Column(name = "create_time")
@@ -52,6 +59,12 @@ public class TFormMain extends BaseEntity {
 
     @Column(name = "org_id")
     private Long orgId;
+
+    @Column(name = "is_use")
+    private Boolean isUse;
+
+    @Column(name = "is_del")
+    private Boolean isDel;
 
     /**
      * @return id
@@ -225,5 +238,21 @@ public class TFormMain extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public Boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
+    }
+
+    public Boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Boolean isDel) {
+        this.isDel = isDel;
     }
 }

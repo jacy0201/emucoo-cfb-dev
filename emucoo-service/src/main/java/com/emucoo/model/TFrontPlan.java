@@ -16,6 +16,9 @@ public class TFrontPlan extends BaseEntity {
     @Column(name = "loop_plan_id")
     private Long loopPlanId;
 
+    @Column(name = "sub_plan_id")
+    private Long subPlanId;
+
     /**
      * 针对的店铺ID
      */
@@ -32,6 +35,13 @@ public class TFrontPlan extends BaseEntity {
      * 状态 0：未安排，1：未巡店，2：已巡店
      */
     private Byte status;
+
+
+    @Column(name = "arrange_year")
+    private String arrangeYear;
+
+    @Column(name = "arrange_month")
+    private String arrangeMonth;
 
     /**
      * 修改时间
@@ -160,6 +170,14 @@ public class TFrontPlan extends BaseEntity {
         this.loopPlanId = loopPlanId;
     }
 
+    public Long getSubPlanId() {
+        return subPlanId;
+    }
+
+    public void setSubPlanId(Long subPlanId) {
+        this.subPlanId = subPlanId;
+    }
+
     /**
      * 获取针对的店铺ID
      *
@@ -176,6 +194,22 @@ public class TFrontPlan extends BaseEntity {
      */
     public void setShopId(Long shopId) {
         this.shopId = shopId;
+    }
+
+    public String getArrangeYear() {
+        return arrangeYear;
+    }
+
+    public void setArrangeYear(String arrangeYear) {
+        this.arrangeYear = arrangeYear;
+    }
+
+    public String getArrangeMonth() {
+        return arrangeMonth;
+    }
+
+    public void setArrangeMonth(String arrangeMonth) {
+        this.arrangeMonth = arrangeMonth;
     }
 
     /**

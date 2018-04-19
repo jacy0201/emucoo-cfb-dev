@@ -66,6 +66,10 @@ public class TLoopPlan extends BaseEntity {
     @ApiModelProperty(name = "planCycle", value = "计划周期")
     private Integer planCycle;
 
+    @ApiModelProperty(name = "planCycleCount", value = "已执行周期次数")
+    @Column(name="plan_cycle_count")
+    private Integer planCycleCount;
+
     /**
      * 修改时间
      */
@@ -211,6 +215,14 @@ public class TLoopPlan extends BaseEntity {
      */
     public void setPlanCycle(Integer planCycle) {
         this.planCycle = planCycle;
+    }
+
+    public Integer getPlanCycleCount() {
+        return planCycleCount;
+    }
+
+    public void setPlanCycleCount(Integer planCycleCount) {
+        this.planCycleCount = planCycleCount;
     }
 
     public List<TPlanFormRelation> getPlanFormRelationList() {

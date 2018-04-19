@@ -1,5 +1,7 @@
 package com.emucoo.service.plan;
 
+import com.emucoo.dto.modules.plan.FindPlanListIn;
+import com.emucoo.dto.modules.plan.FindPlanListOut;
 import com.emucoo.dto.modules.plan.FindShopListIn;
 import com.emucoo.dto.modules.plan.FindShopListOut;
 import com.emucoo.dto.modules.plan.ShopToPlanIn;
@@ -20,6 +22,8 @@ public interface PlanService {
     void addShopToPlan(SysUser user, ShopToPlanIn addShopToPlanIn);
 
     void deleteShopInPlan(ShopToPlanIn shopToPlanIn);
+
+    FindPlanListOut listPlan(SysUser user, FindPlanListIn findPlanListIn);
 
    /* *//**
      * 获取巡店计划列表
