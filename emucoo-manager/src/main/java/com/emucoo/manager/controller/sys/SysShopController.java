@@ -38,14 +38,14 @@ public class SysShopController extends BaseResource {
 	public ApiResult list(@RequestBody ParamVo<TShopInfo> param){
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
-		if(null!=shopInfo.getShopName()) {
+		if(null!=shopInfo && null!=shopInfo.getShopName()) {
 			example.createCriteria().andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
 
-		if(null!=shopInfo.getAreaId()){
+		if(null!=shopInfo && null!=shopInfo.getAreaId()){
 			example.createCriteria().andEqualTo("areaId", shopInfo.getAreaId());
 		}
-		if(null!=shopInfo.getBrandId()){
+		if(null!=shopInfo && null!=shopInfo.getBrandId()){
 			example.createCriteria().andEqualTo("brandId", shopInfo.getBrandId());
 		}
 
@@ -94,6 +94,21 @@ public class SysShopController extends BaseResource {
 	public ApiResult delete(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
 		sysShopService.deleteById(shopInfo.getId());
+		return success("success");
+	}
+
+	/**
+	 * 启用停用店铺
+	 */
+	@PostMapping ("/modifyShopUse")
+	@RequiresPermissions("sys:shop:use")
+	@ApiOperation(value="店铺启用/停用")
+	public ApiResult modifyShopUse(@RequestBody TShopInfo shopInfo){
+		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
+		if(shopInfo.getIsUse()==null){return fail("启用/停用 参数不能为空!");}
+		shopInfo.setModifyTime(new Date());
+		shopInfo.setModifyUserId(1L);
+		sysShopService.updateSelective(shopInfo);
 		return success("success");
 	}
 }

@@ -6,7 +6,8 @@
           WARNING - @mbg.generated
         -->
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="loop_work_id" property="loopWorkId" jdbcType="BIGINT"/>
+        <result column="union_id" property="unionId" jdbcType="BIGINT"/>
+        <result column="union_type" property="unionType" jdbcType="INTEGER"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="user_name" property="userName" jdbcType="VARCHAR"/>
         <result column="is_show" property="isShow" jdbcType="BIT"/>
@@ -15,10 +16,12 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
         <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
         <result column="content" property="content" jdbcType="LONGVARCHAR"/>
     </resultMap>
+
     <select id="fetchByLoopWorkId" resultMap="BaseResultMap">
-        select * from t_task_comment where loop_work_id=#{loopWorkId}
+        select * from t_comment where union_id=#{loopWorkId}
     </select>
 
 </mapper>

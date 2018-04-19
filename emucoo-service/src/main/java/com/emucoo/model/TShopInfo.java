@@ -1,10 +1,14 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "t_shop_info")
+@ApiModel
 public class TShopInfo extends BaseEntity {
     /**
      * 主键PK
@@ -36,6 +40,23 @@ public class TShopInfo extends BaseEntity {
      */
     @Column(name = "shop_desc")
     private String shopDesc;
+
+
+    /**
+     * 是否启用：1-启用；0-停用
+     */
+    @Column(name = "is_use")
+    @ApiModelProperty(name = "isUse", value = "状态 false：停用 true：启用",example = "true")
+    private  Boolean isUse;
+
+    public Boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
+    }
+
 
     /**
      * 省份

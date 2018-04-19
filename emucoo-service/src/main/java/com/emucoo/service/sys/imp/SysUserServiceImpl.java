@@ -1,8 +1,6 @@
 package com.emucoo.service.sys.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
-import com.emucoo.dto.modules.user.UserQuery;
-import com.emucoo.dto.modules.user.UserVo;
 import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserService;
@@ -23,22 +21,32 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	private SysUserMapper sysUserMapper;
 
 	@Override
-	public SysUser queryByUserName(String username) {
-		Example example=new Example(SysUser.class);
-		example.createCriteria().andEqualTo("username",username);
-		return sysUserMapper.selectByExample(example).get(0);
-
-	}
-
-	@Override
 	public List<Long> queryAllMenuId(Long userId) {
 		return sysUserMapper.queryAllMenuId(userId);
 	}
 
 
 	@Override
-	public List<UserVo> listUser(String realName,String username,String mobile,String email,String dptId,String shopId,String postId,Integer status) {
-		return sysUserMapper.listUser( realName, username, mobile, email, dptId, shopId, postId,status);
+	public List<SysUser> listUser(SysUser sysUser) {
+		Example example=new Example(SysUser.class);
+	    if(null!=sysUser.getRealName())
+			example.createCriteria().andEqualTo("realName",sysUser.getRealName());
+		if(null!=sysUser.getUsername())
+			example.createCriteria().andEqualTo("username",sysUser.getUsername());
+		if(null!=sysUser.getMobile())
+			example.createCriteria().andEqualTo("mobile",sysUser.getMobile());
+		if(null!=sysUser.getEmail())
+			example.createCriteria().andEqualTo("email",sysUser.getEmail());
+		if(null!=sysUser.getDptId())
+			example.createCriteria().andEqualTo("deptId",sysUser.getDptId());
+		if(null!=sysUser.getIsShopManager())
+			example.createCriteria().andEqualTo("isShopManager",sysUser.getIsShopManager());
+		if(null!=sysUser.getStatus())
+			example.createCriteria().andEqualTo("status",sysUser.getStatus());
+		if(null!=sysUser.getIsDel())
+			example.createCriteria().andEqualTo("isDel",sysUser.getIsDel());
+
+		return sysUserMapper.selectByExample(example);
 	}
 
 }

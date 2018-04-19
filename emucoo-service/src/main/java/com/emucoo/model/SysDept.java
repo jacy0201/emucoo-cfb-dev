@@ -32,11 +32,62 @@ public class SysDept extends BaseEntity {
     @Column(name = "dpt_no")
     private String dptNo;
 
+
     /**
-     * 地址代码
+     * 机构简称
+     *
      */
-    @Column(name = "address_code")
-    private String addressCode;
+    @Column(name = "short_name")
+    private String shortName;
+
+    /**
+     * 省份
+     */
+    private String province;
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    /**
+
+     * 市
+     */
+    private String city;
+
+    /**
+     * 区
+     */
+    private String district;
+
 
     /**
      * 详细地址
@@ -190,23 +241,6 @@ public class SysDept extends BaseEntity {
         this.dptNo = dptNo;
     }
 
-    /**
-     * 获取地址代码
-     *
-     * @return address_code - 地址代码
-     */
-    public String getAddressCode() {
-        return addressCode;
-    }
-
-    /**
-     * 设置地址代码
-     *
-     * @param addressCode 地址代码
-     */
-    public void setAddressCode(String addressCode) {
-        this.addressCode = addressCode;
-    }
 
     /**
      * 获取详细地址

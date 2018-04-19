@@ -31,16 +31,16 @@
         update t_operate_data_for_work
         <set>
             <if test="auditUserId != null">
-                audit_user_id = #{auditUserId}
+                audit_user_id = #{auditUserId},
             </if>
             <if test="auditResult != null">
-                audit_result = #{auditResult}
+                audit_result = #{auditResult},
             </if>
             <if test="auditImgIds != null ">
-                audit_img_ids = #{auditImgIds}
+                audit_img_ids = #{auditImgIds},
             </if>
             <if test="modifyTime != null">
-                modify_time = #{modifyTime}
+                modify_time = #{modifyTime},
             </if>
         </set>
         where id=#{id}

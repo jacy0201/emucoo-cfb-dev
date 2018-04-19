@@ -1,18 +1,16 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.R;
-import com.emucoo.manager.controller.AbstractController;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserService;
 import com.emucoo.service.sys.SysUserTokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
 
@@ -21,7 +19,7 @@ import java.io.IOException;
  */
 @RestController
 @Api(description="用户登录" )
-public class SysLoginController extends AbstractController {
+public class SysLoginController extends BaseResource {
 
 	@Autowired
 	private SysUserTokenService sysUserTokenService;
@@ -43,8 +41,9 @@ public class SysLoginController extends AbstractController {
 	public R login(String username, String password)throws IOException {
 
 		//用户信息
-		SysUser user = sysUserService.queryByUserName(username);
-
+		SysUser sysUser=new SysUser();
+		sysUser.setUsername(username);
+		SysUser user = sysUserService.findOne(sysUser);
 		//账号不存在、密码错误
 		if(user == null || !user.getPassword().equals(new Sha256Hash(password, user.getSalt()).toHex())) {
 			return R.error("账号或密码不正确");

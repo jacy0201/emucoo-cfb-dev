@@ -33,7 +33,7 @@
         from t_report_user a
             left join t_report b on a.report_id=b.id
             left join sys_user c on b.reporter_id=c.id
-            left join sys_dept d on b.reporter_dpt_id=d.id;
+            left join sys_dept d on b.reporter_dpt_id=d.id
         where
             a.user_id = #{userId} and a.is_read=0
     </select>
@@ -43,7 +43,7 @@
         from t_report_user a
             left join t_report b on a.report_id=b.id
             left join sys_user c on b.reporter_id=c.id
-            left join sys_dept d on b.reporter_dpt_id=d.id;
+            left join sys_dept d on b.reporter_dpt_id=d.id
         where
             a.user_id = #{userId} and a.is_read=0
     </select>

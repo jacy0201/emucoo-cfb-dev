@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.SysArea;
+import com.emucoo.model.TBrandInfo;
 import com.emucoo.service.sys.SysAreaService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,17 +35,34 @@ public class SysAreaController extends BaseResource {
 	@PostMapping ("/list")
 	@RequiresPermissions("sys:area:list")
 	@ResponseBody
-	@ApiOperation(value="查询分区列表")
+	@ApiOperation(value="分页查询分区")
 	public ApiResult list(@RequestBody ParamVo<SysArea> param){
 		SysArea sysArea = param.getData();
 		Example example=new Example(SysArea.class);
-		if(null!=sysArea.getAreaName()) {
+		if(null!=sysArea && null!=sysArea.getAreaName()) {
 			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
 		}
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysArea> areaList = sysAreaService.selectByExample(example);
 		PageInfo<SysArea> pageInfo=new PageInfo(areaList);
 		return success(pageInfo);
+
+	}
+
+	/**
+	 * 查询分区列表(不分页)
+	 */
+	@PostMapping ("/listAll")
+	@RequiresPermissions("sys:area:listAll")
+	@ResponseBody
+	@ApiOperation(value="查询全部分区")
+	public ApiResult listAll(@RequestBody SysArea sysArea){
+		Example example=new Example(SysArea.class);
+		if(null!=sysArea.getAreaName()) {
+			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
+		}
+		List<SysArea> areaList = sysAreaService.selectByExample(example);
+		return success(areaList);
 
 	}
 

@@ -5,6 +5,7 @@ import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,19 +25,21 @@ public class ChancePointController extends BaseResource {
 
     @ApiOperation(value="机会点列表", httpMethod = "POST")
     @PostMapping("/list")
-    public ApiResult<List<TOpportunity>> listChancePoint(@RequestBody ParamVo<String> param) {
-        String keyword = param.getData();
+    public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<TOpportunity> param) {
+        String keyword = param.getData()==null?"":param.getData().getName();
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
-
-        return success(opptList);
+        return success(new PageInfo<>(opptList));
     }
 
     @ApiOperation(value = "编辑机会点", httpMethod = "POST")
     @PostMapping("/edit")
-    public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<Long> param) {
-        Long id = param.getData();
+    public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<TOpportunity> param) {
+        TOpportunity oppt = param.getData();
+        if(oppt == null)
+            return fail("parameter is wrong");
+        Long id = oppt.getId();
         TOpportunity opportunity = chancePointService.fetchChancePointById(id);
         return success(opportunity);
     }
@@ -44,6 +48,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/create")
     public ApiResult<String> createChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
+        if(opportunity == null)
+            return fail("parameter is wrong");
         chancePointService.createChancePoint(opportunity);
         return success("ok");
     }
@@ -52,6 +58,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/update")
     public ApiResult<String> updateChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
+        if(opportunity == null)
+            return fail("parameter is wrong");
         chancePointService.updateChancePoint(opportunity);
         return success("ok");
     }
@@ -60,6 +68,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/delete")
     public ApiResult<String> deleteChancePoint(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.deleteChancePoints(ids);
         return success("ok");
     }
@@ -68,6 +78,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/enable")
     public ApiResult<String> enableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.enableChancePoints(ids);
         return success("ok");
     }
@@ -76,6 +88,8 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/disable")
     public ApiResult<String> disableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
+        if(ids == null || ids.size() == 0)
+            return fail("parameter is wrong.");
         chancePointService.disableChancePoints(ids);
         return success("ok");
     }
