@@ -55,6 +55,7 @@ public class ChancePointServiceImpl implements ChancePointService {
     public void updateChancePoint(TOpportunity opportunity, Long userId) {
         opportunity.setCreateType(1);
         opportunity.setModifyUserId(userId);
+        opportunity.setModifyTime(DateUtil.currentDate());
         opportunityMapper.upsert(opportunity);
     }
 

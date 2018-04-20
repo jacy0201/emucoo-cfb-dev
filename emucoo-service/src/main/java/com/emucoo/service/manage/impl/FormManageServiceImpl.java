@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,23 +147,33 @@ public class FormManageServiceImpl implements FormManageService {
         formMainMapper.upsert(formMain);
 
         List<TFormScoreItem> formScoreItems = formDetail.getFormScoreItems();
-//        formScoreItemMapper.dropByFormMainId(formMain.getId());
-        formScoreItemMapper.upsertMulti(formScoreItems);
+        formScoreItemMapper.dropByFormMainId(formMain.getId());
+        formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
+        formScoreItemMapper.insertList(formScoreItems);
 
         List<TFormImptRules> formImptRuless = formDetail.getFormImptRules();
-//        formImptRulesMapper.dropByFormMainId(formMain.getId());
-        formImptRulesMapper.upsertMulti(formImptRuless);
+        formImptRulesMapper.dropByFormMainId(formMain.getId());
+        formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
+        formImptRulesMapper.insertList(formImptRuless);
 
         // form add items maybe is null
         List<TFormAddItem> formAddItems = formDetail.getFormAddItems();
-//        formAddItemMapper.dropByFormMainId(formMain.getId());
-        if(formAddItems != null && formAddItems.size() > 0)
-            formAddItemMapper.upsertMulti(formAddItems);
+        formAddItemMapper.dropByFormMainId(formMain.getId());
+        if(formAddItems != null && formAddItems.size() > 0) {
+            formAddItems.forEach(it -> it.setFormMainId(formMain.getId()));
+            formAddItemMapper.insertList(formAddItems);
+        }
 
+        dropModuleByFormMainId(formMain.getId());
         List<FormModule> formModules = formDetail.getFormModules();
         formModules.forEach(formModule -> {
+            Optional.of(formModule.getFormType()).ifPresent(it -> it.setFormMainId(formMain.getId()));
             disassembleFormModule(formModule);
         });
+    }
+
+    private void dropModuleByFormMainId(Long id) {
+
     }
 
     private void disassembleFormModule(FormModule formModule) {
