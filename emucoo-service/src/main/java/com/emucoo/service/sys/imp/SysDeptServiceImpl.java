@@ -1,15 +1,19 @@
 package com.emucoo.service.sys.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
-import com.emucoo.mapper.SysDeptMapper;
-import com.emucoo.model.SysDept;
+import com.emucoo.dto.modules.sys.DeptQuery;
+import com.emucoo.mapper.*;
+import com.emucoo.model.*;
 import com.emucoo.service.sys.SysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -17,17 +21,86 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 
 	@Autowired
 	private SysDeptMapper sysDeptMapper;
-	
+
+	@Autowired
+	private SysDptAreaMapper sysDptAreaMapper;
+
+	@Autowired
+	private SysDptBrandMapper sysDptBrandMapper;
+
+	@Autowired
+	private SysAreaMapper sysAreaMapper;
+
+	@Autowired
+	private TBrandInfoMapper brandInfoMapper;
+
 	@Override
-	public List<SysDept> queryList(Map<String, Object> params){
-		List<SysDept> deptList =sysDeptMapper.selectAll();
-		for(SysDept sysDeptEntity : deptList){
-			SysDept parentDeptEntity =  sysDeptMapper.selectByPrimaryKey(sysDeptEntity.getParentId());
-			if(parentDeptEntity != null){
-				sysDeptEntity.setParentName(parentDeptEntity.getDptName());
+	public List<SysDept> queryList(DeptQuery deptQuery){
+		Example example=new Example(SysDept.class);
+		Long brandId=null;
+		Long areaId=null;
+		String dptName="";
+		Boolean isUse=null;
+		List<SysDept> deptList=null;
+		if(null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
+			dptName=deptQuery.getDptName();
+			example.createCriteria().andLike("dptName","%"+dptName+"%");
+		}
+		if(null!=deptQuery.getIsUse()){
+			isUse=deptQuery.getIsUse();
+			example.createCriteria().andEqualTo("isUse",isUse);
+		}
+
+		HashMap paramMap=null;
+		List<SysDept> listB=null;
+		List<SysDept> listA=null;
+		if(null!=deptQuery.getBrandId()){
+			paramMap=new HashMap();
+			brandId=deptQuery.getBrandId();
+			paramMap.put("brandId",brandId);
+			paramMap.put("dptName",dptName);
+			paramMap.put("isUse",isUse);
+			listB=sysDeptMapper.listByBrand(paramMap);
+		}
+
+		if(null!=deptQuery.getAreaId()){
+			paramMap=new HashMap();
+			areaId=deptQuery.getAreaId();
+			paramMap.put("areaId",areaId);
+			paramMap.put("dptName",dptName);
+			paramMap.put("isUse",isUse);
+			listA=sysDeptMapper.listByArea(paramMap);
+		}
+
+		if(null!=areaId  && null==brandId){ deptList=listA; }
+		else if(null == areaId && null!=brandId){deptList=listB;}
+		else if(null == areaId && null ==brandId){deptList =sysDeptMapper.selectByExample(example); }
+		else if(null!=areaId && null!=brandId){
+			if(null!=listA && null!=listB){
+				deptList=new ArrayList<>();
+				for(SysDept sysDept1 :listA){
+					for (SysDept sysDept2 :listB){
+						if(sysDept1.getId()==sysDept2.getId()){
+							deptList.add(sysDept1);
+						}
+					}
+				}
 			}
 		}
-		return deptList;
+		if(null!=deptList && deptList.size()>0) {
+			HashMap param =null;
+			for (SysDept sysDeptEntity : deptList) {
+				param =new HashMap();
+				param.put("dptId",sysDeptEntity.getId());
+				sysDeptEntity.setAreaList(sysAreaMapper.listByDpt(param));
+				sysDeptEntity.setBrandList(brandInfoMapper.listByDpt(param));
+				SysDept parentDeptEntity = sysDeptMapper.selectByPrimaryKey(sysDeptEntity.getParentId());
+				if (parentDeptEntity != null) {
+					sysDeptEntity.setParentName(parentDeptEntity.getDptName());
+				}
+			}
+		}
+			return deptList;
 	}
 
 	@Override
@@ -60,4 +133,111 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 			deptIdList.add(deptId);
 		}
 	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public  void saveDept(SysDept sysDept){
+		sysDept.setIsDel(false);
+		sysDept.setIsUse(true);
+		sysDept.setCreateTime(new Date());
+		sysDept.setCreateUserId(1L);
+		int deptId=sysDeptMapper.insertUseGeneratedKeys(sysDept);
+
+		//添加机构地区关联信息
+		List<SysArea> areaList=sysDept.getAreaList();
+		SysDptArea sysDptArea=null;
+		if(null!=areaList && areaList.size()>0){
+			for(SysArea area :areaList){
+				sysDptArea=new SysDptArea();
+				sysDptArea.setAreaId(area.getId());
+				sysDptArea.setDptId(Long.parseLong(deptId+""));
+				sysDptArea.setCreateTime(new Date());
+				sysDptArea.setCreateUserId(1L);
+				sysDptArea.setIsDel(false);
+				sysDptAreaMapper.insertSelective(sysDptArea);
+			}
+		}
+
+		//添加机构品牌关联信息
+		SysDptBrand sysDptBrand=null;
+		List<TBrandInfo> brandList=sysDept.getBrandList();
+		if(null!=brandList && brandList.size()>0){
+			for(TBrandInfo brandInfo :brandList){
+				sysDptBrand=new SysDptBrand();
+				sysDptBrand.setBrandId(brandInfo.getId());
+				sysDptBrand.setDptId(Long.parseLong(deptId+""));
+				sysDptBrand.setCreateTime(new Date());
+				sysDptBrand.setCreateUserId(1L);
+				sysDptBrand.setIsDel(false);
+				sysDptBrandMapper.insertSelective(sysDptBrand);
+			}
+		}
+
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public  void updateDept(SysDept sysDept){
+		sysDept.setModifyTime(new Date());
+		sysDept.setModifyUserId(1L);
+		sysDeptMapper.updateByPrimaryKeySelective(sysDept);
+
+		//添加机构地区关联信息
+		List<SysArea> areaList=sysDept.getAreaList();
+		SysDptArea sysDptArea=null;
+		if(null!=areaList && areaList.size()>0){
+			//先删除 该机构之前绑定的 地区信息
+			sysDptArea=new SysDptArea();
+			sysDptArea.setDptId(sysDept.getId());
+			sysDptAreaMapper.delete(sysDptArea);
+
+			//再添加机构新绑定的地区信息
+			for(SysArea area :areaList){
+				sysDptArea=new SysDptArea();
+				sysDptArea.setAreaId(area.getId());
+				sysDptArea.setDptId(sysDept.getId());
+				sysDptArea.setCreateTime(new Date());
+				sysDptArea.setCreateUserId(1L);
+				sysDptArea.setIsDel(false);
+				sysDptAreaMapper.insertSelective(sysDptArea);
+			}
+		}
+
+		SysDptBrand sysDptBrand=null;
+		//先删除 该机构之前绑定的 品牌信息
+		sysDptBrand=new SysDptBrand();
+		sysDptBrand.setDptId(sysDept.getId());
+		sysDptBrandMapper.delete(sysDptBrand);
+
+		//再添加机构品牌关联信息
+		List<TBrandInfo> brandList=sysDept.getBrandList();
+		if(null!=brandList && brandList.size()>0){
+			for(TBrandInfo brandInfo :brandList){
+				sysDptBrand=new SysDptBrand();
+				sysDptBrand.setBrandId(brandInfo.getId());
+				sysDptBrand.setDptId(sysDept.getId());
+				sysDptBrand.setCreateTime(new Date());
+				sysDptBrand.setCreateUserId(1L);
+				sysDptBrand.setIsDel(false);
+				sysDptBrandMapper.insertSelective(sysDptBrand);
+			}
+		}
+
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteDept(SysDept sysDept){
+		SysDptArea sysDptArea=new SysDptArea();
+		sysDptArea.setDptId(sysDept.getId());
+		sysDptAreaMapper.delete(sysDptArea);
+
+		SysDptBrand sysDptBrand=new SysDptBrand();
+		sysDptBrand.setDptId(sysDept.getId());
+		sysDptBrandMapper.delete(sysDptBrand);
+
+		sysDeptMapper.delete(sysDept);
+	}
+
+
 }

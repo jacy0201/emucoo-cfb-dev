@@ -62,4 +62,38 @@
     and status = 0 and push_token is not null
   </select>
 
+  <select id="listByPostId"  parameterType="Map" resultType="com.emucoo.model.SysUser">
+    SELECT
+    t1.*
+    FROM
+    sys_user_post t2
+    INNER JOIN sys_user t1 ON t2.user_id = t1.id
+    WHERE t1.is_del=0 AND
+    t2.post_id = #{postId}
+    <if test="dptId != null">
+      and dpt_id = #{dptId}
+    </if>
+    <if test="realName != null  and realName!=''">
+      and real_name LIKE "%"#{realName}"%"
+    </if>
+
+   </select>
+
+  <select id="listByShopId"  parameterType="Map" resultType="com.emucoo.model.SysUser">
+    SELECT
+    t1.*
+    FROM
+    sys_user_shop t2
+    INNER JOIN sys_user t1 ON t2.user_id = t1.id
+    WHERE t1.is_del=0 AND
+    t2.shop_id = #{shopId}
+    <if test="dptId != null">
+      and dpt_id = #{dptId}
+    </if>
+    <if test="realName != null  and realName!=''">
+      and real_name LIKE "%"#{realName}"%"
+    </if>
+  </select>
+
+
 </mapper>

@@ -3,11 +3,9 @@ package com.emucoo.service.manage.impl;
 import com.emucoo.mapper.TOpportunityMapper;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.session.RowBounds;
+import com.emucoo.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -19,15 +17,12 @@ public class ChancePointServiceImpl implements ChancePointService {
 
     @Override
     public List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz) {
-        if(StringUtils.isNotBlank(keyword)) {
-            Example example = new Example(TOpportunity.class);
-            if(StringUtils.isNotBlank(keyword)) {
-                example.createCriteria().andLike("name", "%" + keyword + "%");
-            }
-            return opportunityMapper.selectByExampleAndRowBounds(example, new RowBounds(pageSz*(pageNm-1), pageSz));
-        } else {
-            return opportunityMapper.selectByRowBounds(new TOpportunity(), new RowBounds(pageSz*(pageNm-1), pageSz));
-        }
+       return opportunityMapper.findChancePointsByName(keyword, (pageNm - 1) * pageSz, pageSz);
+    }
+
+    @Override
+    public int countChancePointsByNameKeyword(String keyword) {
+        return opportunityMapper.countChancePointsByName(keyword);
     }
 
     @Override
@@ -36,7 +31,12 @@ public class ChancePointServiceImpl implements ChancePointService {
     }
 
     @Override
-    public void createChancePoint(TOpportunity opportunity) {
+    public void createChancePoint(TOpportunity opportunity, Long userId) {
+        opportunity.setCreateTime(DateUtil.currentDate());
+        opportunity.setModifyTime(DateUtil.currentDate());
+        opportunity.setCreateUserId(userId);
+        opportunity.setModifyUserId(userId);
+        opportunity.setCreateType(0);
         opportunityMapper.insert(opportunity);
     }
 
@@ -52,6 +52,7 @@ public class ChancePointServiceImpl implements ChancePointService {
 
     @Override
     public void updateChancePoint(TOpportunity opportunity) {
+        opportunity.setCreateType(0);
         opportunityMapper.updateByPrimaryKey(opportunity);
     }
 

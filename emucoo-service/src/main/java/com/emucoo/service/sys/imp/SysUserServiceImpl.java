@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,28 +26,18 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		return sysUserMapper.queryAllMenuId(userId);
 	}
 
+	@Override
+	public List<SysUser> listByPostId(HashMap map) {
+
+		return sysUserMapper.listByPostId(map);
+
+	}
 
 	@Override
-	public List<SysUser> listUser(SysUser sysUser) {
-		Example example=new Example(SysUser.class);
-	    if(null!=sysUser.getRealName())
-			example.createCriteria().andEqualTo("realName",sysUser.getRealName());
-		if(null!=sysUser.getUsername())
-			example.createCriteria().andEqualTo("username",sysUser.getUsername());
-		if(null!=sysUser.getMobile())
-			example.createCriteria().andEqualTo("mobile",sysUser.getMobile());
-		if(null!=sysUser.getEmail())
-			example.createCriteria().andEqualTo("email",sysUser.getEmail());
-		if(null!=sysUser.getDptId())
-			example.createCriteria().andEqualTo("deptId",sysUser.getDptId());
-		if(null!=sysUser.getIsShopManager())
-			example.createCriteria().andEqualTo("isShopManager",sysUser.getIsShopManager());
-		if(null!=sysUser.getStatus())
-			example.createCriteria().andEqualTo("status",sysUser.getStatus());
-		if(null!=sysUser.getIsDel())
-			example.createCriteria().andEqualTo("isDel",sysUser.getIsDel());
+	public List<SysUser> listByShopId(HashMap map) {
 
-		return sysUserMapper.selectByExample(example);
+		return sysUserMapper.listByShopId(map);
+
 	}
 
 }

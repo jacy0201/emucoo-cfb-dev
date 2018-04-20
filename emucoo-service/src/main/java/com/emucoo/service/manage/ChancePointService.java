@@ -7,7 +7,7 @@ import java.util.List;
 public interface ChancePointService {
 
 
-    void createChancePoint(TOpportunity opportunity);
+    void createChancePoint(TOpportunity opportunity, Long userId);
 
     void updateChancePoint(TOpportunity opportunity);
 
@@ -19,5 +19,8 @@ public interface ChancePointService {
 
     List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz);
 
+    int countChancePointsByNameKeyword(String keyword);
+
     TOpportunity fetchChancePointById(Long id);
+
 }

@@ -50,6 +50,25 @@ public class SysPostController extends BaseResource {
 
 
 	/**
+	 * 查询岗位列表(不分页)
+	 */
+	@PostMapping ("/listAll")
+	@RequiresPermissions("sys:post:listAll")
+	@ResponseBody
+	@ApiOperation(value="查询全部岗位")
+	public ApiResult listAll(@RequestBody SysPost sysPost){
+		Example example=new Example(SysPost.class);
+		if(null!=sysPost.getPostName()) {
+			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");
+		}
+		List<SysPost> postList = sysPostService.selectByExample(example);
+		return success(postList);
+
+	}
+
+
+
+	/**
 	 * 保存岗位
 	 */
 	@PostMapping ("/save")
