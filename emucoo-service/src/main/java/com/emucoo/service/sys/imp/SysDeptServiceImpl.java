@@ -87,7 +87,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 				}
 			}
 		}
-		if(null!=deptList) {
+		if(null!=deptList && deptList.size()>0) {
 			HashMap param =null;
 			for (SysDept sysDeptEntity : deptList) {
 				param =new HashMap();
