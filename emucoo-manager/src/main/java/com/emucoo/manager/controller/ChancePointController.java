@@ -6,6 +6,7 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "chancePoint")
+
+@Api(value = "机会点管理")
 public class ChancePointController extends BaseResource {
 
     @Autowired
@@ -29,8 +31,13 @@ public class ChancePointController extends BaseResource {
         String keyword = param.getData()==null?"":param.getData().getName();
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
+        int total = chancePointService.countChancePointsByNameKeyword(keyword);
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
-        return success(new PageInfo<>(opptList));
+        PageInfo pageInfo = new PageInfo<>(opptList);
+        pageInfo.setPageSize(pageSz);
+        pageInfo.setPageNum(pageNm);
+        pageInfo.setTotal(total);
+        return success(pageInfo);
     }
 
     @ApiOperation(value = "编辑机会点", httpMethod = "POST")
@@ -50,7 +57,7 @@ public class ChancePointController extends BaseResource {
         TOpportunity opportunity = param.getData();
         if(opportunity == null)
             return fail("parameter is wrong");
-        chancePointService.createChancePoint(opportunity);
+        chancePointService.createChancePoint(opportunity, 0L);
         return success("ok");
     }
 

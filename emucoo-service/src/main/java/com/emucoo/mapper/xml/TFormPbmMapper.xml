@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFormPbmMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormPbm">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
+        <result column="sub_problem_num" property="subProblemNum" jdbcType="INTEGER"/>
+        <result column="sub_problem_unit" property="subProblemUnit" jdbcType="VARCHAR"/>
+        <result column="problem_schema_type" property="problemSchemaType" jdbcType="BIT"/>
+        <result column="is_important" property="isImportant" jdbcType="BIT"/>
+        <result column="form_type_id" property="formTypeId" jdbcType="BIGINT"/>
+        <result column="description_hit" property="descriptionHit" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <select id="findFormPbmsByFormTypeId" resultMap="BaseResultMap">
+        select * from t_form_pbm where form_type_id = #{id}
+    </select>
+
+    <insert id="upsert" parameterType="com.emucoo.model.TFormPbm">
+        insert into t_form_pbm (id, name, score, create_user_id, create_time, modify_user_id, modify_time, sub_problem_num, sub_problem_unit, problem_schema_type, is_important, form_type_id, description_hit)
+        values (#{id}, #{name}, #{score}, #{createUserId}, #{createTime}, #{modifyUserId}, #{modifyTime}, #{subProblemNum}, #{subProblemUnit}, #{problemSchemaType}, #{isImportant}, #{formTypeId}, #{descriptionHit})
+        on duplicate key update name=#{name}, score=#{score}, modify_user_id=#{modifyUserId}, modify_time=#{modifyTime}, sub_problem_num=#{subProblemNum}, sub_problem_unit=#{subProblemUnit}, problem_schema_type=#{problemSchemaType}, is_important=#{isImportant}, form_type_id=#{form_type_id}, description_hit=#{description_hit}
+    </insert>
+</mapper>

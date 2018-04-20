@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFormSubPbmMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormSubPbm">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sub_problem_name" property="subProblemName" jdbcType="VARCHAR"/>
+        <result column="sub_problem_score" property="subProblemScore" jdbcType="INTEGER"/>
+        <result column="form_problem_id" property="formProblemId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
+        <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="findFormSubPbmsByFormPbmId" resultMap="BaseResultMap">
+        select * from t_form_sub_pbm where form_problem_id=#{id}
+    </select>
+
+    <insert id="upsertMult" parameterType="java.util.List">
+        insert into t_form_sub_pbm (id, sub_problem_name, sub_problem_score, form_problem_id, create_time, modify_time, create_user_id, modify_user_id, org_id)
+        values
+        <foreach collection="list" item="it" separator=",">
+            (#{it.id}, #{it.subProblemName}, #{it.subProblemScore}, #{it.formProblemId}, #{it.createTime}, #{it.modifyTime}, #{it.createuserId}, #{it.modifyUserId}, #{it.orgId})
+        </foreach>
+        on duplicate key update sub_problem_name=value(sub_problem_name), sub_problem_score=values(sub_problem_score), form_problem_id=values(form_problem_id), modify_time=values(modify_time), modify_user_id=values(modify_user_id), org_id=values(org_id)
+    </insert>
+</mapper>

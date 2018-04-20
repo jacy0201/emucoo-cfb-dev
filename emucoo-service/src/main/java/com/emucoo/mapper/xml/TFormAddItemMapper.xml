@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TFormAddItemMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormAddItem">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="findFormAddItemsByFormMainId" resultMap="BaseResultMap">
+        select * from t_form_add_item where form_main_id=#{id}
+    </select>
+
+    <insert id="upsertMulti" parameterType="java.util.List">
+        insert into t_form_add_item (id, name, create_time, modify_time, form_main_id)
+        values
+        <foreach collection="list" item="it" separator=",">
+            (#{it.id}, #{it.name}, #{it.createTime}, #{it.modifyTime}, #{it.formMainId})
+        </foreach>
+        on duplicate key update name=values(name), modify_time=values(modify_time), form_main_id=values(form_main_id)
+    </insert>
+</mapper>
