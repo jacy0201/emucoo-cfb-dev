@@ -9,8 +9,9 @@ import java.util.List;
 public interface SysDeptMapper extends MyMapper<SysDept> {
 
     /**
-     * ²éÑ¯×Ó²¿ÃÅIDÁÐ±í
-     * @param parentId  ÉÏ¼¶²¿ÃÅID
+     * 查询子部门ID列表
+     *
+     * @param parentId 上级部门ID
      */
     List<Long> queryDetpIdList(Long parentId);
 
