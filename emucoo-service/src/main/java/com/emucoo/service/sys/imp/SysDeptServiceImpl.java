@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 
 @Service
@@ -49,8 +52,8 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		}
 
 		HashMap paramMap=null;
-		List listB=null;
-		List listA=null;
+		List<SysDept> listB=null;
+		List<SysDept> listA=null;
 		if(null!=deptQuery.getBrandId()){
 			paramMap=new HashMap();
 			brandId=deptQuery.getBrandId();
@@ -71,14 +74,18 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 
 		if(null!=areaId  && null==brandId){ deptList=listA; }
 		else if(null == areaId && null!=brandId){deptList=listB;}
+		else if(null == areaId && null ==brandId){deptList =sysDeptMapper.selectByExample(example); }
 		else if(null!=areaId && null!=brandId){
-			listA.retainAll(listB);
-			if(null!=listA && listA.size()>0){
-				deptList=listA;
+			if(null!=listA && null!=listB){
+				deptList=new ArrayList<>();
+				for(SysDept sysDept1 :listA){
+					for (SysDept sysDept2 :listB){
+						if(sysDept1.getId()==sysDept2.getId()){
+							deptList.add(sysDept1);
+						}
+					}
+				}
 			}
-		}
-		else if(null == areaId && null ==brandId){
-			deptList =sysDeptMapper.selectByExample(example);
 		}
 		if(null!=deptList) {
 			HashMap param =null;
