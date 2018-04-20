@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_form_type")
@@ -24,6 +25,9 @@ public class TFormType extends BaseEntity {
 
     @Column(name = "form_main_id")
     private Long formMainId;
+
+    @Transient
+    private List<TFormPbm> problems;
 
     /**
      * @return id
@@ -97,5 +101,13 @@ public class TFormType extends BaseEntity {
      */
     public void setFormMainId(Long formMainId) {
         this.formMainId = formMainId;
+    }
+
+    public List<TFormPbm> getProblems() {
+        return problems;
+    }
+
+    public void setProblems(List<TFormPbm> problems) {
+        this.problems = problems;
     }
 }

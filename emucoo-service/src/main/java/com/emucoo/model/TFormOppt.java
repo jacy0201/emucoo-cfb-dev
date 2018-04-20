@@ -32,7 +32,7 @@ public class TFormOppt extends BaseEntity {
      * 题项方案类型（1：不带抽样，2：带抽样）
      */
     @Column(name = "problem_type")
-    private Boolean problemType;
+    private Integer problemType;
 
     @Column(name = "sub_problem_id")
     private Long subProblemId;
@@ -120,7 +120,7 @@ public class TFormOppt extends BaseEntity {
      *
      * @return problem_type - 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public Boolean getProblemType() {
+    public Integer getProblemType() {
         return problemType;
     }
 
@@ -129,7 +129,7 @@ public class TFormOppt extends BaseEntity {
      *
      * @param problemType 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public void setProblemType(Boolean problemType) {
+    public void setProblemType(Integer problemType) {
         this.problemType = problemType;
     }
 

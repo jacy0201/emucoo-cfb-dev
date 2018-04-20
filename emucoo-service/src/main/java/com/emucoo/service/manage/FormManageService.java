@@ -1,6 +1,5 @@
 package com.emucoo.service.manage;
 
-import com.emucoo.model.FormDetail;
 import com.emucoo.model.TFormMain;
 
 import java.util.List;
@@ -21,8 +20,8 @@ public interface FormManageService {
 
     void disableForms(List<Long> ids);
 
-    FormDetail fetchFormDetail(Long id);
+    TFormMain fetchFormDetail(Long id);
 
-    void saveFormDetail(FormDetail formDetail);
+    void saveFormDetail(TFormMain formMain);
 
 }

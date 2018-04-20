@@ -16,8 +16,28 @@
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
     </resultMap>
 
+    <resultMap id="opptMap" type="com.emucoo.model.TOpportunity">
+        <id column="oppt_id" property="id" jdbcType="BIGINT"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="front_can_create" property="frontCanCreate" jdbcType="BIT"/>
+    </resultMap>
+
+    <resultMap id="subProblemMap" type="com.emucoo.model.TFormSubPbm">
+        <id column="sub_problem_id" property="id" jdbcType="BIGINT"/>
+        <result column="sub_problem_name" property="subProblemName" jdbcType="VARCHAR"/>
+        <result column="sub_problem_score" property="subProblemScore" jdbcType="INTEGER"/>
+        <result column="form_problem_id" property="formProblemId" jdbcType="BIGINT"/>
+
+        <association property="opportunity" resultMap="opptMap" />
+    </resultMap>
+
     <select id="findFormSubPbmsByFormPbmId" resultMap="BaseResultMap">
-        select * from t_form_sub_pbm where form_problem_id=#{id}
+        select a.id as sub_problem_id, a.sub_problem_name, a.sub_problem_score, a.form_problem_id, c.id as oppt_id, c.type, c.name, c.description, c.front_can_create
+        from t_form_sub_pbm a left join t_form_oppt b on a.form_problem_id = b.problem_id and a.id = b.sub_problem_id
+            left join t_opportunity c on b.oppt_id=c.id
+        where a.form_problem_id=#{id}
     </select>
 
     <insert id="upsertMult" parameterType="java.util.List">

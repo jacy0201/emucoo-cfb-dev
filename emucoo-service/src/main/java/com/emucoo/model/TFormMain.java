@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_form_main")
@@ -65,6 +66,19 @@ public class TFormMain extends BaseEntity {
 
     @Column(name = "is_del")
     private Boolean isDel;
+
+
+    @Transient
+    private List<TFormScoreItem> scoreItems;
+
+    @Transient
+    private List<TFormImptRules> imptRules;
+
+    @Transient
+    private List<TFormAddItem> addItems;
+
+    @Transient
+    private List<TFormType> formModules;
 
     /**
      * @return id
@@ -254,5 +268,53 @@ public class TFormMain extends BaseEntity {
 
     public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
+    }
+
+    public Boolean getUse() {
+        return isUse;
+    }
+
+    public void setUse(Boolean use) {
+        isUse = use;
+    }
+
+    public Boolean getDel() {
+        return isDel;
+    }
+
+    public void setDel(Boolean del) {
+        isDel = del;
+    }
+
+    public List<TFormScoreItem> getScoreItems() {
+        return scoreItems;
+    }
+
+    public void setScoreItems(List<TFormScoreItem> scoreItems) {
+        this.scoreItems = scoreItems;
+    }
+
+    public List<TFormImptRules> getImptRules() {
+        return imptRules;
+    }
+
+    public void setImptRules(List<TFormImptRules> imptRules) {
+        this.imptRules = imptRules;
+    }
+
+    public List<TFormAddItem> getAddItems() {
+        return addItems;
+    }
+
+    public void setAddItems(List<TFormAddItem> addItems) {
+        this.addItems = addItems;
+    }
+
+    public List<TFormType> getFormModules() {
+        return formModules;
+    }
+
+    public void setFormModules(List<TFormType> formModules) {
+        this.formModules = formModules;
     }
 }
