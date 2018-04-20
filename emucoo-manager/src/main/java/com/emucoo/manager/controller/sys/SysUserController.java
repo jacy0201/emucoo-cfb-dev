@@ -2,17 +2,25 @@ package com.emucoo.manager.controller.sys;
 
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserRoleService;
 import com.emucoo.service.sys.SysUserService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,17 +37,130 @@ public class SysUserController extends BaseResource {
 
 
 	/**
-	 * 所有用户列表分页查询
-	 * @return
+	 * 查询用户列表
 	 */
+	@ApiOperation(value="分页查询用户")
 	@PostMapping("/list")
 	@RequiresPermissions("sys:user:list")
-	public ApiResult list(@RequestBody ParamVo<SysUser> param){
-		SysUser sysUser=param.getData();
-		PageHelper.startPage(param.getPageNumber(), param.getPageSize(),"create_time desc");
-	//	List<SysUser> userList = sysUserService.listUser(sysUser);
-		return success("success");
+	@ResponseBody
+	public ApiResult list(@RequestBody ParamVo<UserQuery> param){
+        UserQuery userQuery=param.getData();
+        PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
+        List<SysUser> userList = sysUserService.queryList(userQuery);
+        PageInfo<SysUser> pageInfo=new PageInfo(userList);
+        return success(pageInfo);
 	}
+
+    /**
+     * 创建用户
+     */
+    @ApiOperation(value="创建用户")
+    @PostMapping("/save")
+    @RequiresPermissions("sys:user:save")
+    public ApiResult save(@RequestBody SysUser sysUser){
+        sysUser.setCreateTime(new Date());
+        sysUser.setCreateUserId(1L);
+        sysUser.setIsDel(false);
+        sysUser.setIsAdmin(false);
+        //sha256加密
+        String salt = RandomStringUtils.randomAlphanumeric(20);
+        sysUser.setPassword(new Sha256Hash(sysUser.getPassword(), salt).toHex());
+        sysUser.setSalt(salt);
+        sysUserService.addUser(sysUser);
+     return success("success");
+    }
+
+    /**
+     * 编辑用户
+     */
+    @ApiOperation(value="编辑用户")
+    @PostMapping("/edit")
+    @RequiresPermissions("sys:user:edit")
+    public ApiResult edit(@RequestBody SysUser sysUser){
+        if(null==sysUser.getId()){return fail("id 不能为空!");}
+        sysUser.setModifyTime(new Date());
+        sysUser.setModifyUserId(1L);
+        //sha256加密
+        if(null!=sysUser.getPassword()) sysUser.setPassword(new Sha256Hash(sysUser.getPassword(), sysUser.getSalt()).toHex());
+        sysUserService.addUser(sysUser);
+        sysUserService.editUser(sysUser);
+        return success("success");
+    }
+
+
+    /**
+     * 设置用户品牌分区
+     */
+    @ApiOperation(value="设置品牌分区")
+    @PostMapping("/setBrandArea")
+    @RequiresPermissions("sys:user:setBrandArea")
+    public ApiResult setBrandArea(@RequestBody UserBrandArea userBrandArea){
+        if(null==userBrandArea.getUserId()){return fail("userId 不能为空!");}
+        sysUserService.setBrandArea(userBrandArea);
+        return success("success");
+    }
+
+
+    /**
+     * 批量删除用户
+     */
+    @ApiOperation(value="批量删除用户",notes = "多个用户id 用 , 分隔")
+    @PostMapping("/deleteByIds")
+    @RequiresPermissions("sys:user:deleteByIds")
+    public ApiResult deleteByIds(String ids){
+        if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
+        if(ArrayUtils.contains(ids.split(","), "1")){
+            return fail("系统管理员不能删除");
+        }
+        sysUserService.deleteByIds(ids);
+        return success("success");
+    }
+
+    /**
+     * 删除单个用户
+     */
+    @PostMapping("/delete")
+    @RequiresPermissions("sys:user:delete")
+    @ApiOperation(value="删除用户")
+    public ApiResult delete(Long id){
+        if(null==id){return fail("id 不能为空!");}
+        if(id==1){ return fail("系统管理员不能删除"); }
+        sysUserService.deleteById(id);
+        return success("success");
+    }
+
+    /**
+     * 批量启用/停用 用户
+     */
+    @PostMapping("/modifyBatchUse")
+    @RequiresPermissions("sys:user:modifyBatchUse")
+    @ApiOperation(value="批量启用/停用",notes = "ids 传用户id,多个id 直接用 ,分隔; 用户状态(status):0-启用；1-停用；2-锁定；")
+    public ApiResult modifyBatchUse(String ids,Integer status){
+        if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
+        if(ArrayUtils.contains(ids.split(","), "1")){
+            return fail("系统管理员不能删除");
+        }
+        if(null==status){ return fail("status 不能为空！"); }
+        sysUserService.modifyBatchUse(ids,status);
+        return success("success");
+    }
+
+    /**
+     * 启用/停用 用户
+     */
+    @PostMapping("/modifyUse")
+    @RequiresPermissions("sys:user:modifyUse")
+    @ApiOperation(value="启用/停用",notes = "用户状态(status):0-启用；1-停用；2-锁定；")
+    public ApiResult modifyUse(Long id,Integer status){
+        if(null==id){return fail("id 不能为空!");}
+        if(id==1){ return fail("系统管理员不能修改"); }
+        if(null==status){ return fail("status 不能为空！"); }
+        SysUser sysUser=new SysUser();
+        sysUser.setId(id);
+        sysUser.setStatus(status);
+        sysUserService.updateSelective(sysUser);
+        return success("success");
+    }
 
 	/**
 	 * 根据用户id 获取用户详情
@@ -47,9 +168,9 @@ public class SysUserController extends BaseResource {
 	@PostMapping("/getUserById")
 	@ApiOperation(value="获取用户详情")
 	@ResponseBody
-	public ApiResult getUserById(@RequestBody SysUser sysUser){
-		if(null==sysUser.getId()){return fail("Id 不能为空!");}
-		return success(sysUserService.findById(sysUser.getId()));
+	public ApiResult getUserById(Long id){
+		if(null==id){return fail("Id 不能为空!");}
+		return success(sysUserService.findById(id));
 	}
 
 	/**

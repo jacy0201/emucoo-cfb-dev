@@ -1,6 +1,7 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,6 +21,15 @@ public class SysUser extends BaseEntity {
      */
     private String username;
 
+    public String getDptName() {
+        return dptName;
+    }
+
+    public void setDptName(String dptName) {
+        this.dptName = dptName;
+    }
+
+    @JsonIgnore
     private String password;
 
     private String remark;
@@ -61,6 +71,7 @@ public class SysUser extends BaseEntity {
      */
     private Integer status;
 
+
     /**
      * 用户拥有的岗位集合
      */
@@ -79,7 +90,6 @@ public class SysUser extends BaseEntity {
      * 用户负责的品牌集合
      */
     @Transient
-
     private List<TBrandInfo> brandList;
 
 
