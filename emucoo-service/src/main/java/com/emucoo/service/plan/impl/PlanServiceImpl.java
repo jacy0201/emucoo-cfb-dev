@@ -104,6 +104,8 @@ public class PlanServiceImpl implements PlanService {
     public void addShopToPlan(SysUser user, ShopToPlanIn shopToPlanIn) {
         Long planId = shopToPlanIn.getPlanID();
         Date now = new Date();
+        String year = shopToPlanIn.getPlanYearMonth().substring(0, 4);
+        String month = shopToPlanIn.getPlanYearMonth().substring(4, 6);
         for(ShopVo shopVo : shopToPlanIn.getShopArr()) {
             TFrontPlan tFrontPlan = new TFrontPlan();
             TShopInfo tShopInfo = new TShopInfo();
@@ -111,8 +113,8 @@ public class PlanServiceImpl implements PlanService {
             tFrontPlan.setShop(tShopInfo);
             tFrontPlan.setSubPlanId(planId);
             tFrontPlan.setStatus(ShopArrangeStatus.NOT_ARRANGE.getCode().byteValue());
-            tFrontPlan.setArrangeYear(shopToPlanIn.getPlanYear());
-            tFrontPlan.setArrangeMonth(shopToPlanIn.getPlanMonth());
+            tFrontPlan.setArrangeYear(year);
+            tFrontPlan.setArrangeMonth(month);
             tFrontPlan.setCreateTime(now);
             tFrontPlan.setModifyTime(now);
             tFrontPlan.setCreateUserId(user.getId());
@@ -124,13 +126,15 @@ public class PlanServiceImpl implements PlanService {
     }
 
     public void deleteShopInPlan(ShopToPlanIn shopToPlanIn) {
+        String year = shopToPlanIn.getPlanYearMonth().substring(0, 4);
+        String month = shopToPlanIn.getPlanYearMonth().substring(4, 6);
         Example example = new Example(TFrontPlan.class);
         List<Long> shopIds = new ArrayList<>();
         for(ShopVo shopVo : shopToPlanIn.getShopArr()) {
             shopIds.add(shopVo.getShopID());
         }
         example.createCriteria().andIn("shopId", shopIds).andEqualTo("subPlanId", shopToPlanIn.getPlanID())
-        .andEqualTo("arrangeYear", shopToPlanIn.getPlanYear()).andEqualTo("arrangeMonth", shopToPlanIn.getPlanMonth());
+        .andEqualTo("arrangeYear", year).andEqualTo("arrangeMonth", month);
         tFrontPlanMapper.deleteByExample(example);
     }
 
