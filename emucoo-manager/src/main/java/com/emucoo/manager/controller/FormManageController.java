@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
-@Api(value = "表单管理")
+@Api(description = "表单管理")
 @RestController
 @RequestMapping(value = "form")
 public class FormManageController extends BaseResource {

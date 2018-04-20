@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Api(description = "机会点管理")
 @RestController
 @RequestMapping(value = "chancePoint")
-
-@Api(value = "机会点管理")
 public class ChancePointController extends BaseResource {
 
     @Autowired
@@ -67,7 +66,7 @@ public class ChancePointController extends BaseResource {
         TOpportunity opportunity = param.getData();
         if(opportunity == null)
             return fail("parameter is wrong");
-        chancePointService.updateChancePoint(opportunity);
+        chancePointService.updateChancePoint(opportunity, 0L);
         return success("ok");
     }
 
