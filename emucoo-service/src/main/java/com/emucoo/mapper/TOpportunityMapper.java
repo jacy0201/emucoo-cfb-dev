@@ -7,10 +7,14 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TOpportunityMapper extends MyMapper<TOpportunity> {
+
     void removeByIds(List<Long> ids);
-    void enableByIds(List<Long> ids);
-    void disableByIds(List<Long> ids);
+
+    void changeIsUse(@Param("ids") List<Long> ids, @Param("state") Boolean state);
 
     List<TOpportunity> findChancePointsByName(@Param("keyword") String keyword, @Param("startRow") int startRow, @Param("size") int pageSz);
+
     Integer countChancePointsByName(@Param("keyword") String keyword);
+
+    void upsert(TOpportunity opportunity);
 }

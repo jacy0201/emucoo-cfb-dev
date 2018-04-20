@@ -36,24 +36,26 @@ public class ChancePointServiceImpl implements ChancePointService {
         opportunity.setModifyTime(DateUtil.currentDate());
         opportunity.setCreateUserId(userId);
         opportunity.setModifyUserId(userId);
-        opportunity.setCreateType(0);
-        opportunityMapper.insert(opportunity);
+        opportunity.setCreateType(1);
+        opportunity.setIsUse(false);
+        opportunityMapper.upsert(opportunity);
     }
 
     @Override
     public void enableChancePoints(List<Long> ids) {
-        opportunityMapper.enableByIds(ids);
+        opportunityMapper.changeIsUse(ids, true);
     }
 
     @Override
     public void disableChancePoints(List<Long> ids) {
-        opportunityMapper.disableByIds(ids);
+        opportunityMapper.changeIsUse(ids, false);
     }
 
     @Override
-    public void updateChancePoint(TOpportunity opportunity) {
-        opportunity.setCreateType(0);
-        opportunityMapper.updateByPrimaryKey(opportunity);
+    public void updateChancePoint(TOpportunity opportunity, Long userId) {
+        opportunity.setCreateType(1);
+        opportunity.setModifyUserId(userId);
+        opportunityMapper.upsert(opportunity);
     }
 
     @Override

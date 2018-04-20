@@ -9,7 +9,7 @@ public interface ChancePointService {
 
     void createChancePoint(TOpportunity opportunity, Long userId);
 
-    void updateChancePoint(TOpportunity opportunity);
+    void updateChancePoint(TOpportunity opportunity, Long userId);
 
     void deleteChancePoints(List<Long> ids);
 

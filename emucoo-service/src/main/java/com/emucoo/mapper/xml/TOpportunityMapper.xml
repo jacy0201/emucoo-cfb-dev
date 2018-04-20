@@ -18,6 +18,12 @@
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
     </resultMap>
 
+    <insert id="upsert" parameterType="com.emucoo.model.TOpportunity">
+        insert into t_opportunity (id, type, name, is_del, is_use, description, front_can_create, create_type, create_time, modify_time, create_user_id, modify_user_id, org_id)
+        values (#{id}, #{type}, #{name}, #{isDel}, #{isUse}, #{description}, #{frontCanCreate}, #{createType}, #{createTime}, #{modifyTime}, #{createUserId}, #{modifyUserId}, #{orgId})
+        on duplicate key update type=#{type}, name=#{name}, is_del=#{isDel}, is_use=#{isUse}, description=#{description}, front_can_create=#{frontCanCreate}, create_type=#{createType}, modify_time=#{modifyTime}, modify_user_id=#{modifyUserId}, org_id=#{orgId}
+    </insert>
+
     <select id="findChancePointsByName" resultMap="BaseResultMap">
         select * from t_opportunity
         <where>
@@ -49,21 +55,11 @@
         </where>
     </update>
 
-    <update id="enableByIds" parameterType="java.util.List">
-        update t_opportunity set is_use = 1
+    <update id="changeIsUse" parameterType="java.util.List">
+        update t_opportunity set is_use = #{state}
         <where>
             id in
-            <foreach collection="list" item="it" open="(" close=")" separator=",">
-                #{it}
-            </foreach>
-        </where>
-    </update>
-
-    <update id="disableByIds" parameterType="java.util.List">
-        update t_opportunity set is_use = 0
-        <where>
-            id in
-            <foreach collection="list" item="it" open="(" close=")" separator=",">
+            <foreach collection="ids" item="it" open="(" close=")" separator=",">
                 #{it}
             </foreach>
         </where>
