@@ -17,6 +17,15 @@
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
 
+  <select id="findBrandListByUserId" parameterType="Long" resultType="com.emucoo.model.TBrandInfo">
+    SELECT
+    brand.id,
+    brand.brand_name
+    FROM t_brand_info brand
+    INNER JOIN sys_user_brand userBrand
+    ON userBrand.brand_id = brand.id AND userBrand.user_id=#{userId}
+  </select>
+
   <!-- 根据机构查询品牌信息-->
   <select id="listByDpt" parameterType="Map" resultType="com.emucoo.model.TBrandInfo">
     SELECT

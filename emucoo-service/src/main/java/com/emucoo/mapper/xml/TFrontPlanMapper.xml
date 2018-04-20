@@ -80,13 +80,34 @@
     shopinfo.shop_name
     from t_front_plan plan
     INNER JOIN t_shop_info shopinfo
-    ON plan.shop_id = shopinfo.id
+    ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
+    AND shopinfo.is_use = TRUE
     WHERE plan.shop_id in
     (
       SELECT
       shop.id
       from t_shop_info shop WHERE shop.area_id = #{areaId}
+      AND shop.brand_id IN
+      <foreach collection="brandList" item="item" open="(" close=")" separator=",">
+        #{item.id}
+      </foreach>
     )
     AND plan.arrange_year = #{year} AND plan.arrange_month = #{month}
+    AND plan.is_del = FALSE
+  </select>
+
+  <select id="findFinishedArrangeListByForms"  resultType="HashMap">
+     SELECT
+     COUNT(plan.shop_id) AS shopCount,
+     planForm.form_main_id AS formId
+     FROM t_front_plan plan
+     INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
+     AND planForm.is_del = FALSE
+     WHERE planForm.form_main_id IN
+     <foreach collection="formIds" item="item" open="(" close=")" separator=",">
+      #{item}
+     </foreach>
+    AND plan.sub_plan_id = #{planId} AND plan.status=3 AND plan.is_del = FALSE
+    GROUP BY planForm.form_main_id
   </select>
 </mapper>

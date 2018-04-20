@@ -37,6 +37,8 @@ public class TLoopSubPlan extends BaseEntity {
     @Column(name = "dpt_id")
     private Long dptId;
 
+    private Boolean isDel;
+
     /**
      * @return id
      */
@@ -125,5 +127,13 @@ public class TLoopSubPlan extends BaseEntity {
      */
     public void setDptId(Long dptId) {
         this.dptId = dptId;
+    }
+
+    public Boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Boolean isDel) {
+        this.isDel = isDel;
     }
 }

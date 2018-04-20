@@ -10,7 +10,8 @@ public interface SysDeptMapper extends MyMapper<SysDept> {
 
     /**
      * 查询子部门ID列表
-     * @param parentId  上级部门ID
+     *
+     * @param parentId 上级部门ID
      */
     List<Long> queryDetpIdList(Long parentId);
 
@@ -20,7 +21,8 @@ public interface SysDeptMapper extends MyMapper<SysDept> {
      * @return
      */
     List<SysDept> listByBrand(HashMap map);
-
+	
+    List<SysDept> findPlanProcessByUserId(Long userId);
     /**
      * 根据分区id 获取机构信息
      * @param map

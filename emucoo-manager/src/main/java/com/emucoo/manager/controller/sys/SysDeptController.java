@@ -114,10 +114,8 @@ public class SysDeptController extends BaseResource {
     @PostMapping("/listUserRelation")
     @RequiresPermissions("sys:dept:relation")
     public ApiResult listUserRelation(Long dptId){
-        if(dptId==null){return fail("机构 id 不能为空!");}
-        Example example=new Example(SysUserRelation.class);
-        example.createCriteria().andEqualTo("dptId",dptId);
-        List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
+        if(dptId==null){return fail("dptId 不能为空!");}
+        List<SysUserRelation> list=sysUserRelationService.listUserRelation(dptId);
         return success(list);
     }
 

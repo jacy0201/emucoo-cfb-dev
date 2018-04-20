@@ -93,7 +93,7 @@
       <if test="isUse != null">
         AND is_use = #{isUse}
       </if>
-      AND is_del = 0
+      AND is_del = FALSE
     </where>
   </select>
 

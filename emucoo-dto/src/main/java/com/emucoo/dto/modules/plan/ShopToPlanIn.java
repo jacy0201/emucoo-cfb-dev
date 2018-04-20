@@ -15,9 +15,7 @@ public class ShopToPlanIn {
     // 管辖区域ID
     private Long planID;
     // 计划年份
-    private String planYear;
-    // 计划月份
-    private String planMonth;
+    private String planYearMonth;
 
     private List<ShopVo> shopArr;
 

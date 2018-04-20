@@ -74,17 +74,22 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         tPlanFormRelationMapper.addPlanFormRelation(plan.getPlanFormRelationList());
     }
 
+    @Transactional
     public void modifyPlanUseById(TLoopPlan plan) {
         Date now = new Date();
         plan.setModifyTime(now);
         tLoopPlanMapper.modifyPlanStatusById(plan);
+        tPlanFormRelationMapper.modifyUseStatus(plan);
     }
 
+    @Transactional
     public void deletePlanById(TLoopPlan plan) {
         Date now = new Date();
         plan.setIsDel(DeleteStatus.DELETED.getCode());
         plan.setModifyTime(now);
         tLoopPlanMapper.deletePlanById(plan);
+
+        tPlanFormRelationMapper.deleteById(plan.getId());
     }
 
     public List<TLoopPlan> findPlanListByCondition(TLoopPlan plan) {

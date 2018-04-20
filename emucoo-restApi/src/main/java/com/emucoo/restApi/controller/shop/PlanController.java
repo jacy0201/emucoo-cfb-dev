@@ -5,6 +5,7 @@ import com.emucoo.dto.modules.plan.FindPlanListIn;
 import com.emucoo.dto.modules.plan.FindPlanListOut;
 import com.emucoo.dto.modules.plan.FindShopListIn;
 import com.emucoo.dto.modules.plan.FindShopListOut;
+import com.emucoo.dto.modules.plan.PlanProgressOut;
 import com.emucoo.dto.modules.plan.ShopToPlanIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
@@ -83,6 +84,13 @@ public class PlanController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         FindPlanListOut findPlanListOut = planService.listPlan(user, findPlanListIn);
         return success(findPlanListOut);
+    }
+
+    @PostMapping(value = "progress")
+    public AppResult planProcess(HttpServletRequest request) {
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        PlanProgressOut planProcessOut = planService.findPlanProcessByUserId(user);
+        return success(planProcessOut);
     }
 
 
