@@ -13,17 +13,51 @@ public class SysUserRelation extends BaseEntity {
     @Column(name = "user_id")
     private Long userId;
 
+    @Transient
+    private String userName;
+
     /**
      * child_user_id下级id
      */
     @Column(name = "child_user_id")
     private Long childUserId;
 
+    @Transient
+    private String childUserName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getChildUserName() {
+        return childUserName;
+    }
+
+    public void setChildUserName(String childUserName) {
+        this.childUserName = childUserName;
+    }
+
+    public String getPostName() {
+        return postName;
+    }
+
+    public void setPostName(String postName) {
+        this.postName = postName;
+    }
+
     /**
      * user_id 的岗位id
      */
     @Column(name = "post_id")
+
     private Long postId;
+
+    @Transient
+    private String postName;
 
     /**
      * user_id 的 dpt_id 
