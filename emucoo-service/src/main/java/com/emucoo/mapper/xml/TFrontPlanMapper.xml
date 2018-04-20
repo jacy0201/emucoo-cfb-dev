@@ -107,7 +107,16 @@
      <foreach collection="formIds" item="item" open="(" close=")" separator=",">
       #{item}
      </foreach>
-    AND plan.sub_plan_id = #{planId} AND plan.status=3 AND plan.is_del = FALSE
+    AND plan.sub_plan_id = #{planId} AND plan.status=4 AND plan.is_del = FALSE
     GROUP BY planForm.form_main_id
   </select>
+
+  <update id="deleteFrontPlanByIds" parameterType="ArrayList">
+    UPDATE t_front_plan
+    SET is_del = TRUE
+    WHERE id IN
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </update>
 </mapper>

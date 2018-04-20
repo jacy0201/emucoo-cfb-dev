@@ -20,4 +20,6 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
                                              @Param(value = "month") String month, @Param(value = "brandList")List<TBrandInfo> brandInfos);
 
     List<HashMap<String, Long>> findFinishedArrangeListByForms(@Param(value = "planId") Long planId, @Param(value = "formIds") List<Long> formIds);
+
+    void deleteFrontPlanByIds(List<Long> subIds);
 }
