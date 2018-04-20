@@ -7,6 +7,7 @@ import com.emucoo.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -217,5 +218,12 @@ public class FormManageServiceImpl implements FormManageService {
                 });
             }
         });
+    }
+
+    public List<TFormMain> findFormList() {
+        Example example = new Example(TFormMain.class);
+        example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
+        List<TFormMain> tFormMains = formMainMapper.selectByExample(example);
+        return tFormMains;
     }
 }

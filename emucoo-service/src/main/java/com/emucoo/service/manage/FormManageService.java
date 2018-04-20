@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface FormManageService {
 
+    List<TFormMain> findFormList();
+
     int countFormsByNameKeyword(String keyword);
 
     List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz);

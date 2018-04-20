@@ -1,7 +1,10 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.model.SysUser;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,5 +36,35 @@ public interface SysUserService extends BaseService<SysUser> {
 	 */
 	List<SysUser> listByShopId(HashMap map) ;
 
+
+	/**
+	 * 根据条件分页查询用户列表
+	 */
+	List<SysUser> queryList(UserQuery userQuery);
+
+	/**
+	 * 创建用户
+	 * @param sysUser
+	 */
+	void addUser(SysUser sysUser);
+
+	/**
+	 * 创建用户
+	 * @param sysUser
+	 */
+	void editUser(SysUser sysUser);
+
+
+	/**
+	 * 设置用户品牌分区
+	 */
+	void setBrandArea(UserBrandArea userBrandArea);
+
+	/**
+	 * 批量启用/停用
+	 * @param ids
+	 * @param status
+	 */
+	void modifyBatchUse(String ids, Integer status);
 
 }

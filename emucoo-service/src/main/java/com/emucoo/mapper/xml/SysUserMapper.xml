@@ -71,12 +71,29 @@
     WHERE t1.is_del=0 AND
     t2.post_id = #{postId}
     <if test="dptId != null">
-      and dpt_id = #{dptId}
+      and t1.dpt_id = #{dptId}
     </if>
     <if test="realName != null  and realName!=''">
-      and real_name LIKE "%"#{realName}"%"
+      and t1.real_name LIKE "%"#{realName}"%"
     </if>
-
+    <if test="status != null">
+      and t1.status = #{status}
+    </if>
+    <if test="postId != null">
+      and t2.post_id = #{postId}
+    </if>
+    <if test="username != null  and username!=''">
+      and t1.username = #{username}
+    </if>
+    <if test="mobile != null  and mobile!=''">
+      and t1.mobile = #{mobile}
+    </if>
+    <if test="email != null  and email!=''">
+      and t1.email = #{email}
+    </if>
+    <if test="isShopManager != null">
+      and t1.is_shop_manager = #{isShopManager}
+    </if>
    </select>
 
   <select id="listByShopId"  parameterType="Map" resultType="com.emucoo.model.SysUser">
@@ -92,6 +109,24 @@
     </if>
     <if test="realName != null  and realName!=''">
       and real_name LIKE "%"#{realName}"%"
+    </if>
+    <if test="status != null">
+      and t1.status = #{status}
+    </if>
+    <if test="postId != null">
+      and t2.post_id = #{postId}
+    </if>
+    <if test="username != null  and username!=''">
+      and t1.username = #{username}
+    </if>
+    <if test="mobile != null  and mobile!=''">
+      and t1.mobile = #{mobile}
+    </if>
+    <if test="email != null  and email!=''">
+      and t1.email = #{email}
+    </if>
+    <if test="isShopManager != null">
+      and t1.is_shop_manager = #{isShopManager}
     </if>
   </select>
 
