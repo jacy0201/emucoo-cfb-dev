@@ -70,8 +70,14 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		}
 
 		if(null!=areaId  && null==brandId){ deptList=listA; }
-		else if(null == listA && null!=listB){deptList=listB;}
-		else if(null == listA && null ==listB){
+		else if(null == areaId && null!=brandId){deptList=listB;}
+		else if(null!=areaId && null!=brandId){
+			listA.retainAll(listB);
+			if(null!=listA && listA.size()>0){
+				deptList=listA;
+			}
+		}
+		else if(null == areaId && null ==brandId){
 			deptList =sysDeptMapper.selectByExample(example);
 		}
 		if(null!=deptList) {
