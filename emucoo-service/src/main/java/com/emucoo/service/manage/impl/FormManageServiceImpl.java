@@ -147,18 +147,18 @@ public class FormManageServiceImpl implements FormManageService {
         formMainMapper.upsert(formMain);
 
         List<TFormScoreItem> formScoreItems = formDetail.getFormScoreItems();
-        formScoreItemMapper.dropByFormMainId(formMain.getId());
+//        formScoreItemMapper.dropByFormMainId(formMain.getId());
         formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
         formScoreItemMapper.insertList(formScoreItems);
 
         List<TFormImptRules> formImptRuless = formDetail.getFormImptRules();
-        formImptRulesMapper.dropByFormMainId(formMain.getId());
+//        formImptRulesMapper.dropByFormMainId(formMain.getId());
         formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
         formImptRulesMapper.insertList(formImptRuless);
 
         // form add items maybe is null
         List<TFormAddItem> formAddItems = formDetail.getFormAddItems();
-        formAddItemMapper.dropByFormMainId(formMain.getId());
+//        formAddItemMapper.dropByFormMainId(formMain.getId());
         if(formAddItems != null && formAddItems.size() > 0) {
             formAddItems.forEach(it -> it.setFormMainId(formMain.getId()));
             formAddItemMapper.insertList(formAddItems);
