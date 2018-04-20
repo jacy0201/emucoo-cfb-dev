@@ -4,6 +4,7 @@ import com.emucoo.dto.modules.plan.FindPlanListIn;
 import com.emucoo.dto.modules.plan.FindPlanListOut;
 import com.emucoo.dto.modules.plan.FindShopListIn;
 import com.emucoo.dto.modules.plan.FindShopListOut;
+import com.emucoo.dto.modules.plan.PlanProgressOut;
 import com.emucoo.dto.modules.plan.ShopToPlanIn;
 import com.emucoo.dto.modules.shop.ShopPlanListVO;
 import com.emucoo.dto.modules.shop.ShopPlanProgressVO;
@@ -24,6 +25,8 @@ public interface PlanService {
     void deleteShopInPlan(ShopToPlanIn shopToPlanIn);
 
     FindPlanListOut listPlan(SysUser user, FindPlanListIn findPlanListIn);
+
+    PlanProgressOut findPlanProcessByUserId(SysUser user);
 
    /* *//**
      * 获取巡店计划列表

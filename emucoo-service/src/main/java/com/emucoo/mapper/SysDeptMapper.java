@@ -2,6 +2,7 @@ package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.SysDept;
+import com.emucoo.model.SysUser;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface SysDeptMapper extends MyMapper<SysDept> {
      * @param parentId  上级部门ID
      */
     List<Long> queryDetpIdList(Long parentId);
+
+    List<SysDept> findPlanProcessByUserId(Long userId);
 }

@@ -1,6 +1,7 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -33,7 +34,7 @@ public class TPlanFormRelation extends BaseEntity {
     /**
      * 表单引用次数
      */
-    @Column(name = "fom_use_count")
+    @Column(name = "form_use_count")
     @ApiModelProperty(name = "formUseCount", value = "该表单周期内使用次数")
     private Long formUseCount;
 
@@ -42,6 +43,10 @@ public class TPlanFormRelation extends BaseEntity {
 
     @Column(name = "modify_time")
     private Date modifyTime;
+
+    private Boolean isDel;
+
+    private Boolean isUse;
 
     /**
      * @return id
@@ -135,5 +140,21 @@ public class TPlanFormRelation extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public Boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Boolean isDel) {
+        this.isDel = isDel;
+    }
+
+    public Boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
     }
 }

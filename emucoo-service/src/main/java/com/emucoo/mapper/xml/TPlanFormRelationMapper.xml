@@ -8,7 +8,7 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="plan_id" property="planId" jdbcType="BIGINT" />
     <result column="form_main_id" property="formMainId" jdbcType="BIGINT" />
-    <result column="fom_use_count" property="fomUseCount" jdbcType="BIGINT" />
+    <result column="form_use_count" property="fomUseCount" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -26,4 +26,16 @@
       (#{item.planId},#{item.formMainId},#{item.formUseCount},#{item.createTime},#{item.modifyTime})
     </foreach>
   </insert>
+
+  <update id="deleteById" parameterType="Long">
+      UPDATE t_plan_form_relation
+      SET is_del = TRUE
+      WHERE plan_id = #{id}
+  </update>
+
+  <update id="modifyUseStatus" parameterType="com.emucoo.model.TLoopPlan">
+      UPDATE t_plan_form_relation
+      SET is_use = #{isUse}
+      WHERE plan_id = #{id}
+  </update>
 </mapper>
