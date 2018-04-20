@@ -14,7 +14,7 @@
         <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
         <result column="sub_problem_num" property="subProblemNum" jdbcType="INTEGER"/>
         <result column="sub_problem_unit" property="subProblemUnit" jdbcType="VARCHAR"/>
-        <result column="problem_schema_type" property="problemSchemaType" jdbcType="BIT"/>
+        <result column="problem_schema_type" property="problemSchemaType" jdbcType="INTEGER"/>
         <result column="is_important" property="isImportant" jdbcType="BIT"/>
         <result column="form_type_id" property="formTypeId" jdbcType="BIGINT"/>
         <result column="description_hit" property="descriptionHit" jdbcType="LONGVARCHAR"/>

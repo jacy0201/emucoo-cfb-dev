@@ -104,6 +104,8 @@ public class PlanServiceImpl implements PlanService {
     public void addShopToPlan(SysUser user, ShopToPlanIn shopToPlanIn) {
         Long planId = shopToPlanIn.getPlanID();
         Date now = new Date();
+        String year = shopToPlanIn.getPlanYearMonth().substring(0, 4);
+        String month = shopToPlanIn.getPlanYearMonth().substring(4, 6);
         for(ShopVo shopVo : shopToPlanIn.getShopArr()) {
             TFrontPlan tFrontPlan = new TFrontPlan();
             TShopInfo tShopInfo = new TShopInfo();
@@ -111,8 +113,8 @@ public class PlanServiceImpl implements PlanService {
             tFrontPlan.setShop(tShopInfo);
             tFrontPlan.setSubPlanId(planId);
             tFrontPlan.setStatus(ShopArrangeStatus.NOT_ARRANGE.getCode().byteValue());
-            tFrontPlan.setArrangeYear(shopToPlanIn.getPlanYear());
-            tFrontPlan.setArrangeMonth(shopToPlanIn.getPlanMonth());
+            tFrontPlan.setArrangeYear(year);
+            tFrontPlan.setArrangeMonth(month);
             tFrontPlan.setCreateTime(now);
             tFrontPlan.setModifyTime(now);
             tFrontPlan.setCreateUserId(user.getId());
@@ -124,14 +126,17 @@ public class PlanServiceImpl implements PlanService {
     }
 
     public void deleteShopInPlan(ShopToPlanIn shopToPlanIn) {
-        Example example = new Example(TFrontPlan.class);
-        List<Long> shopIds = new ArrayList<>();
+        //String year = shopToPlanIn.getPlanYearMonth().substring(0, 4);
+        //String month = shopToPlanIn.getPlanYearMonth().substring(4, 6);
+        //Example example = new Example(TFrontPlan.class);
+        //List<Long> shopIds = new ArrayList<>();
+        List<Long> subIds = new ArrayList<>();
         for(ShopVo shopVo : shopToPlanIn.getShopArr()) {
-            shopIds.add(shopVo.getShopID());
+            //shopIds.add(shopVo.getShopID());
+            subIds.add(shopVo.getSubID());
         }
-        example.createCriteria().andIn("shopId", shopIds).andEqualTo("subPlanId", shopToPlanIn.getPlanID())
-        .andEqualTo("arrangeYear", shopToPlanIn.getPlanYear()).andEqualTo("arrangeMonth", shopToPlanIn.getPlanMonth());
-        tFrontPlanMapper.deleteByExample(example);
+        //example.createCriteria().andIn("id", subIds);
+        tFrontPlanMapper.deleteFrontPlanByIds(subIds);
     }
 
     @Transactional
@@ -261,7 +266,7 @@ public class PlanServiceImpl implements PlanService {
                         shop.setShopName(frontPlan.getShop().getShopName());
                         shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"":frontPlan.getPlanDate().toString());
                         shop.setShopStatus(frontPlan.getStatus().intValue());
-                        shop.setSubID(frontPlan.getSubPlanId());
+                        shop.setSubID(frontPlan.getId());
                         shopArr.add(shop);
                     }
                     areaOut.setShopArr(shopArr);

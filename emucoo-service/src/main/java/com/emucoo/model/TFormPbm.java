@@ -48,7 +48,7 @@ public class TFormPbm extends BaseEntity {
      * 题项方案类型（1：不带抽样，2：带抽样）
      */
     @Column(name = "problem_schema_type")
-    private Boolean problemSchemaType;
+    private Integer problemSchemaType;
 
     /**
      * 是否重要（0：不重要，1：重要）
@@ -215,7 +215,7 @@ public class TFormPbm extends BaseEntity {
      *
      * @return problem_schema_type - 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public Boolean getProblemSchemaType() {
+    public Integer getProblemSchemaType() {
         return problemSchemaType;
     }
 
@@ -224,7 +224,7 @@ public class TFormPbm extends BaseEntity {
      *
      * @param problemSchemaType 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public void setProblemSchemaType(Boolean problemSchemaType) {
+    public void setProblemSchemaType(Integer problemSchemaType) {
         this.problemSchemaType = problemSchemaType;
     }
 
