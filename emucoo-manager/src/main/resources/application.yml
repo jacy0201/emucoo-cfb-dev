@@ -95,7 +95,7 @@ emucoo:
     redis:
         open: false  # 是否开启redis缓存  true开启   false关闭
     shiro:
-        redis: true # true表示shiro session存到redis里，需要开启redis
+        redis: false # true表示shiro session存到redis里，需要开启redis
 
 #mybatis
 mybatis:

@@ -6,9 +6,12 @@ import javax.persistence.*;
 
 @Table(name = "sys_user_token")
 public class SysUserToken extends BaseEntity {
+
+    /**
+     * sys_user_token 表 id 关联 sys_user 表 id 字段
+     */
     @Id
-    @Column(name = "user_id")
-    private Long userId;
+    private Long id;
 
     /**
      * token
@@ -28,17 +31,17 @@ public class SysUserToken extends BaseEntity {
     private Date updateTime;
 
     /**
-     * @return user_id
+     * @return id
      */
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
     /**
-     * @param userId
+     * @param id
      */
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**

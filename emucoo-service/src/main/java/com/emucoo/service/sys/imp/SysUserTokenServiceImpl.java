@@ -31,7 +31,7 @@ public class SysUserTokenServiceImpl extends BaseServiceImpl<SysUserToken> imple
 	}
 	
 	@Override
-	public R createToken(long userId) {
+	public SysUserToken getToken(long userId) {
 		//生成一个token
 		String token = TokenGenerator.generateValue();
 		//当前时间
@@ -43,12 +43,12 @@ public class SysUserTokenServiceImpl extends BaseServiceImpl<SysUserToken> imple
 		SysUserToken tokenEntity = sysUserTokenMapper.selectByPrimaryKey(userId);
 		if(tokenEntity == null){
 			tokenEntity = new SysUserToken();
-			tokenEntity.setUserId(userId);
+			tokenEntity.setId(userId);
 			tokenEntity.setToken(token);
 			tokenEntity.setUpdateTime(now);
 			tokenEntity.setExpireTime(expireTime);
 			//保存token
-			sysUserTokenMapper.insertSelective(tokenEntity);
+			 sysUserTokenMapper.insertSelective(tokenEntity);
 		}else{
 			tokenEntity.setToken(token);
 			tokenEntity.setUpdateTime(now);
@@ -56,8 +56,18 @@ public class SysUserTokenServiceImpl extends BaseServiceImpl<SysUserToken> imple
 			//更新token
 			sysUserTokenMapper.updateByPrimaryKeySelective(tokenEntity);
 		}
-		R r = R.ok().put("token", token).put("expire", EXPIRE);
-		return r;
+		return tokenEntity;
 	}
-	
+
+	@Override
+	public void expireToken(long id){
+		Date now = new Date();
+		SysUserToken tokenEntity = new SysUserToken();
+		tokenEntity.setId(id);
+		tokenEntity.setUpdateTime(now);
+		tokenEntity.setExpireTime(now);
+		sysUserTokenMapper.updateByPrimaryKeySelective(tokenEntity);
+	}
+
+
 }
