@@ -30,7 +30,7 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       # 配置一个连接在池中最小生存的时间，单位是毫秒
       minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false
@@ -95,7 +95,7 @@ emucoo:
     redis:
         open: false  # 是否开启redis缓存  true开启   false关闭
     shiro:
-        redis: true # true表示shiro session存到redis里，需要开启redis
+        redis: false # true表示shiro session存到redis里，需要开启redis
 
 #mybatis
 mybatis:

@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.Constant;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.StringUtil;
@@ -12,6 +13,8 @@ import com.emucoo.service.sys.SysUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -107,6 +110,7 @@ public class SysUserController extends BaseResource {
     @ApiOperation(value="批量删除用户",notes = "多个用户id 用 , 分隔")
     @PostMapping("/deleteByIds")
     @RequiresPermissions("sys:user:deleteByIds")
+    @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query")
     public ApiResult deleteByIds(String ids){
         if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
         if(ArrayUtils.contains(ids.split(","), "1")){
@@ -122,6 +126,7 @@ public class SysUserController extends BaseResource {
     @PostMapping("/delete")
     @RequiresPermissions("sys:user:delete")
     @ApiOperation(value="删除用户")
+    @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
     public ApiResult delete(Long id){
         if(null==id){return fail("id 不能为空!");}
         if(id==1){ return fail("系统管理员不能删除"); }
@@ -135,9 +140,12 @@ public class SysUserController extends BaseResource {
     @PostMapping("/modifyBatchUse")
     @RequiresPermissions("sys:user:modifyBatchUse")
     @ApiOperation(value="批量启用/停用",notes = "ids 传用户id,多个id 直接用 ,分隔; 用户状态(status):0-启用；1-停用；2-锁定；")
+    @ApiImplicitParams({
+    @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query"),
+    @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
     public ApiResult modifyBatchUse(String ids,Integer status){
         if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
-        if(ArrayUtils.contains(ids.split(","), "1")){
+        if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
             return fail("系统管理员不能删除");
         }
         if(null==status){ return fail("status 不能为空！"); }
@@ -151,9 +159,12 @@ public class SysUserController extends BaseResource {
     @PostMapping("/modifyUse")
     @RequiresPermissions("sys:user:modifyUse")
     @ApiOperation(value="启用/停用",notes = "用户状态(status):0-启用；1-停用；2-锁定；")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query"),
+            @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
     public ApiResult modifyUse(Long id,Integer status){
         if(null==id){return fail("id 不能为空!");}
-        if(id==1){ return fail("系统管理员不能修改"); }
+        if(id==Constant.SUPER_ADMIN){ return fail("系统管理员不能修改"); }
         if(null==status){ return fail("status 不能为空！"); }
         SysUser sysUser=new SysUser();
         sysUser.setId(id);
@@ -168,8 +179,9 @@ public class SysUserController extends BaseResource {
 	@PostMapping("/getUserById")
 	@ApiOperation(value="获取用户详情")
 	@ResponseBody
+    @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
 	public ApiResult getUserById(Long id){
-		if(null==id){return fail("Id 不能为空!");}
+		if(null==id){return fail("id 不能为空!");}
 		return success(sysUserService.findById(id));
 	}
 

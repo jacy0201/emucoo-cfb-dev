@@ -1,10 +1,7 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
-import com.emucoo.common.util.R;
 import com.emucoo.model.SysUserToken;
-
-import java.util.Map;
 
 /**
  *
@@ -18,7 +15,14 @@ public interface SysUserTokenService extends BaseService<SysUserToken> {
 	
 	/**
 	 * 生成token
-	 * @param userId  用户ID
+	 * @param id  用户id
 	 */
-	R createToken(long userId);
+	SysUserToken getToken(long id);
+
+
+	/**
+	 * 设置token过期
+	 * @param id  用户id
+	 */
+	void expireToken(long id);
 }
