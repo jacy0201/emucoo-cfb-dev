@@ -29,4 +29,6 @@ public interface SysDeptMapper extends MyMapper<SysDept> {
      * @return
      */
     List<SysDept> listByArea(HashMap map);
+
+    List<SysDept> fetchByIds(List<Long> ids);
 }

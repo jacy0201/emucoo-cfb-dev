@@ -1,64 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.emucoo.mapper.SysDeptMapper">
-  <resultMap id="BaseResultMap" type="com.emucoo.model.SysDept">
-    <!--
-  WARNING - @mbg.generated
--->
-    <id column="id" property="id" jdbcType="BIGINT"/>
-    <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
-    <result column="dpt_name" property="dptName" jdbcType="VARCHAR"/>
-    <result column="dpt_no" property="dptNo" jdbcType="VARCHAR"/>
-    <result column="address_detail" property="addressDetail" jdbcType="VARCHAR"/>
-    <result column="remark" property="remark" jdbcType="VARCHAR"/>
-    <result column="leader" property="leader" jdbcType="VARCHAR"/>
-    <result column="tel" property="tel" jdbcType="VARCHAR"/>
-    <result column="order_num" property="orderNum" jdbcType="INTEGER"/>
-    <result column="description" property="description" jdbcType="VARCHAR"/>
-    <result column="is_use" property="isUse" jdbcType="BIT"/>
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-    <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
-    <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
-    <result column="is_del" property="isDel" jdbcType="BIT"/>
-    <result column="province" property="province" jdbcType="VARCHAR"/>
-    <result column="city" property="city" jdbcType="VARCHAR"/>
-    <result column="district" property="district" jdbcType="VARCHAR"/>
-    <result column="short_name" property="shortName" jdbcType="VARCHAR"/>
+    <resultMap id="BaseResultMap" type="com.emucoo.model.SysDept">
+        <!--
+      WARNING - @mbg.generated
+    -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="dpt_name" property="dptName" jdbcType="VARCHAR"/>
+        <result column="dpt_no" property="dptNo" jdbcType="VARCHAR"/>
+        <result column="address_detail" property="addressDetail" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="leader" property="leader" jdbcType="VARCHAR"/>
+        <result column="tel" property="tel" jdbcType="VARCHAR"/>
+        <result column="order_num" property="orderNum" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="is_use" property="isUse" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="district" property="district" jdbcType="VARCHAR"/>
+        <result column="short_name" property="shortName" jdbcType="VARCHAR"/>
 
-  </resultMap>
+    </resultMap>
 
-  <select id="queryDetpIdList" resultType="long">
-    select id from sys_dept where parent_id = #{value} and is_del = 0
-  </select>
+    <select id="queryDetpIdList" resultType="long">
+        select id from sys_dept where parent_id = #{value} and is_del = 0
+    </select>
 
-  <select id="listByBrand" parameterType="Map" resultType="com.emucoo.model.SysDept">
-    SELECT
-    t2.*
-    FROM
-    sys_dpt_brand t1
-    INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
-    and t1.brand_id= #{brandId}
-    <if test="dptName != null  and dptName!=''">and t2.dpt_name LIKE "%"#{dptName}"%"
-    </if>
-    <if
-            test="isUse != null">and t2.is_use = #{isUse}
-    </if>
-  </select>
+    <select id="listByBrand" parameterType="Map" resultType="com.emucoo.model.SysDept">
+        SELECT
+        t2.*
+        FROM
+        sys_dpt_brand t1
+        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+        and t1.brand_id= #{brandId}
+        <if test="dptName != null  and dptName!=''">and t2.dpt_name LIKE "%"#{dptName}"%"
+        </if>
+        <if
+                test="isUse != null">and t2.is_use = #{isUse}
+        </if>
+    </select>
 
-  <select id="listByArea" parameterType="Map" resultType="com.emucoo.model.SysDept">
-    SELECT
-    t2.*
-    FROM
-    sys_dpt_area t1
-    INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
-    and t1.area_id= #{areaId}
-    <if test="dptName != null  and dptName!=''">
-      and dpt_name LIKE "%"#{dptName}"%"
-    </if>
-    <if test="isUse != null">
-      and is_use = #{isUse}
-    </if>
-  </select>
+    <select id="listByArea" parameterType="Map" resultType="com.emucoo.model.SysDept">
+        SELECT
+        t2.*
+        FROM
+        sys_dpt_area t1
+        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+        and t1.area_id= #{areaId}
+        <if test="dptName != null  and dptName!=''">
+            and dpt_name LIKE "%"#{dptName}"%"
+        </if>
+        <if test="isUse != null">
+            and is_use = #{isUse}
+        </if>
+    </select>
+
+    <select id="fetchByIds" resultType="com.emucoo.model.SysDept">
+        select * from sys_dept
+        <where>
+            id in
+            <foreach collection="list" item="it" separator="," open="(" close=")">
+                #{it}
+            </foreach>
+        </where>
+    </select>
 
 </mapper>

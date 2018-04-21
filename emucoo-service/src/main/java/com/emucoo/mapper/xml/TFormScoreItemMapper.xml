@@ -27,4 +27,8 @@
         on duplicate key update name=values(name), score_begin=values(score_begin), score_end=values(score_end), modify_time=values(modify_time), form_main_id=values(form_main_id)
 
     </insert>
+
+    <delete id="dropByFormMainId">
+        delete from t_form_score_item where form_main_id=#{id}
+    </delete>
 </mapper>

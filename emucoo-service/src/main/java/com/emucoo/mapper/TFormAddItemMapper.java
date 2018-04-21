@@ -10,4 +10,6 @@ public interface TFormAddItemMapper extends MyMapper<TFormAddItem> {
     List<TFormAddItem> findFormAddItemsByFormMainId(Long id);
 
     void upsertMulti(List<TFormAddItem> formAddItems);
+
+    void dropByFormMainId(Long id);
 }

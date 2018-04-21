@@ -10,4 +10,6 @@ public interface TFormScoreItemMapper extends MyMapper<TFormScoreItem> {
     List<TFormScoreItem> findFormScoreItemsByFormMainId(Long id);
 
     void upsertMulti(List<TFormScoreItem> formScoreItems);
+
+    void dropByFormMainId(Long id);
 }

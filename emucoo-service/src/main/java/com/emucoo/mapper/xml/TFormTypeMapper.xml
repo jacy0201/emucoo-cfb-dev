@@ -21,4 +21,8 @@
         values (#{id}, #{typeName}, #{createTime}, #{modifyTime}, #{formMainId})
         on duplicate key update type_name=#{typeName}, modify_time=#{modifyTime}, form_main_id=#{formMainId}
     </insert>
+
+    <delete id="dropByFormMainId">
+        delete from t_form_type where form_main_id=#{id}
+    </delete>
 </mapper>

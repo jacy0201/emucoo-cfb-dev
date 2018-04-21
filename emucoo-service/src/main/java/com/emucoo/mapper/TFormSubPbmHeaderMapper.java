@@ -11,4 +11,6 @@ public interface TFormSubPbmHeaderMapper extends MyMapper<TFormSubPbmHeader> {
     List<TFormSubPbmHeader> findFormSubPbmHeadersByFormPbmId(Long id);
 
     void upsertMulti(List<TFormSubPbmHeader> subProblemHeads);
+
+    void dropByProblemIds(List<Long> probIds);
 }

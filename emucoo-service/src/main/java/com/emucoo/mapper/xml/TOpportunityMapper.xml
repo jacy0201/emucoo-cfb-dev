@@ -65,4 +65,14 @@
         </where>
     </update>
 
+    <delete id="dropByIds">
+        delete from t_opportunity
+        <where>
+            id in
+            <foreach collection="list" item="it" open="(" close=")" separator=",">
+                #{it}
+            </foreach>
+        </where>
+    </delete>
+
 </mapper>
