@@ -24,7 +24,7 @@
         select * from t_comment where union_id=#{loopWorkId}
     </select>
 
-    <select id="" resultMap="com.emucoo.model.TTaskComment">
+    <select id="" resultType="com.emucoo.model.TTaskComment">
         select a.id, a.union_id as unionId, a.union_type as unionType, a.user_id as userId, a.user_name as userName,
             a.is_show as isShow, a.is_del as isDel, a.img_ids as imgIds, a.create_time as createTime,
             a.modify_time as modifyTime, a.create_user_id as createUserId, a.modify_user_id as modifyUserId,
