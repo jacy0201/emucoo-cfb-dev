@@ -69,7 +69,8 @@ public class SysUserController extends BaseResource {
         sysUser.setIsAdmin(false);
         //sha256加密
         String salt = RandomStringUtils.randomAlphanumeric(20);
-        sysUser.setPassword(new Sha256Hash(sysUser.getPassword(), salt).toHex());
+        //sysUser.setPassword(new Sha256Hash(sysUser.getPassword(),salt).toHex());
+        sysUser.setPassword(new Sha256Hash(sysUser.getPassword()).toHex());
         sysUser.setSalt(salt);
         sysUserService.addUser(sysUser);
      return success("success");
@@ -86,7 +87,7 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         //sha256加密
-        if(null!=sysUser.getPassword()) sysUser.setPassword(new Sha256Hash(sysUser.getPassword(), sysUser.getSalt()).toHex());
+        if(null!=sysUser.getPassword()) sysUser.setPassword(new Sha256Hash(sysUser.getPassword()).toHex());
         sysUserService.addUser(sysUser);
         sysUserService.editUser(sysUser);
         return success("success");

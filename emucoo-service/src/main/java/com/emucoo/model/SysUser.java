@@ -29,7 +29,6 @@ public class SysUser extends BaseEntity {
         this.dptName = dptName;
     }
 
-    @JsonIgnore
     private String password;
 
     private String remark;
