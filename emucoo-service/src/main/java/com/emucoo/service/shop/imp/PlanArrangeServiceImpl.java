@@ -163,8 +163,8 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 tFrontPlanFormMapper.addRelationToArrangeAndForm(frontPlanForms);
             }
         } catch (Exception e) {
-            logger.error("创建巡店计划失败！", e);
-            throw new ApiException("创建巡店计划失败");
+            logger.error("編輯巡店计划失败！", e);
+            throw new ApiException("编辑巡店计划失败");
         }
     }
 
