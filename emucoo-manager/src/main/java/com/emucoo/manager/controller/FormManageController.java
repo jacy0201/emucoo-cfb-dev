@@ -3,7 +3,6 @@ package com.emucoo.manager.controller;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.model.FormDetail;
 import com.emucoo.model.TFormMain;
 import com.emucoo.service.manage.FormManageService;
 import com.github.pagehelper.PageInfo;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

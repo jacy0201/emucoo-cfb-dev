@@ -61,6 +61,10 @@ public class TTaskComment extends BaseEntity {
     @Column(name = "modify_user_id")
     private Long modifyUserId;
 
+
+    @Transient
+    private String imgUrls;
+
     /**
      * 评论的文本内容
      */
@@ -237,5 +241,45 @@ public class TTaskComment extends BaseEntity {
 
     public void setUnionId(Long unionId) {
         this.unionId = unionId;
+    }
+
+    public Integer getUnionType() {
+        return unionType;
+    }
+
+    public void setUnionType(Integer unionType) {
+        this.unionType = unionType;
+    }
+
+    public Boolean getShow() {
+        return isShow;
+    }
+
+    public void setShow(Boolean show) {
+        isShow = show;
+    }
+
+    public Boolean getDel() {
+        return isDel;
+    }
+
+    public void setDel(Boolean del) {
+        isDel = del;
+    }
+
+    public Long getModifyUserId() {
+        return modifyUserId;
+    }
+
+    public void setModifyUserId(Long modifyUserId) {
+        this.modifyUserId = modifyUserId;
+    }
+
+    public String getImgUrls() {
+        return imgUrls;
+    }
+
+    public void setImgUrls(String imgUrls) {
+        this.imgUrls = imgUrls;
     }
 }
