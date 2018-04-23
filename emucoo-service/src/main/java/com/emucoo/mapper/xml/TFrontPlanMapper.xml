@@ -9,12 +9,12 @@
     <result column="status" property="status" jdbcType="BIT" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="plan_precise_time" property="planPreciseTime" jdbcType="VARCHAR" />
+    <result column="plan_precise_time" property="planPreciseTime" jdbcType="TIMESTAMP" />
     <result column="report_id" property="reportId" jdbcType="BIGINT" />
     <result column="check_form_ids" property="checkFormIds" jdbcType="VARCHAR" />
-    <result column="remind_type" property="remindType" jdbcType="BIT" />
+    <result column="remind_type" property="remindType" jdbcType="TINYINT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="actual_execute_time" property="actualExecuteTime" jdbcType="VARCHAR" />
+    <result column="actual_execute_time" property="actualExecuteTime" jdbcType="TIMESTAMP" />
     <result column="actual_execute_address" property="actualExecuteAddress" jdbcType="VARCHAR" />
     <result column="actual_remind_time" property="actualRemindTime" jdbcType="TIMESTAMP" />
     <result column="arranger_id" property="arrangerId" jdbcType="BIGINT" />
@@ -69,6 +69,34 @@
       #{isDel}
     )
   </insert>
+
+  <update id="updateFrontPlan" parameterType="com.emucoo.model.TFrontPlan">
+    UPDATE t_front_plan
+    SET
+      plan_date = #{planDate},
+      status = #{status},
+      plan_precise_time = #{planPreciseTime},
+      remind_type = #{remindType},
+      remark = #{remark},
+      arranger_id = #{arrangerId},
+      arrangee_id = #{arrangeeId},
+      modify_user_id = #{modifyUserId},
+      modify_time = #{modifyTime}
+    WHERE id = #{id}
+  </update>
+  
+  <update id="uploadArrangeProcess" parameterType="com.emucoo.model.TFrontPlan">
+    UPDATE t_front_plan
+    SET
+    actual_execute_time = #{actualExecuteTime},
+    longitude = #{longitude},
+    latitude = #{latitude},
+    actual_execute_address = #{actualExecuteAddress},
+    status = #{status},
+    modify_user_id = #{modifyUserId},
+    modify_time = #{modifyTime}
+    WHERE id = #{id}
+  </update>
 
   <select id="findArrangeListByAreaId" resultMap="BaseResultMap">
     SELECT

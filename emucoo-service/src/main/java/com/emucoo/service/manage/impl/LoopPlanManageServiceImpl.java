@@ -10,7 +10,7 @@ import com.emucoo.mapper.TPlanFormRelationMapper;
 import com.emucoo.model.TFormMain;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.model.TPlanFormRelation;
-import com.emucoo.service.manage.TLoopPlanManageService;
+import com.emucoo.service.manage.LoopPlanManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ import java.util.List;
  * Created by sj on 2018/4/15.
  */
 @Service
-public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implements TLoopPlanManageService {
+public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implements LoopPlanManageService {
 
     @Autowired
     private TLoopPlanMapper tLoopPlanMapper;
@@ -39,6 +39,7 @@ public class TLoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> imple
         Date now = new Date();
         plan.setCreateTime(now);
         plan.setModifyTime(now);
+        plan.setDptId(plan.getDptId());
         plan.setPlanStartDate(plan.getPlanStartDate());
         plan.setPlanEndDate(plan.getPlanEndDate());
         plan.setIsUse(WorkStatus.STOP_USE.getCode());

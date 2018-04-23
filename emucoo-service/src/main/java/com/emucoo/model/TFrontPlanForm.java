@@ -1,6 +1,8 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.persistence.*;
 
 @Table(name = "t_front_plan_form")
@@ -20,6 +22,14 @@ public class TFrontPlanForm extends BaseEntity {
      */
     @Column(name = "form_main_id")
     private Long formMainId;
+
+    @Column(name = "report_id")
+    private Long reportId;
+
+    @Column(name = "report_status")
+    private Byte reportStatus;
+
+    private Boolean isDel;
 
     /**
      * @return id
@@ -69,5 +79,29 @@ public class TFrontPlanForm extends BaseEntity {
      */
     public void setFormMainId(Long formMainId) {
         this.formMainId = formMainId;
+    }
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
+
+    public Byte getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(Byte reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public Boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Boolean isDel) {
+        this.isDel = isDel;
     }
 }

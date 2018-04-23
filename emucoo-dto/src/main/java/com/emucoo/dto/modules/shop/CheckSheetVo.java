@@ -7,8 +7,8 @@ import lombok.Data;
  */
 @Data
 public class CheckSheetVo {
-    private long checklistID;
+    private Long checklistID;
     private String checklistName;
-    private int sourceType;
+    private Integer sourceType;
     private String sourceName;
 }

@@ -28,6 +28,9 @@ public class TFormValue extends BaseEntity {
     @Column(name = "is_done")
     private Boolean isDone;
 
+    @Column(name = "front_plan_id")
+    private Long frontPlanId;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -100,6 +103,14 @@ public class TFormValue extends BaseEntity {
      */
     public void setIsDone(Boolean isDone) {
         this.isDone = isDone;
+    }
+
+    public Long getFrontPlanId() {
+        return frontPlanId;
+    }
+
+    public void setFrontPlanId(Long frontPlanId) {
+        this.frontPlanId = frontPlanId;
     }
 
     /**

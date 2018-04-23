@@ -9,4 +9,6 @@ public interface TFrontPlanService {
     ReportBaseInfoOut getReportBaseInfo(ReportBaseInfoIn vo);
     GetReportOut getReportById(GetReportIn vo);
     List<GetReportListOut> getReportList();
+
+
 }
