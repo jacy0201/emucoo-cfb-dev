@@ -141,6 +141,10 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		sysDept.setIsUse(true);
 		sysDept.setCreateTime(new Date());
 		sysDept.setCreateUserId(1L);
+		//一级机构的 父ID为0
+		if(null==sysDept.getParentId()){
+			sysDept.setParentId(0L);
+		}
 		int deptId=sysDeptMapper.insertUseGeneratedKeys(sysDept);
 
 		//添加机构地区关联信息
