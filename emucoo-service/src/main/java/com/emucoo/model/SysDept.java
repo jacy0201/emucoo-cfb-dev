@@ -15,7 +15,7 @@ public class SysDept extends BaseEntity {
     private Long id;
 
     /**
-     * 父ID ，层级关系
+     * 父ID ，层级关系（一级机构的 parent_id 为 0）
      */
     @Column(name = "parent_id")
     private Long parentId;
@@ -111,17 +111,6 @@ public class SysDept extends BaseEntity {
     //上级部门名称
     @Transient
     private String parentName;
-
-
-
-    /**
-     * ztree属性
-     */
-    @Transient
-    private Boolean open;
-    @Transient
-    private List<?> list;
-
 
     /**
      * 创建时间
@@ -477,22 +466,6 @@ public class SysDept extends BaseEntity {
 
     public void setParentName(String parentName) {
         this.parentName = parentName;
-    }
-
-    public Boolean getOpen() {
-        return open;
-    }
-
-    public void setOpen(Boolean open) {
-        this.open = open;
-    }
-
-    public List<?> getList() {
-        return list;
-    }
-
-    public void setList(List<?> list) {
-        this.list = list;
     }
 
     public List<SysArea> getAreaList() {
