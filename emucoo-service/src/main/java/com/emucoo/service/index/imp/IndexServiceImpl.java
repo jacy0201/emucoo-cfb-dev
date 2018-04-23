@@ -1,5 +1,6 @@
 package com.emucoo.service.index.imp;
 
+import com.alibaba.druid.util.StringUtils;
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.common.util.RegexMatcher;
 import com.emucoo.dto.modules.index.ReportItemVo;
@@ -54,6 +55,12 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 		    u.setUsername(mobile);
 			user = userMapper.selectOne(u);
 		}
+
+		if(user == null)
+			return null;
+
+		if(!StringUtils.equals(password, user.getPassword()))
+			return null;
 
 		//更新用户 push token
 		user.setPushToken(pushToken);
