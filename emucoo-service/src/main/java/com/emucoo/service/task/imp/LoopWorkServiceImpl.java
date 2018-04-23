@@ -99,19 +99,21 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateWorkStatus(lw);
 
         List<String> imgids = new ArrayList<>();
-        voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
-            com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
-            Date dt = new Date(assignTaskSubmitImgVo.getDate());
-            timg.setCreateUserId(lw.getExcuteUserId());
-            timg.setModifyUserId(lw.getExcuteUserId());
-            timg.setCreateTime(DateUtil.currentDate());
-            timg.setModifyTime(DateUtil.currentDate());
-            timg.setImgUrl(WaterMarkUtils.genPicUrlWithWaterMark(assignTaskSubmitImgVo.getImgUrl(), assignTaskSubmitImgVo.getLocation(), DateUtil.dateToString(dt)));
-            timg.setLocation(assignTaskSubmitImgVo.getLocation());
-            timg.setFileDate(dt);
-            fileMapper.insert(timg);
-            imgids.add(Long.toString(timg.getId()));
-        });
+        if(voi .getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
+            voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
+                com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
+                Date dt = new Date(assignTaskSubmitImgVo.getDate());
+                timg.setCreateUserId(lw.getExcuteUserId());
+                timg.setModifyUserId(lw.getExcuteUserId());
+                timg.setCreateTime(DateUtil.currentDate());
+                timg.setModifyTime(DateUtil.currentDate());
+                timg.setImgUrl(WaterMarkUtils.genPicUrlWithWaterMark(assignTaskSubmitImgVo.getImgUrl(), assignTaskSubmitImgVo.getLocation(), DateUtil.dateToString(dt)));
+                timg.setLocation(assignTaskSubmitImgVo.getLocation());
+                timg.setFileDate(dt);
+                fileMapper.insert(timg);
+                imgids.add(Long.toString(timg.getId()));
+            });
+        }
 
         TOperateDataForWork toof = new TOperateDataForWork();
         toof.setImgIds(StringUtils.join(imgids, ","));
