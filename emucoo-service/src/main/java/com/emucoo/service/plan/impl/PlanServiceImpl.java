@@ -327,8 +327,7 @@ public class PlanServiceImpl implements PlanService {
             //查询该计划需要打表总数量
             Long planId = tLoopPlans.get(0).getId();
             Example tPlanFormRelationExample = new Example(TPlanFormRelation.class);
-            tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false)
-            .andEqualTo("isUse", true);
+            tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false);
             List<TPlanFormRelation> tPlanFormRelations = tPlanFormRelationMapper.selectByExample(tPlanFormRelationExample);
             int totalFormUseCount = 0;
             List<Long> formIds = new ArrayList<>();
