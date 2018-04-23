@@ -8,5 +8,29 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
     <result column="form_main_id" property="formMainId" jdbcType="BIGINT" />
+    <result column="report_id" property="reportId" jdbcType="BIGINT"/>
+    <result column="report_status" property="reportStatus" jdbcType="TINYINT"/>
+    <result column="is_del" property="isDel" jdbcType="BIT"/>
   </resultMap>
+  
+  <insert id="addRelationToArrangeAndForm" parameterType="com.emucoo.model.TFrontPlanForm">
+    INSERT INTO t_front_plan_form
+    (
+      front_plan_id,
+      form_main_id,
+      report_status,
+      is_del
+    ) VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.frontPlanId}, #{item.formMainId}, #{item.reportStatus}, #{item.isDel})
+    </foreach>
+
+  </insert>
+
+  <update id="updateById" parameterType="com.emucoo.model.TFrontPlanForm">
+    UPDATE t_front_plan_form
+    SET
+    is_del = #{isDel}
+    WHERE front_plan_id = #{frontPlanId}
+  </update>
 </mapper>

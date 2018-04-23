@@ -62,6 +62,7 @@ public class PlanController extends AppBaseController {
         checkParam(shopToPlanIn.getPlanID(), "计划id不能为空！");
         checkParam(shopToPlanIn.getPrecinctID(), "管理区域id不能为空！");
         checkParam(shopToPlanIn.getShopArr(), "店铺列表不能为空！");
+        checkParam(shopToPlanIn.getPlanYearMonth(), "年月份不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         planService.addShopToPlan(user, shopToPlanIn);
         return success("success");
@@ -73,6 +74,7 @@ public class PlanController extends AppBaseController {
         checkParam(shopToPlanIn.getPlanID(), "计划id不能为空！");
         checkParam(shopToPlanIn.getPrecinctID(), "管理区域id不能为空！");
         checkParam(shopToPlanIn.getShopArr(), "店铺列表不能为空！");
+        checkParam(shopToPlanIn.getPlanYearMonth(), "年月份不能为空！");
         //SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         planService.deleteShopInPlan(shopToPlanIn);
         return success("success");
@@ -81,6 +83,7 @@ public class PlanController extends AppBaseController {
     @PostMapping(value = "list")
     public AppResult listPlan(@RequestBody ParamVo<FindPlanListIn> params, HttpServletRequest request) {
         FindPlanListIn findPlanListIn = params.getData();
+        checkParam(findPlanListIn.getMonth(), "年月份不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         FindPlanListOut findPlanListOut = planService.listPlan(user, findPlanListIn);
         return success(findPlanListOut);

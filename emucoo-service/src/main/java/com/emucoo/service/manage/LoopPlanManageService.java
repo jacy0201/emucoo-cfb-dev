@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by sj on 2018/4/15.
  */
-public interface TLoopPlanManageService {
+public interface LoopPlanManageService {
 
     void addPlan(TLoopPlan plan);
 

@@ -22,4 +22,8 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
     List<HashMap<String, Long>> findFinishedArrangeListByForms(@Param(value = "planId") Long planId, @Param(value = "formIds") List<Long> formIds);
 
     void deleteFrontPlanByIds(List<Long> subIds);
+
+    void updateFrontPlan(TFrontPlan tFrontPlan);
+
+    int uploadArrangeProcess(TFrontPlan tFrontPlan);
 }

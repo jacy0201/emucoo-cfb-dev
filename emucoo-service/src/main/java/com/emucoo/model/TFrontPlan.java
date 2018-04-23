@@ -59,25 +59,13 @@ public class TFrontPlan extends BaseEntity {
      * 预计到店时间
      */
     @Column(name = "plan_precise_time")
-    private String planPreciseTime;
-
-    /**
-     * 关联的报告id
-     */
-    @Column(name = "report_id")
-    private Long reportId;
-
-    /**
-     * 关联的检查表ids
-     */
-    @Column(name = "check_form_ids")
-    private String checkFormIds;
+    private Date planPreciseTime;
 
     /**
      * 提醒时间类型(0：无，1：日程开始时，2：提前15分钟，3：提前30分钟，4：提前1小时，5：提前2小时，6：提前一天)
      */
     @Column(name = "remind_type")
-    private Boolean remindType;
+    private Byte remindType;
 
     /**
      * 备注
@@ -88,7 +76,7 @@ public class TFrontPlan extends BaseEntity {
      * 实际巡店时间
      */
     @Column(name = "actual_execute_time")
-    private String actualExecuteTime;
+    private Date actualExecuteTime;
 
     /**
      * 实际巡店位置
@@ -101,6 +89,12 @@ public class TFrontPlan extends BaseEntity {
      */
     @Column(name = "actual_remind_time")
     private Date actualRemindTime;
+
+    @Column(name = "longitude")
+    private String longitude;
+
+    @Column(name = "latitude")
+    private String latitude;
 
     /**
      * 巡店安排人id
@@ -238,6 +232,22 @@ public class TFrontPlan extends BaseEntity {
         this.status = status;
     }
 
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
     /**
      * 获取修改时间
      *
@@ -274,75 +284,19 @@ public class TFrontPlan extends BaseEntity {
         this.createTime = createTime;
     }
 
-    /**
-     * 获取预计到店时间
-     *
-     * @return plan_precise_time - 预计到店时间
-     */
-    public String getPlanPreciseTime() {
+    public Date getPlanPreciseTime() {
         return planPreciseTime;
     }
 
-    /**
-     * 设置预计到店时间
-     *
-     * @param planPreciseTime 预计到店时间
-     */
-    public void setPlanPreciseTime(String planPreciseTime) {
+    public void setPlanPreciseTime(Date planPreciseTime) {
         this.planPreciseTime = planPreciseTime;
     }
 
-    /**
-     * 获取关联的报告id
-     *
-     * @return report_id - 关联的报告id
-     */
-    public Long getReportId() {
-        return reportId;
-    }
-
-    /**
-     * 设置关联的报告id
-     *
-     * @param reportId 关联的报告id
-     */
-    public void setReportId(Long reportId) {
-        this.reportId = reportId;
-    }
-
-    /**
-     * 获取关联的检查表ids
-     *
-     * @return check_form_ids - 关联的检查表ids
-     */
-    public String getCheckFormIds() {
-        return checkFormIds;
-    }
-
-    /**
-     * 设置关联的检查表ids
-     *
-     * @param checkFormIds 关联的检查表ids
-     */
-    public void setCheckFormIds(String checkFormIds) {
-        this.checkFormIds = checkFormIds;
-    }
-
-    /**
-     * 获取提醒时间类型(0：无，1：日程开始时，2：提前15分钟，3：提前30分钟，4：提前1小时，5：提前2小时，6：提前一天)
-     *
-     * @return remind_type - 提醒时间类型(0：无，1：日程开始时，2：提前15分钟，3：提前30分钟，4：提前1小时，5：提前2小时，6：提前一天)
-     */
-    public Boolean getRemindType() {
+    public Byte getRemindType() {
         return remindType;
     }
 
-    /**
-     * 设置提醒时间类型(0：无，1：日程开始时，2：提前15分钟，3：提前30分钟，4：提前1小时，5：提前2小时，6：提前一天)
-     *
-     * @param remindType 提醒时间类型(0：无，1：日程开始时，2：提前15分钟，3：提前30分钟，4：提前1小时，5：提前2小时，6：提前一天)
-     */
-    public void setRemindType(Boolean remindType) {
+    public void setRemindType(Byte remindType) {
         this.remindType = remindType;
     }
 
@@ -364,21 +318,11 @@ public class TFrontPlan extends BaseEntity {
         this.remark = remark;
     }
 
-    /**
-     * 获取实际巡店时间
-     *
-     * @return actual_execute_time - 实际巡店时间
-     */
-    public String getActualExecuteTime() {
+    public Date getActualExecuteTime() {
         return actualExecuteTime;
     }
 
-    /**
-     * 设置实际巡店时间
-     *
-     * @param actualExecuteTime 实际巡店时间
-     */
-    public void setActualExecuteTime(String actualExecuteTime) {
+    public void setActualExecuteTime(Date actualExecuteTime) {
         this.actualExecuteTime = actualExecuteTime;
     }
 

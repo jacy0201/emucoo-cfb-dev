@@ -3,12 +3,10 @@ package com.emucoo.manager.controller;
 import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
-import com.emucoo.common.exception.ApiException;
-import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TLoopPlan;
 import com.emucoo.model.TPlanFormRelation;
-import com.emucoo.service.manage.TLoopPlanManageService;
+import com.emucoo.service.manage.LoopPlanManageService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -34,7 +32,7 @@ import java.util.List;
 public class PlanManageController extends BaseResource {
 
     @Autowired
-    private TLoopPlanManageService tLoopPlanManageService;
+    private LoopPlanManageService loopPlanManageService;
 
     /**
      * 新增计划
@@ -65,7 +63,7 @@ public class PlanManageController extends BaseResource {
                 return fail(ApiExecStatus.INVALID_PARAM, "请选择表单！");
             }
         }
-        tLoopPlanManageService.addPlan(plan);
+        loopPlanManageService.addPlan(plan);
         return success("success");
     }
 
@@ -101,7 +99,7 @@ public class PlanManageController extends BaseResource {
                 return fail(ApiExecStatus.INVALID_PARAM, "请选择表单！");
             }
         }
-        tLoopPlanManageService.updatePlanById(plan);
+        loopPlanManageService.updatePlanById(plan);
         return success("success");
     }
 
@@ -122,7 +120,7 @@ public class PlanManageController extends BaseResource {
         if (plan.getIsUse() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "计划使用状态不能为空！");
         }
-        tLoopPlanManageService.modifyPlanUseById(plan);
+        loopPlanManageService.modifyPlanUseById(plan);
         return success("success");
     }
 
@@ -141,7 +139,7 @@ public class PlanManageController extends BaseResource {
         if (plan.getId() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "计划id不能为空！");
         }
-        tLoopPlanManageService.stopPlanById(plan);
+        loopPlanManageService.stopPlanById(plan);
         return success("success");
     }*/
 
@@ -159,7 +157,7 @@ public class PlanManageController extends BaseResource {
         if (plan.getId() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "计划id不能为空！");
         }
-        tLoopPlanManageService.deletePlanById(plan);
+        loopPlanManageService.deletePlanById(plan);
         return success("success");
     }
 
@@ -180,7 +178,7 @@ public class PlanManageController extends BaseResource {
         }
         TLoopPlan plan = param.getData();
         PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
-        List<TLoopPlan> tLoopPlans = tLoopPlanManageService.findPlanListByCondition(plan);
+        List<TLoopPlan> tLoopPlans = loopPlanManageService.findPlanListByCondition(plan);
         return success(new PageInfo<>(tLoopPlans));
     }
 
@@ -198,7 +196,7 @@ public class PlanManageController extends BaseResource {
         if (plan.getId() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "计划id不能为空！");
         }
-        TLoopPlan tLoopPlan = tLoopPlanManageService.findPlanById(plan);
+        TLoopPlan tLoopPlan = loopPlanManageService.findPlanById(plan);
         return success(tLoopPlan);
     }
 }

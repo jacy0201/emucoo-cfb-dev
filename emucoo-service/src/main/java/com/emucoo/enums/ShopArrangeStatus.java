@@ -4,7 +4,7 @@ package com.emucoo.enums;
  * Created by sj on 2018/4/17.
  */
 public enum ShopArrangeStatus {
-    NOT_PLAN(0, "未安排"),
+    NOT_PLAN(0, "未计划"),
     NOT_ARRANGE(1, "未安排"),
     NOT_CHECK(2, "未巡店"),
     CHECKING(3, "巡店中"),

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TRemindMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TRemind" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <id column="remind_type" property="remindType" jdbcType="INTEGER" />
+    <result column="remind_name" property="remindName" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

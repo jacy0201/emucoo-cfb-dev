@@ -44,19 +44,5 @@ public final class ConstantsUtil {
 		// 时间戳
 		public static final String SEPARATOR_DATE = ",";
 	}
-	
-	public interface FrontPlan{
-		// 0：打包计划 1：循环任务
-		public static final Integer TYPE_ZERO = 0;
-		public static final Integer TYPE_ONE = 1;
-		
-		// 状态 0：未巡店1：已巡店
-		public static final Boolean STATUS_ONE = false;
-		public static final Boolean STATUS_TWO = true;
-		
-		// 状态 0：未安排1：已安排
-		public static final Boolean ISPLAN_ONE = false;
-		public static final Boolean ISPLAN_TWO = true;
-	}
 
 }

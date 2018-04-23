@@ -4,11 +4,14 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.report.*;
 import com.emucoo.dto.modules.shop.*;
 import com.emucoo.model.CheckSheet;
+import com.emucoo.model.SysUser;
+import com.emucoo.model.TFormMain;
 import com.emucoo.model.TRemind;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.form.FormService;
 import com.emucoo.service.shop.LoopPlanService;
 import com.emucoo.service.shop.PlanArrangeService;
 import com.emucoo.service.shop.TFrontPlanService;
@@ -39,6 +42,9 @@ public class ArrangementController extends AppBaseController {
 	@Autowired
 	private TFrontPlanService tFrontPlanService;
 
+	@Autowired
+	private FormService formService;
+
 	/**
 	 * 获取到期提醒时间类型列表
 	 *
@@ -63,15 +69,15 @@ public class ArrangementController extends AppBaseController {
 
 	@PostMapping("/sheets")
 	public AppResult<CheckSheetVo_O> sheets() {
-		List<CheckSheet> sheets = loopPlanService.listCheckSheets();
+		List<TFormMain> sheets = formService.listForm();
 		CheckSheetVo_O voo = new CheckSheetVo_O();
 		List<CheckSheetVo> vos = new ArrayList<CheckSheetVo>();
-		for (CheckSheet sheet : sheets) {
+		for (TFormMain sheet : sheets) {
 			CheckSheetVo vo = new CheckSheetVo();
 			vo.setChecklistID(sheet.getId());
 			vo.setChecklistName(sheet.getName());
-			vo.setSourceType(sheet.getSourceType());
-			vo.setSourceName(sheet.getSourceName());
+			vo.setSourceType(0);
+			vo.setSourceName("");
 			vos.add(vo);
 		}
 		voo.setChecklistArr(vos);
@@ -122,37 +128,48 @@ public class ArrangementController extends AppBaseController {
 	}
 
 	@PostMapping("/save")
-	public AppResult<String> save(@RequestBody ParamVo<PlanArrangeAddIn> base) {
+	public AppResult<String> save(@RequestBody ParamVo<PlanArrangeAddIn> base, HttpServletRequest request) {
 		PlanArrangeAddIn vo = base.getData();
-		planArrangeService.save(vo);
-		return success("");
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		planArrangeService.save(vo, user);
+		return success("success");
 	}
-
 
 
 	@PostMapping("/edit")
-	public AppResult<String> edit(@RequestBody ParamVo<PlanArrangeEditIn> base) {
+	public AppResult<String> edit(@RequestBody ParamVo<PlanArrangeEditIn> base, HttpServletRequest request) {
 		PlanArrangeEditIn vo = base.getData();
-		planArrangeService.edit(vo);
-		return success("");
+		checkParam(vo.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		planArrangeService.edit(vo, user);
+		return success("success");
 	}
 
+	@PostMapping("/detail")
+	public AppResult<PatrolShopArrangeDetailVO> detail(@RequestBody ParamVo<PatrolShopArrangeDetailIn> base) {
+		PatrolShopArrangeDetailIn vo = base.getData();
+		checkParam(vo.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+		PatrolShopArrangeDetailVO detail = planArrangeService.detail(vo);
+		return success(detail);
+	}
+
+
 	@PostMapping("/delete")
-	public AppResult<String> delete(@RequestBody ParamVo<PlanArrangeDeleteIn> base) {
+	public AppResult<String> delete(@RequestBody ParamVo<PlanArrangeDeleteIn> base, HttpServletRequest request) {
 		PlanArrangeDeleteIn vo = base.getData();
-		planArrangeService.delete(vo);
-		return success("");
+		checkParam(vo.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		planArrangeService.delete(vo, user);
+		return success("success");
 	}
 
 	@PostMapping("/patrolShop")
-	public AppResult<String> patrolShopInfoIn(@RequestBody ParamVo<PatrolShopInfoIn> base) {
+	public AppResult<String> patrolShopInfoIn(@RequestBody ParamVo<PatrolShopInfoIn> base, HttpServletRequest request) {
 		PatrolShopInfoIn vo = base.getData();
-		int i = planArrangeService.patrolShop(vo);
-		if (i == 1) {
-			return success("");
-		} else {
-			return fail(AppExecStatus.FAIL, "巡店安排不存在！");
-		}
+		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+		planArrangeService.patrolShop(vo, user);
+		return success("success");
+
 	}
 
 }
