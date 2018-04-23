@@ -267,6 +267,7 @@ public class PlanServiceImpl implements PlanService {
                         shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"":frontPlan.getPlanDate().toString());
                         shop.setShopStatus(frontPlan.getStatus().intValue());
                         shop.setSubID(frontPlan.getId());
+                        shop.setPatrolShopArrangeID(frontPlan.getId());
                         shopArr.add(shop);
                     }
                     areaOut.setShopArr(shopArr);
