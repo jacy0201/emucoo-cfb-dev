@@ -48,7 +48,7 @@ public class SysUserController extends BaseResource {
 	@PostMapping("/list")
 	@RequiresPermissions("sys:user:list")
 	@ResponseBody
-	public ApiResult list(@RequestBody ParamVo<UserQuery> param){
+	public ApiResult<PageInfo<SysUser>> list(@RequestBody ParamVo<UserQuery> param){
         UserQuery userQuery=param.getData();
         PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
         List<SysUser> userList = sysUserService.queryList(userQuery);
@@ -215,7 +215,7 @@ public class SysUserController extends BaseResource {
 	@ApiOperation(value="获取用户详情")
 	@ResponseBody
     @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
-	public ApiResult getUserById(Long id){
+	public ApiResult<SysUser> getUserById(Long id){
 		if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		return success(sysUserService.findById(id));
 	}
@@ -225,7 +225,7 @@ public class SysUserController extends BaseResource {
 	 */
 	@PostMapping("/getShopManagers")
 	@ApiOperation(value="获取店长信息集合")
-	public ApiResult getShopManagers(){
+	public ApiResult<List<SysUser>> getShopManagers(){
 		SysUser sysUser=new SysUser();
 		sysUser.setIsShopManager(true);
 		sysUser.setIsDel(false);

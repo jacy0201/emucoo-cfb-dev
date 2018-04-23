@@ -37,7 +37,7 @@ public class SysAreaController extends BaseResource {
 	@RequiresPermissions("sys:area:list")
 	@ResponseBody
 	@ApiOperation(value="分页查询分区")
-	public ApiResult list(@RequestBody ParamVo<SysArea> param){
+	public ApiResult<PageInfo<SysArea>> list(@RequestBody ParamVo<SysArea> param){
 		SysArea sysArea = param.getData();
 		Example example=new Example(SysArea.class);
 		if(null!=sysArea && null!=sysArea.getAreaName()) {
@@ -57,7 +57,7 @@ public class SysAreaController extends BaseResource {
 	@RequiresPermissions("sys:area:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部分区")
-	public ApiResult listAll(@RequestBody SysArea sysArea){
+	public ApiResult<List<SysArea>> listAll(@RequestBody SysArea sysArea){
 		Example example=new Example(SysArea.class);
 		if(null!=sysArea.getAreaName()) {
 			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");

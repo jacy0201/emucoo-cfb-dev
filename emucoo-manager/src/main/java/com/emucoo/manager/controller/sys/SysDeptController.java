@@ -49,7 +49,7 @@ public class SysDeptController extends BaseResource {
 	@PostMapping("/list")
 	@RequiresPermissions("sys:dept:list")
 	@ResponseBody
-	public ApiResult list(@RequestBody DeptQuery DeptQuery){
+	public ApiResult<List<SysDept>> list(@RequestBody DeptQuery DeptQuery){
 		List<SysDept> deptList = sysDeptService.queryList(DeptQuery);
 		return success(deptList);
 	}
@@ -117,7 +117,7 @@ public class SysDeptController extends BaseResource {
     @PostMapping("/listUserRelation")
     @RequiresPermissions("sys:dept:relation")
 	@ApiImplicitParam(name="dptId",value="机构id",dataType="long",required=true,paramType="query")
-    public ApiResult listUserRelation(Long dptId){
+    public ApiResult<List<SysUserRelation>> listUserRelation(Long dptId){
         if(dptId==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
         List<SysUserRelation> list=sysUserRelationService.listUserRelation(dptId);
         return success(list);
@@ -192,7 +192,7 @@ public class SysDeptController extends BaseResource {
 			@ApiImplicitParam(name="realName",value="姓名",dataType="string",required=false,paramType="query"),
 			@ApiImplicitParam(name="postId",value="岗位id",dataType="long",required=false,paramType="query")
 	})
-    public ApiResult listUser(Long deptId,String realName,Long postId ) {
+    public ApiResult<List<SysUser>> listUser(Long deptId,String realName,Long postId ) {
 		List<SysUser> list=null;
 		if(deptId==null){ return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!"); }
         if(postId!=null){
