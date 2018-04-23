@@ -2,6 +2,7 @@ package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.SysUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ public interface SysUserMapper extends MyMapper<SysUser> {
      */
     List<SysUser> listByShopId(HashMap map) ;
 
-    void resetPwd(String mobile, String password);
+    void resetPwd(@Param("mobile") String mobile, @Param("password") String password);
 
     void loginOut(String pushToken);
 
