@@ -139,16 +139,18 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.auditLoopWork(loopWork);
 
         List<String> aimgs = new ArrayList<>();
-        atai.getReviewImgArr().forEach(imageUrlVo -> {
-            com.emucoo.model.TFile aimg = new com.emucoo.model.TFile();
-            aimg.setImgUrl(imageUrlVo.getImgUrl());
-            aimg.setCreateUserId(loopWork.getAuditUserId());
-            aimg.setCreateTime(DateUtil.currentDate());
-            aimg.setModifyTime(DateUtil.currentDate());
-            aimg.setModifyUserId(loopWork.getAuditUserId());
-            fileMapper.insert(aimg);
-            aimgs.add(Long.toString(aimg.getId()));
-        });
+        if(atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
+            atai.getReviewImgArr().forEach(imageUrlVo -> {
+                com.emucoo.model.TFile aimg = new com.emucoo.model.TFile();
+                aimg.setImgUrl(imageUrlVo.getImgUrl());
+                aimg.setCreateUserId(loopWork.getAuditUserId());
+                aimg.setCreateTime(DateUtil.currentDate());
+                aimg.setModifyTime(DateUtil.currentDate());
+                aimg.setModifyUserId(loopWork.getAuditUserId());
+                fileMapper.insert(aimg);
+                aimgs.add(Long.toString(aimg.getId()));
+            });
+        }
 
         TOperateDataForWork toof = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
         toof.setAuditUserId(user.getId());
