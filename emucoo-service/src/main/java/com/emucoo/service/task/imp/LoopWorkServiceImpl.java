@@ -99,19 +99,21 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateWorkStatus(lw);
 
         List<String> imgids = new ArrayList<>();
-        voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
-            com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
-            Date dt = new Date(assignTaskSubmitImgVo.getDate());
-            timg.setCreateUserId(lw.getExcuteUserId());
-            timg.setModifyUserId(lw.getExcuteUserId());
-            timg.setCreateTime(DateUtil.currentDate());
-            timg.setModifyTime(DateUtil.currentDate());
-            timg.setImgUrl(WaterMarkUtils.genPicUrlWithWaterMark(assignTaskSubmitImgVo.getImgUrl(), assignTaskSubmitImgVo.getLocation(), DateUtil.dateToString(dt)));
-            timg.setLocation(assignTaskSubmitImgVo.getLocation());
-            timg.setFileDate(dt);
-            fileMapper.insert(timg);
-            imgids.add(Long.toString(timg.getId()));
-        });
+        if(voi .getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
+            voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
+                com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
+                Date dt = new Date(assignTaskSubmitImgVo.getDate());
+                timg.setCreateUserId(lw.getExcuteUserId());
+                timg.setModifyUserId(lw.getExcuteUserId());
+                timg.setCreateTime(DateUtil.currentDate());
+                timg.setModifyTime(DateUtil.currentDate());
+                timg.setImgUrl(WaterMarkUtils.genPicUrlWithWaterMark(assignTaskSubmitImgVo.getImgUrl(), assignTaskSubmitImgVo.getLocation(), DateUtil.dateToString(dt)));
+                timg.setLocation(assignTaskSubmitImgVo.getLocation());
+                timg.setFileDate(dt);
+                fileMapper.insert(timg);
+                imgids.add(Long.toString(timg.getId()));
+            });
+        }
 
         TOperateDataForWork toof = new TOperateDataForWork();
         toof.setImgIds(StringUtils.join(imgids, ","));
@@ -137,16 +139,18 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.auditLoopWork(loopWork);
 
         List<String> aimgs = new ArrayList<>();
-        atai.getReviewImgArr().forEach(imageUrlVo -> {
-            com.emucoo.model.TFile aimg = new com.emucoo.model.TFile();
-            aimg.setImgUrl(imageUrlVo.getImgUrl());
-            aimg.setCreateUserId(loopWork.getAuditUserId());
-            aimg.setCreateTime(DateUtil.currentDate());
-            aimg.setModifyTime(DateUtil.currentDate());
-            aimg.setModifyUserId(loopWork.getAuditUserId());
-            fileMapper.insert(aimg);
-            aimgs.add(Long.toString(aimg.getId()));
-        });
+        if(atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
+            atai.getReviewImgArr().forEach(imageUrlVo -> {
+                com.emucoo.model.TFile aimg = new com.emucoo.model.TFile();
+                aimg.setImgUrl(imageUrlVo.getImgUrl());
+                aimg.setCreateUserId(loopWork.getAuditUserId());
+                aimg.setCreateTime(DateUtil.currentDate());
+                aimg.setModifyTime(DateUtil.currentDate());
+                aimg.setModifyUserId(loopWork.getAuditUserId());
+                fileMapper.insert(aimg);
+                aimgs.add(Long.toString(aimg.getId()));
+            });
+        }
 
         TOperateDataForWork toof = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
         toof.setAuditUserId(user.getId());

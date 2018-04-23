@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
@@ -78,7 +79,7 @@ public class SysShopController extends BaseResource {
 	@RequiresPermissions("sys:shop:update")
 	@ApiOperation(value="更新店铺")
 	public ApiResult update(@RequestBody TShopInfo shopInfo){
-		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
+		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		shopInfo.setModifyTime(new Date());
 		shopInfo.setModifyUserId(1L);
 		sysShopService.updateSelective(shopInfo);
@@ -92,7 +93,7 @@ public class SysShopController extends BaseResource {
 	@RequiresPermissions("sys:shop:delete")
 	@ApiOperation(value="删除店铺")
 	public ApiResult delete(@RequestBody TShopInfo shopInfo){
-		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
+		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		sysShopService.deleteById(shopInfo.getId());
 		return success("success");
 	}
@@ -104,8 +105,8 @@ public class SysShopController extends BaseResource {
 	@RequiresPermissions("sys:shop:use")
 	@ApiOperation(value="店铺启用/停用")
 	public ApiResult modifyShopUse(@RequestBody TShopInfo shopInfo){
-		if(shopInfo.getId()==null){return fail("id 参数不能为空!");}
-		if(shopInfo.getIsUse()==null){return fail("启用/停用 参数不能为空!");}
+		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
+		if(shopInfo.getIsUse()==null){return fail(ApiExecStatus.INVALID_PARAM,"启用/停用 参数不能为空!");}
 		shopInfo.setModifyTime(new Date());
 		shopInfo.setModifyUserId(1L);
 		sysShopService.updateSelective(shopInfo);

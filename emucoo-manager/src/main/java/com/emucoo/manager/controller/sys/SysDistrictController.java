@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.model.SysDistrict;
@@ -49,7 +50,7 @@ public class SysDistrictController extends BaseResource {
 	@PostMapping (value = "listCityByPrvCode")
 	@ApiOperation(value="根据省份编码查询市", notes ="areaCode 参数不能为空，需要传递所要查询的省的编码！！")
 	public ApiResult listCityByPrvCode(@RequestBody SysDistrict sysDistrict) {
-		if(null==sysDistrict.getAreaCode()){return  fail("areaCode 不能为空！");}
+		if(null==sysDistrict.getAreaCode()){return  fail(ApiExecStatus.INVALID_PARAM,"areaCode 不能为空！");}
 		sysDistrict.setAreaType("2");
 		sysDistrict.setParentCode(sysDistrict.getAreaCode());
 		sysDistrict.setAreaCode(null);
@@ -62,7 +63,7 @@ public class SysDistrictController extends BaseResource {
 	@PostMapping (value = "listDisByCityCode")
 	@ApiOperation(value="根据市编码查询区",notes ="areaCode 参数不能为空，需要传递所要查询的市的编码！！")
 	public ApiResult listDisByCityCode(@RequestBody SysDistrict sysDistrict) {
-		if(null==sysDistrict.getAreaCode()){return  fail("areaCode 不能为空！");}
+		if(null==sysDistrict.getAreaCode()){return  fail(ApiExecStatus.INVALID_PARAM,"areaCode 不能为空！");}
 		sysDistrict.setAreaType("3");
 		sysDistrict.setParentCode(sysDistrict.getAreaCode());
 		sysDistrict.setAreaCode(null);

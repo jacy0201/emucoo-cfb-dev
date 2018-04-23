@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
@@ -90,7 +91,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:update")
 	@ApiOperation(value="修改岗位")
 	public ApiResult update(@RequestBody SysPost post){
-		if(post.getId()==null){return fail("id 参数不能为空!");}
+		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		post.setModifyTime(new Date());
 		post.setModifyUserId(1L);
 		sysPostService.updateSelective(post);
@@ -104,7 +105,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:delete")
 	@ApiOperation(value="删除岗位")
 	public ApiResult delete(@RequestBody SysPost post){
-		if(post.getId()==null){return fail("id 参数不能为空!");}
+		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		sysPostService.deleteById(post.getId());
 		return success("success");
 	}

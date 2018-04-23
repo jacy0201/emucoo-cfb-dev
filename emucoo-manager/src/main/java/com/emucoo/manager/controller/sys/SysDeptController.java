@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.StringUtil;
@@ -72,7 +73,7 @@ public class SysDeptController extends BaseResource {
 	@PostMapping("/update")
 	@RequiresPermissions("sys:dept:update")
 	public ApiResult update(@RequestBody SysDept dept){
-        if(dept.getId()==null){return fail("机构 id 不能为空!");}
+        if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
 		sysDeptService.updateDept(dept);
 		return success("success");
 	}
@@ -84,7 +85,7 @@ public class SysDeptController extends BaseResource {
     @PostMapping("/modifyUse")
     @RequiresPermissions("sys:dept:use")
     public ApiResult modifyUse(@RequestBody SysDept dept){
-        if(dept.getId()==null){return fail("机构 id 不能为空!");}
+        if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
         sysDeptService.updateDept(dept);
         return success("success");
     }
@@ -97,7 +98,7 @@ public class SysDeptController extends BaseResource {
 	@PostMapping("/delete")
 	@RequiresPermissions("sys:dept:delete")
 	public ApiResult delete(@RequestBody SysDept dept){
-        if(dept.getId()==null){return fail("机构 id 不能为空!");}
+        if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
 		//判断是否有子部门
 		List<Long> deptList = sysDeptService.queryDetpIdList(dept.getId());
 		if(deptList.size() > 0){
@@ -117,7 +118,7 @@ public class SysDeptController extends BaseResource {
     @RequiresPermissions("sys:dept:relation")
 	@ApiImplicitParam(name="dptId",value="机构id",dataType="long",required=true,paramType="query")
     public ApiResult listUserRelation(Long dptId){
-        if(dptId==null){return fail("dptId 不能为空!");}
+        if(dptId==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
         List<SysUserRelation> list=sysUserRelationService.listUserRelation(dptId);
         return success(list);
     }
@@ -129,10 +130,10 @@ public class SysDeptController extends BaseResource {
     @ApiOperation(value="添加下级用户")
     @PostMapping("/addChildUser")
     public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
-        if(sysUserRelation.getDptId()==null){return fail("dptId 不能为空!");}
-        if(sysUserRelation.getUserId()==null){return fail("userId 不能为空!");}
-        if(sysUserRelation.getChildUserId()==null){return fail("childUserId 不能为空!");}
-        if(sysUserRelation.getPostId()==null){return fail("postId 不能为空!");}
+        if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
+        if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
+        if(sysUserRelation.getChildUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childUserId 不能为空!");}
+        if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
         sysUserRelation.setIsDel(false);
         sysUserRelation.setCreateTime(new Date());
         sysUserRelation.setCreateUserId(1L);
@@ -147,9 +148,9 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="添加用户")
 	@PostMapping("/addUser")
 	public ApiResult addUser(@RequestBody SysUserRelation sysUserRelation){
-		if(sysUserRelation.getDptId()==null){return fail("dptId 不能为空!");}
-		if(sysUserRelation.getUserId()==null){return fail("userId 不能为空!");}
-		if(sysUserRelation.getPostId()==null){return fail("postId 不能为空!");}
+		if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
+		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
+		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(1L);
@@ -165,10 +166,10 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="删除用户")
 	@PostMapping("/deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
-		if(sysUserRelation.getId()==null){return fail("id 不能为空!");}
+		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
 		sysUserRelation=sysUserRelationService.findById(sysUserRelation.getId());
-		if(null!=sysUserRelation.getChildUserId()){return fail("请先删除下级用户!");}
+		if(null!=sysUserRelation.getChildUserId()){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
 
 		sysUserRelationService.deleteById(sysUserRelation.getId());
 		return success("success");
@@ -193,7 +194,7 @@ public class SysDeptController extends BaseResource {
 	})
     public ApiResult listUser(Long deptId,String realName,Long postId ) {
 		List<SysUser> list=null;
-		if(deptId==null){ return fail("dptId 不能为空!"); }
+		if(deptId==null){ return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!"); }
         if(postId!=null){
         	HashMap map=new HashMap();
 			map.put("postId",postId);

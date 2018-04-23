@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
@@ -100,7 +101,7 @@ public class SysBrandController extends BaseResource {
 	@RequiresPermissions("sys:brand:delete")
 	@ApiOperation(value="删除品牌")
 	public ApiResult delete(@RequestBody TBrandInfo brand){
-		if(brand.getId()==null){return fail("id 参数不能为空!");}
+		if(brand.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		sysBrandService.deleteById(brand.getId());
 		return success("success");
 	}

@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.model.SysUser;
@@ -42,12 +43,12 @@ public class SysLoginController extends BaseResource {
 		SysUser user = sysUserService.findOne(sysUser);
 		//账号不存在、密码错误
 		if(user == null || !user.getPassword().equals(new Sha256Hash(password, user.getSalt()).toHex())) {
-			return fail("账号或密码不正确");
+			return fail(ApiExecStatus.FAIL,"账号或密码不正确");
 		}
 
 		//账号锁定
 		if(user.getStatus()!=0){
-			return fail("账号已被锁定或停用,请联系管理员");
+			return fail(ApiExecStatus.FAIL,"账号已被锁定或停用,请联系管理员");
 		}
 
 		//生成token，并保存到数据库
@@ -62,7 +63,7 @@ public class SysLoginController extends BaseResource {
 	@ApiOperation(value="用户退出")
 	@ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
 	public ApiResult logout(Long id){
-		if(id==null){return fail("id 不能为空！");}
+		if(id==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空！");}
 		sysUserTokenService.expireToken(id);
 		return success("success");
 	}

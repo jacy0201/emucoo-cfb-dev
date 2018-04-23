@@ -1,6 +1,7 @@
 package com.emucoo.manager.controller.sys;
 
 import com.emucoo.common.Constant;
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.StringUtil;
@@ -80,7 +81,7 @@ public class SysUserController extends BaseResource {
     @PostMapping("/edit")
     @RequiresPermissions("sys:user:edit")
     public ApiResult edit(@RequestBody SysUser sysUser){
-        if(null==sysUser.getId()){return fail("id 不能为空!");}
+        if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         //sha256加密
@@ -98,7 +99,7 @@ public class SysUserController extends BaseResource {
     @PostMapping("/setBrandArea")
     @RequiresPermissions("sys:user:setBrandArea")
     public ApiResult setBrandArea(@RequestBody UserBrandArea userBrandArea){
-        if(null==userBrandArea.getUserId()){return fail("userId 不能为空!");}
+        if(null==userBrandArea.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
         sysUserService.setBrandArea(userBrandArea);
         return success("success");
     }
@@ -112,9 +113,9 @@ public class SysUserController extends BaseResource {
     @RequiresPermissions("sys:user:deleteByIds")
     @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query")
     public ApiResult deleteByIds(String ids){
-        if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
-        if(ArrayUtils.contains(ids.split(","), "1")){
-            return fail("系统管理员不能删除");
+        if(StringUtil.isNotEmpty(ids)){return fail(ApiExecStatus.INVALID_PARAM,"ids 不能为空!");}
+        if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
+            return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
         }
         sysUserService.deleteByIds(ids);
         return success("success");
@@ -128,8 +129,8 @@ public class SysUserController extends BaseResource {
     @ApiOperation(value="删除用户")
     @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
     public ApiResult delete(Long id){
-        if(null==id){return fail("id 不能为空!");}
-        if(id==1){ return fail("系统管理员不能删除"); }
+        if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+        if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能删除"); }
         sysUserService.deleteById(id);
         return success("success");
     }
@@ -144,11 +145,11 @@ public class SysUserController extends BaseResource {
     @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query"),
     @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
     public ApiResult modifyBatchUse(String ids,Integer status){
-        if(StringUtil.isNotEmpty(ids)){return fail("ids 不能为空!");}
+        if(StringUtil.isNotEmpty(ids)){return fail(ApiExecStatus.INVALID_PARAM,"ids 不能为空!");}
         if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
-            return fail("系统管理员不能删除");
+            return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
         }
-        if(null==status){ return fail("status 不能为空！"); }
+        if(null==status){ return fail(ApiExecStatus.INVALID_PARAM,"status 不能为空！"); }
         sysUserService.modifyBatchUse(ids,status);
         return success("success");
     }
@@ -164,8 +165,8 @@ public class SysUserController extends BaseResource {
             @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
     public ApiResult modifyUse(Long id,Integer status){
         if(null==id){return fail("id 不能为空!");}
-        if(id==Constant.SUPER_ADMIN){ return fail("系统管理员不能修改"); }
-        if(null==status){ return fail("status 不能为空！"); }
+        if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能修改"); }
+        if(null==status){ return fail(ApiExecStatus.INVALID_PARAM,"status 不能为空！"); }
         SysUser sysUser=new SysUser();
         sysUser.setId(id);
         sysUser.setStatus(status);
@@ -181,7 +182,7 @@ public class SysUserController extends BaseResource {
 	@ResponseBody
     @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
 	public ApiResult getUserById(Long id){
-		if(null==id){return fail("id 不能为空!");}
+		if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		return success(sysUserService.findById(id));
 	}
 
