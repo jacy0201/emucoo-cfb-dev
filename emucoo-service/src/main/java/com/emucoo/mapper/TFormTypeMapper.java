@@ -10,4 +10,6 @@ public interface TFormTypeMapper extends MyMapper<TFormType> {
     List<TFormType> findFormTypesByFormMainId(Long id);
 
     void upsert(TFormType formType);
+
+    void dropByFormMainId(Long id);
 }

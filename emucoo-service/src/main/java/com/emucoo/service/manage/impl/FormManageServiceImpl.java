@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FormManageServiceImpl implements FormManageService {
@@ -43,6 +46,9 @@ public class FormManageServiceImpl implements FormManageService {
 
     @Autowired
     private  TFormOpptMapper formOpptMapper;
+
+    @Autowired
+    private SysDeptMapper sysDeptMapper;
 
     @Override
     public int countFormsByNameKeyword(String keyword) {
@@ -94,10 +100,13 @@ public class FormManageServiceImpl implements FormManageService {
      */
     @Override
     public TFormMain fetchFormDetail(Long id) {
-//        FormDetail detail = new FormDetail();
 
         TFormMain formMain = formMainMapper.fetchOneById(id);
-//        detail.setFormMain(formMain);
+        if(formMain.getCcDptIds() != null) {
+            List<Long> ids = Arrays.stream(formMain.getCcDptIds().split(",")).map(str -> Long.parseLong(str)).collect(Collectors.toList());
+            List<SysDept> ccDepts = sysDeptMapper.fetchByIds(ids);
+            formMain.setCcDepts(ccDepts);
+        }
 
         List<TFormImptRules> formImptRuless = formImptRulesMapper.findFormImptRulesByFormMainId(formMain.getId());
         formMain.setImptRules(formImptRuless);
@@ -118,7 +127,7 @@ public class FormManageServiceImpl implements FormManageService {
         List<TFormType> formTypes = formTypeMapper.findFormTypesByFormMainId(id);
         formTypes.forEach(formType -> {
             List<TFormPbm> formPbms = formPbmMapper.findFormPbmsByFormTypeId(formType.getId());
-            formPbms.forEach(formPbm -> {
+            formPbms.stream().filter(pbm -> pbm.getProblemSchemaType() == 2).forEach(formPbm -> {
                 List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
                 formPbm.setSubProblems(subPbms);
                 List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
@@ -138,25 +147,24 @@ public class FormManageServiceImpl implements FormManageService {
     @Override
     @Transactional
     public void saveFormDetail(TFormMain formMain) {
+        // 创建之前先把原来的数据清除
+        cleanOldFormInfo(formMain);
+
         List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
-//        formScoreItemMapper.dropByFormMainId(formMain.getId());
         formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
         formScoreItemMapper.insertList(formScoreItems);
 
         List<TFormImptRules> formImptRuless = formMain.getImptRules();
-//        formImptRulesMapper.dropByFormMainId(formMain.getId());
         formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
         formImptRulesMapper.insertList(formImptRuless);
 
         // form add items maybe is null
         List<TFormAddItem> formAddItems = formMain.getAddItems();
-//        formAddItemMapper.dropByFormMainId(formMain.getId());
         if(formAddItems != null && formAddItems.size() > 0) {
             formAddItems.forEach(it -> it.setFormMainId(formMain.getId()));
             formAddItemMapper.insertList(formAddItems);
         }
 
-        dropModuleByFormMainId(formMain.getId());
         List<TFormType> formModules = formMain.getFormModules();
         formModules.forEach(formModule -> {
             formModule.setFormMainId(formMain.getId());
@@ -164,9 +172,26 @@ public class FormManageServiceImpl implements FormManageService {
         });
     }
 
-    private void dropModuleByFormMainId(Long id) {
-
+    private void cleanOldFormInfo(TFormMain formMain) {
+        formScoreItemMapper.dropByFormMainId(formMain.getId());
+        formImptRulesMapper.dropByFormMainId(formMain.getId());
+        formAddItemMapper.dropByFormMainId(formMain.getId());
+        List<TFormType> formModules = formMain.getFormModules();
+        List<Long> mdlIds = new ArrayList<>();
+        List<Long> probIds = new ArrayList<>();
+        formModules.forEach(module -> {
+            mdlIds.add(module.getId());
+            module.getProblems().forEach(problem -> probIds.add(problem.getId()));
+        });
+        List<Long> opptIds = formOpptMapper.fetchOpptIdsByProblemIds(probIds, 2);
+        formTypeMapper.dropByFormMainId(formMain.getId());
+        formPbmMapper.dropByFormTypeIds(mdlIds);
+        formSubPbmMapper.dropByProblemIds(probIds);
+        formSubPbmHeaderMapper.dropByProblemIds(probIds);
+        formOpptMapper.dropByProblemIds(probIds);
+        opportunityMapper.dropByIds(opptIds);
     }
+
 
     private void disassembleFormModule(TFormType formType) {
         formTypeMapper.insert(formType);

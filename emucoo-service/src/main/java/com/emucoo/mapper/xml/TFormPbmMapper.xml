@@ -20,8 +20,36 @@
         <result column="description_hit" property="descriptionHit" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
-    <select id="findFormPbmsByFormTypeId" resultMap="BaseResultMap">
-        select * from t_form_pbm where form_type_id = #{id}
+    <resultMap id="pbmMap" type="com.emucoo.model.TFormPbm">
+        <id column="prob_id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
+        <result column="sub_problem_num" property="subProblemNum" jdbcType="INTEGER"/>
+        <result column="sub_problem_unit" property="subProblemUnit" jdbcType="VARCHAR"/>
+        <result column="problem_schema_type" property="problemSchemaType" jdbcType="INTEGER"/>
+        <result column="is_important" property="isImportant" jdbcType="BIT"/>
+        <result column="form_type_id" property="formTypeId" jdbcType="BIGINT"/>
+        <result column="description_hit" property="descriptionHit" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <resultMap id="opptMap" type="com.emucoo.model.TOpportunity">
+        <id column="oppt_id" property="id" jdbcType="BIGINT"/>
+        <result column="oppt_type" property="type" jdbcType="INTEGER"/>
+        <result column="oppt_name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="oppt_description" property="description" jdbcType="VARCHAR"/>
+        <result column="front_can_create" property="frontCanCreate" jdbcType="BIT"/>
+
+        <association property="oppts" resultMap="opptMap" />
+    </resultMap>
+
+    <select id="findFormPbmsByFormTypeId" resultMap="pbmMap">
+        select a.id as prob_id, a.name, a.score, a.sub_problem_num, a.sub_problem_unit, a.problem_schema_type, a.is_important, a.form_type_id, a.description_hit,
+            c.id as oppt_id, c.type as oppt_type, c.name as oppt_name, c.is_del as is_del, c.description as oppt_description, c.front_can_create
+        from t_form_pbm a left join t_form_oppt b on a.id = b.problem_id
+            left join t_opportunity c on b.oppt_id = c.id
+        where a.form_type_id = #{id}
     </select>
 
     <insert id="upsert" parameterType="com.emucoo.model.TFormPbm">
@@ -29,4 +57,14 @@
         values (#{id}, #{name}, #{score}, #{createUserId}, #{createTime}, #{modifyUserId}, #{modifyTime}, #{subProblemNum}, #{subProblemUnit}, #{problemSchemaType}, #{isImportant}, #{formTypeId}, #{descriptionHit})
         on duplicate key update name=#{name}, score=#{score}, modify_user_id=#{modifyUserId}, modify_time=#{modifyTime}, sub_problem_num=#{subProblemNum}, sub_problem_unit=#{subProblemUnit}, problem_schema_type=#{problemSchemaType}, is_important=#{isImportant}, form_type_id=#{form_type_id}, description_hit=#{description_hit}
     </insert>
+
+    <delete id="dropByFormTypeIds">
+        delete from t_form_pbm
+        <where>
+            form_type_id in
+            <foreach collection="list" separator="," item="it" close=")" open="(">
+                #{it}
+            </foreach>
+        </where>
+    </delete>
 </mapper>

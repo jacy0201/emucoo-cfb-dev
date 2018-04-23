@@ -17,4 +17,6 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
     Integer countChancePointsByName(@Param("keyword") String keyword);
 
     void upsert(TOpportunity opportunity);
+
+    void dropByIds(List<Long> opptIds);
 }

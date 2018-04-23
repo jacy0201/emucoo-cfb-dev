@@ -69,6 +69,9 @@ public class TFormMain extends BaseEntity {
 
 
     @Transient
+    private List<SysDept> ccDepts;
+
+    @Transient
     private List<TFormScoreItem> scoreItems;
 
     @Transient
@@ -316,5 +319,13 @@ public class TFormMain extends BaseEntity {
 
     public void setFormModules(List<TFormType> formModules) {
         this.formModules = formModules;
+    }
+
+    public List<SysDept> getCcDepts() {
+        return ccDepts;
+    }
+
+    public void setCcDepts(List<SysDept> ccDepts) {
+        this.ccDepts = ccDepts;
     }
 }
