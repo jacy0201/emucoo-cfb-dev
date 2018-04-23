@@ -7,7 +7,6 @@ import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.SysUserService;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,14 +253,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	}
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void modifyBatchUse(String ids, Integer status){
-		String [] userIds= ids.split(",");
-		for(String userId:userIds){
-			SysUser sysUser=new SysUser();
-			sysUser.setModifyUserId(1L);
-			sysUser.setModifyTime(new Date());
-			sysUser.setId(Long.parseLong(userId));
-			sysUser.setStatus(status);
+	public void modifyUserBatch(List<SysUser> userList){
+		for(SysUser sysUser:userList){
 			sysUserMapper.updateByPrimaryKeySelective(sysUser);
 		}
 	}

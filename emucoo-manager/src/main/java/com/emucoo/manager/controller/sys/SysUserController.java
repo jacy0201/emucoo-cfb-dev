@@ -24,6 +24,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -117,7 +118,21 @@ public class SysUserController extends BaseResource {
         if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
             return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
         }
-        sysUserService.deleteByIds(ids);
+        String idArr[]=ids.split(",");
+        SysUser sysUser=null;
+        List<SysUser> userList=null;
+        if(null!=idArr && idArr.length>0){
+            userList=new ArrayList<>();
+            for (String id:idArr){
+                sysUser =new SysUser();
+                sysUser.setIsDel(true);
+                sysUser.setModifyUserId(1L);
+                sysUser.setModifyTime(new Date());
+                sysUser.setId(Long.parseLong(id));
+                userList.add(sysUser);
+            }
+        }
+        sysUserService.modifyUserBatch(userList);
         return success("success");
     }
 
@@ -131,7 +146,12 @@ public class SysUserController extends BaseResource {
     public ApiResult delete(Long id){
         if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能删除"); }
-        sysUserService.deleteById(id);
+        SysUser sysUser=new SysUser();
+        sysUser.setId(id);
+        sysUser.setIsDel(true);
+        sysUser.setModifyTime(new Date());
+        sysUser.setModifyUserId(1L);
+        sysUserService.updateSelective(sysUser);
         return success("success");
     }
 
@@ -150,7 +170,21 @@ public class SysUserController extends BaseResource {
             return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
         }
         if(null==status){ return fail(ApiExecStatus.INVALID_PARAM,"status 不能为空！"); }
-        sysUserService.modifyBatchUse(ids,status);
+        String idArr[]=ids.split(",");
+        SysUser sysUser=null;
+        List<SysUser> userList=null;
+        if(null!=idArr && idArr.length>0){
+            userList=new ArrayList<>();
+            for (String id:idArr){
+                sysUser =new SysUser();
+                sysUser.setStatus(status);
+                sysUser.setModifyUserId(1L);
+                sysUser.setModifyTime(new Date());
+                sysUser.setId(Long.parseLong(id));
+                userList.add(sysUser);
+            }
+        }
+        sysUserService.modifyUserBatch(userList);
         return success("success");
     }
 
@@ -164,7 +198,7 @@ public class SysUserController extends BaseResource {
             @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query"),
             @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
     public ApiResult modifyUse(Long id,Integer status){
-        if(null==id){return fail("id 不能为空!");}
+        if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能修改"); }
         if(null==status){ return fail(ApiExecStatus.INVALID_PARAM,"status 不能为空！"); }
         SysUser sysUser=new SysUser();

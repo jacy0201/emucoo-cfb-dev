@@ -61,10 +61,9 @@ public interface SysUserService extends BaseService<SysUser> {
 	void setBrandArea(UserBrandArea userBrandArea);
 
 	/**
-	 * 批量启用/停用
-	 * @param ids
-	 * @param status
+	 * 批量修改用户
+	 * @param userList
 	 */
-	void modifyBatchUse(String ids, Integer status);
+	void modifyUserBatch(List<SysUser> userList);
 
 }
