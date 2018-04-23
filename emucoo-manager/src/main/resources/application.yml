@@ -159,6 +159,10 @@ qiniu:
 gaoDe:
   userKey: 5d377810ae041e65dc6041ffef682631
 
+#后台用户token有效期 12小时
+token:
+  expire: 12
+
     #CFB 区域ID 和 名称
 cfb:
   precinct_id: 1
