@@ -131,7 +131,7 @@
      planForm.form_main_id AS formId
      FROM t_front_plan plan
      INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
-     AND planForm.is_del = FALSE
+     AND planForm.report_status=1 AND planForm.is_del = FALSE
      WHERE planForm.form_main_id IN
      <foreach collection="formIds" item="item" open="(" close=")" separator=",">
       #{item}
