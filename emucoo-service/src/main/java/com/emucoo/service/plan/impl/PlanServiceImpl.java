@@ -252,6 +252,7 @@ public class PlanServiceImpl implements PlanService {
             //查询品牌
             List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
             List<PrecinctArr> precinctArr = new ArrayList<>();
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             for (SysArea area : areaList) {
                 PrecinctArr areaOut = new PrecinctArr();
                 areaOut.setPrecinctID(area.getId());
@@ -264,7 +265,7 @@ public class PlanServiceImpl implements PlanService {
                         ShopVo shop = new ShopVo();
                         shop.setShopID(frontPlan.getShopId());
                         shop.setShopName(frontPlan.getShop().getShopName());
-                        shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"":frontPlan.getPlanDate().toString());
+                        shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"": format.format(frontPlan.getPlanDate()));
                         shop.setShopStatus(frontPlan.getStatus().intValue());
                         shop.setSubID(frontPlan.getId());
                         shop.setPatrolShopArrangeID(frontPlan.getId());
