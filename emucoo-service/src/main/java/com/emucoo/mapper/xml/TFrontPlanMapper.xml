@@ -77,6 +77,7 @@
       status = #{status},
       plan_precise_time = #{planPreciseTime},
       remind_type = #{remindType},
+      actual_remind_time = #{actualRemindTime},
       remark = #{remark},
       arranger_id = #{arrangerId},
       arrangee_id = #{arrangeeId},

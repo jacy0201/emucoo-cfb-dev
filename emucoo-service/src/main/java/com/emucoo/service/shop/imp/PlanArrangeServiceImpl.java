@@ -19,6 +19,7 @@ import com.emucoo.model.TFrontPlanForm;
 import com.emucoo.model.TRemind;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.shop.PlanArrangeService;
+import com.emucoo.utils.TimeTaskUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,8 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 Date date = new Date(shop.getExPatrloShopArrangeTime());
                 tFrontPlan.setPlanPreciseTime(date);
                 tFrontPlan.setRemindType(shop.getRemindType().byteValue());
+                Date remindDate = TimeTaskUtil.calActualRemindTime(date, shop.getRemindType());
+                tFrontPlan.setActualRemindTime(remindDate);
                 tFrontPlan.setRemark(planArrangeAddIn.getPostscript());
                 tFrontPlan.setStatus(ShopArrangeStatus.NOT_CHECK.getCode().byteValue());
                 List<CheckList> checkList = shop.getChecklistArr();
