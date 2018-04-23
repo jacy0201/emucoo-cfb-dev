@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller.sys;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
@@ -101,7 +102,7 @@ public class SysAreaController extends BaseResource {
 	@RequiresPermissions("sys:area:delete")
 	@ApiOperation(value="删除分区")
 	public ApiResult delete(@RequestBody SysArea area){
-		if(area.getId()==null){return fail("id 参数不能为空!");}
+		if(area.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		sysAreaService.deleteById(area.getId());
 		return success("success");
 	}
