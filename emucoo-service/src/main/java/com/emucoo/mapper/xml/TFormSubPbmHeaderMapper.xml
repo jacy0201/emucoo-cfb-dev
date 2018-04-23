@@ -24,4 +24,14 @@
         </foreach>
         on duplicate key update name=values(name), form_problem_id=values(form_problem_id),modify_time=values(modify_time)
     </insert>
+
+    <delete id="dropByProblemIds">
+        delete from t_form_sub_pbm_header
+        <where>
+            form_problem_id in
+            <foreach collection="list" item="it" separator="," close=")" open="(">
+                #{it}
+            </foreach>
+        </where>
+    </delete>
 </mapper>

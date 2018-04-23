@@ -29,7 +29,7 @@
         <where>
             is_del = 0 or is_del is null
             <if test="keyword != null and  keyword != ''">
-                and name like '%#{keyword}%'
+                and name like concat('%', #{keyword}, '%')
             </if>
         </where>
         order by create_time desc
@@ -40,7 +40,7 @@
         <where>
             is_del = 0 or is_del is null
             <if test="keyword != null and  keyword != ''">
-                and name like '%#{keyword}%'
+                and name like concat('%',#{keyword}, '%')
             </if>
         </where>
     </select>
@@ -64,5 +64,15 @@
             </foreach>
         </where>
     </update>
+
+    <delete id="dropByIds">
+        delete from t_opportunity
+        <where>
+            id in
+            <foreach collection="list" item="it" open="(" close=")" separator=",">
+                #{it}
+            </foreach>
+        </where>
+    </delete>
 
 </mapper>

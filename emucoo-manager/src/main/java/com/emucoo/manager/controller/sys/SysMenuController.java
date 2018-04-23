@@ -1,8 +1,9 @@
 package com.emucoo.manager.controller.sys;
 import com.emucoo.common.Constant;
+import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.exception.RRException;
 import com.emucoo.common.util.R;
-import com.emucoo.manager.controller.AbstractController;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysMenu;
 import com.emucoo.service.sys.SysMenuService;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sys/menu")
 @ApiIgnore()
-public class SysMenuController extends AbstractController {
+public class SysMenuController extends BaseResource {
 	@Autowired
 	private SysMenuService sysMenuService;
 
@@ -28,7 +29,7 @@ public class SysMenuController extends AbstractController {
 	 */
 	@PostMapping("/nav")
 	public R nav(){
-		List<SysMenu> menuList = sysMenuService.getUserMenuList(getUserId());
+		List<SysMenu> menuList = sysMenuService.getUserMenuList(ShiroUtils.getUserId());
 		return R.ok().put("menuList", menuList);
 	}
 	

@@ -97,18 +97,18 @@ public class FormManageController extends BaseResource {
 
     @ApiOperation(value = "配置表单", httpMethod = "POST")
     @PostMapping("/detail")
-    public ApiResult<FormDetail> detail(@RequestBody ParamVo<TFormMain> paramVo) {
+    public ApiResult<TFormMain> detail(@RequestBody ParamVo<TFormMain> paramVo) {
         TFormMain form = paramVo.getData();
         if(form == null)
             return fail("parameter is wrong.");
-        FormDetail formDetail = formManageService.fetchFormDetail(form.getId());
+        TFormMain formDetail = formManageService.fetchFormDetail(form.getId());
         return success(formDetail);
     }
 
     @ApiOperation(value = "保存表单配置", httpMethod = "POST")
-    @PostMapping("/save")
-    public ApiResult<String> save(@RequestBody ParamVo<FormDetail> paramVo) {
-        FormDetail formDetail = paramVo.getData();
+    @PostMapping("/saveDetail")
+    public ApiResult<String> saveDetail(@RequestBody ParamVo<TFormMain> paramVo) {
+        TFormMain formDetail = paramVo.getData();
         if(formDetail == null)
             return fail("parameter is wrong.");
         formManageService.saveFormDetail(formDetail);

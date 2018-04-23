@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_form_sub_pbm")
@@ -42,6 +43,10 @@ public class TFormSubPbm extends BaseEntity {
 
     @Column(name = "org_id")
     private Long orgId;
+
+    @Transient
+    private TOpportunity opportunity;
+
 
     /**
      * @return id
@@ -181,4 +186,11 @@ public class TFormSubPbm extends BaseEntity {
         this.orgId = orgId;
     }
 
+    public TOpportunity getOpportunity() {
+        return opportunity;
+    }
+
+    public void setOpportunity(TOpportunity opportunity) {
+        this.opportunity = opportunity;
+    }
 }

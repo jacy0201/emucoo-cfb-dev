@@ -11,6 +11,8 @@ import com.emucoo.service.sys.SysDeptService;
 import com.emucoo.service.sys.SysUserRelationService;
 import com.emucoo.service.sys.SysUserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +115,7 @@ public class SysDeptController extends BaseResource {
     @ApiOperation(value="获取用户关系")
     @PostMapping("/listUserRelation")
     @RequiresPermissions("sys:dept:relation")
+	@ApiImplicitParam(name="dptId",value="机构id",dataType="long",required=true,paramType="query")
     public ApiResult listUserRelation(Long dptId){
         if(dptId==null){return fail("dptId 不能为空!");}
         List<SysUserRelation> list=sysUserRelationService.listUserRelation(dptId);
@@ -162,7 +165,7 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="删除用户")
 	@PostMapping("/deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
-		if(sysUserRelation.getId()==null){return fail("Id 不能为空!");}
+		if(sysUserRelation.getId()==null){return fail("id 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
 		sysUserRelation=sysUserRelationService.findById(sysUserRelation.getId());
 		if(null!=sysUserRelation.getChildUserId()){return fail("请先删除下级用户!");}
@@ -181,8 +184,13 @@ public class SysDeptController extends BaseResource {
      * @param postId
      * @return
      */
-    @ApiOperation(value="获取部门人员")
+    @ApiOperation(value="选择人员")
     @PostMapping("/listUser")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="dptId",value="部门id",dataType="long",required=true,paramType="query"),
+			@ApiImplicitParam(name="realName",value="姓名",dataType="string",required=false,paramType="query"),
+			@ApiImplicitParam(name="postId",value="岗位id",dataType="long",required=false,paramType="query")
+	})
     public ApiResult listUser(Long deptId,String realName,Long postId ) {
 		List<SysUser> list=null;
 		if(deptId==null){ return fail("dptId 不能为空!"); }

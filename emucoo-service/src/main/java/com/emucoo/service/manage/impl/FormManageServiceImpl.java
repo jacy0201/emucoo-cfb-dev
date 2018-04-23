@@ -10,8 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormManageServiceImpl implements FormManageService {
@@ -42,6 +43,12 @@ public class FormManageServiceImpl implements FormManageService {
 
     @Autowired
     private TOpportunityMapper opportunityMapper;
+
+    @Autowired
+    private  TFormOpptMapper formOpptMapper;
+
+    @Autowired
+    private SysDeptMapper sysDeptMapper;
 
     @Override
     public int countFormsByNameKeyword(String keyword) {
@@ -92,102 +99,121 @@ public class FormManageServiceImpl implements FormManageService {
      * @return
      */
     @Override
-    public FormDetail fetchFormDetail(Long id) {
-        FormDetail detail = new FormDetail();
+    public TFormMain fetchFormDetail(Long id) {
 
         TFormMain formMain = formMainMapper.fetchOneById(id);
-        detail.setFormMain(formMain);
+        if(formMain.getCcDptIds() != null) {
+            List<Long> ids = Arrays.stream(formMain.getCcDptIds().split(",")).map(str -> Long.parseLong(str)).collect(Collectors.toList());
+            List<SysDept> ccDepts = sysDeptMapper.fetchByIds(ids);
+            formMain.setCcDepts(ccDepts);
+        }
 
         List<TFormImptRules> formImptRuless = formImptRulesMapper.findFormImptRulesByFormMainId(formMain.getId());
-        detail.setFormImptRules(formImptRuless);
+        formMain.setImptRules(formImptRuless);
 
         List<TFormScoreItem> formScoreItems = formScoreItemMapper.findFormScoreItemsByFormMainId(formMain.getId());
-        detail.setFormScoreItems(formScoreItems);
+        formMain.setScoreItems(formScoreItems);
 
         List<TFormAddItem> formAddItems = formAddItemMapper.findFormAddItemsByFormMainId(formMain.getId());
-        detail.setFormAddItems(formAddItems);
+        formMain.setAddItems(formAddItems);
 
-        List<FormModule> formModules = assembleFormModule(formMain.getId());
-        detail.setFormModules(formModules);
+        List<TFormType> formModules = assembleFormModule(formMain.getId());
+        formMain.setFormModules(formModules);
 
-        return  detail;
+        return  formMain;
     }
 
-    private List<FormModule> assembleFormModule(Long id) {
-        List<FormModule> formModules = new ArrayList<>();
+    private List<TFormType> assembleFormModule(Long id) {
         List<TFormType> formTypes = formTypeMapper.findFormTypesByFormMainId(id);
         formTypes.forEach(formType -> {
-            FormModule formModule = new FormModule();
-            formModule.setFormType(formType);
-            List<FormItem> formItems = new ArrayList<>();
             List<TFormPbm> formPbms = formPbmMapper.findFormPbmsByFormTypeId(formType.getId());
-            formPbms.forEach(formPbm -> {
-                FormItem formItem = new FormItem();
-                formItem.setFormProblem(formPbm);
-                formItem.setFormSubProblems(formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId()));
-                formItem.setFormSubProblemHeads(formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId()));
-                formItems.add(formItem);
+            formPbms.stream().filter(pbm -> pbm.getProblemSchemaType() == 2).forEach(formPbm -> {
+                List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
+                formPbm.setSubProblems(subPbms);
+                List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
+                subPbmHeaders.forEach(header -> header.setSubProblems(subPbms));
+                formPbm.setSubProblemHeads(subPbmHeaders);
             });
-            formModule.setFormProblems(formItems);
-            formModules.add(formModule);
+            formType.setProblems(formPbms);
         });
-        return formModules;
+        return formTypes;
     }
 
     /**
      * cause of the input parameter is complexed contructions, so disassemble the structure into different data object
      * and store them into db tables.
-     * @param formDetail
+     * @param formMain
      */
     @Override
     @Transactional
-    public void saveFormDetail(FormDetail formDetail) {
-        TFormMain formMain = formDetail.getFormMain();
-        formMainMapper.upsert(formMain);
+    public void saveFormDetail(TFormMain formMain) {
+        // 创建之前先把原来的数据清除
+        cleanOldFormInfo(formMain);
 
-        List<TFormScoreItem> formScoreItems = formDetail.getFormScoreItems();
-//        formScoreItemMapper.dropByFormMainId(formMain.getId());
+        List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
         formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
         formScoreItemMapper.insertList(formScoreItems);
 
-        List<TFormImptRules> formImptRuless = formDetail.getFormImptRules();
-//        formImptRulesMapper.dropByFormMainId(formMain.getId());
+        List<TFormImptRules> formImptRuless = formMain.getImptRules();
         formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
         formImptRulesMapper.insertList(formImptRuless);
 
         // form add items maybe is null
-        List<TFormAddItem> formAddItems = formDetail.getFormAddItems();
-//        formAddItemMapper.dropByFormMainId(formMain.getId());
+        List<TFormAddItem> formAddItems = formMain.getAddItems();
         if(formAddItems != null && formAddItems.size() > 0) {
             formAddItems.forEach(it -> it.setFormMainId(formMain.getId()));
             formAddItemMapper.insertList(formAddItems);
         }
 
-        dropModuleByFormMainId(formMain.getId());
-        List<FormModule> formModules = formDetail.getFormModules();
+        List<TFormType> formModules = formMain.getFormModules();
         formModules.forEach(formModule -> {
-            Optional.of(formModule.getFormType()).ifPresent(it -> it.setFormMainId(formMain.getId()));
+            formModule.setFormMainId(formMain.getId());
             disassembleFormModule(formModule);
         });
     }
 
-    private void dropModuleByFormMainId(Long id) {
-
+    private void cleanOldFormInfo(TFormMain formMain) {
+        formScoreItemMapper.dropByFormMainId(formMain.getId());
+        formImptRulesMapper.dropByFormMainId(formMain.getId());
+        formAddItemMapper.dropByFormMainId(formMain.getId());
+        List<TFormType> formModules = formMain.getFormModules();
+        List<Long> mdlIds = new ArrayList<>();
+        List<Long> probIds = new ArrayList<>();
+        formModules.forEach(module -> {
+            mdlIds.add(module.getId());
+            module.getProblems().forEach(problem -> probIds.add(problem.getId()));
+        });
+        List<Long> opptIds = formOpptMapper.fetchOpptIdsByProblemIds(probIds, 2);
+        formTypeMapper.dropByFormMainId(formMain.getId());
+        formPbmMapper.dropByFormTypeIds(mdlIds);
+        formSubPbmMapper.dropByProblemIds(probIds);
+        formSubPbmHeaderMapper.dropByProblemIds(probIds);
+        formOpptMapper.dropByProblemIds(probIds);
+        opportunityMapper.dropByIds(opptIds);
     }
 
-    private void disassembleFormModule(FormModule formModule) {
-        TFormType formType = formModule.getFormType();
-        formTypeMapper.upsert(formType);
-        List<FormItem> formItems = formModule.getFormProblems();
-        formItems.forEach(formItem -> {
-            TFormPbm problem = formItem.getFormProblem();
-            formPbmMapper.upsert(problem);
+
+    private void disassembleFormModule(TFormType formType) {
+        formTypeMapper.insert(formType);
+
+        List<TFormPbm> problems = formType.getProblems();
+        problems.forEach(problem -> {
+
+            problem.setFormTypeId(formType.getId());
+            formPbmMapper.insert(problem);
+
             if(problem.getProblemSchemaType() == 2) { // 只有题项是抽查类型时，才会有子题项， 和抽查项。
-                List<TFormSubPbmHeader> subProblemHeads = formItem.getFormSubProblemHeads();
-                formSubPbmHeaderMapper.upsertMulti(subProblemHeads);
-                List<TFormSubPbm> subProblems = formItem.getFormSubProblems();
+                List<TFormSubPbmHeader> subProblemHeads = problem.getSubProblemHeads();
+
+                subProblemHeads.forEach(head -> head.setFormProblemId(problem.getId()));
+                formSubPbmHeaderMapper.insertList(subProblemHeads);
+
+                List<TFormSubPbm> subProblems = problem.getSubProblems();
                 // 每个子检查项都会自动生成一个机会点
                 subProblems.forEach(subProblem -> {
+                        subProblem.setFormProblemId(problem.getId());
+                        formSubPbmMapper.insert(subProblem);
+
                         TOpportunity opportunity = new TOpportunity();
                         opportunity.setName(subProblem.getSubProblemName() + "不合格");
                         opportunity.setDescription(opportunity.getName());
@@ -200,12 +226,21 @@ public class FormManageServiceImpl implements FormManageService {
                         opportunity.setModifyTime(DateUtil.currentDate());
                         opportunityMapper.insert(opportunity);
 
+                        TFormOppt formOppt = new TFormOppt();
+                        formOppt.setProblemId(problem.getId());
+                        formOppt.setProblemType(problem.getProblemSchemaType());
+                        formOppt.setSubProblemId(subProblem.getId());
+                        formOppt.setOpptId(opportunity.getId());
+                        formOpptMapper.insert(formOppt);
                 });
-
-//                formSubPbmMapper.upsertMulti(subProblems);
-
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
-
+                problem.getOppts().forEach(oppt -> {
+                    TFormOppt formOppt = new TFormOppt();
+                    formOppt.setProblemId(problem.getId());
+                    formOppt.setProblemType(problem.getProblemSchemaType());
+                    formOppt.setOpptId(oppt.getId());
+                    formOpptMapper.insert(formOppt);
+                });
             }
         });
     }

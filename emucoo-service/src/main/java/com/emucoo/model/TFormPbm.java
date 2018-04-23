@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_form_pbm")
@@ -67,6 +68,15 @@ public class TFormPbm extends BaseEntity {
      */
     @Column(name = "description_hit")
     private String descriptionHit;
+
+    @Transient
+    private List<TOpportunity> oppts;
+
+    @Transient
+    private List<TFormSubPbm> subProblems;
+
+    @Transient
+    private List<TFormSubPbmHeader> subProblemHeads;
 
     /**
      * @return id
@@ -280,5 +290,37 @@ public class TFormPbm extends BaseEntity {
      */
     public void setDescriptionHit(String descriptionHit) {
         this.descriptionHit = descriptionHit;
+    }
+
+    public Boolean getImportant() {
+        return isImportant;
+    }
+
+    public void setImportant(Boolean important) {
+        isImportant = important;
+    }
+
+    public List<TOpportunity> getOppts() {
+        return oppts;
+    }
+
+    public void setOppts(List<TOpportunity> oppts) {
+        this.oppts = oppts;
+    }
+
+    public List<TFormSubPbm> getSubProblems() {
+        return subProblems;
+    }
+
+    public void setSubProblems(List<TFormSubPbm> subProblems) {
+        this.subProblems = subProblems;
+    }
+
+    public List<TFormSubPbmHeader> getSubProblemHeads() {
+        return subProblemHeads;
+    }
+
+    public void setSubProblemHeads(List<TFormSubPbmHeader> subProblemHeads) {
+        this.subProblemHeads = subProblemHeads;
     }
 }

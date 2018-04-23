@@ -10,4 +10,6 @@ public interface TFormImptRulesMapper extends MyMapper<TFormImptRules> {
     List<TFormImptRules> findFormImptRulesByFormMainId(Long id);
 
     void upsertMulti(List<TFormImptRules> formImptRuless);
+
+    void dropByFormMainId(Long id);
 }

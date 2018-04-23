@@ -56,7 +56,7 @@ public class OAuth2Realm extends AuthorizingRealm {
         }
 
         //查询用户信息
-        SysUser user = shiroService.queryUser(tokenEntity.getUserId());
+        SysUser user = shiroService.queryUser(tokenEntity.getId());
 
         if(user == null) {
             throw new UnknownAccountException("账号或密码不正确");
