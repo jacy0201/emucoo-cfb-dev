@@ -50,6 +50,9 @@ public class TaskAssignController extends AppBaseController {
 	    List<ContactVo> allContacts = new ArrayList<ContactVo>();
 
 	    for(SysUser tu : users) {
+	        if(tu.getIsAdmin()) {
+	            continue;
+            }
 	        ContactVo cv = new ContactVo();
 	        cv.setContactsID(tu.getId());
 	        cv.setContactsName(tu.getRealName()==null?"":tu.getRealName());
