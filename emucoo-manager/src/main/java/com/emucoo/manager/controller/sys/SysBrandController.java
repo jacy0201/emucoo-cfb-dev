@@ -36,7 +36,7 @@ public class SysBrandController extends BaseResource {
 	@RequiresPermissions("sys:brand:list")
 	@ResponseBody
 	@ApiOperation(value="分页查询品牌")
-	public ApiResult list(@RequestBody ParamVo<TBrandInfo> param){
+	public ApiResult<PageInfo<TBrandInfo>> list(@RequestBody ParamVo<TBrandInfo> param){
 		TBrandInfo brandInfo = param.getData();
 		Example example=new Example(TBrandInfo.class);
 		if(null!=brandInfo && null!=brandInfo.getBrandName()) {
@@ -56,7 +56,7 @@ public class SysBrandController extends BaseResource {
 	@RequiresPermissions("sys:brand:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部品牌")
-	public ApiResult listAll(@RequestBody TBrandInfo param){
+	public ApiResult<List<TBrandInfo>> listAll(@RequestBody TBrandInfo param){
 		Example example=new Example(TBrandInfo.class);
 		if(null!=param.getBrandName()) {
 			example.createCriteria().andLike("brandName", "%"+param.getBrandName()+"%");

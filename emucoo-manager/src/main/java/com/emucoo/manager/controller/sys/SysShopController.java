@@ -36,7 +36,7 @@ public class SysShopController extends BaseResource {
 	@RequiresPermissions("sys:shop:list")
 	@ApiOperation(value="查询店铺列表")
 	@ResponseBody
-	public ApiResult list(@RequestBody ParamVo<TShopInfo> param){
+	public ApiResult<PageInfo<TShopInfo>> list(@RequestBody ParamVo<TShopInfo> param){
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
 		if(null!=shopInfo && null!=shopInfo.getShopName()) {

@@ -36,7 +36,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:list")
 	@ApiOperation(value="查询岗位列表")
 	@ResponseBody
-	public ApiResult list(@RequestBody ParamVo<SysPost> param){
+	public ApiResult<PageInfo<SysPost>> list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
 		if(null!=sysPost && null!=sysPost.getPostName()) {
@@ -57,7 +57,7 @@ public class SysPostController extends BaseResource {
 	@RequiresPermissions("sys:post:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部岗位")
-	public ApiResult listAll(@RequestBody SysPost sysPost){
+	public ApiResult<List<SysPost>> listAll(@RequestBody SysPost sysPost){
 		Example example=new Example(SysPost.class);
 		if(null!=sysPost.getPostName()) {
 			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");

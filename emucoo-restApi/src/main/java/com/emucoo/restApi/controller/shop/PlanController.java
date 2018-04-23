@@ -83,7 +83,6 @@ public class PlanController extends AppBaseController {
     @PostMapping(value = "list")
     public AppResult listPlan(@RequestBody ParamVo<FindPlanListIn> params, HttpServletRequest request) {
         FindPlanListIn findPlanListIn = params.getData();
-        checkParam(findPlanListIn.getMonth(), "年月份不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         FindPlanListOut findPlanListOut = planService.listPlan(user, findPlanListIn);
         return success(findPlanListOut);

@@ -38,7 +38,7 @@ public class SysDistrictController extends BaseResource {
 	 */
 	@PostMapping (value = "listProvice")
 	@ApiOperation(value="查询省份集合")
-	public ApiResult listProvice() {
+	public ApiResult<List<SysDistrict>> listProvice() {
 		SysDistrict sysDistrict=new SysDistrict();
 		sysDistrict.setAreaType("1");
 		return success(sysDistrictService.findListByWhere(sysDistrict));
@@ -49,7 +49,7 @@ public class SysDistrictController extends BaseResource {
 	 */
 	@PostMapping (value = "listCityByPrvCode")
 	@ApiOperation(value="根据省份编码查询市", notes ="areaCode 参数不能为空，需要传递所要查询的省的编码！！")
-	public ApiResult listCityByPrvCode(@RequestBody SysDistrict sysDistrict) {
+	public ApiResult<List<SysDistrict>> listCityByPrvCode(@RequestBody SysDistrict sysDistrict) {
 		if(null==sysDistrict.getAreaCode()){return  fail(ApiExecStatus.INVALID_PARAM,"areaCode 不能为空！");}
 		sysDistrict.setAreaType("2");
 		sysDistrict.setParentCode(sysDistrict.getAreaCode());
@@ -62,7 +62,7 @@ public class SysDistrictController extends BaseResource {
 	 */
 	@PostMapping (value = "listDisByCityCode")
 	@ApiOperation(value="根据市编码查询区",notes ="areaCode 参数不能为空，需要传递所要查询的市的编码！！")
-	public ApiResult listDisByCityCode(@RequestBody SysDistrict sysDistrict) {
+	public ApiResult<List<SysDistrict>> listDisByCityCode(@RequestBody SysDistrict sysDistrict) {
 		if(null==sysDistrict.getAreaCode()){return  fail(ApiExecStatus.INVALID_PARAM,"areaCode 不能为空！");}
 		sysDistrict.setAreaType("3");
 		sysDistrict.setParentCode(sysDistrict.getAreaCode());

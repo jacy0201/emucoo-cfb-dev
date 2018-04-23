@@ -35,7 +35,7 @@ public class SysLoginController extends BaseResource {
 			@ApiImplicitParam(name="username",value="账号",required=true,paramType="query"),
 			@ApiImplicitParam(name="password",value="密码",required=true,paramType="query")
 	})
-	public ApiResult login(String username, String password){
+	public ApiResult<SysUserToken> login(String username, String password){
 
 		//用户信息
 		SysUser sysUser=new SysUser();

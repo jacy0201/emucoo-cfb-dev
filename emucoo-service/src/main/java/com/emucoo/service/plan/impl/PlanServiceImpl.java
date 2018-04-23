@@ -252,6 +252,7 @@ public class PlanServiceImpl implements PlanService {
             //查询品牌
             List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
             List<PrecinctArr> precinctArr = new ArrayList<>();
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             for (SysArea area : areaList) {
                 PrecinctArr areaOut = new PrecinctArr();
                 areaOut.setPrecinctID(area.getId());
@@ -264,9 +265,10 @@ public class PlanServiceImpl implements PlanService {
                         ShopVo shop = new ShopVo();
                         shop.setShopID(frontPlan.getShopId());
                         shop.setShopName(frontPlan.getShop().getShopName());
-                        shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"":frontPlan.getPlanDate().toString());
+                        shop.setExPatrloShopArrangeDate(frontPlan.getPlanDate()==null?"": format.format(frontPlan.getPlanDate()));
                         shop.setShopStatus(frontPlan.getStatus().intValue());
                         shop.setSubID(frontPlan.getId());
+                        shop.setPatrolShopArrangeID(frontPlan.getId());
                         shopArr.add(shop);
                     }
                     areaOut.setShopArr(shopArr);
@@ -327,8 +329,7 @@ public class PlanServiceImpl implements PlanService {
             //查询该计划需要打表总数量
             Long planId = tLoopPlans.get(0).getId();
             Example tPlanFormRelationExample = new Example(TPlanFormRelation.class);
-            tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false)
-            .andEqualTo("isUse", true);
+            tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false);
             List<TPlanFormRelation> tPlanFormRelations = tPlanFormRelationMapper.selectByExample(tPlanFormRelationExample);
             int totalFormUseCount = 0;
             List<Long> formIds = new ArrayList<>();
