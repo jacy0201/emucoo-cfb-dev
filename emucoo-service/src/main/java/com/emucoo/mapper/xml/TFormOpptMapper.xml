@@ -14,7 +14,7 @@
         <result column="sub_problem_id" property="subProblemId" jdbcType="BIGINT"/>
     </resultMap>
 
-    <select id="fetchOpptIdsByProblemIds" resultMap="java.lang.Long">
+    <select id="fetchOpptIdsByProblemIds" resultType="java.lang.Long">
         select oppt_id
         from t_form_oppt
         <where>
