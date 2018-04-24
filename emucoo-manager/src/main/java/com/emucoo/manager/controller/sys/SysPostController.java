@@ -79,7 +79,6 @@ public class SysPostController extends BaseResource {
 		post.setCreateTime(new Date());
 		post.setCreateUserId(1L);
 		post.setIsDel(false);
-		post.setStatus(0);
 		sysPostService.saveSelective(post);
 		return success("success");
 	}
