@@ -115,7 +115,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			Example exampleUserArea=new Example(SysUserArea.class);
 			for(SysUser sysUser:userList){
 				//设置机构名称
-				sysUser.setDptName(sysDeptMapper.selectByPrimaryKey(sysUser.getDptId()).getDptName());
+				if(null!=sysUser.getDptId()){ sysUser.setDptName(sysDeptMapper.selectByPrimaryKey(sysUser.getDptId()).getDptName()); }
 				//设置岗位集合
 				exampleUserPost.clear();
 				exampleUserPost.createCriteria().andEqualTo("userId",sysUser.getId()).andEqualTo("isDel",false);
