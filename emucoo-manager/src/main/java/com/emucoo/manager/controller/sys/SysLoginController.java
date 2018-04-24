@@ -3,6 +3,7 @@ package com.emucoo.manager.controller.sys;
 import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
+import com.emucoo.common.util.MD5Util;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserToken;
 import com.emucoo.service.sys.SysUserService;
@@ -42,7 +43,7 @@ public class SysLoginController extends BaseResource {
 		sysUser.setUsername(username);
 		SysUser user = sysUserService.findOne(sysUser);
 		//账号不存在、密码错误
-		if(user == null || !user.getPassword().equals(new Sha256Hash(password).toHex())) {
+		if(user == null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(password)).toHex())) {
 			return fail(ApiExecStatus.FAIL,"账号或密码不正确");
 		}
 
