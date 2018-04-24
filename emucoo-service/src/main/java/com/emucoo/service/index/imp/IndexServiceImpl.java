@@ -60,7 +60,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 		if(user == null)
 			return null;
 
-		if(!StringUtils.equalsIgnoreCase(password, new Sha256Hash(user.getPassword()).toHex()))
+		if(!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password).toHex()))
 			return null;
 
 		//更新用户 push token
