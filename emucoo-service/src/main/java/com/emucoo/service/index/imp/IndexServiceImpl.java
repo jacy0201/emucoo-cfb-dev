@@ -14,11 +14,14 @@ import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.index.IndexService;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +63,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 		if(user == null)
 			return null;
 
-		if(!StringUtils.equalsIgnoreCase(password, new Sha256Hash(user.getPassword()).toHex()))
+		if(!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password,user.getSalt()).toHex()))
 			return null;
 
 		//更新用户 push token
@@ -100,7 +103,14 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 	public void resetPwd(ResetPwdVo_I vo, String vcode) {
 		// 短信验证
 		if (vo.getSmsCode().equals(vcode)) {
-			userMapper.resetPwd(vo.getMobile(), vo.getPassword().toUpperCase());
+			String salt = RandomStringUtils.randomAlphanumeric(20);
+			//userMapper.resetPwd(vo.getMobile(), new Sha256Hash(vo.getPassword(),salt).toHex());
+			Example example=new Example(SysUser.class);
+			example.createCriteria().andEqualTo("mobile",vo.getMobile());
+			SysUser sysUser =new SysUser();
+			sysUser.setModifyTime(new Date());
+			sysUser.setPassword(new Sha256Hash(vo.getPassword(),salt).toHex());
+			userMapper.updateByExampleSelective(sysUser,example);
 		}
 	}
 
