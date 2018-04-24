@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class FindPlanListOut {
+    private String presentMonth;
     private List<PatrolShopCycle> patrolShopCycle;
     private List<PrecinctArr> precinctArr;
 }

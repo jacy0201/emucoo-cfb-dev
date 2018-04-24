@@ -2,6 +2,7 @@ package com.emucoo.dto.modules.report;
 
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -13,12 +14,20 @@ import lombok.Data;
 @Data
 public class ReportVo {
     private Integer reportID;
-    private Boolean isRead;
-    private Long userId;
-    private String reportTitle;
-    private String reporterHeadUrl;
-    private String reporterName;
-    private Integer reportSourceType;
-    private String reportSourceName;
-    private Date reportTime;
+    private Integer patrolShopArrangeID;
+    private String shopName;
+    private String shopownerName;
+    private Date checkDate;
+    private String inspectorName;
+    private String inspectorPosition;
+    private String checkDepartmentName;
+    private String summary;
+    private Integer realScore;
+    private Integer realTotal;
+    private List<FormRulesVo> rulesArray;
+    private String scoreSummaryImg;
+    private String chancePointNum;
+    private List<AdditionItemVo> additionArray;
+    private List<ChancePointVo> chancePointArr;
+    private List<ChecklistKindScoreVo> checklistKindScoreArr;
 }
