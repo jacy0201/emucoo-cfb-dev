@@ -127,6 +127,8 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 Date date = new Date(shop.getExPatrloShopArrangeTime());
                 tFrontPlan.setPlanPreciseTime(date);
                 tFrontPlan.setRemindType(shop.getRemindType().byteValue());
+                Date remindDate = TimeTaskUtil.calActualRemindTime(date, shop.getRemindType());
+                tFrontPlan.setActualRemindTime(remindDate);
                 tFrontPlan.setRemark(planArrangeEditIn.getPostscript());
                 tFrontPlan.setStatus(ShopArrangeStatus.NOT_CHECK.getCode().byteValue());
                 List<CheckList> checkList = shop.getChecklistArr();
@@ -277,6 +279,5 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
             logger.error("上传巡店位置失败！", e);
             throw new ApiException("上传巡店位置失败");
         }
-
     }
 }
