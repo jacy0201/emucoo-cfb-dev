@@ -14,6 +14,7 @@ import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.index.IndexService;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +60,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 		if(user == null)
 			return null;
 
-		if(!StringUtils.equals(password, user.getPassword()))
+		if(!StringUtils.equalsIgnoreCase(password, new Sha256Hash(user.getPassword()).toHex()))
 			return null;
 
 		//更新用户 push token

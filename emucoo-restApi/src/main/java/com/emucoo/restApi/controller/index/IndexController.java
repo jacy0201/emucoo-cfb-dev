@@ -61,8 +61,8 @@ public class IndexController extends AppBaseController {
         String mobile = data.getData().getMobile();
         String password = data.getData().getPassword();
 
-        checkParam(mobile, "缺少 mobile");
-        checkParam(password, "缺少 password");
+        checkParam(mobile, "缺少账号");
+        checkParam(password, "缺少密码");
 
         UserLoginInfo loginInfo = indexService.authenticate(mobile, password, pushToken);
         if(loginInfo == null)
