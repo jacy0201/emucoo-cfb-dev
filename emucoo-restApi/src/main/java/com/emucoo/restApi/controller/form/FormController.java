@@ -1,6 +1,8 @@
 package com.emucoo.restApi.controller.form;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.form.FormIn;
+import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.dto.modules.plan.FindShopListIn;
 import com.emucoo.dto.modules.plan.FindShopListOut;
 import com.emucoo.model.SysUser;
@@ -26,15 +28,17 @@ public class FormController extends AppBaseController {
     @Autowired
     private FormService formService;
 
-    /*@PostMapping(value = "getFormTempletInfo")
-    public AppResult<FindShopListOut> findShopListInArea(@RequestBody ParamVo<FindShopListIn> params, HttpServletRequest request) {
-        FindShopListIn findShopListIn = params.getData();
-        checkParam(findShopListIn.getPlanID(), "计划id不能为空！");
-        checkParam(findShopListIn.getPrecinctID(), "管理区域id不能为空！");
+    @PostMapping(value = "getFormTempletInfo")
+    public AppResult<FormOut> getFormTempletInfo(@RequestBody ParamVo<FormIn> params, HttpServletRequest request) {
+        FormIn formIn = params.getData();
+        checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(formIn.getChecklistID(), "表单id不能为空！");
+        checkParam(formIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        FindShopListOut findShopListOut = planService.findShopList(user, findShopListIn);
-        return success(findShopListOut);
-    }*/
+        //FormOut formOut = formService.getFormTempletInfo(user, formIn);
+        FormOut formOut = new FormOut();
+        return success(formOut);
+    }
 
 
 
