@@ -50,7 +50,7 @@ public class TaskAssignController extends AppBaseController {
 	    List<ContactVo> allContacts = new ArrayList<ContactVo>();
 
 	    for(SysUser tu : users) {
-	        if(tu.getIsAdmin()) {
+	        if(tu.getIsAdmin() != null && tu.getIsAdmin()) {
 	            continue;
             }
 	        ContactVo cv = new ContactVo();
@@ -70,7 +70,6 @@ public class TaskAssignController extends AppBaseController {
             result.setTopContactsArr(allContacts);
         }
         return success(result);
-
     }
 
     /**

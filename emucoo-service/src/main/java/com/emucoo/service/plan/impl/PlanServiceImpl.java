@@ -1,5 +1,6 @@
 package com.emucoo.service.plan.impl;
 
+import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.ServiceException;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.plan.FindPlanListIn;
@@ -280,7 +281,7 @@ public class PlanServiceImpl implements PlanService {
             return findPlanListOut;
         } catch (Exception e) {
             logger.error("用户:{}，查询巡店计划失败", user.getId(), e);
-            throw new ServiceException("查询巡店计划列表失败");
+            throw new ApiException("查询巡店计划列表失败");
         }
 
     }
@@ -378,7 +379,7 @@ public class PlanServiceImpl implements PlanService {
             return planProgressOut;
         } catch (Exception e){
             logger.error("用户:{}，查询巡店计划进度失败", user.getId(), e);
-            throw new ServiceException("查询巡店计划进度失败");
+            throw new ApiException("查询巡店计划进度失败");
         }
     }
 }
