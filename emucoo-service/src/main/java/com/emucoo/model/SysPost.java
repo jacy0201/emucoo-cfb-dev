@@ -26,11 +26,6 @@ public class SysPost extends BaseEntity {
     private String postName;
 
     /**
-     * 状态（0正常 1删除 2停用）
-     */
-    private Integer status;
-
-    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -125,24 +120,6 @@ public class SysPost extends BaseEntity {
      */
     public void setPostName(String postName) {
         this.postName = postName;
-    }
-
-    /**
-     * 获取状态（0正常 1删除 2停用）
-     *
-     * @return status - 状态（0正常 1删除 2停用）
-     */
-    public Integer getStatus() {
-        return status;
-    }
-
-    /**
-     * 设置状态（0正常 1删除 2停用）
-     *
-     * @param status 状态（0正常 1删除 2停用）
-     */
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
     /**

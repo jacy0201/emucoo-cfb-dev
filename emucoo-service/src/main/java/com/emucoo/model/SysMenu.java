@@ -12,7 +12,6 @@ public class SysMenu extends BaseEntity {
     private Long id;
 
 
-
     /**
      * 菜单名称
      */
@@ -27,7 +26,7 @@ public class SysMenu extends BaseEntity {
     /**
      * 父菜单名称
      */
-
+    @Transient
     private String parentName;
 
 

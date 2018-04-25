@@ -42,8 +42,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.emucoo.manager.controller"))//过滤的接口
                 .paths(PathSelectors.any())
-                .build();
-              //  .globalOperationParameters(pars);
+                .build()
+                .globalOperationParameters(pars);
         return docket;
     }
 

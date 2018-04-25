@@ -33,7 +33,7 @@ public class SysBrandController extends BaseResource {
 	 * 分页查询品牌列表
 	 */
 	@PostMapping ("/list")
-	@RequiresPermissions("sys:brand:list")
+	//@RequiresPermissions("sys:brand:list")
 	@ResponseBody
 	@ApiOperation(value="分页查询品牌")
 	public ApiResult<PageInfo<TBrandInfo>> list(@RequestBody ParamVo<TBrandInfo> param){
@@ -53,7 +53,7 @@ public class SysBrandController extends BaseResource {
 	 * 查询品牌列表(不分页)
 	 */
 	@PostMapping ("/listAll")
-	@RequiresPermissions("sys:brand:listAll")
+	//@RequiresPermissions("sys:brand:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部品牌")
 	public ApiResult<List<TBrandInfo>> listAll(@RequestBody TBrandInfo param){
@@ -71,7 +71,7 @@ public class SysBrandController extends BaseResource {
 	 * 保存品牌
 	 */
 	@PostMapping ("/save")
-	@RequiresPermissions("sys:brand:save")
+	//@RequiresPermissions("sys:brand:save")
 	@ApiOperation(value="添加品牌")
 	public ApiResult save(@RequestBody TBrandInfo brand){
 		brand.setCreateTime(new Date());
@@ -85,7 +85,7 @@ public class SysBrandController extends BaseResource {
 	 * 修改品牌
 	 */
 	@PostMapping ("/update")
-	@RequiresPermissions("sys:brand:update")
+	//@RequiresPermissions("sys:brand:update")
 	@ApiOperation(value="修改品牌")
 	public ApiResult update(@RequestBody TBrandInfo brand){
 		brand.setModifyTime(new Date());
@@ -98,7 +98,7 @@ public class SysBrandController extends BaseResource {
 	 * 删除品牌
 	 */
 	@PostMapping ("/delete")
-	@RequiresPermissions("sys:brand:delete")
+	//@RequiresPermissions("sys:brand:delete")
 	@ApiOperation(value="删除品牌")
 	public ApiResult delete(@RequestBody TBrandInfo brand){
 		if(brand.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}

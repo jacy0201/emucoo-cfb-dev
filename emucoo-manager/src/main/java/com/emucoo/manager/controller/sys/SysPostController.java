@@ -33,7 +33,7 @@ public class SysPostController extends BaseResource {
 	 * 岗位列表查询
 	 */
 	@PostMapping ("/list")
-	@RequiresPermissions("sys:post:list")
+	//@RequiresPermissions("sys:post:list")
 	@ApiOperation(value="查询岗位列表")
 	@ResponseBody
 	public ApiResult<PageInfo<SysPost>> list(@RequestBody ParamVo<SysPost> param){
@@ -54,7 +54,7 @@ public class SysPostController extends BaseResource {
 	 * 查询岗位列表(不分页)
 	 */
 	@PostMapping ("/listAll")
-	@RequiresPermissions("sys:post:listAll")
+	//@RequiresPermissions("sys:post:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部岗位")
 	public ApiResult<List<SysPost>> listAll(@RequestBody SysPost sysPost){
@@ -73,13 +73,12 @@ public class SysPostController extends BaseResource {
 	 * 保存岗位
 	 */
 	@PostMapping ("/save")
-	@RequiresPermissions("sys:post:save")
+	//@RequiresPermissions("sys:post:save")
 	@ApiOperation(value="添加岗位")
 	public ApiResult save(@RequestBody SysPost post){
 		post.setCreateTime(new Date());
 		post.setCreateUserId(1L);
 		post.setIsDel(false);
-		post.setStatus(0);
 		sysPostService.saveSelective(post);
 		return success("success");
 	}
@@ -88,7 +87,7 @@ public class SysPostController extends BaseResource {
 	 * 修改岗位
 	 */
 	@PostMapping ("/update")
-	@RequiresPermissions("sys:post:update")
+	//@RequiresPermissions("sys:post:update")
 	@ApiOperation(value="修改岗位")
 	public ApiResult update(@RequestBody SysPost post){
 		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
@@ -102,7 +101,7 @@ public class SysPostController extends BaseResource {
 	 * 删除岗位
 	 */
 	@PostMapping ("/delete")
-	@RequiresPermissions("sys:post:delete")
+	//@RequiresPermissions("sys:post:delete")
 	@ApiOperation(value="删除岗位")
 	public ApiResult delete(@RequestBody SysPost post){
 		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}

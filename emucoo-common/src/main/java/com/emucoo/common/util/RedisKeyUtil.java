@@ -9,4 +9,8 @@ public class RedisKeyUtil {
 
     public static final Integer SESSION_TIMEOUT = 2; //session 失效时间2小时
 
+    public static String getShiroSessionKey(String key){
+        return "sessionid:" + key;
+    }
+
 }
