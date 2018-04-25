@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class AdditionItemVo {
-    private Integer itemID;
+    private Long itemID;
     private String name;
     private String value;
 }

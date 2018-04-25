@@ -25,7 +25,7 @@ public class TFormPbmVal extends BaseEntity {
     /**
      * 实际分数
      */
-    private String score;
+    private Integer score;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -53,6 +53,9 @@ public class TFormPbmVal extends BaseEntity {
      */
     @Column(name = "problem_schema_type")
     private Boolean problemSchemaType;
+
+    @Column(name = "problem_name")
+    private String problemName;
 
     /**
      * 题项描述
@@ -115,7 +118,7 @@ public class TFormPbmVal extends BaseEntity {
      *
      * @return score - 实际分数
      */
-    public String getScore() {
+    public Integer getScore() {
         return score;
     }
 
@@ -124,7 +127,7 @@ public class TFormPbmVal extends BaseEntity {
      *
      * @param score 实际分数
      */
-    public void setScore(String score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 
@@ -222,6 +225,20 @@ public class TFormPbmVal extends BaseEntity {
      */
     public void setProblemSchemaType(Boolean problemSchemaType) {
         this.problemSchemaType = problemSchemaType;
+    }
+
+    /**
+     * @return problem_name
+     */
+    public String getProblemName() {
+        return problemName;
+    }
+
+    /**
+     * @param problemName
+     */
+    public void setProblemName(String problemName) {
+        this.problemName = problemName;
     }
 
     /**

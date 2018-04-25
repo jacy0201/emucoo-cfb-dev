@@ -12,8 +12,8 @@ public class ReportWorkVo {
     private String executorHeadImgUrl;
     private Integer executorID;
     private String executorName;
-    private Double passRate;
+    private Float passRate;
     private String taskTitle;
-    private Integer workID;
+    private Long workID;
     private Integer workType;
 }

@@ -7,10 +7,10 @@ import lombok.Data;
  */
 @Data
 public class ChecklistKindScoreVo {
-    private Integer kindID;
+    private Long kindID;
     private String kindName;
     private Boolean isDone;
-    private Double scoreRate;
+    private Float scoreRate;
     private Integer realScore;
     private Integer realTotal;
     private Integer problemNum;

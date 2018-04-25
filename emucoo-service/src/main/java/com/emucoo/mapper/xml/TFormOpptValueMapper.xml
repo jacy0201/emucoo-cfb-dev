@@ -6,9 +6,80 @@
       WARNING - @mbg.generated
     -->
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="form_oppt_id" property="formOpptId" jdbcType="BIGINT" />
     <result column="is_pick" property="isPick" jdbcType="BIT" />
+    <result column="sub_problem_unit_score" property="subProblemUnitScore" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="oppt_id" property="opptId" jdbcType="BIGINT" />
+    <result column="problem_id" property="problemId" jdbcType="BIGINT" />
+    <result column="sub_problem_id" property="subProblemId" jdbcType="BIGINT" />
+    <result column="oppt_name" property="opptName" jdbcType="VARCHAR" />
+    <result column="problem_value_id" property="problemValueId" jdbcType="BIGINT" />
+    <result column="sub_problem_value_id" property="subProblemValueId" jdbcType="BIGINT" />
+    <result column="problem_type" property="problemType" jdbcType="BIT" />
+    <result column="sub_header_id" property="subHeaderId" jdbcType="BIGINT" />
   </resultMap>
+  <select id="selectUnionFromOpptsByPbmIds" resultType="com.emucoo.model.TFormOpptValue">
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 1 AND problem_value_id IN
+    <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    UNION ALL
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 2 AND sub_problem_value_id IN
+    <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+  </select>
+  <select id="selectUnionFromOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 1 AND problem_value_id IN
+    <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    UNION ALL
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 2 AND sub_problem_value_id IN
+    <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    WHERE oppt_id = #{opptId}
+  </select>
 </mapper>
