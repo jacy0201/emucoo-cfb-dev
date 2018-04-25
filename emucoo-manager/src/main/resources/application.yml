@@ -90,15 +90,6 @@ spring:
     # 属性为NULL 不序列化
     default-property-inclusion: non_null
 
-
-emucoo:
-    redis:
-        open: true  # 是否开启redis缓存  true开启   false关闭
-    shiro:
-        redis: false # true表示shiro session存到redis里，需要开启redis
-        session:
-          timeout: 1 #shiro session 超时时间 1个小时
-
 #mybatis
 mybatis:
   #指定目录类型别名扫描

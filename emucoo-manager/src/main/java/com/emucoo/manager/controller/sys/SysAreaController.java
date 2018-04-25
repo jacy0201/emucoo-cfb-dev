@@ -34,7 +34,7 @@ public class SysAreaController extends BaseResource {
 	 * 岗位列表查询
 	 */
 	@PostMapping ("/list")
-	@RequiresPermissions("sys:area:list")
+//	@RequiresPermissions("sys:area:list")
 	@ResponseBody
 	@ApiOperation(value="分页查询分区")
 	public ApiResult<PageInfo<SysArea>> list(@RequestBody ParamVo<SysArea> param){
@@ -54,7 +54,7 @@ public class SysAreaController extends BaseResource {
 	 * 查询分区列表(不分页)
 	 */
 	@PostMapping ("/listAll")
-	@RequiresPermissions("sys:area:listAll")
+	//@RequiresPermissions("sys:area:listAll")
 	@ResponseBody
 	@ApiOperation(value="查询全部分区")
 	public ApiResult<List<SysArea>> listAll(@RequestBody SysArea sysArea){
@@ -72,7 +72,7 @@ public class SysAreaController extends BaseResource {
 	 * 添加分区
 	 */
 	@PostMapping ("/save")
-	@RequiresPermissions("sys:area:save")
+	//@RequiresPermissions("sys:area:save")
 	@ApiOperation(value="添加分区")
 	public ApiResult save(@RequestBody SysArea area){
 		area.setCreateTime(new Date());
@@ -86,7 +86,7 @@ public class SysAreaController extends BaseResource {
 	 * 修改分区
 	 */
 	@PostMapping ("/update")
-	@RequiresPermissions("sys:area:update")
+	//@RequiresPermissions("sys:area:update")
 	@ApiOperation(value="修改分区")
 	public ApiResult update(@RequestBody SysArea area){
 		area.setModifyTime(new Date());
@@ -99,7 +99,7 @@ public class SysAreaController extends BaseResource {
 	 * 删除分区
 	 */
 	@PostMapping ("/delete")
-	@RequiresPermissions("sys:area:delete")
+	//@RequiresPermissions("sys:area:delete")
 	@ApiOperation(value="删除分区")
 	public ApiResult delete(@RequestBody SysArea area){
 		if(area.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}

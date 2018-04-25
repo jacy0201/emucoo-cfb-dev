@@ -16,6 +16,7 @@ public class RedisClusterClient {
 
     public String set(String key, Object value, int expire) {
         String jsonObject = JSON.toJSONString(value);
+        logger.info("放入redis 缓存key："+key+". velue:"+jsonObject);
         return jedisCluster.setex(key, expire, jsonObject);
     }
 
@@ -27,6 +28,7 @@ public class RedisClusterClient {
     public  void delete(String key) {
         if (!StringUtil.isBlank(key)) {
             jedisCluster.del(key);
+            logger.info("删除redis 缓存key："+key);
         }
     }
 

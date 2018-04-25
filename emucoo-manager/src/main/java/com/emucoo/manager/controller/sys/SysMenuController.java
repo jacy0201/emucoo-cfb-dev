@@ -37,7 +37,7 @@ public class SysMenuController extends BaseResource {
 	 * 所有菜单列表
 	 */
 	@PostMapping("/list")
-	@RequiresPermissions("sys:menu:list")
+	//@RequiresPermissions("sys:menu:list")
 	public List<SysMenu> list(){
 		List<SysMenu> menuList = sysMenuService.findAll();
 		for(SysMenu sysMenu : menuList){
@@ -55,7 +55,7 @@ public class SysMenuController extends BaseResource {
 	 * 菜单信息
 	 */
 	@PostMapping("/info/{menuId}")
-	@RequiresPermissions("sys:menu:info")
+	//@RequiresPermissions("sys:menu:info")
 	public R info(@PathVariable("menuId") Long menuId){
 		SysMenu menu = sysMenuService.findById(menuId);
 		return R.ok().put("menu", menu);
@@ -65,7 +65,7 @@ public class SysMenuController extends BaseResource {
 	 * 保存
 	 */
 	@PostMapping("/save")
-	@RequiresPermissions("sys:menu:save")
+	//@RequiresPermissions("sys:menu:save")
 	public R save(@RequestBody SysMenu menu){
 		//数据校验
 		verifyForm(menu);
@@ -79,7 +79,7 @@ public class SysMenuController extends BaseResource {
 	 * 修改
 	 */
 	@PostMapping("/update")
-	@RequiresPermissions("sys:menu:update")
+	//@RequiresPermissions("sys:menu:update")
 	public R update(@RequestBody SysMenu menu){
 		//数据校验
 		verifyForm(menu);
@@ -93,7 +93,7 @@ public class SysMenuController extends BaseResource {
 	 * 删除
 	 */
 	@PostMapping("/delete")
-	@RequiresPermissions("sys:menu:delete")
+	//@RequiresPermissions("sys:menu:delete")
 	public R delete(long menuId){
 		if(menuId <= 31){
 			return R.error("系统菜单，不能删除");
