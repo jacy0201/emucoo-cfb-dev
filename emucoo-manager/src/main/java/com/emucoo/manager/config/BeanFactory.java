@@ -3,17 +3,19 @@ package com.emucoo.manager.config;
 
 import cn.jpush.api.JPushClient;
 import com.emucoo.manager.component.rong.RongCloud;
-import com.emucoo.manager.config.QiNiuConfig;
-import com.emucoo.manager.config.RongcloudConfig;
 import com.qiniu.util.Auth;
 import com.xiaomi.xmpush.server.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class BeanFactory {
-
+    @Autowired
+    private RedisConnectionFactory factory;
     @Autowired
     private RongcloudConfig rongcloudConfig;
     @Autowired
@@ -23,6 +25,16 @@ public class BeanFactory {
     @Autowired
     private XiaomiPushConfig xiaomiConfig;
 
+    @Bean("redisTemplate")
+    public RedisTemplate<String,String> getRedisTemplate()  {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
+        template.afterPropertiesSet();
+        return template;
+    }
 
     @Bean("rongcloud")
     public RongCloud getRongcloud() {

@@ -73,9 +73,9 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 
 		UserLoginInfo loginInfo = new UserLoginInfo();
 
-		SysDept d = new SysDept();
-		d.setId(user.getDptId());
-		SysDept dept = sysDeptMapper.selectByPrimaryKey(d);
+	/*	SysDept d = new SysDept();
+		d.setId(user.getDptId());*/
+		SysDept dept = sysDeptMapper.selectByPrimaryKey(user.getDptId());
 		if (dept != null) {
 			loginInfo.setUserType("");
 			loginInfo.setDepartmentID(dept.getId());
