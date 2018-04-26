@@ -52,6 +52,9 @@ public class TFormValue extends BaseEntity {
     @Column(name = "score")
     private Integer score;
 
+    @Column(name = "form_result_id")
+    private Long formResultId;
+
     /**
      * @return id
      */
@@ -214,5 +217,13 @@ public class TFormValue extends BaseEntity {
 
     public void setScore(Integer score) {
         this.score = score;
+    }
+
+    public Long getFormResultId() {
+        return formResultId;
+    }
+
+    public void setFormResultId(Long formResultId) {
+        this.formResultId = formResultId;
     }
 }

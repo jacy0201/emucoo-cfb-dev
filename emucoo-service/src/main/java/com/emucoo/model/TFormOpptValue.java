@@ -52,6 +52,9 @@ public class TFormOpptValue extends BaseEntity {
     @Column(name = "sub_header_id")
     private Long subHeaderId;
 
+    @Column(name = "form_result_id")
+    private Long formResultId;
+
     /**
      * @return id
      */
@@ -234,5 +237,13 @@ public class TFormOpptValue extends BaseEntity {
      */
     public void setSubHeaderId(Long subHeaderId) {
         this.subHeaderId = subHeaderId;
+    }
+
+    public Long getFormResultId() {
+        return formResultId;
+    }
+
+    public void setFormResultId(Long formResultId) {
+        this.formResultId = formResultId;
     }
 }

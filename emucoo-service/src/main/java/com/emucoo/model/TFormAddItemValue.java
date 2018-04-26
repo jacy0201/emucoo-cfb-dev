@@ -33,6 +33,9 @@ public class TFormAddItemValue extends BaseEntity {
     @Column(name = "report_id")
     private Long reportId;
 
+    @Column(name = "form_result_id")
+    private Long formResultId;
+
     /**
      * @return id
      */
@@ -137,5 +140,13 @@ public class TFormAddItemValue extends BaseEntity {
      */
     public void setReportId(Long reportId) {
         this.reportId = reportId;
+    }
+
+    public Long getFormResultId() {
+        return formResultId;
+    }
+
+    public void setFormResultId(Long formResultId) {
+        this.formResultId = formResultId;
     }
 }
