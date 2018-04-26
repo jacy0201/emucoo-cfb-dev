@@ -40,13 +40,16 @@
         <result column="is_del" property="isDel" jdbcType="BIT"/>
         <result column="oppt_description" property="description" jdbcType="VARCHAR"/>
         <result column="front_can_create" property="frontCanCreate" jdbcType="BIT"/>
+        <result column="oppt_create_user_id" property="createUserId" jdbcType="BIGINT" />
+        <result column="oppt_create_type" property="createType" jdbcType="INTEGER" />
 
         <association property="oppts" resultMap="opptMap" />
     </resultMap>
 
     <select id="findFormPbmsByFormTypeId" resultMap="pbmMap">
         select a.id as prob_id, a.name, a.score, a.sub_problem_num, a.sub_problem_unit, a.problem_schema_type, a.is_important, a.form_type_id, a.description_hit,
-            c.id as oppt_id, c.type as oppt_type, c.name as oppt_name, c.is_del as is_del, c.description as oppt_description, c.front_can_create
+            c.id as oppt_id, c.type as oppt_type, c.name as oppt_name, c.is_del as is_del, c.description as oppt_description, c.front_can_create,
+            c.create_user_id as oppt_create_user_id, c.create_type as oppt_create_type
         from t_form_pbm a left join t_form_oppt b on a.id = b.problem_id
             left join t_opportunity c on b.oppt_id = c.id
         where a.form_type_id = #{id}

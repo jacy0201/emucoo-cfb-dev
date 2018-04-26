@@ -8,5 +8,6 @@ import lombok.Data;
 @Data
 public class FormSubProblemUnitVo {
 
+    private Long subProblemUnitID;
     private String subProblemUnitName;
 }

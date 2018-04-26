@@ -95,7 +95,6 @@ public class SysUserController extends BaseResource {
         String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
-        sysUserService.addUser(sysUser);
         sysUserService.editUser(sysUser);
         return success("success");
     }

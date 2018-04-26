@@ -11,6 +11,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,6 +128,24 @@ public class FormManageServiceImpl implements FormManageService {
         List<TFormType> formTypes = formTypeMapper.findFormTypesByFormMainId(id);
         formTypes.forEach(formType -> {
             List<TFormPbm> formPbms = formPbmMapper.findFormPbmsByFormTypeId(formType.getId());
+            for(TFormPbm formPbm : formPbms) {
+                if(formPbm.getProblemSchemaType() == 2) {
+                    List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
+                    formPbm.setSubProblems(subPbms);
+                    List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
+                    subPbmHeaders.forEach(header -> header.setSubProblems(subPbms));
+                    formPbm.setSubProblemHeads(subPbmHeaders);
+                } else {
+                    // 有些机会点是app创建的，所以不能在配置表单的时候返回给管理界面
+                    Iterator<TOpportunity> it = formPbm.getOppts().iterator();
+                    while(it.hasNext()) {
+                        TOpportunity oppt = it.next();
+                        if(oppt.getCreateType() != 1) {
+                           it.remove();
+                        }
+                    }
+                }
+            }
             formPbms.stream().filter(pbm -> pbm.getProblemSchemaType() == 2).forEach(formPbm -> {
                 List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
                 formPbm.setSubProblems(subPbms);

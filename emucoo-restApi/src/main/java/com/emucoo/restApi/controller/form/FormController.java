@@ -44,7 +44,7 @@ public class FormController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
 
         FormIn formIn = params.getData();
-        formService.checkinFormResult(formIn);
+        formService.checkinFormResult(user, formIn);
 
         return success("ok");
     }
