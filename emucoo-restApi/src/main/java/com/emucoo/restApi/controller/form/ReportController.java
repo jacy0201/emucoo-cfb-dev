@@ -5,6 +5,7 @@ import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
+import com.emucoo.dto.modules.report.SaveReportIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -37,5 +38,16 @@ public class ReportController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         ReportVo reportOut = reportService.getReport(user, reportIn);
         return success(reportOut);
+    }
+
+    @PostMapping(value = "saveReport")
+    public AppResult<String> saveReport(@RequestBody ParamVo<SaveReportIn> params, HttpServletRequest request) {
+        SaveReportIn reportIn = params.getData();
+        checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(reportIn.getChecklistID(), "表单id不能为空！");
+        checkParam(reportIn.getShopID(), "店铺id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        reportService.saveReport(user, reportIn);
+        return success("success");
     }
 }

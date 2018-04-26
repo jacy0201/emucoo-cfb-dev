@@ -16,5 +16,5 @@ public interface FormService {
 
     FormOut checkoutFormInfo(SysUser user, FormIn formIn);
 
-    void checkinFormResult(FormIn formIn);
+    void checkinFormResult(SysUser user, FormIn formIn);
 }

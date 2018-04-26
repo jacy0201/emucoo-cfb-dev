@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 public class ReportVo {
-    private Integer reportID;
+    private Long reportID;
     private String shopName;
     private String shopownerName;
     private String checkDate;

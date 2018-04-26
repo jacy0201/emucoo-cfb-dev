@@ -63,6 +63,13 @@ public class TFormCheckResult extends BaseEntity {
     @Column(name = "modify_time")
     private Date modifyTime;
 
+    @Column(name = "summary")
+    private String summary;
+
+    @Column(name = "org_id")
+    private Long orgId;
+
+
     /**
      * @return id
      */
@@ -247,5 +254,21 @@ public class TFormCheckResult extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 }

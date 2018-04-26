@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_form_pbm_val")
 public class TFormPbmVal extends BaseEntity {
@@ -52,7 +53,7 @@ public class TFormPbmVal extends BaseEntity {
      * 题项方案类型（1：不带抽样，2：带抽样）
      */
     @Column(name = "problem_schema_type")
-    private Boolean problemSchemaType;
+    private Integer problemSchemaType;
 
     @Column(name = "problem_name")
     private String problemName;
@@ -217,7 +218,7 @@ public class TFormPbmVal extends BaseEntity {
      *
      * @return problem_schema_type - 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public Boolean getProblemSchemaType() {
+    public Integer getProblemSchemaType() {
         return problemSchemaType;
     }
 
@@ -226,7 +227,7 @@ public class TFormPbmVal extends BaseEntity {
      *
      * @param problemSchemaType 题项方案类型（1：不带抽样，2：带抽样）
      */
-    public void setProblemSchemaType(Boolean problemSchemaType) {
+    public void setProblemSchemaType(Integer problemSchemaType) {
         this.problemSchemaType = problemSchemaType;
     }
 
