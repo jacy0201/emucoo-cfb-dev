@@ -30,7 +30,7 @@
     oppt_id,
     oppt_name
     FROM t_form_oppt_value
-    WHERE problem_type = 1 AND is_pick = true AND AND problem_value_id IN
+    WHERE problem_type = 1 AND is_pick = true AND problem_value_id IN
     <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
       #{item}
     </foreach>
