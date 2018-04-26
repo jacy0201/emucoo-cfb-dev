@@ -8,7 +8,9 @@ import com.emucoo.common.util.MD5Util;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.sys.IdsVo;
 import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.user.UserIsUse;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.SysUser;
@@ -38,34 +40,34 @@ import java.util.List;
 @RequestMapping("/sys/user")
 @Api(description="用户管理")
 public class SysUserController extends BaseResource {
-	@Autowired
-	private SysUserService sysUserService;
-	@Autowired
-	private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     @Autowired
     private RedisClusterClient redisClient;
-	/**
-	 * 查询用户列表
-	 */
-	@ApiOperation(value="分页查询用户")
-	@PostMapping("/list")
-	//@RequiresPermissions("sys:user:list")
-	@ResponseBody
-	public ApiResult<PageInfo<SysUser>> list(@RequestBody ParamVo<UserQuery> param){
+    /**
+     * 查询用户列表
+     */
+    @ApiOperation(value="分页查询用户")
+    @PostMapping("/list")
+    //@RequiresPermissions("sys:user:list")
+    @ResponseBody
+    public ApiResult<PageInfo<SysUser>> list(@RequestBody ParamVo<UserQuery> param){
         UserQuery userQuery=param.getData();
         PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
         List<SysUser> userList = sysUserService.queryList(userQuery);
         PageInfo<SysUser> pageInfo=new PageInfo(userList);
         return success(pageInfo);
-	}
+    }
 
     /**
      * 创建用户
      */
     @ApiOperation(value="创建用户")
     @PostMapping("/save")
-   // @RequiresPermissions("sys:user:save")
+    // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
@@ -76,7 +78,7 @@ public class SysUserController extends BaseResource {
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
         sysUserService.addUser(sysUser);
-     return success("success");
+        return success("success");
     }
 
     /**
@@ -84,7 +86,7 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="编辑用户")
     @PostMapping("/edit")
-   // @RequiresPermissions("sys:user:edit")
+    // @RequiresPermissions("sys:user:edit")
     public ApiResult edit(@RequestBody SysUser sysUser){
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
@@ -104,7 +106,7 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="设置品牌分区")
     @PostMapping("/setBrandArea")
-   // @RequiresPermissions("sys:user:setBrandArea")
+    // @RequiresPermissions("sys:user:setBrandArea")
     public ApiResult setBrandArea(@RequestBody UserBrandArea userBrandArea){
         if(null==userBrandArea.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
         sysUserService.setBrandArea(userBrandArea);
@@ -117,9 +119,11 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="批量删除用户",notes = "多个用户id 用 , 分隔")
     @PostMapping("/deleteByIds")
-  //  @RequiresPermissions("sys:user:deleteByIds")
-    @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query")
-    public ApiResult deleteByIds(String ids){
+    //  @RequiresPermissions("sys:user:deleteByIds")
+    // @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query")
+    public ApiResult deleteByIds(@RequestBody ParamVo<IdsVo> param){
+        IdsVo idsVo=param.getData();
+        String ids=idsVo.getIds();
         if(StringUtil.isNotEmpty(ids)){return fail(ApiExecStatus.INVALID_PARAM,"ids 不能为空!");}
         if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
             return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
@@ -150,20 +154,17 @@ public class SysUserController extends BaseResource {
      * 删除单个用户
      */
     @PostMapping("/delete")
-   // @RequiresPermissions("sys:user:delete")
+    // @RequiresPermissions("sys:user:delete")
     @ApiOperation(value="删除用户")
-    @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
-    public ApiResult delete(Long id){
-        if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
-        if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能删除"); }
-        SysUser sysUser=new SysUser();
-        sysUser.setId(id);
+    public ApiResult delete(@RequestBody  SysUser sysUser){
+        if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+        if(sysUser.getId()==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能删除"); }
         sysUser.setIsDel(true);
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
-        redisClient.delete(ISystem.IUSER.USER_TOKEN + id);
+        redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
         return success("success");
     }
 
@@ -171,12 +172,15 @@ public class SysUserController extends BaseResource {
      * 批量启用/停用 用户
      */
     @PostMapping("/modifyBatchUse")
-   // @RequiresPermissions("sys:user:modifyBatchUse")
+    // @RequiresPermissions("sys:user:modifyBatchUse")
     @ApiOperation(value="批量启用/停用",notes = "ids 传用户id,多个id 直接用 ,分隔; 用户状态(status):0-启用；1-停用；2-锁定；")
-    @ApiImplicitParams({
+  /*  @ApiImplicitParams({
     @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query"),
-    @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
-    public ApiResult modifyBatchUse(String ids,Integer status){
+    @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})*/
+    public ApiResult modifyBatchUse(@RequestBody ParamVo<UserIsUse> param){
+        UserIsUse userIsUse=param.getData();
+        String ids=userIsUse.getIds();
+        Integer status=userIsUse.getStatus();
         if(StringUtil.isNotEmpty(ids)){return fail(ApiExecStatus.INVALID_PARAM,"ids 不能为空!");}
         if(ArrayUtils.contains(ids.split(","), String.valueOf(Constant.SUPER_ADMIN))){
             return fail(ApiExecStatus.FAIL,"系统管理员不能删除");
@@ -210,18 +214,17 @@ public class SysUserController extends BaseResource {
      * 启用/停用 用户
      */
     @PostMapping("/modifyUse")
-   // @RequiresPermissions("sys:user:modifyUse")
+    // @RequiresPermissions("sys:user:modifyUse")
     @ApiOperation(value="启用/停用",notes = "用户状态(status):0-启用；1-停用；2-锁定；")
-    @ApiImplicitParams({
+   /* @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query"),
-            @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})
-    public ApiResult modifyUse(Long id,Integer status){
+            @ApiImplicitParam(name="status",value="0/1",dataType="int",required=true,paramType="query")})*/
+    public ApiResult modifyUse(@RequestBody  SysUser sysUser){
+        Long id=sysUser.getId();
+        Integer status=sysUser.getStatus();
         if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         if(id==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能修改"); }
         if(null==status){ return fail(ApiExecStatus.INVALID_PARAM,"status 不能为空！"); }
-        SysUser sysUser=new SysUser();
-        sysUser.setId(id);
-        sysUser.setStatus(status);
         sysUserService.updateSelective(sysUser);
         //停用
         if(status==1){
@@ -231,30 +234,30 @@ public class SysUserController extends BaseResource {
         return success("success");
     }
 
-	/**
-	 * 根据用户id 获取用户详情
-	 */
-	@PostMapping("/getUserById")
-	@ApiOperation(value="获取用户详情")
-	@ResponseBody
-    @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
-	public ApiResult<SysUser> getUserById(Long id){
-		if(null==id){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
-		return success(sysUserService.findById(id));
-	}
+    /**
+     * 根据用户id 获取用户详情
+     */
+    @PostMapping("/getUserById")
+    @ApiOperation(value="获取用户详情")
+    @ResponseBody
+    // @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
+    public ApiResult<SysUser> getUserById(@RequestBody SysUser sysUser){
+        if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+        return success(sysUserService.findById(sysUser.getId()));
+    }
 
-	/**
-	 * 查询是店长的用户
-	 */
-	@PostMapping("/getShopManagers")
-	@ApiOperation(value="获取店长信息集合")
-	public ApiResult<List<SysUser>> getShopManagers(){
-		SysUser sysUser=new SysUser();
-		sysUser.setIsShopManager(true);
-		sysUser.setIsDel(false);
-		List<SysUser> listUser=sysUserService.findListByWhere(sysUser);
-		return success(listUser);
-	}
+    /**
+     * 查询是店长的用户
+     */
+    @PostMapping("/getShopManagers")
+    @ApiOperation(value="获取店长信息集合")
+    public ApiResult<List<SysUser>> getShopManagers(){
+        SysUser sysUser=new SysUser();
+        sysUser.setIsShopManager(true);
+        sysUser.setIsDel(false);
+        List<SysUser> listUser=sysUserService.findListByWhere(sysUser);
+        return success(listUser);
+    }
 
 
 }

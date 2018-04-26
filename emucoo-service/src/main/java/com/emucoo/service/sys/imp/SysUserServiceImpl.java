@@ -59,24 +59,28 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	@Override
 	public List<SysUser> queryList(UserQuery userQuery){
 		List<SysUser> userList=null;
-		String realName=userQuery.getRealName();
-		String username=userQuery.getUsername();
-		String mobile=userQuery.getMobile();
-		String email=userQuery.getEmail();
-		Long dptId=userQuery.getDptId();
-		Integer status=userQuery.getStatus();
-		Boolean isShopManager=userQuery.getIsShopManager();
-		Long shopId=userQuery.getShopId();
-		Long postId=userQuery.getPostId();
+		String realName="";
+		String username="";
+		String mobile="";
+		String email="";
+		Long dptId=null;
+		Integer status=null;
+		Boolean isShopManager=null;
+		Long shopId=null;
+		Long postId=null;
 		Example example=new Example(SysUser.class);
 		example.createCriteria().andEqualTo("isDel",0);
-		if(StringUtil.isNotEmpty(realName)){ example.createCriteria().andEqualTo("realName",realName); }
-		if(StringUtil.isNotEmpty(username)){ example.createCriteria().andEqualTo("username",username); }
-		if(StringUtil.isNotEmpty(mobile)){ example.createCriteria().andEqualTo("mobile",mobile); }
-		if(StringUtil.isNotEmpty(email)){example.createCriteria().andEqualTo("email",email); }
-		if(null!=dptId){example.createCriteria().andEqualTo("dptId",dptId);}
-		if(null!=isShopManager){example.createCriteria().andEqualTo("isShopManager",isShopManager);}
-		if(null!=status){example.createCriteria().andEqualTo("status",status);}
+		if(null!=userQuery){
+			if(StringUtil.isNotEmpty(userQuery.getRealName())){ realName=userQuery.getRealName(); example.createCriteria().andEqualTo("realName",realName); }
+			if(StringUtil.isNotEmpty(userQuery.getUsername())){ username=userQuery.getUsername(); example.createCriteria().andEqualTo("username",username); }
+			if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); example.createCriteria().andEqualTo("mobile",mobile); }
+			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); example.createCriteria().andEqualTo("email",email); }
+			if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); example.createCriteria().andEqualTo("dptId",dptId);}
+			if(null!=userQuery.getIsShopManager()){ isShopManager=userQuery.getIsShopManager(); example.createCriteria().andEqualTo("isShopManager",isShopManager);}
+			if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); example.createCriteria().andEqualTo("status",status);}
+			if(null!=userQuery.getShopId()){ shopId=userQuery.getShopId(); }
+			if(null!=userQuery.getPostId()){ postId=userQuery.getPostId(); }
+		}
 		HashMap paramMap=new HashMap();
 		paramMap.put("realName",realName);
 		paramMap.put("username",username);
@@ -170,7 +174,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void addUser(SysUser sysUser){
-		Long userId=Long.parseLong(sysUserMapper.insertUseGeneratedKeys(sysUser)+"");
+		sysUserMapper.insertUseGeneratedKeys(sysUser);
+		Long id=sysUser.getId();
 		//保存用户岗位
 		List<SysPost> listPost=sysUser.getPostList();
 		if(null!=listPost && listPost.size()>0){
@@ -180,7 +185,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserPost.setCreateTime(new Date());
 				sysUserPost.setCreateUserId(1L);
 				sysUserPost.setIsDel(false);
-				sysUserPost.setUserId(userId);
+				sysUserPost.setUserId(id);
 				sysUserPost.setPostId(sysPost.getId());
 				sysUserPostMapper.insertSelective(sysUserPost);
 			}

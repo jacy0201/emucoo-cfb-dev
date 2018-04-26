@@ -42,11 +42,11 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		String dptName="";
 		Boolean isUse=null;
 		List<SysDept> deptList=null;
-		if(null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
+		if(null!=deptQuery && null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
 			dptName=deptQuery.getDptName();
 			example.createCriteria().andLike("dptName","%"+dptName+"%");
 		}
-		if(null!=deptQuery.getIsUse()){
+		if(null!=deptQuery && null!=deptQuery.getIsUse()){
 			isUse=deptQuery.getIsUse();
 			example.createCriteria().andEqualTo("isUse",isUse);
 		}
@@ -54,7 +54,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		HashMap paramMap=null;
 		List<SysDept> listB=null;
 		List<SysDept> listA=null;
-		if(null!=deptQuery.getBrandId()){
+		if(null!=deptQuery && null!=deptQuery.getBrandId()){
 			paramMap=new HashMap();
 			brandId=deptQuery.getBrandId();
 			paramMap.put("brandId",brandId);
@@ -63,7 +63,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 			listB=sysDeptMapper.listByBrand(paramMap);
 		}
 
-		if(null!=deptQuery.getAreaId()){
+		if(null!=deptQuery && null!=deptQuery.getAreaId()){
 			paramMap=new HashMap();
 			areaId=deptQuery.getAreaId();
 			paramMap.put("areaId",areaId);
@@ -145,7 +145,8 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		if(null==sysDept.getParentId()){
 			sysDept.setParentId(0L);
 		}
-		int deptId=sysDeptMapper.insertUseGeneratedKeys(sysDept);
+		sysDeptMapper.insertUseGeneratedKeys(sysDept);
+		Long deptId=sysDept.getId();
 
 		//添加机构地区关联信息
 		List<SysArea> areaList=sysDept.getAreaList();
@@ -154,7 +155,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 			for(SysArea area :areaList){
 				sysDptArea=new SysDptArea();
 				sysDptArea.setAreaId(area.getId());
-				sysDptArea.setDptId(Long.parseLong(deptId+""));
+				sysDptArea.setDptId(deptId);
 				sysDptArea.setCreateTime(new Date());
 				sysDptArea.setCreateUserId(1L);
 				sysDptArea.setIsDel(false);
