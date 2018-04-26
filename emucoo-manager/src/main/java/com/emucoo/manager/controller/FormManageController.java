@@ -113,11 +113,22 @@ public class FormManageController extends BaseResource {
         return success("ok");
     }
 
-    @ApiOperation(value = "获取表单列表")
-    @PostMapping(value = "findFormList")
-    public ApiResult findFormList() {
-        List<TFormMain> tFormMains = formManageService.findFormList();
-        return success(tFormMains);
+    @ApiOperation(value = "列出可用表单")
+    @PostMapping(value = "/findFormList")
+    public ApiResult<List<TFormMain>> findFormList() {
+        List<TFormMain> list = formManageService.findFormList();
+        return success(list);
+    }
+
+    @ApiOperation(value = "设置报告")
+    @PostMapping(value = "/setReport")
+    public ApiResult<String> setReport(@RequestBody ParamVo<TFormMain> paramVo) {
+        TFormMain formMain = paramVo.getData();
+        if (formMain == null) {
+            return fail("parameter is wrong.");
+        }
+        formManageService.saveFormReportSettings(formMain);
+        return success("ok");
     }
 
 }

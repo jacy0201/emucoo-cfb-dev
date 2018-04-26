@@ -15,10 +15,10 @@ public class FormProblemVo {
     private Boolean isScore;
     private List<FormChanceVo> otherChanceArray;
     private String problemDescription;
-    private Integer problemID;
+    private Long problemID;
     private String problemName;
     private Integer problemScore;
-    private Integer problemTotle;
+    private Integer problemTotal;
     private Integer problemType;
     private List<FormSubProblemVo> subProblemArray;
     private List<FormSubProblemUnitVo> subProblemUnitArray;

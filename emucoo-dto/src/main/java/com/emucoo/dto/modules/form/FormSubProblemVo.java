@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class FormSubProblemVo {
     private List<FormChanceVo> subProblemChanceArray;
-    private int subProblemID;
+    private long subProblemID;
     private String subProblemName;
     private int subProblemScore;
     private int subProblemTotal;

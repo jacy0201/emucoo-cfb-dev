@@ -25,6 +25,8 @@ public class TFormSubPbmVal extends BaseEntity {
     @Column(name = "modify_time")
     private Date modifyTime;
 
+    @Column(name = "problem_value_id")
+    private Long problemValueId;
     /**
      * @return id
      */
@@ -97,5 +99,13 @@ public class TFormSubPbmVal extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public Long getProblemValueId() {
+        return problemValueId;
+    }
+
+    public void setProblemValueId(Long problemValueId) {
+        this.problemValueId = problemValueId;
     }
 }

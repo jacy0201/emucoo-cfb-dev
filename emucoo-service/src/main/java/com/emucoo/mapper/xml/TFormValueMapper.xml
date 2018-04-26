@@ -13,4 +13,10 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <select id="fetchOneFormValue" resultMap="BaseResultMap">
+    select * from t_form_value
+    where form_main_id=#{formId} and from_type_id=#{moduleId} and front_plan_id=#{arrangeId}
+
+  </select>
 </mapper>

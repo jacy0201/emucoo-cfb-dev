@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class FormKindVo {
     private Boolean isDone;
-    private Integer kindID;
+    private Long kindID;
     private String kindName;
     private List<FormProblemVo> problemArray;
     private Integer problemNum;

@@ -9,6 +9,7 @@ import java.util.List;
  */
 @Data
 public class FormOut {
+    private Long formId;
     private String formName;
     private String shopName;
     private String gradeDate;

@@ -70,6 +70,7 @@ public class TaskAssignController extends AppBaseController {
             result.setTopContactsArr(allContacts);
         }
         return success(result);
+
     }
 
     /**

@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface FormManageService {
 
-    List<TFormMain> findFormList();
-
     int countFormsByNameKeyword(String keyword);
 
     List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz);
@@ -26,4 +24,7 @@ public interface FormManageService {
 
     void saveFormDetail(TFormMain formMain);
 
+    public List<TFormMain> findFormList();
+
+    void saveFormReportSettings(TFormMain formMain);
 }

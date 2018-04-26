@@ -150,10 +150,6 @@ public class FormManageServiceImpl implements FormManageService {
         // 创建之前先把原来的数据清除
         cleanOldFormInfo(formMain);
 
-        List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
-        formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
-        formScoreItemMapper.insertList(formScoreItems);
-
         List<TFormImptRules> formImptRuless = formMain.getImptRules();
         formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
         formImptRulesMapper.insertList(formImptRuless);
@@ -175,7 +171,6 @@ public class FormManageServiceImpl implements FormManageService {
     private void cleanOldFormInfo(TFormMain formMain) {
         formScoreItemMapper.dropByFormMainId(formMain.getId());
         formImptRulesMapper.dropByFormMainId(formMain.getId());
-        formAddItemMapper.dropByFormMainId(formMain.getId());
         List<TFormType> formModules = formMain.getFormModules();
         List<Long> mdlIds = new ArrayList<>();
         List<Long> probIds = new ArrayList<>();
@@ -185,11 +180,15 @@ public class FormManageServiceImpl implements FormManageService {
         });
         List<Long> opptIds = formOpptMapper.fetchOpptIdsByProblemIds(probIds, 2);
         formTypeMapper.dropByFormMainId(formMain.getId());
-        formPbmMapper.dropByFormTypeIds(mdlIds);
-        formSubPbmMapper.dropByProblemIds(probIds);
-        formSubPbmHeaderMapper.dropByProblemIds(probIds);
-        formOpptMapper.dropByProblemIds(probIds);
-        opportunityMapper.dropByIds(opptIds);
+        if(mdlIds.size() > 0)
+            formPbmMapper.dropByFormTypeIds(mdlIds);
+        if(probIds.size() > 0) {
+            formSubPbmMapper.dropByProblemIds(probIds);
+            formSubPbmHeaderMapper.dropByProblemIds(probIds);
+            formOpptMapper.dropByProblemIds(probIds);
+        }
+        if(opptIds.size() > 0)
+            opportunityMapper.dropByIds(opptIds);
     }
 
 
@@ -250,5 +249,14 @@ public class FormManageServiceImpl implements FormManageService {
         example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
         List<TFormMain> tFormMains = formMainMapper.selectByExample(example);
         return tFormMains;
+    }
+
+    @Override
+    public void saveFormReportSettings(TFormMain formMain) {
+        formMainMapper.updateByPrimaryKey(formMain);
+        formAddItemMapper.dropByFormMainId(formMain.getId());
+        List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
+        formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
+        formScoreItemMapper.insertList(formScoreItems);
     }
 }
