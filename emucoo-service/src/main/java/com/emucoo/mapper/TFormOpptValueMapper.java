@@ -12,10 +12,10 @@ public interface TFormOpptValueMapper extends MyMapper<TFormOpptValue> {
 
     TFormOpptValue fetchOnePbmOpptValue(@Param("problemValueId") Long problemValueId, @Param("opptId") Long opptId, @Param("problemType") int problemType);
 
-    List<TFormOpptValue> selectUnionFromOpptsByPbmIds(@Param("pbmValueIds")List<Long> formAllPbmValueIds,
+    List<TFormOpptValue> selectUnionFormOpptsByPbmIds(@Param("pbmValueIds")List<Long> formAllPbmValueIds,
                                                       @Param("subPbmValueIds")List<Long> formAllSubPbmValueIds);
 
-    List<TFormOpptValue> selectUnionFromOpptsByPbmIdsAndOppt(@Param("pbmValueIds")List<Long> formAllPbmValueIds,
+    List<TFormOpptValue> selectUnionFormOpptsByPbmIdsAndOppt(@Param("pbmValueIds")List<Long> formAllPbmValueIds,
                                                              @Param("subPbmValueIds")List<Long> formAllSubPbmValueIds,
                                                              @Param("opptId")Long opptId);
 }

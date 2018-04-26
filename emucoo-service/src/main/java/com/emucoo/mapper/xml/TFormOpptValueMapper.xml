@@ -19,7 +19,7 @@
     <result column="problem_type" property="problemType" jdbcType="BIT" />
     <result column="sub_header_id" property="subHeaderId" jdbcType="BIGINT" />
   </resultMap>
-  <select id="selectUnionFromOpptsByPbmIds" resultType="com.emucoo.model.TFormOpptValue">
+  <select id="selectUnionFormOpptsByPbmIds" resultType="com.emucoo.model.TFormOpptValue">
     SELECT
     id,
     is_pick,
@@ -52,7 +52,7 @@
     </foreach>
     GROUP BY oppt_id
   </select>
-  <select id="selectUnionFromOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
+  <select id="selectUnionFormOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
     SELECT
     id,
     is_pick,

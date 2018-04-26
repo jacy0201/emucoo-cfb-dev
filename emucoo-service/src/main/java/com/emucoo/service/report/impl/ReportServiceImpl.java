@@ -1,5 +1,7 @@
 package com.emucoo.service.report.impl;
 
+import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.ServiceException;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.report.AdditionItemVo;
 import com.emucoo.dto.modules.report.ChancePointVo;
@@ -7,14 +9,18 @@ import com.emucoo.dto.modules.report.ChecklistKindScoreVo;
 import com.emucoo.dto.modules.report.FormRulesVo;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
+import com.emucoo.dto.modules.report.SaveReportIn;
 import com.emucoo.enums.ProblemType;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.report.ReportService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
@@ -27,6 +33,8 @@ import java.util.List;
  */
 @Service
 public class ReportServiceImpl implements ReportService {
+
+    private Logger logger = LoggerFactory.getLogger(ReportServiceImpl.class);
 
     @Autowired
     private SysDeptMapper sysDeptMapper;
@@ -80,6 +88,12 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private TOpportunityMapper tOpportunityMapper;
 
+    @Autowired
+    private TFormCheckResultMapper tFormCheckResultMapper;
+
+    @Autowired
+    private TFormAddItemValueMapper tFormAddItemValueMapper;
+
     public ReportVo getReport(SysUser user, GetReportIn reportIn) {
         ReportVo reportOut = new ReportVo();
         // 查询店铺名
@@ -114,8 +128,8 @@ public class ReportServiceImpl implements ReportService {
         for(TFormAddItem tFormAddItem : tFormAddItems) {
             AdditionItemVo additionItemVo = new AdditionItemVo();
             additionItemVo.setItemID(tFormAddItem.getId());
-            additionItemVo.setName("");
-            additionItemVo.setValue(tFormAddItem.getName());
+            additionItemVo.setName(tFormAddItem.getName());
+            additionItemVo.setValue("");
             additionItemVos.add(additionItemVo);
         }
         reportOut.setAdditionArray(additionItemVos);
@@ -137,9 +151,16 @@ public class ReportServiceImpl implements ReportService {
             List<TFormPbmVal> tFormImportPbmVals = tFormPbmValMapper.findImportPbmValsByFormAndArrange(reportIn.getChecklistID(),
                     reportIn.getPatrolShopArrangeID(), formImportPbmIds);
             for (TFormPbmVal tFormPbmVal : tFormImportPbmVals) {
-                if (tFormPbmVal.getScore().equals(0)) {
-                    importNum++;
+                for (TFormPbm tFormPbm : tFormPbms) {
+                    if(tFormPbm.getId().equals(tFormPbmVal.getFormProblemId())) {
+                        // 抽样项题项中只要有一个子题单元被否，就出发重点项规则
+                        if (tFormPbmVal.getScore() < tFormPbm.getScore()) {
+                            importNum++;
+                        }
+                        break;
+                    }
                 }
+
             }
         }
 
@@ -195,7 +216,7 @@ public class ReportServiceImpl implements ReportService {
         List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
             // 根据题项id或子题项id查询关联的机会点信息
             if(formAllSubPbmValueIds.size() > 0) {
-                List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFromOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds);
+                List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds);
                 reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
                 List<ChancePointVo> chancePointVos = new ArrayList<>();
                 for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
@@ -247,7 +268,7 @@ public class ReportServiceImpl implements ReportService {
         int discountNumber = 0;
         boolean hasHit = false;
         for(TFormImptRules formImptRule : formImptRules) {
-            if (importNum > formImptRule.getCountNum()) {
+            if (importNum >= formImptRule.getCountNum()) {
                 discountNumber = formImptRule.getDiscountNum();
                 hasHit = true;
                 break;
@@ -331,15 +352,52 @@ public class ReportServiceImpl implements ReportService {
             for (TFormSubPbmVal tFormSubPbmVal : tFormSubPbmVals) {
                 formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
             }
-            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFromOpptsByPbmIdsAndOppt(formAllPbmValueIds, formAllSubPbmValueIds, opptId);
+            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIdsAndOppt(formAllPbmValueIds, formAllSubPbmValueIds, opptId);
             return tFormOpptValues;
         } else {
             return null;
         }
+    }
 
+    @Transactional
+    public void saveReport(SysUser user, SaveReportIn reportIn) {
 
+        try{
+            // 更新总结
+            tFormCheckResultMapper.saveSummaryToFormResult(reportIn.getSummary(), reportIn.getPatrolShopArrangeID(),
+                    reportIn.getChecklistID(), new Date());
+
+            /*Example formResultExp = new Example(TFormCheckResult.class);
+            formResultExp.createCriteria().andEqualTo("formMainId", reportIn.getChecklistID())
+                    .andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID());*/
+            TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
+            if (result == null) {
+                throw new ServiceException("打表结果不存在！");
+            }
+            List<TFormAddItemValue> tFormAddItemValues = new ArrayList<>();
+            for (AdditionItemVo additionItemVo : reportIn.getAdditionArray()) {
+                TFormAddItemValue formAddItemValue = new TFormAddItemValue();
+                formAddItemValue.setId(additionItemVo.getItemID());
+                formAddItemValue.setValue(additionItemVo.getValue());
+                tFormAddItemValues.add(formAddItemValue);
+            }
+            tFormAddItemValueMapper.addAdditionItemList(tFormAddItemValues, new Date(), result.getId());
+        }catch (Exception e){
+            logger.error("保存报告错误！");
+            if(e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ApiException("保存报告错误！");
+        }
 
     }
 
+    private TFormCheckResult findFormResult(Long arrangeId, Long formId) {
+        TFormCheckResult tFormCheckResult = new TFormCheckResult();
+        tFormCheckResult.setFormMainId(formId);
+        tFormCheckResult.setFrontPlanId(arrangeId);
+        TFormCheckResult result = tFormCheckResultMapper.selectOne(tFormCheckResult);
+        return result;
+    }
 
 }

@@ -9,8 +9,20 @@
     <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
-    <result column="form_main_id" property="formMainId" jdbcType="BIGINT" />
     <result column="form_addition_item_id" property="formAdditionItemId" jdbcType="BIGINT" />
-    <result column="report_id" property="reportId" jdbcType="BIGINT" />
+    <result column="form_result_id" property="formResultId" jdbcType="BIGINT"/>
   </resultMap>
+
+  <insert id="addAdditionItemList">
+      INSERT INTO t_form_add_item_value
+      (
+        value,
+        create_time,
+        form_addition_item_id,
+        form_result_id
+      )VALUES
+      <foreach collection="addList" item="item" separator=",">
+        (#{item.value}, #{createTime}, #{item.id}, #{formResultId})
+      </foreach>
+  </insert>
 </mapper>
