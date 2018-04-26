@@ -194,8 +194,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         stateVo.setTaskRank(task.getPreinstallScore()==null?5:Integer.parseInt(task.getPreinstallScore()));
         stateVo.setTaskRepeatType(task.getLoopCycleType());
         stateVo.setTaskRepeatValue(task.getLoopCycleValue()==null?"":task.getLoopCycleValue());
-        stateVo.setFeedbackImg(too.getFeedbackNumType());
-        stateVo.setFeedbackText(too.getFeedbackNeedText()?0:1);
+        stateVo.setFeedbackImg(too.getFeedbackImgType());
+        stateVo.setFeedbackText(too.getFeedbackNeedText()?2:1);
 
         List<ImageUrlVo> ivs = new ArrayList<ImageUrlVo>();
         String timgIds = task.getIllustrationImgIds();
