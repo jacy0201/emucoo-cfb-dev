@@ -1,11 +1,13 @@
 package com.emucoo.service.manage.impl;
 
-import com.emucoo.mapper.TOpportunityMapper;
-import com.emucoo.model.TOpportunity;
+import com.emucoo.dto.modules.form.OpptDetailOut;
+import com.emucoo.mapper.*;
+import com.emucoo.model.*;
 import com.emucoo.service.manage.ChancePointService;
 import com.emucoo.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -14,6 +16,24 @@ public class ChancePointServiceImpl implements ChancePointService {
 
     @Autowired
     private TOpportunityMapper opportunityMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private TFormOpptValueMapper formOpptValueMapper;
+
+    @Autowired
+    private TFormCheckResultMapper formCheckResultMapper;
+
+    @Autowired
+    private TFormMainMapper formMainMapper;
+
+    @Autowired
+    private TShopInfoMapper shopInfoMapper;
+
+    @Autowired
+    private TFormPbmMapper formPbmMapper;
 
     @Override
     public List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz) {
@@ -62,5 +82,31 @@ public class ChancePointServiceImpl implements ChancePointService {
     @Override
     public void deleteChancePoints(List<Long> ids) {
         opportunityMapper.removeByIds(ids);
+    }
+
+    @Override
+    public OpptDetailOut fetchDetail(TOpportunity data) {
+        OpptDetailOut out = new OpptDetailOut();
+        TOpportunity oppt = opportunityMapper.selectByPrimaryKey(data.getId());
+        SysUser user = sysUserMapper.selectByPrimaryKey(oppt.getCreateUserId());
+        Example example = new Example(TFormOpptValue.class);
+        example.setOrderByClause("create_time asc");
+        example.createCriteria().andEqualTo("oppt_id", oppt.getId());
+        TFormOpptValue fov = formOpptValueMapper.selectOneByExample(example);
+        TFormPbm formPbm = formPbmMapper.selectByPrimaryKey(fov.getProblemId());
+        TFormCheckResult fcr = formCheckResultMapper.selectByPrimaryKey(fov.getFormResultId());
+        TFormMain formMain = formMainMapper.selectByPrimaryKey(fcr.getFormMainId());
+        TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(fcr.getShopId());
+
+        out.setName(oppt.getName());
+        out.setAreaName(shopInfo.getAreaName());
+        out.setBrandName(shopInfo.getBrandName());
+        out.setDate(DateUtil.dateToString(fcr.getCreateTime()));
+        out.setDeptName(user.getDptName());
+        out.setFormName(formMain.getName());
+        out.setProblemName(formPbm.getName());
+
+        return out;
+
     }
 }
