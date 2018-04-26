@@ -1,7 +1,7 @@
 #公共配置
 server:
   #端口号
-  port: 8092
+  port: 8088
   context-path: /
   maxHttpPostSize: 0
   tomcat:
@@ -42,7 +42,7 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       # 配置一个连接在池中最小生存的时间，单位是毫秒
       minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false
@@ -125,3 +125,7 @@ pagehelper:
   reasonable: false
   supportMethodsArguments: true
   params: count=countSql
+
+#后台用户token有效期 12小时
+token:
+  expire: 12

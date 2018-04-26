@@ -45,7 +45,7 @@ public class XxlJobConfig {
 	        executor.setPort(port);
 	        executor.setAccessToken(accessToken);
 	        executor.setLogPath(logPath);
-//	        executor.setLogRetentionDays(logRetentionDays);
+            executor.setLogRetentionDays(logRetentionDays);
 	        
 	        return executor;
 	    }

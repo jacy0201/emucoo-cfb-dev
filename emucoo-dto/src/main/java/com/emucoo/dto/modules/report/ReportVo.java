@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class ReportVo {
     private Long reportID;
+    private Long patrolShopArrangeID;
+    private Long shopID;
+    private Long checklistID;
     private String shopName;
     private String shopownerName;
     private String checkDate;

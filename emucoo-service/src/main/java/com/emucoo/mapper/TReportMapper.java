@@ -10,4 +10,6 @@ public interface TReportMapper extends MyMapper<TReport> {
     List<ReportItemVo> fetchUnReadReport(long currUserId);
 
     Integer countUnReadReport(Long userId);
+
+    void saveReport(TReport report);
 }

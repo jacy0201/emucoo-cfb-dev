@@ -148,4 +148,10 @@
       #{item}
     </foreach>
   </update>
+
+  <update id="updateFrontPlanStatus">
+    UPDATE t_front_plan
+    SET status = #{status}
+    WHERE id = #{arrangeId}
+  </update>
 </mapper>

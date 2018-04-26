@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by sj on 2018/4/24.
  */
-@Controller
+@RestController
 @RequestMapping(value = "/api/form")
 public class FormController extends AppBaseController {
 
