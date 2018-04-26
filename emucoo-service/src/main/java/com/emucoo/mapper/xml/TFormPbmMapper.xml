@@ -67,4 +67,21 @@
             </foreach>
         </where>
     </delete>
+
+    <select id="findFormPbmsByFormMainId" parameterType="Long" resultType="com.emucoo.model.TFormPbm">
+        SELECT
+        id,
+        name,
+        score,
+        sub_problem_num,
+        is_important,
+        description_hit
+        FROM t_form_pbm WHERE form_type_id IN
+        (
+          SELECT
+          id
+          FROM t_form_type
+          WHERE form_main_id = #{formId}
+        )
+    </select>
 </mapper>

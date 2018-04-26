@@ -25,6 +25,12 @@ public class TFormSubPbmVal extends BaseEntity {
     @Column(name = "modify_time")
     private Date modifyTime;
 
+    @Column(name = "sub_problem_name")
+    private String subProblemName;
+
+    @Column(name = "problem_value_id")
+    private Long problemValueId;
+
     /**
      * @return id
      */
@@ -97,5 +103,33 @@ public class TFormSubPbmVal extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    /**
+     * @return sub_problem_name
+     */
+    public String getSubProblemName() {
+        return subProblemName;
+    }
+
+    /**
+     * @param subProblemName
+     */
+    public void setSubProblemName(String subProblemName) {
+        this.subProblemName = subProblemName;
+    }
+
+    /**
+     * @return problem_value_id
+     */
+    public Long getProblemValueId() {
+        return problemValueId;
+    }
+
+    /**
+     * @param problemValueId
+     */
+    public void setProblemValueId(Long problemValueId) {
+        this.problemValueId = problemValueId;
     }
 }

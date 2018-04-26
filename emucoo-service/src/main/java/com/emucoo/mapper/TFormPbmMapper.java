@@ -12,4 +12,6 @@ public interface TFormPbmMapper extends MyMapper<TFormPbm> {
     void upsert(TFormPbm problem);
 
     void dropByFormTypeIds(List<Long> mdlIds);
+
+    List<TFormPbm> findFormPbmsByFormMainId(Long formId);
 }

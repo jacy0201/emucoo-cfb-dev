@@ -10,8 +10,9 @@ import java.util.List;
 @Data
 public class ChancePointVo {
     private Integer chancePointFrequency;
-    private Integer chancePointID;
+    private Long chancePointID;
     private String chancePointTitle;
-    private String checkItemContent;
+    private String chanceContent;
     private List<ReportWorkVo> workArr;
+    private String chanceDescription;
 }

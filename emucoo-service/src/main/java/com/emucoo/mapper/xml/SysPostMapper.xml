@@ -17,4 +17,15 @@
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
   </resultMap>
+
+  <select id="findPositionByUserId" parameterType="Long" resultType="com.emucoo.model.SysPost">
+      SELECT
+      post.post_name,
+      post.post_code,
+      post.remarks
+      FROM sys_post post
+      INNER JOIN sys_user_post userPost ON userPost.post_id = post.id AND userPost.user_id = #{userId}
+      AND userPost.is_del = FALSE
+      WHERE post.is_del = FALSE
+  </select>
 </mapper>

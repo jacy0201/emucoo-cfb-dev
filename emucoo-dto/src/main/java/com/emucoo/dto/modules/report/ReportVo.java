@@ -14,10 +14,9 @@ import lombok.Data;
 @Data
 public class ReportVo {
     private Integer reportID;
-    private Integer patrolShopArrangeID;
     private String shopName;
     private String shopownerName;
-    private Date checkDate;
+    private String checkDate;
     private String inspectorName;
     private String inspectorPosition;
     private String checkDepartmentName;

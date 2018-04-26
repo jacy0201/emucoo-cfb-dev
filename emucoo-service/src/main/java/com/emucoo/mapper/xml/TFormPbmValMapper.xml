@@ -1,20 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.emucoo.mapper.TFormPbmValMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TFormPbmVal" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TFormPbmVal">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="form_value_id" property="formValueId" jdbcType="BIGINT" />
-    <result column="form_problem_id" property="formProblemId" jdbcType="BIGINT" />
-    <result column="score" property="score" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
-    <result column="is_na" property="isNa" jdbcType="BIT" />
-    <result column="is_score" property="isScore" jdbcType="BIT" />
-    <result column="org_id" property="orgId" jdbcType="BIGINT" />
-    <result column="problem_schema_type" property="problemSchemaType" jdbcType="BIT" />
-    <result column="problem_description" property="problemDescription" jdbcType="LONGVARCHAR" />
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="form_value_id" property="formValueId" jdbcType="BIGINT"/>
+    <result column="form_problem_id" property="formProblemId" jdbcType="BIGINT"/>
+    <result column="score" property="score" jdbcType="INTEGER"/>
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    <result column="is_na" property="isNa" jdbcType="BIT"/>
+    <result column="is_score" property="isScore" jdbcType="BIT"/>
+    <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+    <result column="problem_schema_type" property="problemSchemaType" jdbcType="BIT"/>
+    <result column="problem_name" property="problemName" jdbcType="VARCHAR"/>
+    <result column="problem_description" property="problemDescription" jdbcType="LONGVARCHAR"/>
   </resultMap>
+
+  <select id="findImportPbmValsByFormAndArrange" resultType="com.emucoo.model.TFormPbmVal">
+    SELECT
+    pbmVal.id,
+    pbmVal.is_na,
+    pbmVal.score,
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
+    FROM t_form_pbm_val pbmVal
+    INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
+    AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
+    <where>
+      <if test="formPbmIds != null">
+        pbmVal.form_problem_id IN
+        <foreach collection="formPbmIds" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="findFormPbmValsByFormAndArrange" resultType="com.emucoo.model.TFormPbmVal">
+    SELECT
+    pbmVal.id,
+    pbmVal.is_na,
+    pbmVal.score,
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
+    FROM t_form_pbm_val pbmVal
+    INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
+    AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
+  </select>
+
+  <select id="findFormPbmValsByFormAndArrangeList" resultType="com.emucoo.model.TFormPbmVal">
+    SELECT
+    pbmVal.id,
+    pbmVal.is_na,
+    pbmVal.score,
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
+    FROM t_form_pbm_val pbmVal
+    INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
+    AND pbmVal.form_value_id = formVal.id
+    AND formVal.front_plan_id IN
+    <foreach collection="arrangeIds" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+  </select>
+
 </mapper>
