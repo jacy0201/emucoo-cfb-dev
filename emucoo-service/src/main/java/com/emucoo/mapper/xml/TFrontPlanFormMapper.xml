@@ -33,4 +33,12 @@
     is_del = #{isDel}
     WHERE front_plan_id = #{frontPlanId}
   </update>
+
+  <update id="updateStatusByFormAndArrange">
+    UPDATE t_front_plan_form
+    SET report_status = #{status},
+    report_id = #{reportId}
+    WHERE front_plan_id = #{arrangeId} AND form_main_id = #{formId}
+    AND is_del = FALSE
+  </update>
 </mapper>

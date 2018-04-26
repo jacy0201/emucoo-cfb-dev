@@ -32,7 +32,7 @@ public class TReport extends BaseEntity {
      * 打表人的id
      */
     @Column(name = "reporter_id")
-    private String reporterId;
+    private Long reporterId;
 
     /**
      * 打表人部门名
@@ -51,12 +51,6 @@ public class TReport extends BaseEntity {
      */
     @Column(name = "reporter_position")
     private String reporterPosition;
-
-    /**
-     * 检查表报告id，多个用逗号相隔
-     */
-    @Column(name = "form_report_ids")
-    private String formReportIds;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -89,11 +83,13 @@ public class TReport extends BaseEntity {
      * 打表人职位id
      */
     @Column(name = "reporter_position_id")
-    private Long reporterPositionId;
+    private String reporterPositionId;
 
     @Column(name = "org_id")
     private Long orgId;
 
+    @Column(name = "form_result_id")
+    private Long formResultId;
 
     @Transient
     private Boolean isRead;
@@ -221,24 +217,6 @@ public class TReport extends BaseEntity {
     }
 
     /**
-     * 获取检查表报告id，多个用逗号相隔
-     *
-     * @return form_report_ids - 检查表报告id，多个用逗号相隔
-     */
-    public String getFormReportIds() {
-        return formReportIds;
-    }
-
-    /**
-     * 设置检查表报告id，多个用逗号相隔
-     *
-     * @param formReportIds 检查表报告id，多个用逗号相隔
-     */
-    public void setFormReportIds(String formReportIds) {
-        this.formReportIds = formReportIds;
-    }
-
-    /**
      * @return create_time
      */
     public Date getCreateTime() {
@@ -324,21 +302,11 @@ public class TReport extends BaseEntity {
         this.reporterDptId = reporterDptId;
     }
 
-    /**
-     * 获取打表人职位id
-     *
-     * @return reporter_position_id - 打表人职位id
-     */
-    public Long getReporterPositionId() {
+    public String getReporterPositionId() {
         return reporterPositionId;
     }
 
-    /**
-     * 设置打表人职位id
-     *
-     * @param reporterPositionId 打表人职位id
-     */
-    public void setReporterPositionId(Long reporterPositionId) {
+    public void setReporterPositionId(String reporterPositionId) {
         this.reporterPositionId = reporterPositionId;
     }
 
@@ -364,11 +332,19 @@ public class TReport extends BaseEntity {
         isRead = read;
     }
 
-    public String getReporterId() {
+    public Long getReporterId() {
         return reporterId;
     }
 
-    public void setReporterId(String reporterId) {
+    public void setReporterId(Long reporterId) {
         this.reporterId = reporterId;
+    }
+
+    public Long getFormResultId() {
+        return formResultId;
+    }
+
+    public void setFormResultId(Long formResultId) {
+        this.formResultId = formResultId;
     }
 }

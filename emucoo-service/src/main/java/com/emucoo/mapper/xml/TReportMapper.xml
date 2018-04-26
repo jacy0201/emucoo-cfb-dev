@@ -13,13 +13,12 @@
         <result column="reporter_dpt_name" property="reporterDptName" jdbcType="VARCHAR"/>
         <result column="check_form_time" property="checkFormTime" jdbcType="DATE"/>
         <result column="reporter_position" property="reporterPosition" jdbcType="VARCHAR"/>
-        <result column="form_report_ids" property="formReportIds" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
         <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
         <result column="shopkeeper_id" property="shopkeeperId" jdbcType="BIGINT"/>
         <result column="reporter_dpt_id" property="reporterDptId" jdbcType="BIGINT"/>
-        <result column="reporter_position_id" property="reporterPositionId" jdbcType="BIGINT"/>
+        <result column="reporter_position_id" property="reporterPositionId" jdbcType="VARCHAR"/>
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
     </resultMap>
 
@@ -47,4 +46,44 @@
         where
             a.user_id = #{userId} and a.is_read=0
     </select>
+
+    <insert id="saveReport" parameterType="com.emucoo.model.TReport">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_report
+        (
+          shop_name,
+          shop_id,
+          shopkeeper_name,
+          shopkeeper_id,
+          reporter_id,
+          reporter_name,
+          reporter_dpt_id,
+          reporter_dpt_name,
+          reporter_position_id,
+          reporter_position,
+          form_result_id,
+          org_id,
+          check_form_time,
+          create_time,
+          create_user_id
+        )VALUES (
+          #{shopName},
+          #{shopId},
+          #{shopkeeperName},
+          #{shopkeeperId},
+          #{reporterId},
+          #{reporterName},
+          #{reporterDptId},
+          #{reporterDptName},
+          #{reporterPositionId},
+          #{reporterPosition},
+          #{formResultId},
+          #{orgId},
+          #{checkFormTime},
+          #{createTime},
+          #{createUserId}
+        )
+    </insert>
 </mapper>

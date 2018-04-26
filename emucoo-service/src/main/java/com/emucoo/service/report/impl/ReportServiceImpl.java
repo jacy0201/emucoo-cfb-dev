@@ -10,11 +10,13 @@ import com.emucoo.dto.modules.report.FormRulesVo;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.dto.modules.report.SaveReportIn;
+import com.emucoo.enums.Constant;
 import com.emucoo.enums.ProblemType;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.report.ReportService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -93,6 +98,18 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private TFormAddItemValueMapper tFormAddItemValueMapper;
+
+    @Autowired
+    private TReportMapper tReportMapper;
+
+    @Autowired
+    private TReportUserMapper tReportUserMapper;
+
+    @Autowired
+    private TReportOpptMapper tReportOpptMapper;
+
+    @Autowired
+    private TFrontPlanFormMapper tFrontPlanFormMapper;
 
     public ReportVo getReport(SysUser user, GetReportIn reportIn) {
         ReportVo reportOut = new ReportVo();
@@ -360,7 +377,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Transactional
-    public void saveReport(SysUser user, SaveReportIn reportIn) {
+    public void saveReport(SysUser user, ReportVo reportIn) {
 
         try{
             // 更新总结
@@ -372,7 +389,7 @@ public class ReportServiceImpl implements ReportService {
                     .andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID());*/
             TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
             if (result == null) {
-                throw new ServiceException("打表结果不存在！");
+                throw new ApiException("打表结果不存在！");
             }
             List<TFormAddItemValue> tFormAddItemValues = new ArrayList<>();
             for (AdditionItemVo additionItemVo : reportIn.getAdditionArray()) {
@@ -381,11 +398,89 @@ public class ReportServiceImpl implements ReportService {
                 formAddItemValue.setValue(additionItemVo.getValue());
                 tFormAddItemValues.add(formAddItemValue);
             }
+            // 添加额外项值
             tFormAddItemValueMapper.addAdditionItemList(tFormAddItemValues, new Date(), result.getId());
+
+            // 保存报告
+            TReport report = new TReport();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            report.setCheckFormTime(sdf.parse(reportIn.getCheckDate()));
+            Date now = new Date();
+            report.setCreateTime(now);
+            report.setCreateUserId(user.getId());
+            report.setOrgId(Constant.orgId);
+            report.setReporterDptName(reportIn.getInspectorName());
+            // 查询店铺名
+            TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(reportIn.getShopID());
+            report.setShopId(shop.getId());
+            report.setShopName(shop.getShopName());
+            // 查询店长
+            SysUser shopOwer = sysUserMapper.selectByPrimaryKey(shop.getShopManagerId());
+            report.setShopkeeperId(shopOwer.getId());
+            report.setShopkeeperName(shopOwer.getRealName());
+            // 查询打表人所属部门
+            SysDept department = sysDeptMapper.selectByPrimaryKey(user.getDptId());
+            report.setReporterDptId(department.getId());
+            report.setReporterDptName(department.getDptName());
+            // 打表人信息
+            report.setReporterId(user.getId());
+            report.setReporterName(user.getRealName());
+            // 打表人职位
+            List<SysPost> postions = sysPostMapper.findPositionByUserId(user.getId());
+            String postStr = "";
+            String postIdStr = "";
+            for (SysPost post : postions) {
+                postStr += post.getPostName();
+                postIdStr += post.getId();
+            }
+            if (StringUtils.isNotBlank(postStr)) {
+                postStr = postStr.substring(0, postStr.length() - 1);
+            }
+            if (StringUtils.isNotBlank(postIdStr)) {
+                postIdStr = postIdStr.substring(0, postIdStr.length() - 1);
+            }
+            report.setReporterPositionId(postIdStr);
+            report.setReporterPosition(postStr);
+            report.setFormResultId(result.getId());
+            tReportMapper.saveReport(report);
+
+            // 查询报告抄送部门
+            TFormMain form = tFormMainMapper.selectByPrimaryKey(reportIn.getChecklistID());
+            String[] ccDptId = form.getCcDptIds().split(",");
+            Example dptUserExp = new Example(SysUser.class);
+            dptUserExp.createCriteria().andIn("dptId", Arrays.asList(ccDptId)).andEqualTo("status", 0).andEqualTo("isDel", false);
+            List<SysUser> ccUsers = sysUserMapper.selectByExample(dptUserExp);
+            tReportUserMapper.addReportToUser(ccUsers, report.getId());
+
+            // 整理关联的机会点，并存入报告与机会点关联表
+            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptsByResultId(result.getId());
+            List<Long> opptIds = new ArrayList<>();
+            for(TFormOpptValue tFormOpptValue : tFormOpptValues) {
+                opptIds.add(tFormOpptValue.getOpptId());
+            }
+            tReportOpptMapper.addReportOpptRelation(opptIds, report.getId(), new Date());
+
+            // 更新安排与表单完成状态
+            tFrontPlanFormMapper.updateStatusByFormAndArrange(1, reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID(), report.getId());
+
+            //更新巡店安排状态
+            Example tPlanFormExp = new Example(TFrontPlanForm.class);
+            tPlanFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("isDel", false)
+                .andEqualTo("reportStatus", 2);
+            List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(tPlanFormExp);
+            if(CollectionUtils.isEmpty(tFrontPlanForms)) {
+                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID());
+            }
+
         }catch (Exception e){
             logger.error("保存报告错误！");
-            if(e instanceof ServiceException) {
-                throw e;
+            if(StringUtils.isNotBlank(e.getMessage())) {
+                try {
+                    throw e;
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
             }
             throw new ApiException("保存报告错误！");
         }
