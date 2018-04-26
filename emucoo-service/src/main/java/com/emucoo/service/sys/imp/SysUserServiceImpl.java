@@ -70,13 +70,17 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		Long postId=null;
 		Example example=new Example(SysUser.class);
 		example.createCriteria().andEqualTo("isDel",0);
-		if(StringUtil.isNotEmpty(userQuery.getRealName())){ realName=userQuery.getRealName(); example.createCriteria().andEqualTo("realName",realName); }
-		if(StringUtil.isNotEmpty(userQuery.getUsername())){ username=userQuery.getUsername(); example.createCriteria().andEqualTo("username",username); }
-		if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); example.createCriteria().andEqualTo("mobile",mobile); }
-		if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); example.createCriteria().andEqualTo("email",email); }
-		if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); example.createCriteria().andEqualTo("dptId",dptId);}
-		if(null!=userQuery.getIsShopManager()){isShopManager=userQuery.getIsShopManager(); example.createCriteria().andEqualTo("isShopManager",isShopManager);}
-		if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); example.createCriteria().andEqualTo("status",status);}
+		if(null!=userQuery){
+			if(StringUtil.isNotEmpty(userQuery.getRealName())){ realName=userQuery.getRealName(); example.createCriteria().andEqualTo("realName",realName); }
+			if(StringUtil.isNotEmpty(userQuery.getUsername())){ username=userQuery.getUsername(); example.createCriteria().andEqualTo("username",username); }
+			if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); example.createCriteria().andEqualTo("mobile",mobile); }
+			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); example.createCriteria().andEqualTo("email",email); }
+			if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); example.createCriteria().andEqualTo("dptId",dptId);}
+			if(null!=userQuery.getIsShopManager()){ isShopManager=userQuery.getIsShopManager(); example.createCriteria().andEqualTo("isShopManager",isShopManager);}
+			if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); example.createCriteria().andEqualTo("status",status);}
+			if(null!=userQuery.getShopId()){ shopId=userQuery.getShopId(); }
+			if(null!=userQuery.getPostId()){ postId=userQuery.getPostId(); }
+		}
 		HashMap paramMap=new HashMap();
 		paramMap.put("realName",realName);
 		paramMap.put("username",username);

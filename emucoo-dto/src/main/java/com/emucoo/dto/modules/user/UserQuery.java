@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel(value="用户列表查询",description="用户列表查询参数")
-public class UserQuery implements Serializable {
+public class UserQuery{
     @ApiModelProperty(value="用户名",name="username",example="xingguo")
     private String username;
     @ApiModelProperty(value="姓名",name="realName",example="张三")

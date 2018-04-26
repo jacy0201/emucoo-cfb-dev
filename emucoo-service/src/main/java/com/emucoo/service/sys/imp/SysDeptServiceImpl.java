@@ -42,11 +42,11 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		String dptName="";
 		Boolean isUse=null;
 		List<SysDept> deptList=null;
-		if(null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
+		if(null!=deptQuery && null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
 			dptName=deptQuery.getDptName();
 			example.createCriteria().andLike("dptName","%"+dptName+"%");
 		}
-		if(null!=deptQuery.getIsUse()){
+		if(null!=deptQuery && null!=deptQuery.getIsUse()){
 			isUse=deptQuery.getIsUse();
 			example.createCriteria().andEqualTo("isUse",isUse);
 		}
@@ -54,7 +54,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		HashMap paramMap=null;
 		List<SysDept> listB=null;
 		List<SysDept> listA=null;
-		if(null!=deptQuery.getBrandId()){
+		if(null!=deptQuery && null!=deptQuery.getBrandId()){
 			paramMap=new HashMap();
 			brandId=deptQuery.getBrandId();
 			paramMap.put("brandId",brandId);
@@ -63,7 +63,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 			listB=sysDeptMapper.listByBrand(paramMap);
 		}
 
-		if(null!=deptQuery.getAreaId()){
+		if(null!=deptQuery && null!=deptQuery.getAreaId()){
 			paramMap=new HashMap();
 			areaId=deptQuery.getAreaId();
 			paramMap.put("areaId",areaId);
