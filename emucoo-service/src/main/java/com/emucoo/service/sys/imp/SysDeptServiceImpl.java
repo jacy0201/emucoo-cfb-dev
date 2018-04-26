@@ -145,7 +145,8 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		if(null==sysDept.getParentId()){
 			sysDept.setParentId(0L);
 		}
-		int deptId=sysDeptMapper.insertUseGeneratedKeys(sysDept);
+		sysDeptMapper.insertUseGeneratedKeys(sysDept);
+		Long deptId=sysDept.getId();
 
 		//添加机构地区关联信息
 		List<SysArea> areaList=sysDept.getAreaList();
@@ -154,7 +155,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 			for(SysArea area :areaList){
 				sysDptArea=new SysDptArea();
 				sysDptArea.setAreaId(area.getId());
-				sysDptArea.setDptId(Long.parseLong(deptId+""));
+				sysDptArea.setDptId(deptId);
 				sysDptArea.setCreateTime(new Date());
 				sysDptArea.setCreateUserId(1L);
 				sysDptArea.setIsDel(false);
