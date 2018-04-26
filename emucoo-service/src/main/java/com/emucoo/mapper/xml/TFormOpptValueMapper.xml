@@ -1,22 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.emucoo.mapper.TFormOpptValueMapper">
-    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormOpptValue">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="form_oppt_id" property="formOpptId" jdbcType="BIGINT"/>
-        <result column="is_pick" property="isPick" jdbcType="BIT"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
-    </resultMap>
+<mapper namespace="com.emucoo.mapper.TFormOpptValueMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TFormOpptValue" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="is_pick" property="isPick" jdbcType="BIT" />
+    <result column="sub_problem_unit_score" property="subProblemUnitScore" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="oppt_id" property="opptId" jdbcType="BIGINT" />
+    <result column="problem_id" property="problemId" jdbcType="BIGINT" />
+    <result column="sub_problem_id" property="subProblemId" jdbcType="BIGINT" />
+    <result column="oppt_name" property="opptName" jdbcType="VARCHAR" />
+    <result column="problem_value_id" property="problemValueId" jdbcType="BIGINT" />
+    <result column="sub_problem_value_id" property="subProblemValueId" jdbcType="BIGINT" />
+    <result column="problem_type" property="problemType" jdbcType="BIT" />
+    <result column="sub_header_id" property="subHeaderId" jdbcType="BIGINT" />
+  </resultMap>
+  <select id="selectUnionFromOpptsByPbmIds" resultType="com.emucoo.model.TFormOpptValue">
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 1 AND is_pick = true AND problem_value_id IN
+    <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    GROUP BY oppt_id
+    UNION ALL
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 2 AND is_pick = true AND sub_problem_value_id IN
+    <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    GROUP BY oppt_id
+  </select>
+  <select id="selectUnionFromOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 1 AND problem_value_id IN
+    <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    UNION ALL
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE problem_type = 2 AND sub_problem_value_id IN
+    <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+    WHERE oppt_id = #{opptId}
+  </select>
 
-    <select id="fetchOneSubPbmOpptValue" resultMap="BaseResultMap">
-        select * from t_form_oppt_value where sub_problem_value_id=#{subProblemValueId} and sub_problem_id=#{subProblemId} and sub_header_id=#{subProblemHeaderId} and problem_type=#{problemType}
-    </select>
+  <select id="fetchOneSubPbmOpptValue" resultMap="BaseResultMap">
+    select * from t_form_oppt_value where sub_problem_value_id=#{subProblemValueId} and sub_problem_id=#{subProblemId} and sub_header_id=#{subProblemHeaderId} and problem_type=#{problemType}
+  </select>
 
-    <select id="fetchOnePbmOpptValue" resultMap="BaseResultMap">
-        select * from t_form_oppt_value where problem_value_id=#{problemValueId} and oppt_id=#{opptId} and problem_type=#{problemType}
-    </select>
+  <select id="fetchOnePbmOpptValue" resultMap="BaseResultMap">
+    select * from t_form_oppt_value where problem_value_id=#{problemValueId} and oppt_id=#{opptId} and problem_type=#{problemType}
+  </select>
 </mapper>

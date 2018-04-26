@@ -8,10 +8,14 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="form_main_id" property="formMainId" jdbcType="BIGINT" />
     <result column="from_type_id" property="fromTypeId" jdbcType="BIGINT" />
-    <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT"/>
     <result column="is_done" property="isDone" jdbcType="BIT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
+    <result column="form_main_name" property="formMainName" jdbcType="VARCHAR" />
+    <result column="form_type_name" property="formTypeName" jdbcType="VARCHAR" />
+    <result column="score_rate" property="scoreRate" jdbcType="REAL" />
+    <result column="score" property="score" jdbcType="INTEGER"/>
   </resultMap>
 
   <select id="fetchOneFormValue" resultMap="BaseResultMap">

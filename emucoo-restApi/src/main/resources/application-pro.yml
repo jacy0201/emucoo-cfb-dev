@@ -5,6 +5,7 @@ spring:
     password: ${password}
     url: jdbc:mysql://123.59.72.69:3306/emucoo2?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
   redis:
+      database: 0
       cluster:
         nodes: 10.9.163.206:7000,10.9.163.206:7001,10.9.163.206:7002,10.9.6.28:7003,10.9.6.28:7004,10.9.6.28:7005
 

@@ -43,13 +43,13 @@ public class SysLoginController extends BaseResource {
 		sysUser.setUsername(username);
 		SysUser user = sysUserService.findOne(sysUser);
 		//账号不存在、密码错误
-		if(user == null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(password)).toHex())) {
+		if(user == null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(password),user.getSalt()).toHex())) {
 			return fail(ApiExecStatus.FAIL,"账号或密码不正确");
 		}
 
 		//账号锁定
-		if(user.getStatus()!=0){
-			return fail(ApiExecStatus.FAIL,"账号已被锁定或停用,请联系管理员");
+		if(null==user.getStatus() || user.getStatus()!=0){
+			return fail(ApiExecStatus.FAIL,"账号未启用,请联系管理员");
 		}
 
 		//生成token，并保存到数据库

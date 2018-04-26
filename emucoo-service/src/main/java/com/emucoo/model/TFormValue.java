@@ -28,14 +28,29 @@ public class TFormValue extends BaseEntity {
     @Column(name = "is_done")
     private Boolean isDone;
 
-    @Column(name = "front_plan_id")
-    private Long frontPlanId;
-
     @Column(name = "create_time")
     private Date createTime;
 
     @Column(name = "modify_time")
     private Date modifyTime;
+
+    @Column(name = "front_plan_id")
+    private Long frontPlanId;
+
+    @Column(name = "form_main_name")
+    private String formMainName;
+
+    @Column(name = "form_type_name")
+    private String formTypeName;
+
+    /**
+     * l类型得分率
+     */
+    @Column(name = "score_rate")
+    private Float scoreRate;
+
+    @Column(name = "score")
+    private Integer score;
 
     /**
      * @return id
@@ -105,14 +120,6 @@ public class TFormValue extends BaseEntity {
         this.isDone = isDone;
     }
 
-    public Long getFrontPlanId() {
-        return frontPlanId;
-    }
-
-    public void setFrontPlanId(Long frontPlanId) {
-        this.frontPlanId = frontPlanId;
-    }
-
     /**
      * @return create_time
      */
@@ -139,5 +146,73 @@ public class TFormValue extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    /**
+     * @return front_plan_id
+     */
+    public Long getFrontPlanId() {
+        return frontPlanId;
+    }
+
+    /**
+     * @param frontPlanId
+     */
+    public void setFrontPlanId(Long frontPlanId) {
+        this.frontPlanId = frontPlanId;
+    }
+
+    /**
+     * @return form_main_name
+     */
+    public String getFormMainName() {
+        return formMainName;
+    }
+
+    /**
+     * @param formMainName
+     */
+    public void setFormMainName(String formMainName) {
+        this.formMainName = formMainName;
+    }
+
+    /**
+     * @return form_type_name
+     */
+    public String getFormTypeName() {
+        return formTypeName;
+    }
+
+    /**
+     * @param formTypeName
+     */
+    public void setFormTypeName(String formTypeName) {
+        this.formTypeName = formTypeName;
+    }
+
+    /**
+     * 获取l类型得分率
+     *
+     * @return score_rate - l类型得分率
+     */
+    public Float getScoreRate() {
+        return scoreRate;
+    }
+
+    /**
+     * 设置l类型得分率
+     *
+     * @param scoreRate l类型得分率
+     */
+    public void setScoreRate(Float scoreRate) {
+        this.scoreRate = scoreRate;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 }

@@ -33,7 +33,7 @@ public class SysShopController extends BaseResource {
 	 * 店铺列表查询
 	 */
 	@PostMapping ("/list")
-	@RequiresPermissions("sys:shop:list")
+	//@RequiresPermissions("sys:shop:list")
 	@ApiOperation(value="查询店铺列表")
 	@ResponseBody
 	public ApiResult<PageInfo<TShopInfo>> list(@RequestBody ParamVo<TShopInfo> param){
@@ -62,7 +62,7 @@ public class SysShopController extends BaseResource {
 	 * 添加店铺
 	 */
 	@PostMapping ("/save")
-	@RequiresPermissions("sys:shop:save")
+	//@RequiresPermissions("sys:shop:save")
 	@ApiOperation(value="添加店铺")
 	public ApiResult save(@RequestBody TShopInfo shopInfo){
 		shopInfo.setCreateTime(new Date());
@@ -76,7 +76,7 @@ public class SysShopController extends BaseResource {
 	 * 更新店铺
 	 */
 	@PostMapping ("/update")
-	@RequiresPermissions("sys:shop:update")
+	//@RequiresPermissions("sys:shop:update")
 	@ApiOperation(value="更新店铺")
 	public ApiResult update(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
@@ -90,7 +90,7 @@ public class SysShopController extends BaseResource {
 	 * 删除店铺
 	 */
 	@PostMapping ("/delete")
-	@RequiresPermissions("sys:shop:delete")
+	//@RequiresPermissions("sys:shop:delete")
 	@ApiOperation(value="删除店铺")
 	public ApiResult delete(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
@@ -102,7 +102,7 @@ public class SysShopController extends BaseResource {
 	 * 启用停用店铺
 	 */
 	@PostMapping ("/modifyShopUse")
-	@RequiresPermissions("sys:shop:use")
+	//@RequiresPermissions("sys:shop:use")
 	@ApiOperation(value="店铺启用/停用")
 	public ApiResult modifyShopUse(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}

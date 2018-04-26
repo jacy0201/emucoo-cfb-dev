@@ -147,14 +147,16 @@ public class PlanServiceImpl implements PlanService {
             String yearMonth = findPlanListIn.getMonth();
             String year = "";
             String month = "";
+            Calendar calendar = Calendar.getInstance();
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+            month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            if (month.length() < 2) {
+                month = "0" + month;
+            }
+            String currentMonth = year + month + "";
             // 如果不传计划月份参数,则调取当前月数据,否则取指定月数据
             if (StringUtil.isBlank(findPlanListIn.getMonth())) {
-                Calendar calendar = Calendar.getInstance();
-                year = String.valueOf(calendar.get(Calendar.YEAR));
-                month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
-                if(month.length() < 2) {
-                    month = "0" + month;
-                }
+
                 yearMonth = year + month;
             } else {
                 year = yearMonth.substring(0,4);
@@ -277,6 +279,7 @@ public class PlanServiceImpl implements PlanService {
                 areaOut.setShopNum(frontPlans.size());
                 precinctArr.add(areaOut);
             }
+            findPlanListOut.setPresentMonth(currentMonth);
             findPlanListOut.setPrecinctArr(precinctArr);
             return findPlanListOut;
         } catch (Exception e) {

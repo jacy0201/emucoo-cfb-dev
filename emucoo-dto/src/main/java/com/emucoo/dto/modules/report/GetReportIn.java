@@ -9,4 +9,8 @@ import lombok.Data;
 @Data
 public class GetReportIn {
     private String reportID;
+
+    private Long patrolShopArrangeID;
+    private Long shopID;
+    private Long checklistID;
 }

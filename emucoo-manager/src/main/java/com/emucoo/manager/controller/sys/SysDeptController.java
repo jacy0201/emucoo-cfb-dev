@@ -47,7 +47,7 @@ public class SysDeptController extends BaseResource {
 	 */
     @ApiOperation(value="查询机构列表")
 	@PostMapping("/list")
-	@RequiresPermissions("sys:dept:list")
+	//@RequiresPermissions("sys:dept:list")
 	@ResponseBody
 	public ApiResult<List<SysDept>> list(@RequestBody DeptQuery DeptQuery){
 		List<SysDept> deptList = sysDeptService.queryList(DeptQuery);
@@ -60,7 +60,7 @@ public class SysDeptController extends BaseResource {
 	 */
     @ApiOperation(value="创建机构")
     @PostMapping("/save")
-	@RequiresPermissions("sys:dept:save")
+	//@RequiresPermissions("sys:dept:save")
 	public ApiResult save(@RequestBody SysDept dept){
 		sysDeptService.saveDept(dept);
 		return success("success");
@@ -71,7 +71,7 @@ public class SysDeptController extends BaseResource {
 	 */
     @ApiOperation(value="更新机构")
 	@PostMapping("/update")
-	@RequiresPermissions("sys:dept:update")
+	//@RequiresPermissions("sys:dept:update")
 	public ApiResult update(@RequestBody SysDept dept){
         if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
 		sysDeptService.updateDept(dept);
@@ -83,7 +83,7 @@ public class SysDeptController extends BaseResource {
      */
     @ApiOperation(value="启用/停用 机构")
     @PostMapping("/modifyUse")
-    @RequiresPermissions("sys:dept:use")
+   // @RequiresPermissions("sys:dept:modifyUse")
     public ApiResult modifyUse(@RequestBody SysDept dept){
         if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
         sysDeptService.updateDept(dept);
@@ -96,7 +96,7 @@ public class SysDeptController extends BaseResource {
 	 */
     @ApiOperation(value="删除机构")
 	@PostMapping("/delete")
-	@RequiresPermissions("sys:dept:delete")
+	//@RequiresPermissions("sys:dept:delete")
 	public ApiResult delete(@RequestBody SysDept dept){
         if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
 		//判断是否有子部门
@@ -115,7 +115,7 @@ public class SysDeptController extends BaseResource {
      */
     @ApiOperation(value="获取用户关系")
     @PostMapping("/listUserRelation")
-    @RequiresPermissions("sys:dept:relation")
+    //@RequiresPermissions("sys:dept:listUserRelation")
 	@ApiImplicitParam(name="dptId",value="机构id",dataType="long",required=true,paramType="query")
     public ApiResult<List<SysUserRelation>> listUserRelation(Long dptId){
         if(dptId==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
@@ -129,7 +129,8 @@ public class SysDeptController extends BaseResource {
      */
     @ApiOperation(value="添加下级用户")
     @PostMapping("/addChildUser")
-    public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
+	//@RequiresPermissions("sys:user:addChildUser")
+	public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
         if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
         if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
         if(sysUserRelation.getChildUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childUserId 不能为空!");}
@@ -147,6 +148,7 @@ public class SysDeptController extends BaseResource {
 	 */
 	@ApiOperation(value="添加用户")
 	@PostMapping("/addUser")
+	//@RequiresPermissions("sys:user:addUser")
 	public ApiResult addUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
@@ -165,6 +167,7 @@ public class SysDeptController extends BaseResource {
 	 */
 	@ApiOperation(value="删除用户")
 	@PostMapping("/deleteUser")
+	//@RequiresPermissions("sys:user:deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
@@ -187,6 +190,7 @@ public class SysDeptController extends BaseResource {
      */
     @ApiOperation(value="选择人员")
     @PostMapping("/listUser")
+	//@RequiresPermissions("sys:user:listUser")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name="dptId",value="部门id",dataType="long",required=true,paramType="query"),
 			@ApiImplicitParam(name="realName",value="姓名",dataType="string",required=false,paramType="query"),

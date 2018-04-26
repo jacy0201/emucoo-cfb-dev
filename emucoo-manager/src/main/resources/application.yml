@@ -90,13 +90,6 @@ spring:
     # 属性为NULL 不序列化
     default-property-inclusion: non_null
 
-
-emucoo:
-    redis:
-        open: false  # 是否开启redis缓存  true开启   false关闭
-    shiro:
-        redis: false # true表示shiro session存到redis里，需要开启redis
-
 #mybatis
 mybatis:
   #指定目录类型别名扫描
@@ -162,9 +155,3 @@ gaoDe:
 #后台用户token有效期 12小时
 token:
   expire: 12
-
-    #CFB 区域ID 和 名称
-cfb:
-  precinct_id: 1
-  precinct_name: 南一区
-  total_shops : 2

@@ -40,8 +40,8 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
         plan.setCreateTime(now);
         plan.setModifyTime(now);
         plan.setDptId(plan.getDptId());
-        plan.setPlanStartDate(plan.getPlanStartDate());
-        plan.setPlanEndDate(plan.getPlanEndDate());
+        plan.setPlanStartDate(plan.getPlanStartDate().replaceAll("-", ""));
+        plan.setPlanEndDate(plan.getPlanEndDate().replaceAll("-", ""));
         plan.setIsUse(WorkStatus.STOP_USE.getCode());
         plan.setIsDel(DeleteStatus.COMMON.getCode());
         plan.setOrgId(Constant.orgId);
@@ -60,6 +60,8 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
     public void updatePlanById(TLoopPlan plan) {
         Date now = new Date();
         plan.setModifyTime(now);
+        plan.setPlanStartDate(plan.getPlanStartDate().replaceAll("-", ""));
+        plan.setPlanEndDate(plan.getPlanEndDate().replaceAll("-", ""));
         // 根据id更新对应的计划数据
         tLoopPlanMapper.updatePlanById(plan);
         // 删除旧的表单与计划对应关系

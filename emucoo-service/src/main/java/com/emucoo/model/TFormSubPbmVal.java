@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_form_sub_pbm_val")
 public class TFormSubPbmVal extends BaseEntity {
@@ -27,6 +28,10 @@ public class TFormSubPbmVal extends BaseEntity {
 
     @Column(name = "problem_value_id")
     private Long problemValueId;
+
+    @Column(name = "sub_problem_name")
+    private String subProblemName;
+
     /**
      * @return id
      */
@@ -101,10 +106,30 @@ public class TFormSubPbmVal extends BaseEntity {
         this.modifyTime = modifyTime;
     }
 
+    /**
+     * @return sub_problem_name
+     */
+    public String getSubProblemName() {
+        return subProblemName;
+    }
+
+    /**
+     * @param subProblemName
+     */
+    public void setSubProblemName(String subProblemName) {
+        this.subProblemName = subProblemName;
+    }
+
+    /**
+     * @return problem_value_id
+     */
     public Long getProblemValueId() {
         return problemValueId;
     }
 
+    /**
+     * @param problemValueId
+     */
     public void setProblemValueId(Long problemValueId) {
         this.problemValueId = problemValueId;
     }

@@ -1,4 +1,4 @@
-package com.emucoo.restApi.config;
+package com.emucoo.manager.config;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;

@@ -103,7 +103,7 @@ public class FormServiceImpl implements FormService {
                 pbmVo.setIsImportant(pbm.getIsImportant());
                 pbmVo.setIsNA(pbmVal.getIsNa());
                 pbmVo.setIsScore(pbmVal.getIsScore());
-                pbmVo.setProblemScore(Integer.parseInt(pbmVal.getScore()));
+                pbmVo.setProblemScore(pbmVal.getScore());
                 pbmVo.setProblemTotal(pbm.getScore());
                 pbmVo.setProblemType(pbm.getProblemSchemaType());
 

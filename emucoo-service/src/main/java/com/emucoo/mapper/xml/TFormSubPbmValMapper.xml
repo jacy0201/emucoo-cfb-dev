@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.emucoo.mapper.TFormSubPbmValMapper">
-    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormSubPbmVal">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="sub_problem_id" property="subProblemId" jdbcType="BIGINT"/>
-        <result column="sub_problem_score" property="subProblemScore" jdbcType="INTEGER"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
-        <result column="problem_value_id" property="problemValueId" jdbcType="BIGINT"/>
-    </resultMap>
+   <resultMap id="BaseResultMap" type="com.emucoo.model.TFormSubPbmVal">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="sub_problem_id" property="subProblemId" jdbcType="BIGINT"/>
+    <result column="sub_problem_score" property="subProblemScore" jdbcType="INTEGER"/>
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    <result column="sub_problem_name" property="subProblemName" jdbcType="VARCHAR"/>
+    <result column="problem_value_id" property="problemValueId" jdbcType="BIGINT"/>
+  </resultMap>
 
     <select id="fetchOneSubPbmValue" resultMap="BaseResultMap">
         select * from t_form_sub_pbm_val where problem_value_id=#{problemValueId} and sub_problem_id=#{subProblemId}
     </select>
+
 </mapper>

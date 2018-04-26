@@ -130,8 +130,3 @@ gaoDe:
 token:
   expire: 12
 
-  #CFB 区域ID 和 名称
-cfb:
-  precinct_id: 1
-  precinct_name: 南一区
-  total_shops : 2

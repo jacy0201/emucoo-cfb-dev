@@ -6,9 +6,11 @@ import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.MD5Util;
 import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.UserBrandArea;
 import com.emucoo.dto.modules.user.UserQuery;
+import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserRoleService;
 import com.emucoo.service.sys.SysUserService;
@@ -41,13 +43,14 @@ public class SysUserController extends BaseResource {
 	@Autowired
 	private SysUserRoleService sysUserRoleService;
 
-
+    @Autowired
+    private RedisClusterClient redisClient;
 	/**
 	 * 查询用户列表
 	 */
 	@ApiOperation(value="分页查询用户")
 	@PostMapping("/list")
-	@RequiresPermissions("sys:user:list")
+	//@RequiresPermissions("sys:user:list")
 	@ResponseBody
 	public ApiResult<PageInfo<SysUser>> list(@RequestBody ParamVo<UserQuery> param){
         UserQuery userQuery=param.getData();
@@ -62,7 +65,7 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="创建用户")
     @PostMapping("/save")
-    @RequiresPermissions("sys:user:save")
+   // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
@@ -70,8 +73,7 @@ public class SysUserController extends BaseResource {
         sysUser.setIsAdmin(false);
         //sha256加密
         String salt = RandomStringUtils.randomAlphanumeric(20);
-        //sysUser.setPassword(new Sha256Hash(sysUser.getPassword(),salt).toHex());
-        sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword())).toHex());
+        sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
         sysUserService.addUser(sysUser);
      return success("success");
@@ -82,13 +84,15 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="编辑用户")
     @PostMapping("/edit")
-    @RequiresPermissions("sys:user:edit")
+   // @RequiresPermissions("sys:user:edit")
     public ApiResult edit(@RequestBody SysUser sysUser){
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         //sha256加密
-        sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword())).toHex());
+        String salt = RandomStringUtils.randomAlphanumeric(20);
+        sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
+        sysUser.setSalt(salt);
         sysUserService.addUser(sysUser);
         sysUserService.editUser(sysUser);
         return success("success");
@@ -100,7 +104,7 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="设置品牌分区")
     @PostMapping("/setBrandArea")
-    @RequiresPermissions("sys:user:setBrandArea")
+   // @RequiresPermissions("sys:user:setBrandArea")
     public ApiResult setBrandArea(@RequestBody UserBrandArea userBrandArea){
         if(null==userBrandArea.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
         sysUserService.setBrandArea(userBrandArea);
@@ -113,7 +117,7 @@ public class SysUserController extends BaseResource {
      */
     @ApiOperation(value="批量删除用户",notes = "多个用户id 用 , 分隔")
     @PostMapping("/deleteByIds")
-    @RequiresPermissions("sys:user:deleteByIds")
+  //  @RequiresPermissions("sys:user:deleteByIds")
     @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query")
     public ApiResult deleteByIds(String ids){
         if(StringUtil.isNotEmpty(ids)){return fail(ApiExecStatus.INVALID_PARAM,"ids 不能为空!");}
@@ -135,6 +139,10 @@ public class SysUserController extends BaseResource {
             }
         }
         sysUserService.modifyUserBatch(userList);
+        for(SysUser su:userList){
+            //删除redis 缓存
+            redisClient.delete(ISystem.IUSER.USER_TOKEN + su.getId());
+        }
         return success("success");
     }
 
@@ -142,7 +150,7 @@ public class SysUserController extends BaseResource {
      * 删除单个用户
      */
     @PostMapping("/delete")
-    @RequiresPermissions("sys:user:delete")
+   // @RequiresPermissions("sys:user:delete")
     @ApiOperation(value="删除用户")
     @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
     public ApiResult delete(Long id){
@@ -154,6 +162,8 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         sysUserService.updateSelective(sysUser);
+        //删除redis 缓存
+        redisClient.delete(ISystem.IUSER.USER_TOKEN + id);
         return success("success");
     }
 
@@ -161,7 +171,7 @@ public class SysUserController extends BaseResource {
      * 批量启用/停用 用户
      */
     @PostMapping("/modifyBatchUse")
-    @RequiresPermissions("sys:user:modifyBatchUse")
+   // @RequiresPermissions("sys:user:modifyBatchUse")
     @ApiOperation(value="批量启用/停用",notes = "ids 传用户id,多个id 直接用 ,分隔; 用户状态(status):0-启用；1-停用；2-锁定；")
     @ApiImplicitParams({
     @ApiImplicitParam(name="ids",value="用户id字符串",dataType="string",required=true,paramType="query"),
@@ -187,6 +197,12 @@ public class SysUserController extends BaseResource {
             }
         }
         sysUserService.modifyUserBatch(userList);
+        if(status==1){
+            for(SysUser su:userList){
+                //删除redis 缓存
+                redisClient.delete(ISystem.IUSER.USER_TOKEN + su.getId());
+            }
+        }
         return success("success");
     }
 
@@ -194,7 +210,7 @@ public class SysUserController extends BaseResource {
      * 启用/停用 用户
      */
     @PostMapping("/modifyUse")
-    @RequiresPermissions("sys:user:modifyUse")
+   // @RequiresPermissions("sys:user:modifyUse")
     @ApiOperation(value="启用/停用",notes = "用户状态(status):0-启用；1-停用；2-锁定；")
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query"),
@@ -207,6 +223,11 @@ public class SysUserController extends BaseResource {
         sysUser.setId(id);
         sysUser.setStatus(status);
         sysUserService.updateSelective(sysUser);
+        //停用
+        if(status==1){
+            //删除redis 缓存
+            redisClient.delete(ISystem.IUSER.USER_TOKEN + id);
+        }
         return success("success");
     }
 
