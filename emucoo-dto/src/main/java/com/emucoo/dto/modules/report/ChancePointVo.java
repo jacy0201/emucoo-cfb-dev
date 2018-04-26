@@ -12,6 +12,7 @@ public class ChancePointVo {
     private Integer chancePointFrequency;
     private Long chancePointID;
     private String chancePointTitle;
-    private String checkItemContent;
+    private String chanceContent;
     private List<ReportWorkVo> workArr;
+    private String chanceDescription;
 }

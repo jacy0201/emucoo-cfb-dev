@@ -30,10 +30,11 @@
     oppt_id,
     oppt_name
     FROM t_form_oppt_value
-    WHERE problem_type = 1 AND problem_value_id IN
+    WHERE problem_type = 1 AND is_pick = true AND AND problem_value_id IN
     <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
       #{item}
     </foreach>
+    GROUP BY oppt_id
     UNION ALL
     SELECT
     id,
@@ -45,10 +46,11 @@
     oppt_id,
     oppt_name
     FROM t_form_oppt_value
-    WHERE problem_type = 2 AND sub_problem_value_id IN
+    WHERE problem_type = 2 AND is_pick = true AND sub_problem_value_id IN
     <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
       #{item}
     </foreach>
+    GROUP BY oppt_id
   </select>
   <select id="selectUnionFromOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
     SELECT

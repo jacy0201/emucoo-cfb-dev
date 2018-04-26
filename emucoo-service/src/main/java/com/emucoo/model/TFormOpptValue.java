@@ -47,7 +47,7 @@ public class TFormOpptValue extends BaseEntity {
     private Long subProblemValueId;
 
     @Column(name = "problem_type")
-    private Boolean problemType;
+    private Byte problemType;
 
     @Column(name = "sub_header_id")
     private Long subHeaderId;
@@ -214,17 +214,11 @@ public class TFormOpptValue extends BaseEntity {
         this.subProblemValueId = subProblemValueId;
     }
 
-    /**
-     * @return problem_type
-     */
-    public Boolean getProblemType() {
+    public Byte getProblemType() {
         return problemType;
     }
 
-    /**
-     * @param problemType
-     */
-    public void setProblemType(Boolean problemType) {
+    public void setProblemType(Byte problemType) {
         this.problemType = problemType;
     }
 

@@ -8,6 +8,7 @@ import com.emucoo.dto.modules.report.FormRulesVo;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.enums.ProblemType;
+import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.report.ReportService;
@@ -74,7 +75,10 @@ public class ReportServiceImpl implements ReportService {
     private TFormScoreItemMapper tFormScoreItemMapper;
 
     @Autowired
-    private  TFormValueMapper tFormValueMapper;
+    private TFormValueMapper tFormValueMapper;
+
+    @Autowired
+    private TOpportunityMapper tOpportunityMapper;
 
     public ReportVo getReport(SysUser user, GetReportIn reportIn) {
         ReportVo reportOut = new ReportVo();
@@ -193,6 +197,7 @@ public class ReportServiceImpl implements ReportService {
             if(formAllSubPbmValueIds.size() > 0) {
                 List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFromOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds);
                 reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
+                List<ChancePointVo> chancePointVos = new ArrayList<>();
                 for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
                     ChancePointVo chancePointVo = new ChancePointVo();
                     chancePointVo.setChancePointID(tFormOpptValue.getOpptId());
@@ -202,13 +207,13 @@ public class ReportServiceImpl implements ReportService {
                     List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
                     // 计算该机会点使用情况
                     List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId());
-                    chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm.size());
+                    chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
                     // 查询该机会点关联的题项信息
                     TFormPbmVal pbmValForThisOppt = null;
                     TFormSubPbmVal subPbmValForThisOppt = null;
-                    if (tFormOpptValue.getProblemType().equals(ProblemType.NOT_SAMPLE.getCode())) {
+                    if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                         pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
-                    } else if (tFormOpptValue.getProblemType().equals(ProblemType.SAMPLING.getCode())) {
+                    } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                         subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
                         pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                     }
@@ -221,8 +226,12 @@ public class ReportServiceImpl implements ReportService {
                         pbmCascadingRelation.append(formValue.getFormTypeName()).append("-").append(pbmValForThisOppt.getProblemName())
                                 .append("-").append(subPbmValForThisOppt.getSubProblemName());
                     }
-                    chancePointVo.setCheckItemContent(pbmCascadingRelation.toString());
+                    chancePointVo.setChanceContent(pbmCascadingRelation.toString());
+                    TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
+                    chancePointVo.setChanceDescription(tOpportunity.getDescription());
+                    chancePointVos.add(chancePointVo);
                 }
+                reportOut.setChancePointArr(chancePointVos);
             }
 
         }
@@ -236,11 +245,16 @@ public class ReportServiceImpl implements ReportService {
         imptRuleExp.setOrderByClause("count_num desc");
         List<TFormImptRules> formImptRules = tFormImptRulesMapper.selectByExample(imptRuleExp);
         int discountNumber = 0;
+        boolean hasHit = false;
         for(TFormImptRules formImptRule : formImptRules) {
             if (importNum > formImptRule.getCountNum()) {
                 discountNumber = formImptRule.getDiscountNum();
+                hasHit = true;
                 break;
             }
+        }
+        if(!hasHit) {
+            discountNumber = 100;
         }
         int realTotal = (preTotalScore - naTotalScore);
         float fLastScore = actualScore * ((float)discountNumber / 100);
@@ -255,7 +269,7 @@ public class ReportServiceImpl implements ReportService {
         List<TFormScoreItem> tFormScoreItems = tFormScoreItemMapper.selectByExample(formScoreExp);
         if(tFormScoreItems.size() > 0) {
             String summaryImgUrl = "";
-            boolean hasHit = false;
+            hasHit = false;
             for (TFormScoreItem tFormScoreItem : tFormScoreItems) {
                 if (totalScoreRate > tFormScoreItem.getScoreBegin()) {
                     summaryImgUrl = tFormScoreItem.getName();
@@ -297,27 +311,33 @@ public class ReportServiceImpl implements ReportService {
     private List<TFormOpptValue> opptListInShopAndForm(Long shopId, Long formId, Long opptId) {
         // 根据店铺查询巡店安排
         Example arrangeExp = new Example(TFrontPlan.class);
-        arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", 4).andEqualTo("isDel", false);
+        arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
         List<TFrontPlan> tFrontPlans = tFrontPlanMapper.selectByExample(arrangeExp);
-        List<Long> arrangeIds = new ArrayList<>();
-        for(TFrontPlan tFrontPlan : tFrontPlans) {
-            arrangeIds.add(tFrontPlan.getId());
+        if(tFrontPlans.size() > 0) {
+            List<Long> arrangeIds = new ArrayList<>();
+            for (TFrontPlan tFrontPlan : tFrontPlans) {
+                arrangeIds.add(tFrontPlan.getId());
+            }
+            // 根据巡店安排和表单查询题项
+            List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrangeList(formId, arrangeIds);
+            List<Long> formAllPbmValueIds = new ArrayList<>();
+            for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
+                formAllPbmValueIds.add(tFormPbmVal.getId());
+            }
+            Example subPbmValExp = new Example(TFormSubPbmVal.class);
+            subPbmValExp.createCriteria().andIn("problemValueId", formAllPbmValueIds);
+            List<TFormSubPbmVal> tFormSubPbmVals = tFormSubPbmValMapper.selectByExample(subPbmValExp);
+            List<Long> formAllSubPbmValueIds = new ArrayList<>();
+            for (TFormSubPbmVal tFormSubPbmVal : tFormSubPbmVals) {
+                formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
+            }
+            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFromOpptsByPbmIdsAndOppt(formAllPbmValueIds, formAllSubPbmValueIds, opptId);
+            return tFormOpptValues;
+        } else {
+            return null;
         }
-        // 根据巡店安排和表单查询题项
-        List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrangeList(formId, arrangeIds);
-        List<Long> formAllPbmValueIds = new ArrayList<>();
-        for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
-            formAllPbmValueIds.add(tFormPbmVal.getId());
-        }
-        Example subPbmValExp = new Example(TFormSubPbmVal.class);
-        subPbmValExp.createCriteria().andIn("problemValueId", formAllPbmValueIds);
-        List<TFormSubPbmVal> tFormSubPbmVals = tFormSubPbmValMapper.selectByExample(subPbmValExp);
-        List<Long> formAllSubPbmValueIds = new ArrayList<>();
-        for (TFormSubPbmVal tFormSubPbmVal : tFormSubPbmVals) {
-            formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
-        }
-        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFromOpptsByPbmIdsAndOppt(formAllPbmValueIds, formAllSubPbmValueIds, opptId);
-        return tFormOpptValues;
+
+
 
     }
 

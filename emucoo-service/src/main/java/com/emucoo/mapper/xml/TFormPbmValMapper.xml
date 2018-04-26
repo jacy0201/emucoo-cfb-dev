@@ -24,7 +24,11 @@
     pbmVal.id,
     pbmVal.is_na,
     pbmVal.score,
-    pbmVal.is_score
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
     FROM t_form_pbm_val pbmVal
     INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
     AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
@@ -43,7 +47,11 @@
     pbmVal.id,
     pbmVal.is_na,
     pbmVal.score,
-    pbmVal.is_score
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
     FROM t_form_pbm_val pbmVal
     INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
     AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
@@ -54,10 +62,15 @@
     pbmVal.id,
     pbmVal.is_na,
     pbmVal.score,
-    pbmVal.is_score
+    pbmVal.is_score,
+    pbmVal.form_problem_id,
+    pbmVal.form_value_id,
+    pbmVal.problem_schema_type,
+    pbmVal.problem_name
     FROM t_form_pbm_val pbmVal
     INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
-    AND pbmVal.form_value_id = formVal.id AND formVal.front_plan_id IN
+    AND pbmVal.form_value_id = formVal.id
+    AND formVal.front_plan_id IN
     <foreach collection="arrangeIds" item="item" separator="," open="(" close=")">
       #{item}
     </foreach>
