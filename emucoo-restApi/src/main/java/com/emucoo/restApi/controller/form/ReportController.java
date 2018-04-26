@@ -41,8 +41,8 @@ public class ReportController extends AppBaseController {
     }
 
     @PostMapping(value = "saveReport")
-    public AppResult<String> saveReport(@RequestBody ParamVo<SaveReportIn> params, HttpServletRequest request) {
-        SaveReportIn reportIn = params.getData();
+    public AppResult<String> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
+        ReportVo reportIn = params.getData();
         checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(reportIn.getChecklistID(), "表单id不能为空！");
         checkParam(reportIn.getShopID(), "店铺id不能为空！");

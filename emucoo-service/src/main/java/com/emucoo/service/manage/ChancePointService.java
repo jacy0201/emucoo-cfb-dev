@@ -1,5 +1,6 @@
 package com.emucoo.service.manage;
 
+import com.emucoo.dto.modules.form.OpptDetailOut;
 import com.emucoo.model.TOpportunity;
 
 import java.util.List;
@@ -23,4 +24,5 @@ public interface ChancePointService {
 
     TOpportunity fetchChancePointById(Long id);
 
+    OpptDetailOut fetchDetail(TOpportunity data);
 }

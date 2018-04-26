@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TReportOpptMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TReportOppt" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="report_id" property="reportId" jdbcType="BIGINT" />
+    <result column="oppt_id" property="opptId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="addReportOpptRelation">
+    INSERT INTO t_report_oppt
+    (
+      report_id,
+      oppt_id,
+      create_time
+    ) VALUES
+    <foreach collection="opptIds" item="item" separator=",">
+      (#{reportId}, #{item}, #{createTime})
+    </foreach>
+  </insert>
+</mapper>

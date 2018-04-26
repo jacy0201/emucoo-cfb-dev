@@ -52,6 +52,21 @@
     </foreach>
     GROUP BY oppt_id
   </select>
+
+  <select id="findOpptsByResultId" parameterType="Long" resultType="com.emucoo.model.TFormOpptValue">
+    SELECT
+    id,
+    is_pick,
+    sub_problem_unit_score,
+    problem_type,
+    problem_value_id,
+    sub_problem_value_id,
+    oppt_id,
+    oppt_name
+    FROM t_form_oppt_value
+    WHERE is_pick = true AND form_result_id = #{formResultId}
+    GROUP BY oppt_id
+  </select>
   <select id="selectUnionFormOpptsByPbmIdsAndOppt" resultType="com.emucoo.model.TFormOpptValue">
     SELECT
     id,

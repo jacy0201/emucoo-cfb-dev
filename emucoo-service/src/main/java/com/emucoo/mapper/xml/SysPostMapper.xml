@@ -20,6 +20,7 @@
 
   <select id="findPositionByUserId" parameterType="Long" resultType="com.emucoo.model.SysPost">
       SELECT
+      post.id,
       post.post_name,
       post.post_code,
       post.remarks

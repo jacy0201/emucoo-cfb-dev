@@ -3,6 +3,7 @@ package com.emucoo.manager.controller;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.form.OpptDetailOut;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
 import com.github.pagehelper.PageInfo;
@@ -98,6 +99,13 @@ public class ChancePointController extends BaseResource {
             return fail("parameter is wrong.");
         chancePointService.disableChancePoints(ids);
         return success("ok");
+    }
+
+    @ApiOperation(value = "机会点详情", httpMethod = "POST")
+    @PostMapping("/detail")
+    public ApiResult<OpptDetailOut> detail(@RequestBody ParamVo<TOpportunity> param) {
+        OpptDetailOut out = chancePointService.fetchDetail(param.getData());
+        return success(out);
     }
 
 }

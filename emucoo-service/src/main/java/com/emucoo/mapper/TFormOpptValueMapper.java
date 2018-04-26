@@ -18,4 +18,6 @@ public interface TFormOpptValueMapper extends MyMapper<TFormOpptValue> {
     List<TFormOpptValue> selectUnionFormOpptsByPbmIdsAndOppt(@Param("pbmValueIds")List<Long> formAllPbmValueIds,
                                                              @Param("subPbmValueIds")List<Long> formAllSubPbmValueIds,
                                                              @Param("opptId")Long opptId);
+
+    List<TFormOpptValue> findOpptsByResultId(Long formResultId);
 }
