@@ -63,7 +63,7 @@ public class SysUserRelation extends BaseEntity {
      * user_id 的 dpt_id 
      */
     @Column(name = "dpt_id")
-    private Integer dptId;
+    private Long dptId;
 
     /**
      * 创建时间
@@ -164,7 +164,7 @@ public class SysUserRelation extends BaseEntity {
      *
      * @return dpt_id - user_id 的 dpt_id 
      */
-    public Integer getDptId() {
+    public Long getDptId() {
         return dptId;
     }
 
@@ -173,7 +173,7 @@ public class SysUserRelation extends BaseEntity {
      *
      * @param dptId user_id 的 dpt_id 
      */
-    public void setDptId(Integer dptId) {
+    public void setDptId(Long dptId) {
         this.dptId = dptId;
     }
 

@@ -17,4 +17,12 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <update id="saveSummaryToFormResult">
+     UPDATE t_form_check_result
+     SET
+     summary = #{summary},
+     modify_time = #{modifyDate}
+     WHERE front_plan_id = #{arrangeId} AND form_main_id = #{formId}
+  </update>
 </mapper>
