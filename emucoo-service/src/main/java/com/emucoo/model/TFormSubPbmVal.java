@@ -31,6 +31,9 @@ public class TFormSubPbmVal extends BaseEntity {
     @Column(name = "problem_value_id")
     private Long problemValueId;
 
+    @Column(name = "form_result_id")
+    private Long formResultId;
+
     /**
      * @return id
      */
@@ -131,5 +134,13 @@ public class TFormSubPbmVal extends BaseEntity {
      */
     public void setProblemValueId(Long problemValueId) {
         this.problemValueId = problemValueId;
+    }
+
+    public Long getFormResultId() {
+        return formResultId;
+    }
+
+    public void setFormResultId(Long formResultId) {
+        this.formResultId = formResultId;
     }
 }
