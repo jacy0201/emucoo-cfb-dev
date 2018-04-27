@@ -274,6 +274,8 @@
     <module>emucoo-dto</module>
     <module>emucoo-common</module>
     <module>emucoo-job</module>
+      <module>xxl-job-admin</module>
+      <module>xxl-job-core</module>
   </modules>
   
   <build>
