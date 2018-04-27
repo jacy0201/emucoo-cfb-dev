@@ -271,15 +271,17 @@ public class FormManageServiceImpl implements FormManageService {
                         formOpptMapper.insert(formOppt);
                 });
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
-                problem.getOppts().forEach(oppt -> {
-                    TFormOppt formOppt = new TFormOppt();
-                    formOppt.setProblemId(problem.getId());
-                    formOppt.setProblemType(problem.getProblemSchemaType());
-                    formOppt.setOpptId(oppt.getId());
-                    formOppt.setCreateTime(DateUtil.currentDate());
-                    formOppt.setModifyTime(DateUtil.currentDate());
-                    formOpptMapper.insert(formOppt);
-                });
+                if(problem.getOppts() != null && problem.getOppts().size() > 0) {
+                    problem.getOppts().forEach(oppt -> {
+                        TFormOppt formOppt = new TFormOppt();
+                        formOppt.setProblemId(problem.getId());
+                        formOppt.setProblemType(problem.getProblemSchemaType());
+                        formOppt.setOpptId(oppt.getId());
+                        formOppt.setCreateTime(DateUtil.currentDate());
+                        formOppt.setModifyTime(DateUtil.currentDate());
+                        formOpptMapper.insert(formOppt);
+                    });
+                }
             }
         });
     }

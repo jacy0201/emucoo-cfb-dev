@@ -200,7 +200,7 @@ public class FormServiceImpl implements FormService {
                 .andEqualTo("createUserId", userId);
         List<TFormCheckResult> results = formCheckResultMapper.selectByExample(example);
         if(results != null && results.size() > 0) {
-            
+
         }
     }
 
