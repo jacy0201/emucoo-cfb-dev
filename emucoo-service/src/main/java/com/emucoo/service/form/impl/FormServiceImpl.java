@@ -137,14 +137,18 @@ public class FormServiceImpl implements FormService {
                         subProblemVo.setSubProblemName(subPbm.getSubProblemName());
                         subProblemVo.setSubProblemScore(subPbm.getSubProblemScore() * subProblemUnitVos.size());
                         subProblemVo.setSubProblemTotal(subPbm.getSubProblemScore() * subProblemUnitVos.size());
+
+                        List<FormChanceVo> subProblemChanceVos = new ArrayList<>();
+                        subProblemVo.setSubProblemChanceArray(subProblemChanceVos);
+
                         if(subPbm.getOpportunity() != null){
-                            List<FormChanceVo> subProblemChanceVos = new ArrayList<>();
                             for(TFormSubPbmHeader subPbmHeader : subPbmHeaders){
                                 FormChanceVo subProblemChanceVo = new FormChanceVo();
                                 subProblemChanceVo.setChanceID(subPbm.getOpportunity().getId());
                                 subProblemChanceVo.setChanceName(subPbm.getOpportunity().getName());
 //                                TFormOpptValue opptVal = formOpptValueMapper.fetchOneSubPbmOpptValue(subPbmVal.getId(), subPbm.getId(), subPbmHeader.getId(), 2);
                                 subProblemChanceVo.setPick(false);
+                                subProblemChanceVos.add(subProblemChanceVo);
                             }
                         }
                         subProblemVos.add(subProblemVo);
