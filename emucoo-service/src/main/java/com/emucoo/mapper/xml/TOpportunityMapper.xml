@@ -75,4 +75,7 @@
         </where>
     </delete>
 
+    <select id="findOpptsByPbmId" resultMap="BaseResultMap">
+        select b.* from t_form_oppt a left join t_opportunity b on a.oppt_id=b.id where a.problem_id=#{id} and a.problem_type=1
+    </select>
 </mapper>
