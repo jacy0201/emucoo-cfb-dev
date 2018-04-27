@@ -19,4 +19,6 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
     void upsert(TOpportunity opportunity);
 
     void dropByIds(List<Long> opptIds);
+
+    List<TOpportunity> findOpptsByPbmId(Long id);
 }

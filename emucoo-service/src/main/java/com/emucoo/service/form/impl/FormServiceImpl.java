@@ -65,7 +65,6 @@ public class FormServiceImpl implements FormService {
     @Autowired
     private TFormOpptMapper formOpptMapper;
 
-
     public List<TFormMain> listForm() {
         Example example = new Example(TFormMain.class);
         example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
@@ -83,17 +82,18 @@ public class FormServiceImpl implements FormService {
         if(formMain == null || shopInfo == null) {
             return null;
         }
+        TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
         formOut.setFormId(formMain.getId());
         formOut.setFormName(formMain.getName());
         formOut.setShopName(shopInfo.getShopName());
-        formOut.setBrandName(shopInfo.getBrandName());
+        formOut.setBrandName(brandInfo==null?"":brandInfo.getBrandName());
         formOut.setGradeDate(DateUtil.dateToString1(DateUtil.currentDate()));
 
         List<FormKindVo> formKindVos = new ArrayList<>();
         formOut.setKindArray(formKindVos);
 
         // 循环里面查数据库是比较弱智的方法，现在先这样吧，有时间再改。
-        List<TFormType> modules = formTypeMapper.findFormTypesByFormMainId(shopInfo.getId());
+        List<TFormType> modules = formTypeMapper.findFormTypesByFormMainId(formMain.getId());
         for(TFormType module : modules) {
 //            TFormValue fv = formValueMapper.fetchOneFormValue(formMain.getId(), module.getId(), arrangeId);
             FormKindVo formKindVo = new FormKindVo();
@@ -152,7 +152,7 @@ public class FormServiceImpl implements FormService {
                     pbmVo.setSubProblemArray(subProblemVos);
                     pbmVo.setSubProblemUnitArray(subProblemUnitVos);
                 } else {
-                    List<TOpportunity> oppts = pbm.getOppts();
+                    List<TOpportunity> oppts = opportunityMapper.findOpptsByPbmId(pbm.getId());
                     List<FormChanceVo> formChanceVos = new ArrayList<>();
                     if(oppts != null && oppts.size() > 0) {
                         for(TOpportunity oppt : oppts) {
