@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -172,19 +169,31 @@ public class FormManageServiceImpl implements FormManageService {
         cleanOldFormInfo(formMain);
 
         List<TFormImptRules> formImptRuless = formMain.getImptRules();
-        formImptRuless.forEach(it -> it.setFormMainId(formMain.getId()));
+        formImptRuless.forEach(it -> {
+            it.setFormMainId(formMain.getId());
+            it.setCreateTime(DateUtil.currentDate());
+            it.setModifyTime(DateUtil.currentDate());
+        });
         formImptRulesMapper.insertList(formImptRuless);
 
         // form add items maybe is null
         List<TFormAddItem> formAddItems = formMain.getAddItems();
         if(formAddItems != null && formAddItems.size() > 0) {
-            formAddItems.forEach(it -> it.setFormMainId(formMain.getId()));
+            formAddItems.forEach(it -> {
+                it.setFormMainId(formMain.getId());
+                it.setCreateTime(DateUtil.currentDate());
+                it.setModifyTime(DateUtil.currentDate());
+            });
             formAddItemMapper.insertList(formAddItems);
         }
 
         List<TFormType> formModules = formMain.getFormModules();
         formModules.forEach(formModule -> {
             formModule.setFormMainId(formMain.getId());
+            formModule.setCreateTime(DateUtil.currentDate());
+            formModule.setModifyTime(DateUtil.currentDate());
+            formTypeMapper.insert(formModule);
+
             disassembleFormModule(formModule);
         });
     }
@@ -214,24 +223,29 @@ public class FormManageServiceImpl implements FormManageService {
 
 
     private void disassembleFormModule(TFormType formType) {
-        formTypeMapper.insert(formType);
-
         List<TFormPbm> problems = formType.getProblems();
         problems.forEach(problem -> {
-
             problem.setFormTypeId(formType.getId());
+            problem.setCreateTime(DateUtil.currentDate());
+            problem.setModifyTime(DateUtil.currentDate());
             formPbmMapper.insert(problem);
 
             if(problem.getProblemSchemaType() == 2) { // 只有题项是抽查类型时，才会有子题项， 和抽查项。
                 List<TFormSubPbmHeader> subProblemHeads = problem.getSubProblemHeads();
 
-                subProblemHeads.forEach(head -> head.setFormProblemId(problem.getId()));
+                subProblemHeads.forEach(head -> {
+                    head.setFormProblemId(problem.getId());
+                    head.setCreateTime(DateUtil.currentDate());
+                    head.setModifyTime(DateUtil.currentDate());
+                });
                 formSubPbmHeaderMapper.insertList(subProblemHeads);
 
                 List<TFormSubPbm> subProblems = problem.getSubProblems();
                 // 每个子检查项都会自动生成一个机会点
                 subProblems.forEach(subProblem -> {
                         subProblem.setFormProblemId(problem.getId());
+                        subProblem.setCreateTime(DateUtil.currentDate());
+                        subProblem.setCreateTime(DateUtil.currentDate());
                         formSubPbmMapper.insert(subProblem);
 
                         TOpportunity opportunity = new TOpportunity();
@@ -251,6 +265,8 @@ public class FormManageServiceImpl implements FormManageService {
                         formOppt.setProblemType(problem.getProblemSchemaType());
                         formOppt.setSubProblemId(subProblem.getId());
                         formOppt.setOpptId(opportunity.getId());
+                        formOppt.setCreateTime(DateUtil.currentDate());
+                        formOppt.setModifyTime(DateUtil.currentDate());
                         formOpptMapper.insert(formOppt);
                 });
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
@@ -259,6 +275,8 @@ public class FormManageServiceImpl implements FormManageService {
                     formOppt.setProblemId(problem.getId());
                     formOppt.setProblemType(problem.getProblemSchemaType());
                     formOppt.setOpptId(oppt.getId());
+                    formOppt.setCreateTime(DateUtil.currentDate());
+                    formOppt.setModifyTime(DateUtil.currentDate());
                     formOpptMapper.insert(formOppt);
                 });
             }
