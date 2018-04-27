@@ -216,7 +216,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         AssignTaskSubmitDetailVo executorVo = new AssignTaskSubmitDetailVo();
         executorVo.setTaskSubPerID(loopWork.getExcuteUserId());
         executorVo.setTaskSubPerHeadUrl(executeUser==null?"":executeUser.getHeadImgUrl());
-        executorVo.setTaskSubTime(loopWork.getExecuteBeginDate().getTime());
+        executorVo.setTaskSubTime(loopWork.getModifyTime().getTime());
         executorVo.setWorkText(todw==null?"":todw.getWorkTxt());
         executorVo.setDigitalItemValue(Double.parseDouble(todw==null?"0.0":todw.getNumOptionValue()));
 
