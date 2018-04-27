@@ -1,17 +1,16 @@
 package com.emucoo.restApi.controller.task.common;
 
-import javax.annotation.Resource;
-
+import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.model.SysUser;
-import com.emucoo.service.sys.UserService;
-import com.emucoo.service.task.*;
-import org.springframework.web.bind.annotation.*;
-
-import com.emucoo.dto.base.ParamVo;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.sys.UserService;
+import com.emucoo.service.task.TaskCommonService;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/api/task/common")
@@ -49,8 +48,9 @@ public class TaskCommonController extends AppBaseController{
     }
 
     @PostMapping("/addExcImgs")
-    public AppResult<String> addExcImgs(@RequestBody ParamVo<ExecuteImgIn> base){
-//        workImgAppendService.addExcImgs(base.getData());
+    public AppResult<String> addExcImgs(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<ExecuteImgIn> base){
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+        taskCommonService.editExcImgs(base.getData(), user);
         return success("");
     }
     

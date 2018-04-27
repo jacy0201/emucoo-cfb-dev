@@ -99,7 +99,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateWorkStatus(lw);
 
         List<String> imgids = new ArrayList<>();
-        if(voi .getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
+        if(voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
             voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
                 com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
                 Date dt = new Date(assignTaskSubmitImgVo.getDate());
