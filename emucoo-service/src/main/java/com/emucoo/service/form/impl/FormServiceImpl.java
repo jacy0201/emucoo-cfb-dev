@@ -80,7 +80,7 @@ public class FormServiceImpl implements FormService {
         FormOut formOut = new FormOut();
         TFormMain formMain = formMainMapper.fetchOneById(formIn.getChecklistID());
         TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
-        if(shopInfo != null) {
+        if(formMain == null || shopInfo == null) {
             return null;
         }
         formOut.setFormId(formMain.getId());
