@@ -19,10 +19,11 @@
         value,
         create_time,
         form_addition_item_id,
+        form_addition_item_name,
         form_result_id
       )VALUES
       <foreach collection="addList" item="item" separator=",">
-        (#{item.value}, #{createTime}, #{item.id}, #{formResultId})
+        (#{item.value}, #{createTime}, #{item.id}, #{item.formAdditionItemName}, #{formResultId})
       </foreach>
   </insert>
 </mapper>

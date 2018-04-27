@@ -29,6 +29,12 @@ public class ReportController extends AppBaseController {
     @Autowired
     private ReportService reportService;
 
+    /**
+     * 报告预览
+     * @param params
+     * @param request
+     * @return
+     */
     @PostMapping(value = "reportPreview")
     public AppResult<ReportVo> reportPreview(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
         GetReportIn reportIn = params.getData();
@@ -40,14 +46,36 @@ public class ReportController extends AppBaseController {
         return success(reportOut);
     }
 
+    /**
+     *  保存报告
+     * @param params
+     * @param request
+     * @return
+     */
     @PostMapping(value = "saveReport")
-    public AppResult<String> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
+    public AppResult<Long> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
         ReportVo reportIn = params.getData();
         checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(reportIn.getChecklistID(), "表单id不能为空！");
         checkParam(reportIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        reportService.saveReport(user, reportIn);
-        return success("success");
+        Long reportId = reportService.saveReport(user, reportIn);
+        return success(reportId);
     }
+
+    /**
+     * 根据报告id查询报告详情
+     * @param params
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "findReportInfoById")
+    public AppResult<ReportVo> findReportInfoById(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
+        GetReportIn reportIn = params.getData();
+        checkParam(reportIn.getReportID(), "表单id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        ReportVo reportOut = reportService.findReportInfoById(user, reportIn);
+        return success(reportOut);
+    }
+
 }
