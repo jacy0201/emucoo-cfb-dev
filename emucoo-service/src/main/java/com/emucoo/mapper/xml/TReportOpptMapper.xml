@@ -17,10 +17,11 @@
     (
       report_id,
       oppt_id,
+      oppt_name,
       create_time
     ) VALUES
-    <foreach collection="opptIds" item="item" separator=",">
-      (#{reportId}, #{item}, #{createTime})
+    <foreach collection="reportOppts" item="item" separator=",">
+      (#{reportId}, #{item.opptId}, #{item.opptName}, #{createTime})
     </foreach>
   </insert>
 </mapper>

@@ -140,6 +140,12 @@ public class TLoopWork extends BaseEntity {
      */
     private String score;
 
+    @Transient
+    private TTask task;
+
+    @Transient
+    private String executeUserHeadImgUrl;
+
     /**
      * @return id
      */
@@ -552,5 +558,21 @@ public class TLoopWork extends BaseEntity {
      */
     public void setScore(String score) {
         this.score = score;
+    }
+
+    public TTask getTask() {
+        return task;
+    }
+
+    public void setTask(TTask task) {
+        this.task = task;
+    }
+
+    public String getExecuteUserHeadImgUrl() {
+        return executeUserHeadImgUrl;
+    }
+
+    public void setExecuteUserHeadImgUrl(String executeUserHeadImgUrl) {
+        this.executeUserHeadImgUrl = executeUserHeadImgUrl;
     }
 }
