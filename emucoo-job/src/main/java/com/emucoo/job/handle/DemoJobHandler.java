@@ -1,16 +1,17 @@
 package com.emucoo.job.handle;
+
+import com.alibaba.fastjson.JSON;
 import com.emucoo.model.SysUser;
 import com.emucoo.service.sys.SysUserService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
- /* 任务Handler示例（Bean模式）
+/* 任务Handler示例（Bean模式）
  *
  * 开发步骤：
  * 1、继承"IJobHandler"：“com.xxl.job.core.handler.IJobHandler”；
@@ -23,15 +24,19 @@ import org.springframework.stereotype.Component;
  @Component
 public class DemoJobHandler extends IJobHandler {
 
-	
+
 	@Resource
 	private SysUserService sysUserService;
 
 	@Override
-	public ReturnT<String> execute(String  param) throws Exception {
+	public ReturnT execute(String  param) throws Exception {
 		SysUser sysUser = sysUserService.findById(1L);
-		XxlJobLogger.log(sysUser.getRealName()+"<>查询结果={0}",param );
-		return SUCCESS;
+		XxlJobLogger.log("<>查询结果={0}",param );
+		ReturnT rt =new ReturnT();
+		sysUser.setPassword("");
+		rt.setContent(sysUser.getRealName()+":"+sysUser.getUsername());
+		rt.setMsg("查询用户表信息成功");
+		return rt;
 	}
 
 }
