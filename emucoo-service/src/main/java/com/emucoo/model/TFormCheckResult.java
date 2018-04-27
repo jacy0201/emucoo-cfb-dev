@@ -49,8 +49,20 @@ public class TFormCheckResult extends BaseEntity {
     /**
      * 得分
      */
+    @Column(name = "score")
     private Integer score;
 
+    @Column(name = "actual_total")
+    private Integer actualTotal;
+
+    @Column(name = "impt_item_deny_num")
+    private Integer imptItemDenyNum;
+
+    @Column(name = "na_num")
+    private Integer naNum;
+
+    @Column(name = "summary_img")
+    private String summaryImg;
     /**
      * 提交结果的用户id
      */
@@ -270,5 +282,37 @@ public class TFormCheckResult extends BaseEntity {
 
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public Integer getActualTotal() {
+        return actualTotal;
+    }
+
+    public void setActualTotal(Integer actualTotal) {
+        this.actualTotal = actualTotal;
+    }
+
+    public Integer getImptItemDenyNum() {
+        return imptItemDenyNum;
+    }
+
+    public void setImptItemDenyNum(Integer imptItemDenyNum) {
+        this.imptItemDenyNum = imptItemDenyNum;
+    }
+
+    public Integer getNaNum() {
+        return naNum;
+    }
+
+    public void setNaNum(Integer naNum) {
+        this.naNum = naNum;
+    }
+
+    public String getSummaryImg() {
+        return summaryImg;
+    }
+
+    public void setSummaryImg(String summaryImg) {
+        this.summaryImg = summaryImg;
     }
 }

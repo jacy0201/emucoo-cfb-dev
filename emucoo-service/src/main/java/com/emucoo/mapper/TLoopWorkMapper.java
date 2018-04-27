@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
+
     TLoopWork fetchOneTaskByWorkIds(@Param("workId") String workId, @Param("subWorkId") String subWorkId);
 
     void updateWorkStatus(TLoopWork lw);
@@ -31,4 +32,6 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     TaskImproveSubmit getTaskImproveSubmit(@Param("loopWorkId") Long loopWorkId);
 
     TaskImproveStatement getTaskImproveStatement(@Param("loopWorkId") Long loopWorkId);
+
+    List<TLoopWork> findImproveTaskList(@Param("opptId")Long opptId, @Param("reportId")Long reportId);
 }

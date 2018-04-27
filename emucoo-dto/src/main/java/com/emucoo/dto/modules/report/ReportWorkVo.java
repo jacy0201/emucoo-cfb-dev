@@ -10,10 +10,10 @@ public class ReportWorkVo {
     private Integer allNum;
     private Integer doneNum;
     private String executorHeadImgUrl;
-    private Integer executorID;
+    private Long executorID;
     private String executorName;
-    private Float passRate;
+    private Integer passRate;
     private String taskTitle;
-    private Long workID;
+    private String workID;
     private Integer workType;
 }

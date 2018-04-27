@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class GetReportIn {
-    private String reportID;
+    private Long reportID;
 
     private Long patrolShopArrangeID;
     private Long shopID;

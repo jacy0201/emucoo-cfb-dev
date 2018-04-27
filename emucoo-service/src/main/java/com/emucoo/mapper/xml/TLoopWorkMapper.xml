@@ -13,6 +13,7 @@
         <result column="create_user_name" property="createUserName" jdbcType="VARCHAR"/>
         <result column="excute_user_id" property="excuteUserId" jdbcType="BIGINT"/>
         <result column="excute_user_name" property="excuteUserName" jdbcType="VARCHAR"/>
+        <result column="head_img_url" property="executeUserHeadImgUrl" jdbcType="VARCHAR"/>
         <result column="audit_user_id" property="auditUserId" jdbcType="BIGINT"/>
         <result column="audit_user_name" property="auditUserName" jdbcType="VARCHAR"/>
         <result column="send_user_ids" property="sendUserIds" jdbcType="BIGINT"/>
@@ -28,6 +29,12 @@
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
         <result column="version" property="version" jdbcType="INTEGER"/>
         <result column="score" property="score" jdbcType="VARCHAR"/>
+        <association property="task" javaType="com.emucoo.model.TTask">
+            <id column="task_id" property="id" jdbcType="BIGINT"/>
+            <result column="name" property="name" jdbcType="VARCHAR"/>
+            <result column="type" property="type" jdbcType="INTEGER"/>
+            <result column="work_id" property="workId" jdbcType="VARCHAR"/>
+        </association>
     </resultMap>
 
     <select id="listPendingExecute" resultType="com.emucoo.model.TLoopWork">
@@ -70,8 +77,8 @@
         select * from t_loop_work where work_id=#{workId} and sub_work_id = #{subWorkId} limit 1
     </select>
 
-    <select id="fetchExeHistory" resultMap="BaseResultMap">
-        select * from t_loop_work where type=#{workType} and workID=#{workId}
+    <select id="fetchTaskExeHistory" resultMap="BaseResultMap">
+        select * from t_loop_work where type=#{workType} and work_id=#{workId} and work_status=2
     </select>
 
     <update id="updateWorkStatus" parameterType="com.emucoo.model.TLoopWork">
@@ -158,5 +165,24 @@
         where s.id=#{loopWorkId}
     </select>
 
-
+    <select id="findImproveTaskList" resultMap="BaseResultMap">
+      SELECT
+      twork.id,
+      twork.excute_user_id,
+      twork.excute_user_name,
+      twork.work_status,
+      twork.work_result,
+      task.id AS task_id,
+      task.name,
+      task.type,
+      task.work_id,
+      twork.sub_work_id,
+      user.head_img_url
+      FROM t_loop_work twork
+      INNER JOIN t_task task ON task.work_id = twork.work_id
+      AND task.oppt_id = #{opptId} AND task.report_id = #{reportId}
+      INNER JOIN sys_user user ON twork.excute_user_id = user.id
+      ORDER BY twork.create_time DESC
+    </select>
+    
 </mapper>

@@ -169,7 +169,7 @@ public class PlanServiceImpl implements PlanService {
             .andEqualTo("dptId", user.getDptId()).andEqualTo("isDel", false).andEqualTo("isUse", true);
             List<TLoopPlan> tLoopPlans = tLoopPlanMapper.selectByExample(tLoopPlanExample);
             if (tLoopPlans.size() > 1) {
-                throw new ServiceException("不能有多个巡店计划！");
+                throw new ApiException("不能有多个巡店计划！");
             } else if(tLoopPlans.size() == 0) {
                 return null;
             }

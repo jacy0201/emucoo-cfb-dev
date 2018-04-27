@@ -18,11 +18,17 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
 
-  <update id="saveSummaryToFormResult">
+  <update id="saveFormResult" parameterType="com.emucoo.model.TFormCheckResult">
      UPDATE t_form_check_result
      SET
      summary = #{summary},
-     modify_time = #{modifyDate}
-     WHERE front_plan_id = #{arrangeId} AND form_main_id = #{formId}
+     score = #{score},
+     score_rate = #{scoreRate},
+     actual_total = #{actualTotal},
+     impt_item_deny_num = #{imptItemDenyNum},
+     na_num = #{naNum},
+     summary_img = #{summaryImg},
+     modify_time = #{modifyTime}
+     WHERE front_plan_id = #{frontPlanId} AND form_main_id = #{formMainId}
   </update>
 </mapper>

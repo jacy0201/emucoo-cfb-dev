@@ -11,5 +11,7 @@ import com.emucoo.model.SysUser;
 public interface ReportService {
     ReportVo getReport(SysUser user, GetReportIn reportIn);
 
-    void saveReport(SysUser user, ReportVo reportIn);
+    Long saveReport(SysUser user, ReportVo reportIn);
+
+    ReportVo findReportInfoById(SysUser user, GetReportIn reportIn);
 }

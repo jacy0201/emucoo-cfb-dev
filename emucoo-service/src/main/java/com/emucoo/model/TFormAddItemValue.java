@@ -27,6 +27,9 @@ public class TFormAddItemValue extends BaseEntity {
     @Column(name = "form_addition_item_id")
     private Long formAdditionItemId;
 
+    @Column(name = "form_addition_item_name")
+    private String formAdditionItemName;
+
     /**
      * 报告id
      */
@@ -148,5 +151,13 @@ public class TFormAddItemValue extends BaseEntity {
 
     public void setFormResultId(Long formResultId) {
         this.formResultId = formResultId;
+    }
+
+    public String getFormAdditionItemName() {
+        return formAdditionItemName;
+    }
+
+    public void setFormAdditionItemName(String formAdditionItemName) {
+        this.formAdditionItemName = formAdditionItemName;
     }
 }

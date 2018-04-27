@@ -112,7 +112,7 @@ public class FormServiceImpl implements FormService {
                 pbmVo.setProblemName(pbm.getName());
                 pbmVo.setProblemDescription(pbm.getDescriptionHit());
                 pbmVo.setIsImportant(pbm.getIsImportant());
-                pbmVo.setIsNA(true);
+                pbmVo.setIsNA(false);
                 pbmVo.setIsScore(false);
                 pbmVo.setProblemScore(pbm.getScore());
                 pbmVo.setProblemTotal(pbm.getScore());
@@ -137,14 +137,18 @@ public class FormServiceImpl implements FormService {
                         subProblemVo.setSubProblemName(subPbm.getSubProblemName());
                         subProblemVo.setSubProblemScore(subPbm.getSubProblemScore() * subProblemUnitVos.size());
                         subProblemVo.setSubProblemTotal(subPbm.getSubProblemScore() * subProblemUnitVos.size());
+
+                        List<FormChanceVo> subProblemChanceVos = new ArrayList<>();
+                        subProblemVo.setSubProblemChanceArray(subProblemChanceVos);
+
                         if(subPbm.getOpportunity() != null){
-                            List<FormChanceVo> subProblemChanceVos = new ArrayList<>();
                             for(TFormSubPbmHeader subPbmHeader : subPbmHeaders){
                                 FormChanceVo subProblemChanceVo = new FormChanceVo();
                                 subProblemChanceVo.setChanceID(subPbm.getOpportunity().getId());
                                 subProblemChanceVo.setChanceName(subPbm.getOpportunity().getName());
 //                                TFormOpptValue opptVal = formOpptValueMapper.fetchOneSubPbmOpptValue(subPbmVal.getId(), subPbm.getId(), subPbmHeader.getId(), 2);
                                 subProblemChanceVo.setPick(false);
+                                subProblemChanceVos.add(subProblemChanceVo);
                             }
                         }
                         subProblemVos.add(subProblemVo);
@@ -222,7 +226,7 @@ public class FormServiceImpl implements FormService {
             formValue.setFrontPlanId(frontPlanId);
             formValue.setIsDone(module.getIsDone());
             formValue.setModifyTime(DateUtil.currentDate());
-//            formValue.setScore(module.);
+//            formValue.setScore();
             formValue.setScoreRate(module.getScoreRate());
             formValueMapper.insert(formValue);
 
@@ -246,104 +250,108 @@ public class FormServiceImpl implements FormService {
                 total += problemVo.getProblemTotal();
 
                 List<FormChanceVo> chanceVos = problemVo.getChanceArray();
-                List<TFormOpptValue> opptVals = new ArrayList<>();
-                for(FormChanceVo formChanceVo : chanceVos) {
-                    TFormOpptValue formOpptValue = new TFormOpptValue();
-                    formOpptValue.setCreateTime(DateUtil.currentDate());
-                    formOpptValue.setModifyTime(DateUtil.currentDate());
-                    formOpptValue.setFormResultId(formCheckResult.getId());
-                    formOpptValue.setIsPick(formChanceVo.isPick());
-                    formOpptValue.setOpptId(formChanceVo.getChanceID());
-                    formOpptValue.setOpptName(formChanceVo.getChanceName());
-                    formOpptValue.setProblemId(problemVo.getProblemID());
-                    formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
-                    formOpptValue.setProblemValueId(formPbmVal.getId());
+                if(chanceVos != null && chanceVos.size()>0) {
+                    List<TFormOpptValue> opptVals = new ArrayList<>();
+                    for (FormChanceVo formChanceVo : chanceVos) {
+                        TFormOpptValue formOpptValue = new TFormOpptValue();
+                        formOpptValue.setCreateTime(DateUtil.currentDate());
+                        formOpptValue.setModifyTime(DateUtil.currentDate());
+                        formOpptValue.setFormResultId(formCheckResult.getId());
+                        formOpptValue.setIsPick(formChanceVo.isPick());
+                        formOpptValue.setOpptId(formChanceVo.getChanceID());
+                        formOpptValue.setOpptName(formChanceVo.getChanceName());
+                        formOpptValue.setProblemId(problemVo.getProblemID());
+                        formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                        formOpptValue.setProblemValueId(formPbmVal.getId());
 
-                    opptVals.add(formOpptValue);
+                        opptVals.add(formOpptValue);
+                    }
+                    formOpptValueMapper.insertList(opptVals);
                 }
-                formOpptValueMapper.insertList(opptVals);
 
                 List<FormChanceVo> otherChanceVos = problemVo.getOtherChanceArray();
-                List<TFormOpptValue> otherOpptVals = new ArrayList<>();
-                for(FormChanceVo fcv : otherChanceVos) {
-                    // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
-                    TOpportunity opportunity = new TOpportunity();
-                    opportunity.setName(fcv.getChanceName());
-                    opportunity.setDescription(opptDescription);
-                    opportunity.setIsUse(true);
-                    opportunity.setIsDel(false);
-                    opportunity.setFrontCanCreate(true);
-                    opportunity.setType(0);
-                    opportunity.setCreateType(2);
-                    opportunity.setCreateTime(DateUtil.currentDate());
-                    opportunity.setCreateUserId(user.getId());
-                    opportunity.setModifyTime(DateUtil.currentDate());
-                    opportunity.setModifyUserId(user.getId());
-                    opportunityMapper.insert(opportunity);
+                if(otherChanceVos != null && otherChanceVos.size() > 0) {
+                    for (FormChanceVo fcv : otherChanceVos) {
+                        // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
+                        TOpportunity opportunity = new TOpportunity();
+                        opportunity.setName(fcv.getChanceName());
+                        opportunity.setDescription(opptDescription);
+                        opportunity.setIsUse(true);
+                        opportunity.setIsDel(false);
+                        opportunity.setFrontCanCreate(true);
+                        opportunity.setType(0);
+                        opportunity.setCreateType(2);
+                        opportunity.setCreateTime(DateUtil.currentDate());
+                        opportunity.setCreateUserId(user.getId());
+                        opportunity.setModifyTime(DateUtil.currentDate());
+                        opportunity.setModifyUserId(user.getId());
+                        opportunityMapper.insert(opportunity);
 
-                    // 把机会点和题目的关系保存起来
-                    TFormOppt formOppt = new TFormOppt();
-                    formOppt.setOpptId(opportunity.getId());
-                    formOppt.setProblemId(problemVo.getProblemID());
-                    formOppt.setProblemType(problemVo.getProblemType());
-                    formOppt.setCreateTime(DateUtil.currentDate());
-                    formOppt.setModifyTime(DateUtil.currentDate());
-                    formOpptMapper.insert(formOppt);
+                        // 把机会点和题目的关系保存起来
+                        TFormOppt formOppt = new TFormOppt();
+                        formOppt.setOpptId(opportunity.getId());
+                        formOppt.setProblemId(problemVo.getProblemID());
+                        formOppt.setProblemType(problemVo.getProblemType());
+                        formOppt.setCreateTime(DateUtil.currentDate());
+                        formOppt.setModifyTime(DateUtil.currentDate());
+                        formOpptMapper.insert(formOppt);
 
-                    TFormOpptValue formOpptValue =  new TFormOpptValue();
+                        TFormOpptValue formOpptValue = new TFormOpptValue();
 //                    formOpptValue.setSubProblemValueId();
 //                    formOpptValue.setSubProblemUnitScore();
 //                    formOpptValue.setSubProblemId();
 //                    formOpptValue.setSubHeaderId();
-                    formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
-                    formOpptValue.setProblemId(problemVo.getProblemID());
-                    formOpptValue.setOpptName(fcv.getChanceName());
-                    formOpptValue.setOpptId(opportunity.getId());
-                    formOpptValue.setIsPick(fcv.isPick());
-                    formOpptValue.setFormResultId(formCheckResult.getId());
-                    formOpptValue.setCreateTime(DateUtil.currentDate());
-                    formOpptValue.setModifyTime(DateUtil.currentDate());
+                        formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                        formOpptValue.setProblemId(problemVo.getProblemID());
+                        formOpptValue.setOpptName(fcv.getChanceName());
+                        formOpptValue.setOpptId(opportunity.getId());
+                        formOpptValue.setIsPick(fcv.isPick());
+                        formOpptValue.setFormResultId(formCheckResult.getId());
+                        formOpptValue.setCreateTime(DateUtil.currentDate());
+                        formOpptValue.setModifyTime(DateUtil.currentDate());
 
-                    otherOpptVals.add(formOpptValue);
+                        formOpptValueMapper.insert(formOpptValue);
+                    }
                 }
-                formOpptValueMapper.insertList(otherOpptVals);
 
                 List<FormSubProblemVo> subProblemVos = problemVo.getSubProblemArray();
-                for(FormSubProblemVo subProblemVo : subProblemVos) {
-                    TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
-                    subPbmVal.setCreateTime(DateUtil.currentDate());
-                    subPbmVal.setModifyTime(DateUtil.currentDate());
-                    subPbmVal.setFormResultId(formCheckResult.getId());
-                    subPbmVal.setProblemValueId(formPbmVal.getId());
-                    subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
-                    subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
-                    subPbmVal.setSubProblemScore(subProblemVo.getSubProblemScore());
-                    formSubPbmValMapper.insert(subPbmVal);
+                if(subProblemVos != null && subProblemVos.size() > 0) {
+                    for (FormSubProblemVo subProblemVo : subProblemVos) {
+                        TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
+                        subPbmVal.setCreateTime(DateUtil.currentDate());
+                        subPbmVal.setModifyTime(DateUtil.currentDate());
+                        subPbmVal.setFormResultId(formCheckResult.getId());
+                        subPbmVal.setProblemValueId(formPbmVal.getId());
+                        subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
+                        subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
+                        subPbmVal.setSubProblemScore(subProblemVo.getSubProblemScore());
+                        formSubPbmValMapper.insert(subPbmVal);
 
-                    List<FormChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
-                    List<FormSubProblemUnitVo> subProblemUnitVos = problemVo.getSubProblemUnitArray();
-                    List<TFormOpptValue> subOppts = new ArrayList<>();
-                    for(FormChanceVo subChanceVo : subChanceVos) {
-                        for(FormSubProblemUnitVo subProblemUnitVo : subProblemUnitVos) {
-                            TFormOpptValue formOpptValue = new TFormOpptValue();
-                            formOpptValue.setCreateTime(DateUtil.currentDate());
-                            formOpptValue.setModifyTime(DateUtil.currentDate());
-                            formOpptValue.setFormResultId(formCheckResult.getId());
-                            formOpptValue.setIsPick(subChanceVo.isPick());
-                            formOpptValue.setOpptId(subChanceVo.getChanceID());
-                            formOpptValue.setOpptName(subChanceVo.getChanceName());
-                            formOpptValue.setProblemId(problemVo.getProblemID());
-                            formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
-                            formOpptValue.setSubHeaderId(subProblemUnitVo.getSubProblemUnitID());
-                            formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
-                            formOpptValue.setSubProblemUnitScore(subProblemVo.getSubProblemScore());
-                            formOpptValue.setSubProblemValueId(subPbmVal.getId());
-                            formOpptValue.setProblemValueId(formPbmVal.getId());
+                        List<FormChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
+                        List<FormSubProblemUnitVo> subProblemUnitVos = problemVo.getSubProblemUnitArray();
+                        List<TFormOpptValue> subOppts = new ArrayList<>();
+                        for (FormChanceVo subChanceVo : subChanceVos) {
+                            for (FormSubProblemUnitVo subProblemUnitVo : subProblemUnitVos) {
+                                TFormOpptValue formOpptValue = new TFormOpptValue();
+                                formOpptValue.setCreateTime(DateUtil.currentDate());
+                                formOpptValue.setModifyTime(DateUtil.currentDate());
+                                formOpptValue.setFormResultId(formCheckResult.getId());
+                                formOpptValue.setIsPick(subChanceVo.isPick());
+                                formOpptValue.setOpptId(subChanceVo.getChanceID());
+                                formOpptValue.setOpptName(subChanceVo.getChanceName());
+                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                                formOpptValue.setSubHeaderId(subProblemUnitVo.getSubProblemUnitID());
+                                formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
+                                formOpptValue.setSubProblemUnitScore(subProblemVo.getSubProblemScore());
+                                formOpptValue.setSubProblemValueId(subPbmVal.getId());
+                                formOpptValue.setProblemValueId(formPbmVal.getId());
 
-                            subOppts.add(formOpptValue);
+                                subOppts.add(formOpptValue);
+                            }
                         }
+                        formOpptValueMapper.insertList(subOppts);
                     }
-                    formOpptValueMapper.insertList(subOppts);
                 }
             }
         }

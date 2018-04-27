@@ -42,6 +42,9 @@
             <if test="modifyTime != null">
                 modify_time = #{modifyTime},
             </if>
+            <if test="auditContent != null">
+                audit_content=#{auditContent},
+            </if>
         </set>
         where id=#{id}
     </update>
