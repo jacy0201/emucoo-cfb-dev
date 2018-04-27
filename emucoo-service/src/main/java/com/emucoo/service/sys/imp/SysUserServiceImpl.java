@@ -228,7 +228,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserBrand.setCreateTime(new Date());
 				sysUserBrand.setCreateUserId(1L);
 				sysUserBrand.setIsDel(false);
-				sysUserAreaMapper.insertSelective(sysUserArea);
+				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
 		}
 	}
@@ -239,7 +239,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		//先删除用户之前的岗位关系
 		Example example=new Example(SysUserPost.class);
 		example.createCriteria().andEqualTo("userId",sysUser.getId());
-		sysUserBrandMapper.deleteByExample(example);
+		sysUserPostMapper.deleteByExample(example);
 		//保存用户岗位
 		List<SysPost> listPost=sysUser.getPostList();
 		if(null!=listPost && listPost.size()>0){
