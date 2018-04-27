@@ -169,22 +169,23 @@ public class FormManageServiceImpl implements FormManageService {
         cleanOldFormInfo(formMain);
 
         List<TFormImptRules> formImptRuless = formMain.getImptRules();
-        formImptRuless.forEach(it -> {
-            it.setFormMainId(formMain.getId());
-            it.setCreateTime(DateUtil.currentDate());
-            it.setModifyTime(DateUtil.currentDate());
-        });
-        formImptRulesMapper.insertList(formImptRuless);
-
-        // form add items maybe is null
-        List<TFormAddItem> formAddItems = formMain.getAddItems();
-        if(formAddItems != null && formAddItems.size() > 0) {
-            formAddItems.forEach(it -> {
+        if(formImptRuless != null && formImptRuless.size() > 0) {
+            formImptRuless.forEach(it -> {
                 it.setFormMainId(formMain.getId());
                 it.setCreateTime(DateUtil.currentDate());
                 it.setModifyTime(DateUtil.currentDate());
             });
-            formAddItemMapper.insertList(formAddItems);
+            formImptRulesMapper.insertList(formImptRuless);
+        }
+
+        List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
+        if(formScoreItems != null && formScoreItems.size() > 0) {
+            formScoreItems.forEach(it -> {
+                it.setFormMainId(formMain.getId());
+                it.setCreateTime(DateUtil.currentDate());
+                it.setModifyTime(DateUtil.currentDate());
+            });
+            formScoreItemMapper.insertList(formScoreItems);
         }
 
         List<TFormType> formModules = formMain.getFormModules();
@@ -292,10 +293,17 @@ public class FormManageServiceImpl implements FormManageService {
 
     @Override
     public void saveFormReportSettings(TFormMain formMain) {
-        formMainMapper.updateByPrimaryKey(formMain);
+        formMainMapper.updateByPrimaryKeySelective(formMain);
         formAddItemMapper.dropByFormMainId(formMain.getId());
-        List<TFormScoreItem> formScoreItems = formMain.getScoreItems();
-        formScoreItems.forEach(it -> it.setFormMainId(formMain.getId()));
-        formScoreItemMapper.insertList(formScoreItems);
+        // form add items maybe is null
+        List<TFormAddItem> formAddItems = formMain.getAddItems();
+        if(formAddItems != null && formAddItems.size() > 0) {
+            formAddItems.forEach(it -> {
+                it.setFormMainId(formMain.getId());
+                it.setCreateTime(DateUtil.currentDate());
+                it.setModifyTime(DateUtil.currentDate());
+            });
+            formAddItemMapper.insertList(formAddItems);
+        }
     }
 }
