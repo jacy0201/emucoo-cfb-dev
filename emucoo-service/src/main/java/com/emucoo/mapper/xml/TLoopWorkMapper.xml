@@ -77,8 +77,8 @@
         select * from t_loop_work where work_id=#{workId} and sub_work_id = #{subWorkId} limit 1
     </select>
 
-    <select id="fetchExeHistory" resultMap="BaseResultMap">
-        select * from t_loop_work where type=#{workType} and workID=#{workId}
+    <select id="fetchTaskExeHistory" resultMap="BaseResultMap">
+        select * from t_loop_work where type=#{workType} and work_id=#{workId} and work_status=2
     </select>
 
     <update id="updateWorkStatus" parameterType="com.emucoo.model.TLoopWork">

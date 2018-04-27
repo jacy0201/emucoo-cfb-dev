@@ -33,7 +33,7 @@
         <association property="opportunity" resultMap="opptMap" />
     </resultMap>
 
-    <select id="findFormSubPbmsByFormPbmId" resultMap="BaseResultMap">
+    <select id="findFormSubPbmsByFormPbmId" resultMap="subProblemMap">
         select a.id as sub_problem_id, a.sub_problem_name, a.sub_problem_score, a.form_problem_id, c.id as oppt_id, c.type, c.name, c.description, c.front_can_create
         from t_form_sub_pbm a left join t_form_oppt b on a.form_problem_id = b.problem_id and a.id = b.sub_problem_id
             left join t_opportunity c on b.oppt_id=c.id

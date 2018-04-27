@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
+
     TLoopWork fetchOneTaskByWorkIds(@Param("workId") String workId, @Param("subWorkId") String subWorkId);
 
     void updateWorkStatus(TLoopWork lw);

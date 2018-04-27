@@ -99,7 +99,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateWorkStatus(lw);
 
         List<String> imgids = new ArrayList<>();
-        if(voi .getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
+        if(voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
             voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
                 com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
                 Date dt = new Date(assignTaskSubmitImgVo.getDate());
@@ -157,6 +157,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         toof.setAuditImgIds(StringUtils.join(aimgs, ","));
         toof.setAuditResult(atai.getReviewResult());
         toof.setModifyTime(DateUtil.currentDate());
+        toof.setAuditContent(atai.getReviewOpinion());
 
         operateDataForWorkMapper.auditOperateData(toof);
     }
@@ -194,8 +195,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         stateVo.setTaskRank(task.getPreinstallScore()==null?5:Integer.parseInt(task.getPreinstallScore()));
         stateVo.setTaskRepeatType(task.getLoopCycleType());
         stateVo.setTaskRepeatValue(task.getLoopCycleValue()==null?"":task.getLoopCycleValue());
-        stateVo.setFeedbackImg(too.getFeedbackNumType());
-        stateVo.setFeedbackText(too.getFeedbackNeedText()?0:1);
+        stateVo.setFeedbackImg(too.getFeedbackImgType());
+        stateVo.setFeedbackText(too.getFeedbackNeedText()?2:1);
 
         List<ImageUrlVo> ivs = new ArrayList<ImageUrlVo>();
         String timgIds = task.getIllustrationImgIds();
@@ -216,7 +217,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         AssignTaskSubmitDetailVo executorVo = new AssignTaskSubmitDetailVo();
         executorVo.setTaskSubPerID(loopWork.getExcuteUserId());
         executorVo.setTaskSubPerHeadUrl(executeUser==null?"":executeUser.getHeadImgUrl());
-        executorVo.setTaskSubTime(loopWork.getExecuteBeginDate().getTime());
+        executorVo.setTaskSubTime(loopWork.getModifyTime().getTime());
         executorVo.setWorkText(todw==null?"":todw.getWorkTxt());
         executorVo.setDigitalItemValue(Double.parseDouble(todw==null?"0.0":todw.getNumOptionValue()));
 

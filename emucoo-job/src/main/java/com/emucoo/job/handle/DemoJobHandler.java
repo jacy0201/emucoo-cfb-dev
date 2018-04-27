@@ -1,17 +1,16 @@
 package com.emucoo.job.handle;
-
-/**import com.emucoo.model.Content;
-import com.emucoo.service.demo.ApiDemoService;
+import com.emucoo.model.SysUser;
+import com.emucoo.service.sys.SysUserService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
-import com.xxl.job.core.handler.annotation.JobHander;
+import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
- * 任务Handler示例（Bean模式）
+ /* 任务Handler示例（Bean模式）
  *
  * 开发步骤：
  * 1、继承"IJobHandler"：“com.xxl.job.core.handler.IJobHandler”；
@@ -19,26 +18,20 @@ import org.springframework.stereotype.Component;
  * 3、注册到执行器工厂：添加“@JobHandler(value="自定义jobhandler名称")”注解，注解value值对应的是调度中心新建任务的JobHandler属性的值。
  * 4、执行日志：需要通过 "XxlJobLogger.log" 打印执行日志；
  *
- * @author xuxueli 2015-12-19 19:43:36
  */
-/*@JobHander(value="demoJobHandler")
-@Component
+ @JobHandler(value="demoJobHandler")
+ @Component
 public class DemoJobHandler extends IJobHandler {
 
 	
 	@Resource
-	private ApiDemoService demoService;
-
-	public ReturnT<String> execute(String param) throws Exception {
-		Content content = demoService.getById(1L);
-		XxlJobLogger.log("查询结果={0}", content.getContent());
-		return null;
-	}
+	private SysUserService sysUserService;
 
 	@Override
-	public ReturnT<String> execute(String... arg0) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ReturnT<String> execute(String  param) throws Exception {
+		SysUser sysUser = sysUserService.findById(1L);
+		XxlJobLogger.log(sysUser.getRealName()+"<>查询结果={0}",param );
+		return SUCCESS;
 	}
-	
-}*/
+
+}
