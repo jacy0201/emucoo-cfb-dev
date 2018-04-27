@@ -2,7 +2,7 @@ package com.emucoo.service.sys.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.common.util.StringUtil;
-import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.sys.UserBrandAreaShop;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -194,19 +194,19 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void setBrandArea(UserBrandArea userBrandArea){
+	public void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop){
 		//设置用户分区
-		List<Long> areaIdList=userBrandArea.getListAreaId();
+		List<Long> areaIdList=userBrandAreaShop.getListAreaId();
 		SysUserArea sysUserArea=null;
 		if(null!=areaIdList && areaIdList.size()>0) {
 			//先删除之前的分区关系
 			Example example=new Example(SysUserArea.class);
-			example.createCriteria().andEqualTo("userId",userBrandArea.getUserId());
+			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
 			sysUserAreaMapper.deleteByExample(example);
 			for (Long areaId : areaIdList) {
 				sysUserArea = new SysUserArea();
 				sysUserArea.setAreaId(areaId);
-				sysUserArea.setUserId(userBrandArea.getUserId());
+				sysUserArea.setUserId(userBrandAreaShop.getUserId());
 				sysUserArea.setCreateTime(new Date());
 				sysUserArea.setCreateUserId(1L);
 				sysUserArea.setIsDel(false);
@@ -214,23 +214,45 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			}
 		}
 		//设置用户品牌
-		List<Long> brandIdList=userBrandArea.getListBrandId();
+		List<Long> brandIdList=userBrandAreaShop.getListBrandId();
 		SysUserBrand sysUserBrand=null;
 		if(null!=brandIdList && brandIdList.size()>0) {
 			//先删除之前的品牌关系
 			Example example=new Example(SysUserBrand.class);
-			example.createCriteria().andEqualTo("userId",userBrandArea.getUserId());
+			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
 			sysUserBrandMapper.deleteByExample(example);
 			for (Long brandId : brandIdList) {
 				sysUserBrand = new SysUserBrand();
 				sysUserBrand.setBrandId(brandId);
-				sysUserBrand.setUserId(userBrandArea.getUserId());
+				sysUserBrand.setUserId(userBrandAreaShop.getUserId());
 				sysUserBrand.setCreateTime(new Date());
 				sysUserBrand.setCreateUserId(1L);
 				sysUserBrand.setIsDel(false);
 				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
 		}
+
+		//设置用户店铺
+		List<Long> shopIdList=userBrandAreaShop.getListShopId();
+		SysUserShop sysUserShop=null;
+		if(null!=shopIdList && shopIdList.size()>0) {
+			//先删除之前的shop关系
+			Example example=new Example(SysUserShop.class);
+			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+			sysUserShopMapper.deleteByExample(example);
+			for (Long shopId : shopIdList) {
+				sysUserShop = new SysUserShop();
+				sysUserShop.setShopId(shopId);
+				sysUserShop.setUserId(userBrandAreaShop.getUserId());
+				sysUserShop.setCreateTime(new Date());
+				sysUserShop.setCreateUserId(1L);
+				sysUserShop.setIsDel(false);
+				sysUserShopMapper.insertSelective(sysUserShop);
+			}
+		}
+
+
+
 	}
 	@Override
 	@Transactional(rollbackFor = Exception.class)
