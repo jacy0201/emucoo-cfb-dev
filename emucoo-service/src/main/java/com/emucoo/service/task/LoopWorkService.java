@@ -14,10 +14,13 @@ import java.util.List;
  * @date 2018/3/14 14:18
  */
 public interface LoopWorkService extends BaseService<TLoopWork> {
+
     List<TLoopWork> listPendingExecute(Long submitUserId, Date date);
 
     List<TLoopWork> listPendingReview(Long auditUserId);
+
     int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
+
     int fetchPendingReviewWorkNum(Long submitUserId);
 
     void add(TLoopWork loopWork);
@@ -27,7 +30,9 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     TLoopWork fetchByWorkId(String workId, String subWorkId, int workType);
 
     void submitAssignTask(AssignTaskSubmitVo_I voi);
+
     void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai);
+
     AssignTaskDetailVo_O viewAssignTaskDetail(String workId, String subWorkId, int workType, SysUser loginUser);
     
     void createAssignTask(AssignTaskCreationVo_I assignTaskCreationVo_i, long userId);
