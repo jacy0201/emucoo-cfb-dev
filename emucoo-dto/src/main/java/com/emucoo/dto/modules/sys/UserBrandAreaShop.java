@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 @Data
-public class UserBrandArea {
+public class UserBrandAreaShop {
     /**
      * 用户id
      */
@@ -24,5 +24,11 @@ public class UserBrandArea {
      * 分区id集合
      */
     private List<Long>  listAreaId;
+
+
+    /**
+     * 分区id集合
+     */
+    private List<Long>  listShopId;
 
 }

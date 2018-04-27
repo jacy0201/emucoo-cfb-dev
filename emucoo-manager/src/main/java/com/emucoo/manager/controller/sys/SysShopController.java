@@ -49,6 +49,15 @@ public class SysShopController extends BaseResource {
 		if(null!=shopInfo && null!=shopInfo.getBrandId()){
 			example.createCriteria().andEqualTo("brandId", shopInfo.getBrandId());
 		}
+		if(null!=shopInfo && null!=shopInfo.getProvince()){
+			example.createCriteria().andEqualTo("province", shopInfo.getProvince());
+		}
+		if(null!=shopInfo && null!=shopInfo.getCity()){
+			example.createCriteria().andEqualTo("city", shopInfo.getCity());
+		}
+		if(null!=shopInfo && null!=shopInfo.getDistrict()){
+			example.createCriteria().andEqualTo("district", shopInfo.getDistrict());
+		}
 
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
