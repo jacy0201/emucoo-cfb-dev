@@ -137,11 +137,13 @@ public class FormManageServiceImpl implements FormManageService {
                     formPbm.setSubProblemHeads(subPbmHeaders);
                 } else {
                     // 有些机会点是app创建的，所以不能在配置表单的时候返回给管理界面
-                    Iterator<TOpportunity> it = formPbm.getOppts().iterator();
-                    while(it.hasNext()) {
-                        TOpportunity oppt = it.next();
-                        if(oppt.getCreateType() != 1) {
-                           it.remove();
+                    if(formPbm.getOppts() != null && formPbm.getOppts().size() > 0) {
+                        Iterator<TOpportunity> it = formPbm.getOppts().iterator();
+                        while (it.hasNext()) {
+                            TOpportunity oppt = it.next();
+                            if (oppt.getCreateType() != 1) {
+                                it.remove();
+                            }
                         }
                     }
                 }
