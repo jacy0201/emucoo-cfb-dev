@@ -21,9 +21,9 @@
 
       <!-- xxl-job-core -->
       <dependency>
-          <groupId>emucoo</groupId>
+          <groupId>com.xuxueli</groupId>
           <artifactId>xxl-job-core</artifactId>
-          <version>1.9.2</version>
+          <version>1.9.1</version>
       </dependency>
 
   </dependencies>
