@@ -157,6 +157,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         toof.setAuditImgIds(StringUtils.join(aimgs, ","));
         toof.setAuditResult(atai.getReviewResult());
         toof.setModifyTime(DateUtil.currentDate());
+        toof.setAuditContent(atai.getReviewOpinion());
 
         operateDataForWorkMapper.auditOperateData(toof);
     }
