@@ -3,7 +3,10 @@ package com.emucoo.restApi.controller.form;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
+import com.emucoo.dto.modules.report.GetOpptIn;
+import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
+import com.emucoo.dto.modules.report.GetReportOut;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.dto.modules.report.SaveReportIn;
 import com.emucoo.model.SysUser;
@@ -76,6 +79,16 @@ public class ReportController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         ReportVo reportOut = reportService.findReportInfoById(user, reportIn);
         return success(reportOut);
+    }
+
+    @PostMapping(value = "findOpptInfoById")
+    public AppResult<GetOpptOut> findOpptInfoById(@RequestBody ParamVo<GetOpptIn> params, HttpServletRequest request) {
+        GetOpptIn getOpptIn = params.getData();
+        checkParam(getOpptIn.getReportID(), "报告id不能为空！");
+        checkParam(getOpptIn.getOpptID(), "机会点id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        GetOpptOut getOpptOut = reportService.findOpptInfoById(user, getOpptIn);
+        return success(getOpptOut);
     }
 
 }
