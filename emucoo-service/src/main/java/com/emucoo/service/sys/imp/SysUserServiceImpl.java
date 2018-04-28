@@ -69,15 +69,22 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		Long shopId=null;
 		Long postId=null;
 		Example example=new Example(SysUser.class);
-		example.createCriteria().andEqualTo("isDel",0);
-		if(null!=userQuery){
-			if(StringUtil.isNotEmpty(userQuery.getRealName())){ realName=userQuery.getRealName(); example.createCriteria().andEqualTo("realName",realName); }
-			if(StringUtil.isNotEmpty(userQuery.getUsername())){ username=userQuery.getUsername(); example.createCriteria().andEqualTo("username",username); }
-			if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); example.createCriteria().andEqualTo("mobile",mobile); }
-			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); example.createCriteria().andEqualTo("email",email); }
-			if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); example.createCriteria().andEqualTo("dptId",dptId);}
-			if(null!=userQuery.getIsShopManager()){ isShopManager=userQuery.getIsShopManager(); example.createCriteria().andEqualTo("isShopManager",isShopManager);}
-			if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); example.createCriteria().andEqualTo("status",status);}
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("isDel",0);
+        if(null!=userQuery){
+			if(StringUtil.isNotEmpty(userQuery.getRealName())){
+			    realName=userQuery.getRealName();
+                criteria.andEqualTo("realName",realName);
+			}
+			if(StringUtil.isNotEmpty(userQuery.getUsername())){
+			    username=userQuery.getUsername();
+                criteria.andEqualTo("username",username);
+			}
+			if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); criteria.andEqualTo("mobile",mobile); }
+			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); criteria.andEqualTo("email",email); }
+			if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); criteria.andEqualTo("dptId",dptId);}
+			if(null!=userQuery.getIsShopManager()){ isShopManager=userQuery.getIsShopManager();criteria.andEqualTo("isShopManager",isShopManager);}
+			if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); criteria.andEqualTo("status",status);}
 			if(null!=userQuery.getShopId()){ shopId=userQuery.getShopId(); }
 			if(null!=userQuery.getPostId()){ postId=userQuery.getPostId(); }
 		}
