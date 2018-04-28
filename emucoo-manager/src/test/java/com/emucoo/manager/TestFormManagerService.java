@@ -43,7 +43,7 @@ public class TestFormManagerService {
     @Test
     public void testEncode() {
         String KEY = "DES/ECB/PKCS5Padding";
-        userToken = DESUtil.encryptStr(String.valueOf(3), KEY);
-        System.out.print(userToken);
+       /* userToken = DESUtil.encryptStr(String.valueOf(3), KEY);
+        System.out.print(userToken);*/
     }
 }
