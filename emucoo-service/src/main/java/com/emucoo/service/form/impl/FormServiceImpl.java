@@ -153,8 +153,11 @@ public class FormServiceImpl implements FormService {
                         }
                         subProblemVos.add(subProblemVo);
                     }
+
                     pbmVo.setSubProblemArray(subProblemVos);
                     pbmVo.setSubProblemUnitArray(subProblemUnitVos);
+                    pbmVo.setProblemScore(subProblemVos.stream().mapToInt(p -> p.getSubProblemScore()).sum());
+                    pbmVo.setProblemTotal(pbmVo.getProblemScore());
                 } else {
                     List<TOpportunity> oppts = opportunityMapper.findOpptsByPbmId(pbm.getId());
                     List<FormChanceVo> formChanceVos = new ArrayList<>();
