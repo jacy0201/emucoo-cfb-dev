@@ -74,7 +74,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
         if(null!=userQuery){
 			if(StringUtil.isNotEmpty(userQuery.getRealName())){
 			    realName=userQuery.getRealName();
-                criteria.andEqualTo("realName",realName);
+                criteria.andLike("realName","%"+realName+"%");
 			}
 			if(StringUtil.isNotEmpty(userQuery.getUsername())){
 			    username=userQuery.getUsername();
