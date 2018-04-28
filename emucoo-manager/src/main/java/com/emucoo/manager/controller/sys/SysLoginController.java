@@ -37,12 +37,27 @@ public class SysLoginController extends BaseResource {
 	@ApiOperation(value="用户登录")
 	public ApiResult<SysUserToken> login(@RequestBody SysUserLogin sysUserLogin){
 
-		//用户信息
-		SysUser sysUser=new SysUser();
-		sysUser.setUsername(sysUserLogin.getUsername());
-		SysUser user = sysUserService.findOne(sysUser);
+		SysUser user=null;
+		//用户名
+		SysUser sysUser1=new SysUser();
+		sysUser1.setUsername(sysUserLogin.getUsername());
+		user = sysUserService.findOne(sysUser1);
+
+		//手机号
+		if(user==null){
+			SysUser sysUser2=new SysUser();
+			sysUser2.setMobile(sysUserLogin.getUsername());
+			user = sysUserService.findOne(sysUser2);
+		}
+		//邮箱
+		if(user==null){
+			SysUser sysUser3=new SysUser();
+			sysUser3.setEmail(sysUserLogin.getUsername());
+			user = sysUserService.findOne(sysUser3);
+		}
+
 		//账号不存在、密码错误
-		if(user == null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(sysUserLogin.getPassword()),user.getSalt()).toHex())) {
+		if(user==null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(sysUserLogin.getPassword()),user.getSalt()).toHex())) {
 			return fail(ApiExecStatus.FAIL,"账号或密码不正确");
 		}
 
