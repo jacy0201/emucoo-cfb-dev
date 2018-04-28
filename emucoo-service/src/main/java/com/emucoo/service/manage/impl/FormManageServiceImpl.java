@@ -250,7 +250,7 @@ public class FormManageServiceImpl implements FormManageService {
                         subProblem.setFormProblemId(problem.getId());
                         subProblem.setCreateTime(DateUtil.currentDate());
                         subProblem.setCreateTime(DateUtil.currentDate());
-                        subscore += subProblem.getSubProblemScore();
+                        subscore += subProblem.getSubProblemScore()==null?0:subProblem.getSubProblemScore();
                         formSubPbmMapper.insert(subProblem);
 
                         TOpportunity opportunity = new TOpportunity();
