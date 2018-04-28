@@ -200,7 +200,19 @@ public class FormServiceImpl implements FormService {
                 .andEqualTo("createUserId", userId);
         List<TFormCheckResult> results = formCheckResultMapper.selectByExample(example);
         if(results != null && results.size() > 0) {
+            results.forEach(result -> {
+                // 要先删除关系，再删除机会点
+                formOpptMapper.cleanFormOpptRelationByResultId(result.getId());
+                opportunityMapper.cleanOpptsByResultId(result.getId());
 
+                formCheckResultMapper.deleteByPrimaryKey(result.getId());
+
+                formValueMapper.cleanByResultId(result.getId());
+                formPbmValMapper.cleanByResultId(result.getId());
+                formSubPbmValMapper.cleanByResultId(result.getId());
+                formOpptValueMapper.cleanByResultId(result.getId());
+
+            });
         }
     }
 

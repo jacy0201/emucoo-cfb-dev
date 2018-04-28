@@ -21,7 +21,7 @@ import com.emucoo.service.sys.UserService;
 import com.emucoo.service.task.LoopWorkService;
 import com.emucoo.utils.CheckoutUtil;
 import com.emucoo.utils.DateUtil;
-import com.google.common.collect.Maps;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -249,23 +249,6 @@ public class IndexController extends AppBaseController {
 
     }
 
-    /**
-     * 获取未读报告类表数
-     *
-     * @return
-     */
-    @PostMapping("/reportNum")
-    public AppResult<Map> reportNum(@RequestHeader("userToken") String userToken) {
-        // 获取用户 Id from user token
-        Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
-        checkParam(loginUserId, "没有此用户");
-        Integer unreadRepNum = indexService.reportNum(loginUserId, false);
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("unreadRepNum", unreadRepNum);
-        return success(map);
-    }
-
-
     @PostMapping("/pendingWorkNum")
     public AppResult<PendingWorkNumVo_O> pendingWorkNum(@RequestHeader("userToken") String userToken) {
         Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
@@ -281,6 +264,23 @@ public class IndexController extends AppBaseController {
         return success(pendingWorkNumVo);
 
     }
+
+    /**
+     * 获取未读报告类表数
+     *
+     * @return
+     */
+    @PostMapping("/reportNum")
+    public AppResult<Map> reportNum(@RequestHeader("userToken") String userToken) {
+        // 获取用户 Id from user token
+        Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
+        checkParam(loginUserId, "没有此用户");
+        Integer unreadRepNum = indexService.reportNum(loginUserId, false);
+        Map<String, Object> map = new HashedMap();
+        map.put("unreadRepNum", unreadRepNum);
+        return success(map);
+    }
+
 
     @PostMapping("/reportList")
     public AppResult<ReportListVo_O> reportList(@RequestHeader("userToken") String userToken) {
