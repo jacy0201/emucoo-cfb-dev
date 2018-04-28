@@ -9,7 +9,7 @@ import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.IdsVo;
-import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.sys.UserBrandAreaShop;
 import com.emucoo.dto.modules.user.UserIsUse;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.manager.utils.RedisClusterClient;
@@ -19,12 +19,9 @@ import com.emucoo.service.sys.SysUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -103,12 +100,12 @@ public class SysUserController extends BaseResource {
     /**
      * 设置用户品牌分区
      */
-    @ApiOperation(value="设置品牌分区")
-    @PostMapping("/setBrandArea")
+    @ApiOperation(value="设置品牌分区店铺")
+    @PostMapping("/setBrandAreaShop")
     // @RequiresPermissions("sys:user:setBrandArea")
-    public ApiResult setBrandArea(@RequestBody UserBrandArea userBrandArea){
-        if(null==userBrandArea.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-        sysUserService.setBrandArea(userBrandArea);
+    public ApiResult setBrandAreaShop(@RequestBody UserBrandAreaShop userBrandAreaShop){
+        if(null==userBrandAreaShop.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
+        sysUserService.setBrandAreaShop(userBrandAreaShop);
         return success("success");
     }
 

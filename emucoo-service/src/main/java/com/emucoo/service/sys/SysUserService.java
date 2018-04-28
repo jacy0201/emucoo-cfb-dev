@@ -1,14 +1,12 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
-import com.emucoo.dto.modules.sys.UserBrandArea;
+import com.emucoo.dto.modules.sys.UserBrandAreaShop;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.model.SysUser;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -58,7 +56,7 @@ public interface SysUserService extends BaseService<SysUser> {
 	/**
 	 * 设置用户品牌分区
 	 */
-	void setBrandArea(UserBrandArea userBrandArea);
+	void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop);
 
 	/**
 	 * 批量修改用户

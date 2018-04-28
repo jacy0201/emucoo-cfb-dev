@@ -16,5 +16,7 @@ public class FormKindVo {
     private Integer problemNum;
     private Float scoreRate;
     private Integer wrongNum;
+    private Integer realScore;
+    private Integer realTotal;
 
 }

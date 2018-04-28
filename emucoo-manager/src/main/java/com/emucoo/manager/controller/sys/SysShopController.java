@@ -34,7 +34,7 @@ public class SysShopController extends BaseResource {
 	 */
 	@PostMapping ("/list")
 	//@RequiresPermissions("sys:shop:list")
-	@ApiOperation(value="查询店铺列表")
+	@ApiOperation(value="分页查询店铺")
 	@ResponseBody
 	public ApiResult<PageInfo<TShopInfo>> list(@RequestBody ParamVo<TShopInfo> param){
 		TShopInfo shopInfo = param.getData();
@@ -49,11 +49,47 @@ public class SysShopController extends BaseResource {
 		if(null!=shopInfo && null!=shopInfo.getBrandId()){
 			example.createCriteria().andEqualTo("brandId", shopInfo.getBrandId());
 		}
+		if(null!=shopInfo && null!=shopInfo.getProvince()){
+			example.createCriteria().andEqualTo("province", shopInfo.getProvince());
+		}
+		if(null!=shopInfo && null!=shopInfo.getCity()){
+			example.createCriteria().andEqualTo("city", shopInfo.getCity());
+		}
+		if(null!=shopInfo && null!=shopInfo.getDistrict()){
+			example.createCriteria().andEqualTo("district", shopInfo.getDistrict());
+		}
 
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
 		PageInfo<TShopInfo> pageInfo=new PageInfo(shopList);
 		return success(pageInfo);
+
+	}
+
+	/**
+	 * 店铺列表查询
+	 */
+	@PostMapping ("/listAll")
+	//@RequiresPermissions("sys:shop:list")
+	@ApiOperation(value="查询店铺列表")
+	@ResponseBody
+	public ApiResult<List<TShopInfo>> listAll(@RequestBody ParamVo<TShopInfo> param){
+		TShopInfo shopInfo = param.getData();
+		Example example=new Example(TShopInfo.class);
+		if(null!=shopInfo && null!=shopInfo.getShopName()) {
+			example.createCriteria().andLike("shopName", "%"+shopInfo.getShopName()+"%");
+		}
+		if(null!=shopInfo && null!=shopInfo.getProvince()){
+			example.createCriteria().andEqualTo("province", shopInfo.getProvince());
+		}
+		if(null!=shopInfo && null!=shopInfo.getCity()){
+			example.createCriteria().andEqualTo("city", shopInfo.getCity());
+		}
+		if(null!=shopInfo && null!=shopInfo.getDistrict()){
+			example.createCriteria().andEqualTo("district", shopInfo.getDistrict());
+		}
+		List<TShopInfo> shopList = sysShopService.selectByExample(example);
+		return success(shopList);
 
 	}
 

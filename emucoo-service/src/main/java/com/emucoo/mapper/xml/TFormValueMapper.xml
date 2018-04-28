@@ -16,6 +16,7 @@
     <result column="form_type_name" property="formTypeName" jdbcType="VARCHAR" />
     <result column="score_rate" property="scoreRate" jdbcType="REAL" />
     <result column="score" property="score" jdbcType="INTEGER"/>
+    <result column="total" property="total" jdbcType="INTEGER"/>
   </resultMap>
 
   <select id="fetchOneFormValue" resultMap="BaseResultMap">

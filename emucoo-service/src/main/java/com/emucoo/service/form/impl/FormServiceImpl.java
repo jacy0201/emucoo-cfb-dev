@@ -187,6 +187,23 @@ public class FormServiceImpl implements FormService {
         return formOut;
     }
 
+    private void cleanOldValueByCheckResultId(SysUser user, FormIn formIn) {
+        Long frontPlanId = formIn.getPatrolShopArrangeID();
+        Long formMainId = formIn.getChecklistID();
+        Long shopId = formIn.getShopID();
+        Long userId = user.getId();
+
+        Example example = new Example(TFormCheckResult.class);
+        example.createCriteria().andEqualTo("formMainId", formMainId)
+                .andEqualTo("frontPlanId", frontPlanId)
+                .andEqualTo("shopId", shopId)
+                .andEqualTo("createUserId", userId);
+        List<TFormCheckResult> results = formCheckResultMapper.selectByExample(example);
+        if(results != null && results.size() > 0) {
+
+        }
+    }
+
     @Override
     public void checkinFormResult(SysUser user, FormIn formIn) {
         Long frontPlanId = formIn.getPatrolShopArrangeID();
@@ -226,7 +243,8 @@ public class FormServiceImpl implements FormService {
             formValue.setFrontPlanId(frontPlanId);
             formValue.setIsDone(module.getIsDone());
             formValue.setModifyTime(DateUtil.currentDate());
-//            formValue.setScore();
+            formValue.setScore(module.getRealScore());
+            formValue.setTotal(module.getRealTotal());
             formValue.setScoreRate(module.getScoreRate());
             formValueMapper.insert(formValue);
 

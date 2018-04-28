@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_form_value")
 public class TFormValue extends BaseEntity {
@@ -42,6 +43,9 @@ public class TFormValue extends BaseEntity {
 
     @Column(name = "form_type_name")
     private String formTypeName;
+
+    @Column(name = "total")
+    private Integer total;
 
     /**
      * l类型得分率
@@ -225,5 +229,13 @@ public class TFormValue extends BaseEntity {
 
     public void setFormResultId(Long formResultId) {
         this.formResultId = formResultId;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 }
