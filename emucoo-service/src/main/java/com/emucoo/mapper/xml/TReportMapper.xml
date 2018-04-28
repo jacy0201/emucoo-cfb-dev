@@ -11,6 +11,7 @@
         <result column="reporter_id" property="reporterId" jdbcType="BIGINT" />
         <result column="reporter_name" property="reporterName" jdbcType="VARCHAR"/>
         <result column="reporter_dpt_name" property="reporterDptName" jdbcType="VARCHAR"/>
+        <result column="head_img_url" property="reporterHeadImgUrl" jdbcType="VARCHAR"/>
         <result column="check_form_time" property="checkFormTime" jdbcType="DATE"/>
         <result column="reporter_position" property="reporterPosition" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -20,6 +21,12 @@
         <result column="reporter_dpt_id" property="reporterDptId" jdbcType="BIGINT"/>
         <result column="reporter_position_id" property="reporterPositionId" jdbcType="VARCHAR"/>
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+        <association property="reportUser" javaType="com.emucoo.model.TReportUser">
+            <id column="report_user_id" property="id" jdbcType="BIGINT"/>
+            <id column="user_id" property="userId" jdbcType="BIGINT"/>
+            <id column="report_id" property="reportId" jdbcType="BIGINT"/>
+            <id column="is_read" property="isRead" jdbcType="BIT"/>
+        </association>
     </resultMap>
 
     <select id="fetchUnReadReport" resultType="com.emucoo.dto.modules.index.ReportItemVo">
@@ -35,6 +42,24 @@
             left join sys_dept d on b.reporter_dpt_id=d.id
         where
             a.user_id = #{userId} and a.is_read=0
+    </select>
+
+    <select id="findReportByUser" resultMap="BaseResultMap">
+        SELECT
+        report.id,
+        report.shop_name,
+        report.reporter_name,
+        report.reporter_dpt_name,
+        report.create_time,
+        reportUser.id AS report_user_id,
+        reportUser.is_read,
+        reportUser.user_id,
+        user.head_img_url
+        FROM t_report report
+        LEFT JOIN t_report_user reportUser ON reportUser.report_id = report.id
+        AND reportUser.user_id = #{userId}
+        INNER JOIN sys_user user ON user.id = report.reporter_id
+        ORDER BY reportUser.is_read ASC, report.create_time DESC
     </select>
 
     <select id="countUnReadReport" resultType="java.lang.Integer">

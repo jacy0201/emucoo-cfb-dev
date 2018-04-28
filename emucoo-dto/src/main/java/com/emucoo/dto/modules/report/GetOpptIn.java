@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class GetOpptIn {
     private Long reportID;
-    private Long opptID;
+    private Long chanceID;
 }
