@@ -72,7 +72,7 @@ public class FormManageServiceImpl implements FormManageService {
 
     @Override
     public void updateForm(TFormMain form) {
-        formMainMapper.updateByPrimaryKey(form);
+        formMainMapper.updateByPrimaryKeySelective(form);
     }
 
     @Override
