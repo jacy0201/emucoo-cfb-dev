@@ -221,6 +221,9 @@ public class FormServiceImpl implements FormService {
 
     @Override
     public void checkinFormResult(SysUser user, FormIn formIn) {
+        // 每次存之前把旧数据删掉
+        cleanOldValueByCheckResultId(user, formIn);
+
         Long frontPlanId = formIn.getPatrolShopArrangeID();
         Long formMainId = formIn.getChecklistID();
         Long shopId = formIn.getShopID();
