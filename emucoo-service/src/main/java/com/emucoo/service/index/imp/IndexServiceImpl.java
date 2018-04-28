@@ -12,6 +12,7 @@ import com.emucoo.mapper.TReportMapper;
 import com.emucoo.mapper.TShopInfoMapper;
 import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TReport;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.index.IndexService;
 import org.apache.commons.lang.RandomStringUtils;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,7 +125,20 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 
 	@Override
 	public List<ReportItemVo> fetchUnReadReports(long currUserId) {
-		return reportMapper.fetchUnReadReport(currUserId);
+		List<ReportItemVo> reportItemVos = new ArrayList<>();
+		List<TReport> reports = reportMapper.findReportByUser(currUserId);
+		for(TReport report : reports) {
+			ReportItemVo reportItemVo = new ReportItemVo();
+			reportItemVo.setRead(report.getReportUser().getIsRead());
+			reportItemVo.setReporterName(report.getReporterName());
+			reportItemVo.setReportID(report.getId());
+			reportItemVo.setReporterHeadUrl(report.getReporterHeadImgUrl());
+			reportItemVo.setReportSourceName(report.getReporterDptName());
+			reportItemVo.setReportTime(report.getCreateTime().getTime());
+			reportItemVos.add(reportItemVo);
+		}
+		return reportItemVos;
+		//return reportMapper.fetchUnReadReport(currUserId);
 	}
 
 	@Override

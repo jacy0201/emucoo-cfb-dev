@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.System;
 import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -39,4 +40,10 @@ public class TestFormManagerService {
         oppts.forEach(oppt -> System.out.println(oppt.getCreateTime()));
     }
 
+    @Test
+    public void testEncode() {
+        String KEY = "DES/ECB/PKCS5Padding";
+        userToken = DESUtil.encryptStr(String.valueOf(3), KEY);
+        System.out.print(userToken);
+    }
 }

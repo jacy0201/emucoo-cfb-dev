@@ -85,7 +85,7 @@ public class ReportController extends AppBaseController {
     public AppResult<GetOpptOut> findOpptInfoById(@RequestBody ParamVo<GetOpptIn> params, HttpServletRequest request) {
         GetOpptIn getOpptIn = params.getData();
         checkParam(getOpptIn.getReportID(), "报告id不能为空！");
-        checkParam(getOpptIn.getOpptID(), "机会点id不能为空！");
+        checkParam(getOpptIn.getChanceID(), "机会点id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         GetOpptOut getOpptOut = reportService.findOpptInfoById(user, getOpptIn);
         return success(getOpptOut);

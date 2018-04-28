@@ -560,6 +560,7 @@ public class ReportServiceImpl implements ReportService {
         return result;
     }
 
+    @Transactional
     public ReportVo findReportInfoById(SysUser user, GetReportIn reportIn) {
         ReportVo reportVo = new ReportVo();
 
@@ -666,6 +667,8 @@ public class ReportServiceImpl implements ReportService {
             checklistKindScoreVos.add(checklistKindScoreVo);
         }
         reportVo.setChecklistKindScoreArr(checklistKindScoreVos);
+        // 更新报告已读状态
+        tReportUserMapper.updateReadStatus(user.getId(), report.getId());
 
         return reportVo;
     }
@@ -712,7 +715,7 @@ public class ReportServiceImpl implements ReportService {
 
     public GetOpptOut findOpptInfoById(SysUser user, GetOpptIn getOpptIn) {
         GetOpptOut getOpptOut = new GetOpptOut();
-        List<ReportWorkVo> workArr = findImproveByOppt(getOpptIn.getOpptID(), getOpptIn.getReportID());
+        List<ReportWorkVo> workArr = findImproveByOppt(getOpptIn.getChanceID(), getOpptIn.getReportID());
         getOpptOut.setWorkArr(workArr);
         return getOpptOut;
     }
