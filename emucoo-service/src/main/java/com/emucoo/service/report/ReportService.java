@@ -1,5 +1,7 @@
 package com.emucoo.service.report;
 
+import com.emucoo.dto.modules.report.GetOpptIn;
+import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.dto.modules.report.SaveReportIn;
@@ -14,4 +16,6 @@ public interface ReportService {
     Long saveReport(SysUser user, ReportVo reportIn);
 
     ReportVo findReportInfoById(SysUser user, GetReportIn reportIn);
+
+    GetOpptOut findOpptInfoById(SysUser user, GetOpptIn opptId);
 }
