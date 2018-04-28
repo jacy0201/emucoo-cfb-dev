@@ -37,6 +37,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 	@Override
 	public List<SysDept> queryList(DeptQuery deptQuery){
 		Example example=new Example(SysDept.class);
+		Example.Criteria criteria = example.createCriteria();
 		Long brandId=null;
 		Long areaId=null;
 		String dptName="";
@@ -44,11 +45,11 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		List<SysDept> deptList=null;
 		if(null!=deptQuery && null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
 			dptName=deptQuery.getDptName();
-			example.createCriteria().andLike("dptName","%"+dptName+"%");
+			criteria.andLike("dptName","%"+dptName+"%");
 		}
 		if(null!=deptQuery && null!=deptQuery.getIsUse()){
 			isUse=deptQuery.getIsUse();
-			example.createCriteria().andEqualTo("isUse",isUse);
+			criteria.andEqualTo("isUse",isUse);
 		}
 
 		HashMap paramMap=null;

@@ -28,6 +28,9 @@ public class TReport extends BaseEntity {
     @Column(name = "reporter_name")
     private String reporterName;
 
+    @Transient
+    private String reporterHeadImgUrl;
+
     /**
      * 打表人的id
      */
@@ -92,7 +95,7 @@ public class TReport extends BaseEntity {
     private Long formResultId;
 
     @Transient
-    private Boolean isRead;
+    private TReportUser reportUser;
 
     /**
      * @return id
@@ -324,14 +327,6 @@ public class TReport extends BaseEntity {
         this.orgId = orgId;
     }
 
-    public Boolean getRead() {
-        return isRead;
-    }
-
-    public void setRead(Boolean read) {
-        isRead = read;
-    }
-
     public Long getReporterId() {
         return reporterId;
     }
@@ -346,5 +341,21 @@ public class TReport extends BaseEntity {
 
     public void setFormResultId(Long formResultId) {
         this.formResultId = formResultId;
+    }
+
+    public String getReporterHeadImgUrl() {
+        return reporterHeadImgUrl;
+    }
+
+    public void setReporterHeadImgUrl(String reporterHeadImgUrl) {
+        this.reporterHeadImgUrl = reporterHeadImgUrl;
+    }
+
+    public TReportUser getReportUser() {
+        return reportUser;
+    }
+
+    public void setReportUser(TReportUser reportUser) {
+        this.reportUser = reportUser;
     }
 }

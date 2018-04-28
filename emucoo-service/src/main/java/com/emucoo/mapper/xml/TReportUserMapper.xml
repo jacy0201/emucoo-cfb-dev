@@ -22,4 +22,10 @@
       (#{reportId}, #{item.id}, FALSE)
     </foreach>
   </insert>
+
+  <update id="updateReadStatus">
+    UPDATE t_report_user
+    SET is_read = TRUE
+    WHERE user_id = #{userId} AND report_id = #{reportId}
+  </update>
 </mapper>

@@ -10,4 +10,6 @@ import java.util.List;
 public interface TReportUserMapper extends MyMapper<TReportUser> {
 
     void addReportToUser(@Param("users")List<SysUser> users, @Param("reportId")Long reportId);
+
+    void updateReadStatus(@Param("userId")Long userId, @Param("reportId")Long reportId);
 }

@@ -2,6 +2,7 @@ package com.emucoo.service.index.imp;
 
 import com.alibaba.druid.util.StringUtils;
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.util.RegexMatcher;
 import com.emucoo.dto.modules.index.ReportItemVo;
 import com.emucoo.dto.modules.index.ResetPwdVo_I;
@@ -12,15 +13,20 @@ import com.emucoo.mapper.TReportMapper;
 import com.emucoo.mapper.TShopInfoMapper;
 import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TReport;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.index.IndexService;
+import com.emucoo.service.report.impl.ReportServiceImpl;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +34,8 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexService {
+
+	private Logger logger = LoggerFactory.getLogger(IndexServiceImpl.class);
 
 	@Autowired
 	private SysUserMapper userMapper;
@@ -123,7 +131,27 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 
 	@Override
 	public List<ReportItemVo> fetchUnReadReports(long currUserId) {
-		return reportMapper.fetchUnReadReport(currUserId);
+		try {
+			List<ReportItemVo> reportItemVos = new ArrayList<>();
+			List<TReport> reports = reportMapper.findReportByUser(currUserId);
+			for (TReport report : reports) {
+				ReportItemVo reportItemVo = new ReportItemVo();
+				reportItemVo.setRead(report.getReportUser().getIsRead());
+				reportItemVo.setReportTitle(report.getShopName() + "评估表");
+				reportItemVo.setReporterName(report.getReporterName());
+				reportItemVo.setReportID(report.getId());
+				reportItemVo.setReporterHeadUrl(report.getReporterHeadImgUrl());
+				reportItemVo.setReportSourceName(report.getReporterDptName());
+				reportItemVo.setReportTime(report.getCreateTime().getTime());
+				reportItemVos.add(reportItemVo);
+			}
+			return reportItemVos;
+		} catch (Exception e) {
+			logger.error("读取报告列表有误！", e);
+			throw new ApiException("读取报告列表有误！");
+		}
+
+		//return reportMapper.fetchUnReadReport(currUserId);
 	}
 
 	@Override
