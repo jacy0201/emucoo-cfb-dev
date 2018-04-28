@@ -3,9 +3,12 @@ package com.emucoo.manager.controller;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.config.QiNiuConfig;
 import com.emucoo.model.TFormMain;
 import com.emucoo.service.manage.FormManageService;
 import com.github.pagehelper.PageInfo;
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -21,6 +25,12 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "form")
 public class FormManageController extends BaseResource {
+
+    @Resource(name = "qiniuAuth")
+    private Auth qiniuAuth;
+
+    @Autowired
+    private QiNiuConfig qiNiuConfig;
 
     @Autowired
     private FormManageService formManageService;
@@ -129,6 +139,16 @@ public class FormManageController extends BaseResource {
         }
         formManageService.saveFormReportSettings(formMain);
         return success("ok");
+    }
+
+    @ApiOperation(value = "获得图片上传token")
+    @PostMapping(value = "/uploadToken")
+    public ApiResult<String> uploadToken() {
+        StringMap policy = new StringMap();
+        String returnBody = "{\"url\":\"" + qiNiuConfig.getBaseUrl() + "/$(key)\",\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize)}";
+        policy.put("returnBody", returnBody);
+        String token = qiniuAuth.uploadToken(qiNiuConfig.getBucket(), null, qiNiuConfig.getExpires(), policy) ;
+        return success(token);
     }
 
 }
