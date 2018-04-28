@@ -37,4 +37,13 @@
             </foreach>
         </where>
     </delete>
+
+    <delete id="cleanFormOpptRelationByResultId">
+        delete from t_form_oppt
+        where oppt_id in
+            (
+                select id from t_opportunity where create_type=2 and id in
+                    (select distinct oppt_id from `t_form_oppt_value` where form_result_id=#{resultId})
+            )
+    </delete>
 </mapper>

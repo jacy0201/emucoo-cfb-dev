@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.emucoo.mapper.TFormValueMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TFormValue" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="form_main_id" property="formMainId" jdbcType="BIGINT" />
-    <result column="from_type_id" property="fromTypeId" jdbcType="BIGINT" />
-    <result column="is_done" property="isDone" jdbcType="BIT" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
-    <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
-    <result column="form_main_name" property="formMainName" jdbcType="VARCHAR" />
-    <result column="form_type_name" property="formTypeName" jdbcType="VARCHAR" />
-    <result column="score_rate" property="scoreRate" jdbcType="REAL" />
-    <result column="score" property="score" jdbcType="INTEGER"/>
-    <result column="total" property="total" jdbcType="INTEGER"/>
-  </resultMap>
+<mapper namespace="com.emucoo.mapper.TFormValueMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFormValue">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
+        <result column="from_type_id" property="fromTypeId" jdbcType="BIGINT"/>
+        <result column="is_done" property="isDone" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT"/>
+        <result column="form_main_name" property="formMainName" jdbcType="VARCHAR"/>
+        <result column="form_type_name" property="formTypeName" jdbcType="VARCHAR"/>
+        <result column="score_rate" property="scoreRate" jdbcType="REAL"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+        <result column="total" property="total" jdbcType="INTEGER"/>
+    </resultMap>
 
-  <select id="fetchOneFormValue" resultMap="BaseResultMap">
-    select * from t_form_value
-    where form_main_id=#{formId} and from_type_id=#{moduleId} and front_plan_id=#{arrangeId}
+    <select id="fetchOneFormValue" resultMap="BaseResultMap">
+        select * from t_form_value
+        where form_main_id=#{formId} and from_type_id=#{moduleId} and front_plan_id=#{arrangeId}
 
-  </select>
+    </select>
+
+    <delete id="cleanByResultId">
+        delete from t_form_value where form_result_id=#{resultId}
+    </delete>
 </mapper>

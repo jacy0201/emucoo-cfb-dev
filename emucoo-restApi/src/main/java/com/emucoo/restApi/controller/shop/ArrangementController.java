@@ -85,47 +85,6 @@ public class ArrangementController extends AppBaseController {
 		return success(voo);
 	}
 
-	@PostMapping("/saveReport")
-	public AppResult<SaveReportOut> saveReport(@RequestBody ParamVo<SaveReportIn> base, HttpServletRequest request) {
-		SaveReportIn vo = base.getData();
-		checkParam(vo.getPatrolShopArrangeID(), "巡店安排id不能为空！");
-		checkParam(vo.getReportValue(), "报告内容不能为空！");
-		String userToken = request.getHeader("userToken");
-		checkParam(userToken, "用户token不能为空！");
-		Long auditUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
-		vo.setReporterID(auditUserId.toString());
-		SaveReportOut saveReportOut = tFrontPlanService.saveReport(vo);
-		return success(saveReportOut);
-	}
-
-	@PostMapping("/getReportBaseInfo")
-	public AppResult<ReportBaseInfoOut> getReportBaseInfo(@RequestBody ParamVo<ReportBaseInfoIn> base, HttpServletRequest request) {
-		ReportBaseInfoIn vo = base.getData();
-		checkParam(vo.getPatrolShopArrangeID(), "巡店安排id不能为空！");
-		checkParam(vo.getShopID(), "店铺id不能为空！");
-		String userToken = request.getHeader("userToken");
-		checkParam(userToken, "用户token不能为空！");
-		Long auditUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
-		vo.setReporterId(auditUserId.toString());
-		ReportBaseInfoOut reportBaseInfoOut = tFrontPlanService.getReportBaseInfo(vo);
-
-		return success(reportBaseInfoOut);
-	}
-
-	@PostMapping("/getReportById")
-	public AppResult<GetReportOut> getReportById(@RequestBody ParamVo<GetReportIn> base) {
-		GetReportIn vo = base.getData();
-		checkParam(vo.getReportID(), "报告id不能为空！");
-		GetReportOut report = tFrontPlanService.getReportById(vo);
-		return success(report);
-	}
-
-	@PostMapping("/getReportList")
-	public AppResult<List<GetReportListOut>> getReportList(@RequestBody ParamVo<GetReportIn> base) {
-		GetReportIn vo = base.getData();
-		List<GetReportListOut> reportList = tFrontPlanService.getReportList();
-		return success(reportList);
-	}
 
 	@PostMapping("/save")
 	public AppResult<String> save(@RequestBody ParamVo<PlanArrangeAddIn> base, HttpServletRequest request) {
