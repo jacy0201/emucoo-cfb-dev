@@ -64,6 +64,8 @@ public class FormManageServiceImpl implements FormManageService {
         form.setModifyTime(DateUtil.currentDate());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
+        form.setIsDel(false);
+        form.setIsUse(false);
         formMainMapper.insert(form);
 
     }
