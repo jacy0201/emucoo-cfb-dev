@@ -244,11 +244,13 @@ public class FormManageServiceImpl implements FormManageService {
                 formSubPbmHeaderMapper.insertList(subProblemHeads);
 
                 List<TFormSubPbm> subProblems = problem.getSubProblems();
+                int subscore = 0;
                 // 每个子检查项都会自动生成一个机会点
-                subProblems.forEach(subProblem -> {
+                for(TFormSubPbm subProblem : subProblems) {
                         subProblem.setFormProblemId(problem.getId());
                         subProblem.setCreateTime(DateUtil.currentDate());
                         subProblem.setCreateTime(DateUtil.currentDate());
+                        subscore += subProblem.getSubProblemScore();
                         formSubPbmMapper.insert(subProblem);
 
                         TOpportunity opportunity = new TOpportunity();
@@ -271,7 +273,10 @@ public class FormManageServiceImpl implements FormManageService {
                         formOppt.setCreateTime(DateUtil.currentDate());
                         formOppt.setModifyTime(DateUtil.currentDate());
                         formOpptMapper.insert(formOppt);
-                });
+                }
+                int cols = subProblemHeads==null?0:subProblemHeads.size();
+                problem.setScore(cols * subscore);
+                formPbmMapper.updateByPrimaryKey(problem);
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
                 if(problem.getOppts() != null && problem.getOppts().size() > 0) {
                     problem.getOppts().forEach(oppt -> {
