@@ -4,6 +4,8 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.MD5Util;
+import com.emucoo.dto.modules.sys.SysUserLogin;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserToken;
 import com.emucoo.service.sys.SysUserService;
@@ -12,6 +14,7 @@ import io.swagger.annotations.*;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,18 +35,29 @@ public class SysLoginController extends BaseResource {
 	 */
 	@PostMapping(value = "/sys/login")
 	@ApiOperation(value="用户登录")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="username",value="账号",required=true,paramType="query"),
-			@ApiImplicitParam(name="password",value="密码",required=true,paramType="query")
-	})
-	public ApiResult<SysUserToken> login(String username, String password){
+	public ApiResult<SysUserToken> login(@RequestBody SysUserLogin sysUserLogin){
 
-		//用户信息
-		SysUser sysUser=new SysUser();
-		sysUser.setUsername(username);
-		SysUser user = sysUserService.findOne(sysUser);
+		SysUser user=null;
+		//用户名
+		SysUser sysUser1=new SysUser();
+		sysUser1.setUsername(sysUserLogin.getUsername());
+		user = sysUserService.findOne(sysUser1);
+
+		//手机号
+		if(user==null){
+			SysUser sysUser2=new SysUser();
+			sysUser2.setMobile(sysUserLogin.getUsername());
+			user = sysUserService.findOne(sysUser2);
+		}
+		//邮箱
+		if(user==null){
+			SysUser sysUser3=new SysUser();
+			sysUser3.setEmail(sysUserLogin.getUsername());
+			user = sysUserService.findOne(sysUser3);
+		}
+
 		//账号不存在、密码错误
-		if(user == null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(password),user.getSalt()).toHex())) {
+		if(user==null || !user.getPassword().equalsIgnoreCase(new Sha256Hash(MD5Util.getMd5Hash(sysUserLogin.getPassword()),user.getSalt()).toHex())) {
 			return fail(ApiExecStatus.FAIL,"账号或密码不正确");
 		}
 
@@ -62,10 +76,9 @@ public class SysLoginController extends BaseResource {
 	 */
 	@PostMapping(value = "/sys/logout")
 	@ApiOperation(value="用户退出")
-	@ApiImplicitParam(name="id",value="用户id",dataType="long",required=true,paramType="query")
-	public ApiResult logout(Long id){
-		if(id==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空！");}
-		sysUserTokenService.expireToken(id);
+	public ApiResult logout(){
+		sysUserTokenService.expireToken(ShiroUtils.getUserId());
+		ShiroUtils.logout();
 		return success("success");
 	}
 

@@ -66,6 +66,12 @@ public class SysUserController extends BaseResource {
     @PostMapping("/save")
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
+        if(StringUtil.isNotEmpty(sysUser.getUsername())){
+            SysUser su=new SysUser();
+            su.setUsername(sysUser.getUsername());
+            su.setIsDel(false);
+           if(null!=sysUserService.findOne(su)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+        }
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
         sysUser.setIsDel(false);
