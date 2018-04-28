@@ -6,9 +6,9 @@ import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.dto.modules.report.GetOpptIn;
 import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
+import com.emucoo.dto.modules.report.GetReportListOut;
 import com.emucoo.dto.modules.report.GetReportOut;
 import com.emucoo.dto.modules.report.ReportVo;
-import com.emucoo.dto.modules.report.SaveReportIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -90,5 +90,12 @@ public class ReportController extends AppBaseController {
         GetOpptOut getOpptOut = reportService.findOpptInfoById(user, getOpptIn);
         return success(getOpptOut);
     }
+
+    /*@PostMapping("/getReportList")
+    public AppResult<List<GetReportListOut>> getReportList(@RequestBody ParamVo<GetReportIn> base) {
+        GetReportIn vo = base.getData();
+        List<GetReportListOut> reportList = tFrontPlanService.getReportList();
+        return success(reportList);
+    }*/
 
 }

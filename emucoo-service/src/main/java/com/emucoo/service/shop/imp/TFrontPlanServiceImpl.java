@@ -8,23 +8,5 @@ import java.util.List;
 
 @Service
 public class TFrontPlanServiceImpl implements TFrontPlanService {
-    @Override
-    public SaveReportOut saveReport(SaveReportIn vo) {
-        return null;
-    }
 
-    @Override
-    public ReportBaseInfoOut getReportBaseInfo(ReportBaseInfoIn vo) {
-        return null;
-    }
-
-    @Override
-    public GetReportOut getReportById(GetReportIn vo) {
-        return null;
-    }
-
-    @Override
-    public List<GetReportListOut> getReportList() {
-        return null;
-    }
 }
