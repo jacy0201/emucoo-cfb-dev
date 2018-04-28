@@ -16,4 +16,6 @@ public interface TFormPbmValMapper extends MyMapper<TFormPbmVal> {
     List<TFormPbmVal> findFormPbmValsByFormAndArrange(@Param("formId")Long checklistID, @Param("arrangeId")Long patrolShopArrangeID);
 
     List<TFormPbmVal> findFormPbmValsByFormAndArrangeList(@Param("formId")Long formId, @Param("arrangeIds")List<Long> arrangeIds);
+
+    void cleanByResultId(Long id);
 }

@@ -78,4 +78,8 @@
     <select id="findOpptsByPbmId" resultMap="BaseResultMap">
         select b.* from t_form_oppt a left join t_opportunity b on a.oppt_id=b.id where a.problem_id=#{id} and a.problem_type=1
     </select>
+
+    <delete id="cleanOpptsByResultId">
+        delete from t_opportunity where create_type=2 and id in (select distinct oppt_id from `t_form_oppt_value` where form_result_id=#{resultId});
+    </delete>
 </mapper>

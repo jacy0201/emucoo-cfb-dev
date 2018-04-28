@@ -10,4 +10,6 @@ public interface TFormOpptMapper extends MyMapper<TFormOppt> {
     List<Long> fetchOpptIdsByProblemIds(@Param("probIds") List<Long> probIds, @Param("problemType") Integer problemType);
 
     void dropByProblemIds(List<Long> probIds);
+
+    void cleanFormOpptRelationByResultId(Long id);
 }
