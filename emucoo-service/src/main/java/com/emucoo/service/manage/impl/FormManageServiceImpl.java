@@ -191,6 +191,7 @@ public class FormManageServiceImpl implements FormManageService {
         }
 
         List<TFormType> formModules = formMain.getFormModules();
+        formMain.setTotalScore(0);
         formModules.forEach(formModule -> {
             formModule.setFormMainId(formMain.getId());
             formModule.setCreateTime(DateUtil.currentDate());
@@ -198,6 +199,7 @@ public class FormManageServiceImpl implements FormManageService {
             formTypeMapper.insert(formModule);
 
             disassembleFormModule(formModule);
+            formMain.setTotalScore(formMain.getTotalScore().intValue() + formModule.getScore().intValue());
         });
     }
 
@@ -226,8 +228,10 @@ public class FormManageServiceImpl implements FormManageService {
 
 
     private void disassembleFormModule(TFormType formType) {
+        formType.setScore(0);
         List<TFormPbm> problems = formType.getProblems();
-        problems.forEach(problem -> {
+        int moduleScore = 0;
+        for(TFormPbm problem : problems) {
             problem.setFormTypeId(formType.getId());
             problem.setCreateTime(DateUtil.currentDate());
             problem.setModifyTime(DateUtil.currentDate());
@@ -290,7 +294,9 @@ public class FormManageServiceImpl implements FormManageService {
                     });
                 }
             }
-        });
+            moduleScore += problem.getScore();
+        };
+        formType.setScore(moduleScore);
     }
 
     public List<TFormMain> findFormList() {

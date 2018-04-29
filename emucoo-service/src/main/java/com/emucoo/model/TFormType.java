@@ -1,9 +1,10 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
 
 @Table(name = "t_form_type")
 public class TFormType extends BaseEntity {
@@ -25,6 +26,9 @@ public class TFormType extends BaseEntity {
 
     @Column(name = "form_main_id")
     private Long formMainId;
+
+    @Transient
+    private Integer score;
 
     @Transient
     private List<TFormPbm> problems;
@@ -109,5 +113,13 @@ public class TFormType extends BaseEntity {
 
     public void setProblems(List<TFormPbm> problems) {
         this.problems = problems;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 }
