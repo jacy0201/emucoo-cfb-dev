@@ -152,7 +152,7 @@
             t.loop_cycle_type taskRepeatType,
             t.loop_cycle_value taskRepeatValue,
             o.preinstall_score taskRank,
-            o.feedback_need_text feedbackText,
+            case when o.feedback_need_text=1 then 2 else 1 end feedbackText,
             o.feedback_img_type feedbackImg,
             o.feedback_num_type digitalItemType,
             o.feedback_num_name digitalItemName
