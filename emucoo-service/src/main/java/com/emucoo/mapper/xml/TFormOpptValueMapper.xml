@@ -80,7 +80,7 @@
         oppt_id,
         oppt_name
         FROM t_form_oppt_value
-        WHERE problem_type = 1 AND oppt_id = #{opptId} AND problem_value_id IN
+        WHERE problem_type = 1 AND oppt_id = #{opptId} AND is_pick = TRUE AND problem_value_id IN
         <foreach collection="pbmValueIds" separator="," item="item" open="(" close=")">
             #{item}
         </foreach>
@@ -96,7 +96,7 @@
         oppt_id,
         oppt_name
         FROM t_form_oppt_value
-        WHERE problem_type = 2 AND oppt_id = #{opptId} AND sub_problem_value_id IN
+        WHERE problem_type = 2 AND oppt_id = #{opptId} AND is_pick = TRUE AND sub_problem_value_id IN
         <foreach collection="subPbmValueIds" separator="," item="item" open="(" close=")">
             #{item}
         </foreach>

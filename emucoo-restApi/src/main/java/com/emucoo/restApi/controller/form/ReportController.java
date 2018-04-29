@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sj on 2018/4/24.
@@ -56,14 +58,16 @@ public class ReportController extends AppBaseController {
      * @return
      */
     @PostMapping(value = "saveReport")
-    public AppResult<Long> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
+    public AppResult<Map> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
         ReportVo reportIn = params.getData();
         checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(reportIn.getChecklistID(), "表单id不能为空！");
         checkParam(reportIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long reportId = reportService.saveReport(user, reportIn);
-        return success(reportId);
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("reportID", reportId);
+        return success(map);
     }
 
     /**

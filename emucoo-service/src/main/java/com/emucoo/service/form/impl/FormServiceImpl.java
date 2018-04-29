@@ -147,7 +147,7 @@ public class FormServiceImpl implements FormService {
                                 subProblemChanceVo.setChanceID(subPbm.getOpportunity().getId());
                                 subProblemChanceVo.setChanceName(subPbm.getOpportunity().getName());
 //                                TFormOpptValue opptVal = formOpptValueMapper.fetchOneSubPbmOpptValue(subPbmVal.getId(), subPbm.getId(), subPbmHeader.getId(), 2);
-                                subProblemChanceVo.setPick(false);
+                                subProblemChanceVo.setIsPick(false);
                                 subProblemChanceVos.add(subProblemChanceVo);
                             }
                         }
@@ -170,7 +170,7 @@ public class FormServiceImpl implements FormService {
                             FormChanceVo formChanceVo = new FormChanceVo();
                             formChanceVo.setChanceID(oppt.getId());
                             formChanceVo.setChanceName(oppt.getName());
-                            formChanceVo.setPick(false);
+                            formChanceVo.setIsPick(false);
                             formChanceVos.add(formChanceVo);
                         }
                     }
@@ -293,7 +293,7 @@ public class FormServiceImpl implements FormService {
                         formOpptValue.setCreateTime(DateUtil.currentDate());
                         formOpptValue.setModifyTime(DateUtil.currentDate());
                         formOpptValue.setFormResultId(formCheckResult.getId());
-                        formOpptValue.setIsPick(formChanceVo.isPick());
+                        formOpptValue.setIsPick(formChanceVo.getIsPick());
                         formOpptValue.setOpptId(formChanceVo.getChanceID());
                         formOpptValue.setOpptName(formChanceVo.getChanceName());
                         formOpptValue.setProblemId(problemVo.getProblemID());
@@ -341,7 +341,7 @@ public class FormServiceImpl implements FormService {
                         formOpptValue.setProblemId(problemVo.getProblemID());
                         formOpptValue.setOpptName(fcv.getChanceName());
                         formOpptValue.setOpptId(opportunity.getId());
-                        formOpptValue.setIsPick(fcv.isPick());
+                        formOpptValue.setIsPick(fcv.getIsPick());
                         formOpptValue.setFormResultId(formCheckResult.getId());
                         formOpptValue.setCreateTime(DateUtil.currentDate());
                         formOpptValue.setModifyTime(DateUtil.currentDate());
@@ -372,7 +372,7 @@ public class FormServiceImpl implements FormService {
                                 formOpptValue.setCreateTime(DateUtil.currentDate());
                                 formOpptValue.setModifyTime(DateUtil.currentDate());
                                 formOpptValue.setFormResultId(formCheckResult.getId());
-                                formOpptValue.setIsPick(subChanceVo.isPick());
+                                formOpptValue.setIsPick(subChanceVo.getIsPick());
                                 formOpptValue.setOpptId(subChanceVo.getChanceID());
                                 formOpptValue.setOpptName(subChanceVo.getChanceName());
                                 formOpptValue.setProblemId(problemVo.getProblemID());

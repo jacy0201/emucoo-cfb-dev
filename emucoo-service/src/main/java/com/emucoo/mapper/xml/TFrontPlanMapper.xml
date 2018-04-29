@@ -80,7 +80,7 @@
       actual_remind_time = #{actualRemindTime},
       remark = #{remark},
       arranger_id = #{arrangerId},
-      arrangee_id = #{arrangeeId},
+      notice_user_id = #{noticeUserId},
       modify_user_id = #{modifyUserId},
       modify_time = #{modifyTime}
     WHERE id = #{id}

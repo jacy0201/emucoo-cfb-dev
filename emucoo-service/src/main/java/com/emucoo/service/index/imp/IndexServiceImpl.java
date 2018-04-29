@@ -136,7 +136,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 			List<TReport> reports = reportMapper.findReportByUser(currUserId);
 			for (TReport report : reports) {
 				ReportItemVo reportItemVo = new ReportItemVo();
-				reportItemVo.setRead(report.getReportUser().getIsRead());
+				reportItemVo.setIsRead(report.getReportUser().getIsRead());
 				reportItemVo.setReportTitle(report.getShopName() + "评估表");
 				reportItemVo.setReporterName(report.getReporterName());
 				reportItemVo.setReportID(report.getId());
