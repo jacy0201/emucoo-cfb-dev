@@ -280,7 +280,9 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         odw.setAuditUserId(user.getId());
         odw.setAuditContent(auditIn.getReviewOpinion());
         odw.setAuditResult(auditIn.getReviewResult());
-        odw.setAuditImgIds(StringUtils.join(imgs, ","));
+        if(imgs.size() > 0) {
+            odw.setAuditImgIds(StringUtils.join(imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList()), ","));
+        };
         operateDataForWorkMapper.updateByPrimaryKey(odw);
     }
 
