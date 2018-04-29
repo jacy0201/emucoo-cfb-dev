@@ -129,31 +129,17 @@ public class FormManageServiceImpl implements FormManageService {
             List<TFormPbm> formPbms = formPbmMapper.findFormPbmsByFormTypeId(formType.getId());
             for(TFormPbm formPbm : formPbms) {
                 if(formPbm.getProblemSchemaType() == 2) {
-                    List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
+                    List<TFormSubPbm> subPbms = formSubPbmMapper.findSubPbmsByPbmId(formPbm.getId());
                     formPbm.setSubProblems(subPbms);
                     List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
                     subPbmHeaders.forEach(header -> header.setSubProblems(subPbms));
                     formPbm.setSubProblemHeads(subPbmHeaders);
                 } else {
                     // 有些机会点是app创建的，所以不能在配置表单的时候返回给管理界面
-                    if(formPbm.getOppts() != null && formPbm.getOppts().size() > 0) {
-                        Iterator<TOpportunity> it = formPbm.getOppts().iterator();
-                        while (it.hasNext()) {
-                            TOpportunity oppt = it.next();
-                            if (oppt.getCreateType() != 1) {
-                                it.remove();
-                            }
-                        }
-                    }
+                    List<TOpportunity> opptsOfPbm = opportunityMapper.findOpptsByPbmId(formPbm.getId());
+                    formPbm.setOppts(opptsOfPbm);
                 }
             }
-            formPbms.stream().filter(pbm -> pbm.getProblemSchemaType() == 2).forEach(formPbm -> {
-                List<TFormSubPbm> subPbms = formSubPbmMapper.findFormSubPbmsByFormPbmId(formPbm.getId());
-                formPbm.setSubProblems(subPbms);
-                List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
-                subPbmHeaders.forEach(header -> header.setSubProblems(subPbms));
-                formPbm.setSubProblemHeads(subPbmHeaders);
-            });
             formType.setProblems(formPbms);
         });
         return formTypes;
