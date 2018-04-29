@@ -1,21 +1,18 @@
 package com.emucoo.service.task.imp;
 
-import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.dto.modules.task.TaskImproveSubmitIn.ImgUrl;
 import com.emucoo.dto.modules.task.TaskImproveVo.CCPerson;
 import com.emucoo.dto.modules.task.TaskImproveVo.Executor;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
-import com.emucoo.service.task.*;
+import com.emucoo.service.task.TaskImproveService;
 import com.emucoo.utils.*;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.weaver.patterns.ThisOrTargetPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -315,7 +312,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         String ccps = statement.getCcPersonNames();
         if(StringUtils.isNotBlank(ccps)) {
             List<String> userNames = Arrays.asList(ccps.split(",")).stream().map(uid -> {
-                SysUser usr = userMapper.selectByPrimaryKey(uid);
+                SysUser usr = userMapper.selectByPrimaryKey(Long.valueOf(uid));
                 return usr.getRealName();
             }).collect(Collectors.toList());
             statement.setCcPersonNames(StringUtils.join(userNames, ","));
