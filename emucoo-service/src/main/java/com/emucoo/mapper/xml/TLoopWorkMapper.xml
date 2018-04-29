@@ -161,7 +161,7 @@
             left join t_opportunity e on t.oppt_id = e.id
             Left join t_operate_option o on t.id = o.task_id
             LEFT JOIN t_front_plan k on k.id = t.front_plan_id
-            LEFT JOIN sys_dept m on m.id = k.org_id;
+            LEFT JOIN sys_dept m on m.id = k.org_id
         where s.id=#{loopWorkId}
     </select>
 
