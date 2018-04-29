@@ -594,6 +594,7 @@ public class ReportServiceImpl implements ReportService {
         reportVo.setRealTotal(result.getActualTotal());
         reportVo.setRealScore(result.getScore());
         reportVo.setScoreSummaryImg(result.getSummaryImg());
+        reportVo.setSummary(result.getSummary());
         // 获取额外项
         List<AdditionItemVo> additionItemVos = new ArrayList<>();
         Example formAddItemValExp = new Example(TFormAddItemValue.class);
