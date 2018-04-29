@@ -262,16 +262,19 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWorkMapper.updateByPrimaryKey(loopWork);
 
         List<TFile> imgs = new ArrayList<>();
-        auditIn.getReviewImgArr().forEach(imageUrl -> {
-            TFile img = new TFile();
-            img.setImgUrl(imageUrl.getImgUrl());
-            img.setCreateUserId(user.getId());
-            img.setCreateTime(DateUtil.currentDate());
-            img.setModifyUserId(user.getId());
-            img.setModifyTime(DateUtil.currentDate());
-            imgs.add(img);
-        });
-        fileMapper.insertList(imgs);
+        List<ImageUrl> imageUrls = auditIn.getReviewImgArr();
+        if(imageUrls != null && imageUrls.size() > 0) {
+            imageUrls.forEach(imageUrl -> {
+                TFile img = new TFile();
+                img.setImgUrl(imageUrl.getImgUrl());
+                img.setCreateUserId(user.getId());
+                img.setCreateTime(DateUtil.currentDate());
+                img.setModifyUserId(user.getId());
+                img.setModifyTime(DateUtil.currentDate());
+                imgs.add(img);
+            });
+            fileMapper.insertList(imgs);
+        }
 
         TOperateDataForWork odw = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
         odw.setAuditUserId(user.getId());
