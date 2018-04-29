@@ -261,6 +261,8 @@ public class FormServiceImpl implements FormService {
             formValue.setFrontPlanId(frontPlanId);
             formValue.setIsDone(module.getIsDone());
             formValue.setModifyTime(DateUtil.currentDate());
+            score += module.getRealScore();
+            total += module.getRealTotal();
             formValue.setScore(module.getRealScore());
             formValue.setTotal(module.getRealTotal());
             formValue.setScoreRate(module.getScoreRate());
@@ -282,8 +284,6 @@ public class FormServiceImpl implements FormService {
                 formPbmVal.setScore(problemVo.getProblemScore());
 
                 formPbmValMapper.insert(formPbmVal);
-                score += problemVo.getProblemScore();
-                total += problemVo.getProblemTotal();
 
                 List<FormChanceVo> chanceVos = problemVo.getChanceArray();
                 if(chanceVos != null && chanceVos.size()>0) {
