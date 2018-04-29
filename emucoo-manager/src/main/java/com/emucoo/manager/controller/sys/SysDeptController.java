@@ -189,11 +189,11 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="选择人员")
 	@PostMapping("/listUser")
 	//@RequiresPermissions("sys:user:listUser")
-	@ApiImplicitParams({
+	/*@ApiImplicitParams({
 			@ApiImplicitParam(name="dptId",value="部门id",dataType="long",required=true,paramType="query"),
 			@ApiImplicitParam(name="realName",value="姓名",dataType="string",required=false,paramType="query"),
 			@ApiImplicitParam(name="postId",value="岗位id",dataType="long",required=false,paramType="query")
-	})
+	})*/
 	public ApiResult<List<SysUser>> listUser(@RequestBody ParamVo<UserQuery> param) {
 		UserQuery userQuery=param.getData();
 		Long deptId=userQuery.getDptId();
