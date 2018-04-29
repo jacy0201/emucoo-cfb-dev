@@ -209,8 +209,9 @@ public class SysDeptController extends BaseResource {
 			list= sysUserService.listByPostId(map);
 		}else{
 			Example example=new Example(SysUser.class);
-			example.createCriteria().andEqualTo("dptId",deptId);
-			if(StringUtil.isNotEmpty(realName)){ example.createCriteria().andLike("realName","%"+realName+"%"); }
+			Example.Criteria criteria=example.createCriteria();
+			criteria.andEqualTo("dptId",deptId);
+			if(StringUtil.isNotEmpty(realName)){ criteria.andLike("realName","%"+realName+"%"); }
 			list=sysUserService.selectByExample(example);
 		}
 		return success(list);
