@@ -139,7 +139,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 	@Transactional(rollbackFor = Exception.class)
 	public  void saveDept(SysDept sysDept){
 		sysDept.setIsDel(false);
-		sysDept.setIsUse(true);
+		sysDept.setIsUse(false);
 		sysDept.setCreateTime(new Date());
 		sysDept.setCreateUserId(1L);
 		//一级机构的 父ID为0

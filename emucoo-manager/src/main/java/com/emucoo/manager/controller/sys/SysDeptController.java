@@ -87,7 +87,7 @@ public class SysDeptController extends BaseResource {
 	// @RequiresPermissions("sys:dept:modifyUse")
 	public ApiResult modifyUse(@RequestBody SysDept dept){
 		if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
-		sysDeptService.updateDept(dept);
+		sysDeptService.updateSelective(dept);
 		return success("success");
 	}
 
