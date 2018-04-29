@@ -19,7 +19,7 @@
         <result column="file_date" property="fileDate" jdbcType="DATE"/>
     </resultMap>
 
-    <select id="fetchFileByIds" resultMap="BaseResultMap">
+    <select id="fetchFilesByIds" resultMap="BaseResultMap">
         select * from t_file
         where id in
         <foreach collection="list" item="id" open="(" close=")" separator=",">
