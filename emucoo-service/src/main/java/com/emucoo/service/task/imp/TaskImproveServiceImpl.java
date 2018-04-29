@@ -337,8 +337,10 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         if (odw != null) {
             review.setAuditorID(odw.getAuditUserId());
             SysUser u = userMapper.selectByPrimaryKey(odw.getAuditUserId());
-            review.setAuditorName(u.getRealName());
-            review.setAuditorHeadUrl(u.getHeadImgUrl());
+            if(u != null) {
+                review.setAuditorName(u.getRealName());
+                review.setAuditorHeadUrl(u.getHeadImgUrl());
+            }
             review.setReviewID(odw.getId());
             review.setReviewResult(odw.getAuditResult());
             review.setReviewOpinion(odw.getAuditContent());
