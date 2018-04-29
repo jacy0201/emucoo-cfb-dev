@@ -82,6 +82,10 @@ public class FormServiceImpl implements FormService {
         if(formMain == null || shopInfo == null) {
             return null;
         }
+        if(!formMain.getIsUse() || formMain.getIsDel()) {
+            return null;
+        }
+
         TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
         formOut.setFormId(formMain.getId());
         formOut.setFormName(formMain.getName());
