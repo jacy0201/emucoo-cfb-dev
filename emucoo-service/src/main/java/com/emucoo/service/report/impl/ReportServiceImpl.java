@@ -1,6 +1,7 @@
 package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.report.AdditionItemVo;
 import com.emucoo.dto.modules.report.ChancePointVo;
 import com.emucoo.dto.modules.report.ChecklistKindScoreVo;
@@ -185,7 +186,6 @@ public class ReportServiceImpl implements ReportService {
                         break;
                     }
                 }
-
             }
         }
 
@@ -267,10 +267,10 @@ public class ReportServiceImpl implements ReportService {
                     TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
                     StringBuilder pbmCascadingRelation = new StringBuilder();
                     if (subPbmValForThisOppt == null) {
-                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("-").append(pbmValForThisOppt.getProblemName());
+                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
                     } else {
-                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("-").append(pbmValForThisOppt.getProblemName())
-                                .append("-").append(subPbmValForThisOppt.getSubProblemName());
+                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName())
+                                .append("#").append(subPbmValForThisOppt.getSubProblemName());
                     }
                     chancePointVo.setChanceContent(pbmCascadingRelation.toString());
                     TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
@@ -307,7 +307,7 @@ public class ReportServiceImpl implements ReportService {
         int lastScore = Math.round(fLastScore);
         reportOut.setRealTotal(realTotal);
         reportOut.setRealScore(lastScore);
-        float totalScoreRate = lastScore / realTotal * 100;
+        float totalScoreRate = (float)lastScore / realTotal;
         // 计分项规则
         Example formScoreExp = new Example(TFormScoreItem.class);
         formScoreExp.createCriteria().andEqualTo("formMainId", reportIn.getChecklistID());
@@ -317,7 +317,7 @@ public class ReportServiceImpl implements ReportService {
             String summaryImgUrl = "";
             hasHit = false;
             for (TFormScoreItem tFormScoreItem : tFormScoreItems) {
-                if (totalScoreRate > tFormScoreItem.getScoreBegin()) {
+                if (totalScoreRate * 100 > tFormScoreItem.getScoreBegin()) {
                     summaryImgUrl = tFormScoreItem.getName();
                     hasHit = true;
                     break;
@@ -337,6 +337,7 @@ public class ReportServiceImpl implements ReportService {
         for(TFormValue tFormValue : formTypeValues) {
             ChecklistKindScoreVo checklistKindScoreVo = new ChecklistKindScoreVo();
             checklistKindScoreVo.setRealScore(tFormValue.getScore());
+            checklistKindScoreVo.setRealTotal(tFormValue.getTotal());
             checklistKindScoreVo.setScoreRate(tFormValue.getScoreRate());
             checklistKindScoreVo.setKindID(tFormValue.getFromTypeId());
             checklistKindScoreVo.setKindName(tFormValue.getFormTypeName());
@@ -369,6 +370,9 @@ public class ReportServiceImpl implements ReportService {
             List<Long> formAllPbmValueIds = new ArrayList<>();
             for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
                 formAllPbmValueIds.add(tFormPbmVal.getId());
+            }
+            if(CollectionUtils.isEmpty(formAllPbmValueIds)) {
+                return null;
             }
             Example subPbmValExp = new Example(TFormSubPbmVal.class);
             subPbmValExp.createCriteria().andIn("problemValueId", formAllPbmValueIds);
@@ -452,15 +456,17 @@ public class ReportServiceImpl implements ReportService {
                 throw new ApiException("打表结果不存在！");
             }
             List<TFormAddItemValue> tFormAddItemValues = new ArrayList<>();
-            for (AdditionItemVo additionItemVo : reportIn.getAdditionArray()) {
-                TFormAddItemValue formAddItemValue = new TFormAddItemValue();
-                formAddItemValue.setId(additionItemVo.getItemID());
-                formAddItemValue.setValue(additionItemVo.getValue());
-                formAddItemValue.setFormAdditionItemName(additionItemVo.getName());
-                tFormAddItemValues.add(formAddItemValue);
+            if(CollectionUtils.isNotEmpty(reportIn.getAdditionArray())) {
+                for (AdditionItemVo additionItemVo : reportIn.getAdditionArray()) {
+                    TFormAddItemValue formAddItemValue = new TFormAddItemValue();
+                    formAddItemValue.setId(additionItemVo.getItemID());
+                    formAddItemValue.setValue(additionItemVo.getValue());
+                    formAddItemValue.setFormAdditionItemName(additionItemVo.getName());
+                    tFormAddItemValues.add(formAddItemValue);
+                }
+                // 添加额外项值
+                tFormAddItemValueMapper.addAdditionItemList(tFormAddItemValues, new Date(), result.getId());
             }
-            // 添加额外项值
-            tFormAddItemValueMapper.addAdditionItemList(tFormAddItemValues, new Date(), result.getId());
 
             // 保存报告
             TReport report = new TReport();
@@ -508,11 +514,13 @@ public class ReportServiceImpl implements ReportService {
 
             // 查询报告抄送部门
             TFormMain form = tFormMainMapper.selectByPrimaryKey(reportIn.getChecklistID());
-            String[] ccDptId = form.getCcDptIds().split(",");
-            Example dptUserExp = new Example(SysUser.class);
-            dptUserExp.createCriteria().andIn("dptId", Arrays.asList(ccDptId)).andEqualTo("status", 0).andEqualTo("isDel", false);
-            List<SysUser> ccUsers = sysUserMapper.selectByExample(dptUserExp);
-            tReportUserMapper.addReportToUser(ccUsers, report.getId());
+            if(StringUtils.isNotBlank(form.getCcDptIds())) {
+                String[] ccDptId = form.getCcDptIds().split(",");
+                Example dptUserExp = new Example(SysUser.class);
+                dptUserExp.createCriteria().andIn("dptId", Arrays.asList(ccDptId)).andEqualTo("status", 0).andEqualTo("isDel", false);
+                List<SysUser> ccUsers = sysUserMapper.selectByExample(dptUserExp);
+                tReportUserMapper.addReportToUser(ccUsers, report.getId());
+            }
 
             // 整理关联的机会点，并存入报告与机会点关联表
             List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptsByResultId(result.getId());
@@ -523,7 +531,9 @@ public class ReportServiceImpl implements ReportService {
                 tReportOppt.setOpptName(tFormOpptValue.getOpptName());
                 tReportOppts.add(tReportOppt);
             }
-            tReportOpptMapper.addReportOpptRelation(tReportOppts, report.getId(), new Date());
+            if(CollectionUtils.isNotEmpty(tReportOppts)) {
+                tReportOpptMapper.addReportOpptRelation(tReportOppts, report.getId(), new Date());
+            }
 
             // 更新安排与表单完成状态
             tFrontPlanFormMapper.updateStatusByFormAndArrange(1, reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID(), report.getId());
@@ -535,6 +545,7 @@ public class ReportServiceImpl implements ReportService {
             List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(tPlanFormExp);
             if(CollectionUtils.isEmpty(tFrontPlanForms)) {
                 tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID());
+
             }
             return report.getId();
 
@@ -640,10 +651,10 @@ public class ReportServiceImpl implements ReportService {
             TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
             StringBuilder pbmCascadingRelation = new StringBuilder();
             if (subPbmValForThisOppt == null) {
-                pbmCascadingRelation.append(formValue.getFormTypeName()).append("-").append(pbmValForThisOppt.getProblemName());
+                pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
             } else {
-                pbmCascadingRelation.append(formValue.getFormTypeName()).append("-").append(pbmValForThisOppt.getProblemName())
-                        .append("-").append(subPbmValForThisOppt.getSubProblemName());
+                pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName())
+                        .append("#").append(subPbmValForThisOppt.getSubProblemName());
             }
             chancePointVo.setChanceContent(pbmCascadingRelation.toString());
             TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
@@ -660,6 +671,7 @@ public class ReportServiceImpl implements ReportService {
         List<ChecklistKindScoreVo> checklistKindScoreVos = new ArrayList<>();
         for (TFormValue tFormValue : formTypeValues) {
             ChecklistKindScoreVo checklistKindScoreVo = new ChecklistKindScoreVo();
+            checklistKindScoreVo.setRealTotal(tFormValue.getTotal());
             checklistKindScoreVo.setRealScore(tFormValue.getScore());
             checklistKindScoreVo.setScoreRate(tFormValue.getScoreRate());
             checklistKindScoreVo.setKindID(tFormValue.getFromTypeId());

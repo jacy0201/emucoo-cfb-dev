@@ -7,12 +7,12 @@ import lombok.Data;
  */
 @Data
 public class ReportItemVo {
-    private long reportID;
-    private boolean isRead;
+    private Long reportID;
+    private Boolean isRead;
     private String reportTitle;
     private String reporterHeadUrl;
     private String reporterName;
-    private int reportSourceType;
+    private Integer reportSourceType;
     private String reportSourceName;
-    private long reportTime;
+    private Long reportTime;
 }

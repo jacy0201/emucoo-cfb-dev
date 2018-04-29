@@ -108,6 +108,9 @@ public class TFrontPlan extends BaseEntity {
     @Column(name = "arrangee_id")
     private Long arrangeeId;
 
+    @Column(name = "notice_user_id")
+    private String noticeUserId;
+
     /**
      * 数据创建人ID
      */
@@ -472,5 +475,13 @@ public class TFrontPlan extends BaseEntity {
      */
     public void setOrgId(Long orgId) {
         this.orgId = orgId;
+    }
+
+    public String getNoticeUserId() {
+        return noticeUserId;
+    }
+
+    public void setNoticeUserId(String noticeUserId) {
+        this.noticeUserId = noticeUserId;
     }
 }

@@ -20,6 +20,7 @@ import com.emucoo.model.TRemind;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.shop.PlanArrangeService;
 import com.emucoo.utils.TimeTaskUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,13 +97,23 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 tFrontPlan.setModifyUserId(user.getId());
                 tFrontPlan.setArrangerId(user.getId());
                 // 根据店铺id查询负责人
-                //Example example = new Example(SysUserShop.class);
-                //example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel",false);
-                SysUserShop sysUserShopExp = new SysUserShop();
+                Example example = new Example(SysUserShop.class);
+                example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel",false);
+              /*  SysUserShop sysUserShopExp = new SysUserShop();
                 sysUserShopExp.setIsDel(false);
                 sysUserShopExp.setShopId(shop.getShopID());
-                SysUserShop userShop = sysUserShopMapper.selectOne(sysUserShopExp);
-                tFrontPlan.setArrangeeId(userShop.getUserId());
+                tFrontPlan.setArrangeeId(userShop.getUserId());*/
+
+                List<SysUserShop> userShops = sysUserShopMapper.selectByExample(example);
+                String userIds = "";
+                for (SysUserShop userShop : userShops) {
+                    userIds += userShop.getUserId() + ",";
+                }
+                if(StringUtils.isNotBlank(userIds)) {
+                    userIds = userIds.substring(0, userIds.length() - 1);
+                }
+                tFrontPlan.setNoticeUserId(userIds);
+
                 // 更新巡店安排
                 tFrontPlanMapper.updateFrontPlan(tFrontPlan);
                 // 更新巡店安排和表单对应关系表
@@ -110,8 +121,8 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
             }
 
         } catch (Exception e) {
-            logger.error("创建巡店计划失败！", e);
-            throw new ApiException("创建巡店计划失败");
+            logger.error("创建巡店安排失败！", e);
+            throw new ApiException("创建巡店安排失败");
         }
 
     }

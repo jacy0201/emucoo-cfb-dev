@@ -9,5 +9,7 @@ import lombok.Data;
 public class FormChanceVo {
     private Long chanceID;
     private String chanceName;
-    private boolean isPick;
+    private Boolean isPick;
+
+
 }
