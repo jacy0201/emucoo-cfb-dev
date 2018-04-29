@@ -56,7 +56,7 @@
         reportUser.user_id,
         user.head_img_url
         FROM t_report report
-        LEFT JOIN t_report_user reportUser ON reportUser.report_id = report.id
+        INNER JOIN t_report_user reportUser ON reportUser.report_id = report.id
         AND reportUser.user_id = #{userId}
         INNER JOIN sys_user user ON user.id = report.reporter_id
         ORDER BY reportUser.is_read ASC, report.create_time DESC
