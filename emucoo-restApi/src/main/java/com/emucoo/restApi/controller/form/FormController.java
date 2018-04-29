@@ -6,15 +6,11 @@ import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by sj on 2018/4/24.
@@ -33,8 +29,10 @@ public class FormController extends AppBaseController {
         checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(formIn.getChecklistID(), "表单id不能为空！");
         checkParam(formIn.getShopID(), "店铺id不能为空！");
-        FormOut formOut = formService.checkoutFormInfo(user, formIn);
 
+        FormOut formOut = formService.checkoutFormInfo(user, formIn);
+        if(formOut == null)
+            return fail(AppExecStatus.FAIL, "表单不存在或者未启用！");
         return success(formOut);
     }
 
