@@ -22,6 +22,36 @@ public class SysUserRelation extends BaseEntity {
     @Column(name = "child_user_id")
     private Long childUserId;
 
+    /**
+     * child_user_id 的 postId
+     */
+    @Column(name = "child_post_id")
+    private Long childPostId;
+
+
+    public Long getChildPostId() {
+        return childPostId;
+    }
+
+    public void setChildPostId(Long childPostId) {
+        this.childPostId = childPostId;
+    }
+
+    public String getChildPostName() {
+        return childPostName;
+    }
+
+    public void setChildPostName(String childPostName) {
+        this.childPostName = childPostName;
+    }
+
+    /**
+     * 下级用户岗位
+     */
+
+    @Transient
+    private String childPostName;
+
     @Transient
     private String childUserName;
 
