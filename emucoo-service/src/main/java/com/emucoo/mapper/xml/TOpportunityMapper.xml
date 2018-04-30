@@ -27,7 +27,7 @@
     <select id="findChancePointsByName" resultMap="BaseResultMap">
         select * from t_opportunity
         <where>
-            is_del != 1
+            is_del != 1 and create_type = 1
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%', #{keyword}, '%')
             </if>
@@ -38,7 +38,7 @@
     <select id="countChancePointsByName" resultType="java.lang.Integer">
         select count(1) from t_opportunity
         <where>
-            is_del = 0 or is_del is null
+            is_del != 1 and create_type = 1
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%',#{keyword}, '%')
             </if>
@@ -82,4 +82,8 @@
     <delete id="cleanOpptsByResultId">
         delete from t_opportunity where create_type=2 and id in (select distinct oppt_id from `t_form_oppt_value` where form_result_id=#{resultId});
     </delete>
+
+    <select id="judgeExistsByName">
+        select count(1) from t_opportunity where create_type=1 and name=#{name} 
+    </select>
 </mapper>

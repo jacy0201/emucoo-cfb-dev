@@ -110,4 +110,11 @@ public class ChancePointServiceImpl implements ChancePointService {
         return out;
 
     }
+
+    @Override
+    public boolean judgeExisted(TOpportunity opportunity) {
+        if(opportunityMapper.judgeExistsByName(opportunity.getName()) > 0)
+            return true;
+        return false;
+    }
 }
