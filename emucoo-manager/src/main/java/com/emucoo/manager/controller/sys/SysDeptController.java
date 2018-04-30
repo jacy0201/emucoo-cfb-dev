@@ -14,8 +14,6 @@ import com.emucoo.service.sys.SysDeptService;
 import com.emucoo.service.sys.SysUserRelationService;
 import com.emucoo.service.sys.SysUserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -136,6 +134,7 @@ public class SysDeptController extends BaseResource {
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
 		if(sysUserRelation.getChildUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childUserId 不能为空!");}
 		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
+		if(sysUserRelation.getChildPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childPostId 不能为空!");}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(1L);
