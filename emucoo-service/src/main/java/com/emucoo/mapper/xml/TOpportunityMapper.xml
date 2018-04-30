@@ -27,7 +27,7 @@
     <select id="findChancePointsByName" resultMap="BaseResultMap">
         select * from t_opportunity
         <where>
-            is_del = 0 or is_del is null
+            is_del != 1
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%', #{keyword}, '%')
             </if>
