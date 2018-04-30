@@ -357,7 +357,7 @@ public class ReportServiceImpl implements ReportService {
      */
     private List<TFormOpptValue> opptListInShopAndForm(Long shopId, Long formId, Long opptId) {
         // 根据店铺查询巡店安排
-        Example arrangeExp = new Example(TFrontPlan.class);
+        /*Example arrangeExp = new Example(TFrontPlan.class);
         arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
         List<TFrontPlan> tFrontPlans = tFrontPlanMapper.selectByExample(arrangeExp);
         if(tFrontPlans.size() > 0) {
@@ -382,10 +382,37 @@ public class ReportServiceImpl implements ReportService {
                 formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
             }
             List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIdsAndOppt(formAllPbmValueIds, formAllSubPbmValueIds, opptId);
-            return tFormOpptValues;
-        } else {
+            return  tFormOpptValues;
+            } else {
+            return null;
+            }
+            */
+
+
+        Example arrangeExp = new Example(TFrontPlan.class);
+        arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
+        List<TFrontPlan> tFrontPlans = tFrontPlanMapper.selectByExample(arrangeExp);
+        if(CollectionUtils.isEmpty(tFrontPlans)) {
             return null;
         }
+        List<Long> arrangeIds = new ArrayList<>();
+        for(TFrontPlan frontPlan : tFrontPlans) {
+            arrangeIds.add(frontPlan.getId());
+        }
+        Example resultExp = new Example(TFormCheckResult.class);
+        resultExp.createCriteria().andEqualTo("formMainId", formId).andIn("frontPlanId", arrangeIds);
+        List<TFormCheckResult> results = tFormCheckResultMapper.selectByExample(resultExp);
+        if(CollectionUtils.isEmpty(results)) {
+            return null;
+        }
+        List<Long> resultIds = new ArrayList<>();
+        for(TFormCheckResult result : results) {
+            resultIds.add(result.getId());
+        }
+        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId);
+
+        return tFormOpptValues;
+
     }
 
     @Transactional
@@ -629,7 +656,7 @@ public class ReportServiceImpl implements ReportService {
         List<ChancePointVo> chancePointVos = new ArrayList<>();
         for (TReportOppt tReportOppt : tReportOppts) {
             ChancePointVo chancePointVo = new ChancePointVo();
-            chancePointVo.setChancePointID(tReportOppt.getId());
+            chancePointVo.setChancePointID(tReportOppt.getOpptId());
             chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
             // 计算该机会点使用情况
             List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
@@ -695,32 +722,38 @@ public class ReportServiceImpl implements ReportService {
     private List<ReportWorkVo> findImproveByOppt(Long opptId, Long reportId) {
 
         List<TLoopWork> works = tLoopWorkMapper.findImproveTaskList(opptId, reportId);
+        //List<TTask> tasks = tTaskMapper.findImproveTaskList(opptId, reportId);
         if(CollectionUtils.isEmpty(works)) {
             return null;
         }
         List<ReportWorkVo> reportWorkVos = new ArrayList<>();
-        int doneNum = 0;
-        int passNum = 0;
+
         for(TLoopWork work : works) {
+            int doneNum = 0;
+            int passNum = 0;
+            int allNum = 0;
             ReportWorkVo reportWork = new ReportWorkVo();
             reportWork.setExecutorID(work.getExcuteUserId());
             reportWork.setExecutorName(work.getExcuteUserName());
             reportWork.setExecutorHeadImgUrl(work.getExecuteUserHeadImgUrl());
             reportWork.setTaskTitle(work.getTask().getName());
             reportWork.setWorkType(work.getType());
-            reportWork.setAllNum(works.size());
-            if(work.getWorkStatus() != null) {
-                doneNum++;
-                if(work.getWorkResult().equals(1)) {
-                    passNum++;
+            List<TLoopWork> userWorks = tLoopWorkMapper.findImproveTaskListByUser(opptId, reportId, work.getExcuteUserId());
+            for(TLoopWork userwork : userWorks) {
+                if (userwork.getWorkStatus() != null && userwork.getWorkStatus().equals(2)) {
+                    doneNum++;
+                    if (userwork.getWorkResult() != null && userwork.getWorkResult().equals(1)) {
+                        passNum++;
+                    }
                 }
+                allNum++;
             }
+            reportWork.setAllNum(allNum);
+            reportWork.setDoneNum(doneNum);
+            float passRate = (float) passNum / allNum;
+            reportWork.setPassRate(passRate);
+
             reportWorkVos.add(reportWork);
-        }
-        float passRate = (float)passNum / works.size();
-        for(ReportWorkVo workVo : reportWorkVos) {
-            workVo.setDoneNum(doneNum);
-            workVo.setPassRate(Math.round(passRate));
         }
 
         return reportWorkVos;

@@ -34,6 +34,7 @@ import com.emucoo.model.TPlanFormRelation;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.plan.PlanService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -296,6 +297,9 @@ public class PlanServiceImpl implements PlanService {
         try {
             // 查询部门
             SysDept dept = sysDeptMapper.selectByPrimaryKey(user.getDptId());
+            if(dept == null) {
+                throw new BaseException("用户数据异常！");
+            }
             planProgressOut.setDepartmentID(dept.getId());
             planProgressOut.setDepartmentName(dept.getDptName());
             //查询品牌
@@ -304,8 +308,13 @@ public class PlanServiceImpl implements PlanService {
             for(TBrandInfo brandInfo : brandInfos) {
                 brandName += brandInfo.getBrandName() + ",";
             }
-            brandName = brandName.substring(0, brandName.length() - 1);
-            planProgressOut.setBrandName(brandName);
+            if(StringUtils.isNotBlank(brandName)) {
+                brandName = brandName.substring(0, brandName.length() - 1);
+                planProgressOut.setBrandName(brandName);
+            } else {
+                return null;
+            }
+
 
             //计算进度
             Calendar calendar = Calendar.getInstance();

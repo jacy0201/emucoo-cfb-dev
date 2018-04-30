@@ -42,5 +42,9 @@
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
     <result column="report_id" property="reportId" jdbcType="BIGINT" />
     <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
+    <collection property="workList" ofType="com.emucoo.model.TLoopWork" javaType="ArrayList">
+      <id column="id" property="id" jdbcType="BIGINT"/>
+    </collection>
   </resultMap>
+
 </mapper>

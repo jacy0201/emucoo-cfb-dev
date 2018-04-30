@@ -12,7 +12,7 @@ public class ReportWorkVo {
     private String executorHeadImgUrl;
     private Long executorID;
     private String executorName;
-    private Integer passRate;
+    private Float passRate;
     private String taskTitle;
     private String workID;
     private Integer workType;
