@@ -84,6 +84,6 @@
     </delete>
 
     <select id="judgeExistsByName">
-        select count(1) from t_opportunity where create_type=1 and name=#{name} 
+        select count(1) from t_opportunity where create_type=1 and name=#{name}
     </select>
 </mapper>

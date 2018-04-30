@@ -208,12 +208,12 @@ public class FormServiceImpl implements FormService {
         List<TFormCheckResult> results = formCheckResultMapper.selectByExample(example);
         if(results != null && results.size() > 0) {
             results.forEach(result -> {
-                // 要先删除关系，再删除机会点
+                // 要先删除关系，再删除机会点，这里删的是模版里的关系和机会点数据，因为是app创建的，所以每次打表保存都要删。
                 formOpptMapper.cleanFormOpptRelationByResultId(result.getId());
                 opportunityMapper.cleanOpptsByResultId(result.getId());
 
+                // 这里删除的是value表里的数据，模版结构不需要变，所以不用删，删的是本次打表的得分数据。
                 formCheckResultMapper.deleteByPrimaryKey(result.getId());
-
                 formValueMapper.cleanByResultId(result.getId());
                 formPbmValMapper.cleanByResultId(result.getId());
                 formSubPbmValMapper.cleanByResultId(result.getId());

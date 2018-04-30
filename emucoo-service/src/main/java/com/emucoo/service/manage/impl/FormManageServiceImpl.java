@@ -199,6 +199,7 @@ public class FormManageServiceImpl implements FormManageService {
             mdlIds.add(module.getId());
             module.getProblems().forEach(problem -> probIds.add(problem.getId()));
         });
+        // 每次都要把抽查类问题自动创建的机会点和关系删除掉。
         List<Long> opptIds = formOpptMapper.fetchOpptIdsByProblemIds(probIds, 2);
         formTypeMapper.dropByFormMainId(formMain.getId());
         if(mdlIds.size() > 0)
