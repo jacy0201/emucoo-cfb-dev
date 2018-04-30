@@ -189,7 +189,7 @@ public class PlanServiceImpl implements PlanService {
                 cal.add(Calendar.MONTH, loopCycleCount * tLoopPlan.getPlanCycle());
                 String subCycyleStartDate = monthSdf.format(cal.getTime());
                 if(subCycyleStartDate.compareTo(tLoopPlan.getPlanEndDate()) > 0) {
-                    logger.info("计划id={}已结束！", tLoopPlan.getId());
+                    logger.info("当前用户id={}，计划id={}已结束！", user.getId(), tLoopPlan.getId());
                     return null;
                 }
                 tLoopSubPlan.setCycleBegin(monthSdf.format(cal.getTime()));
