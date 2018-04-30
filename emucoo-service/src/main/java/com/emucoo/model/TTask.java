@@ -2,6 +2,7 @@ package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "t_task")
@@ -214,6 +215,9 @@ public class TTask extends BaseEntity {
      */
     @Column(name = "front_plan_id")
     private Long frontPlanId;
+
+    @Transient
+    List<TLoopWork> workList;
 
     /**
      * @return id
@@ -871,5 +875,13 @@ public class TTask extends BaseEntity {
      */
     public void setFrontPlanId(Long frontPlanId) {
         this.frontPlanId = frontPlanId;
+    }
+
+    public List<TLoopWork> getWorkList() {
+        return workList;
+    }
+
+    public void setWorkList(List<TLoopWork> workList) {
+        this.workList = workList;
     }
 }

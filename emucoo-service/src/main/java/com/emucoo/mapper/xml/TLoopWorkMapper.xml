@@ -184,7 +184,23 @@
       AND task.is_del = FALSE AND is_use = TRUE
       INNER JOIN sys_user user ON twork.excute_user_id = user.id
       WHERE twork.type=3
+      GROUP BY twork.excute_user_id
       ORDER BY twork.create_time DESC
+    </select>
+
+    <select id="findImproveTaskListByUser" resultType="com.emucoo.model.TLoopWork">
+        SELECT
+        twork.id,
+        twork.excute_user_id,
+        twork.excute_user_name,
+        twork.work_status,
+        twork.work_result,
+        twork.sub_work_id
+        FROM t_loop_work twork
+        INNER JOIN t_task task ON task.work_id = twork.work_id
+        AND task.oppt_id = #{opptId} AND task.report_id = #{reportId}
+        AND task.is_del = FALSE AND is_use = TRUE
+        WHERE twork.type=3 AND twork.excute_user_id = #{excuteUserId}
     </select>
     
 </mapper>

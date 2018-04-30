@@ -34,4 +34,6 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     TaskImproveStatement getTaskImproveStatement(@Param("loopWorkId") Long loopWorkId);
 
     List<TLoopWork> findImproveTaskList(@Param("opptId")Long opptId, @Param("reportId")Long reportId);
+
+    List<TLoopWork> findImproveTaskListByUser(@Param("opptId") Long opptId, @Param("reportId") Long reportId, @Param("excuteUserId")Long excuteUserId);
 }
