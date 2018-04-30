@@ -19,11 +19,13 @@
     plan_id,
     form_main_id,
     form_use_count,
+    is_use,
+    is_del,
     create_time,
     modify_time
     )VALUES
     <foreach collection="list" item="item" index="index" separator=",">
-      (#{item.planId},#{item.formMainId},#{item.formUseCount},#{item.createTime},#{item.modifyTime})
+      (#{item.planId},#{item.formMainId},#{item.formUseCount},#{item.isUse}, #{item.isDel}, #{item.createTime},#{item.modifyTime})
     </foreach>
   </insert>
 

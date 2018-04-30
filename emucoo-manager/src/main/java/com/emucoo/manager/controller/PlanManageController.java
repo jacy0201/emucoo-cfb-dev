@@ -73,7 +73,7 @@ public class PlanManageController extends BaseResource {
      * @return
      */
     @ApiOperation(value = "更新计划")
-    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
+    //@ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "updatePlanById")
     @ResponseBody
     public ApiResult<String> updatePlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -109,7 +109,7 @@ public class PlanManageController extends BaseResource {
      * @return
      */
     @ApiOperation(value = "启用/停用计划")
-    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
+    //@ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "modifyPlanUseById")
     @ResponseBody
     public ApiResult<String> startPlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -149,7 +149,7 @@ public class PlanManageController extends BaseResource {
      * @return
      */
     @ApiOperation(value = "删除计划")
-    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
+    //@ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "deletePlanById")
     @ResponseBody
     public ApiResult<String> deletePlanById(@RequestBody ParamVo<TLoopPlan> param) {
@@ -188,7 +188,7 @@ public class PlanManageController extends BaseResource {
      * @return
      */
     @ApiOperation(value = "根据id查询计划详情", response = TLoopPlan.class)
-    @ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
+    //@ApiImplicitParams({@ApiImplicitParam(dataType = "Long", name = "id", value = "计划id，必填", required = true)})
     @PostMapping(value = "findPlanById")
     @ResponseBody
     public ApiResult findPlanById(@RequestBody ParamVo<TLoopPlan> param) {

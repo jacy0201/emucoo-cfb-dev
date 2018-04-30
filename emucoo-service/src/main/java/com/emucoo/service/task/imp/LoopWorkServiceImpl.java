@@ -315,6 +315,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setType(2);
         task.setWorkId(uniWorkId);
         task.setVersion(1);
+        task.setIsDel(false);
+        task.setIsUse(true);
         task.setPreinstallScore(Integer.toString(voi.getTaskRank()));
 
         task.setTaskEndDate(DateUtil.strToSimpleYYMMDDDate(voi.getEndDate()));

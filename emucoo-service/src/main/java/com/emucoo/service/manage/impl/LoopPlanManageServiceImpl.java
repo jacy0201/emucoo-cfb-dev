@@ -49,6 +49,8 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
         tLoopPlanMapper.addPlan(plan);
         for(TPlanFormRelation planFormRelation : plan.getPlanFormRelationList()) {
             planFormRelation.setPlanId(plan.getId());
+            planFormRelation.setIsDel(DeleteStatus.COMMON.getCode());
+            planFormRelation.setIsUse(WorkStatus.STOP_USE.getCode());
             planFormRelation.setCreateTime(now);
             planFormRelation.setModifyTime(now);
         }
@@ -106,8 +108,16 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
             for(TPlanFormRelation tPlanFormRelation : tLoopPlan.getPlanFormRelationList()) {
                 TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(tPlanFormRelation.getFormMainId());
                 tPlanFormRelation.setName(tFormMain.getName());
+                tPlanFormRelation.setId(tPlanFormRelation.getId());
+                tPlanFormRelation.setFormMainId(tPlanFormRelation.getFormMainId());
             }
         }
+        String year = tLoopPlan.getPlanStartDate().substring(0, 4);
+        String month = tLoopPlan.getPlanStartDate().substring(4, 6);
+        tLoopPlan.setPlanStartDate(year + "-" + month);
+        year = tLoopPlan.getPlanEndDate().substring(0, 4);
+        month = tLoopPlan.getPlanEndDate().substring(4, 6);
+        tLoopPlan.setPlanEndDate(year + "-" + month);
         return tLoopPlan;
     }
 }
