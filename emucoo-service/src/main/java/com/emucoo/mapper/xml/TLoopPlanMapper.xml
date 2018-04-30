@@ -107,6 +107,7 @@
     plan.plan_start_date,
     plan.plan_end_date,
     plan.plan_cycle,
+    pf.id,
     pf.form_main_id,
     pf.form_use_count
     FROM t_loop_plan plan

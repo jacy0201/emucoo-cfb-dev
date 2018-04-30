@@ -1,7 +1,7 @@
 package com.emucoo.service.plan.impl;
 
 import com.emucoo.common.exception.ApiException;
-import com.emucoo.common.exception.ServiceException;
+import com.emucoo.common.exception.BaseException;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.plan.FindPlanListIn;
 import com.emucoo.dto.modules.plan.FindPlanListOut;
@@ -17,7 +17,6 @@ import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.SysAreaMapper;
 import com.emucoo.mapper.SysDeptMapper;
-import com.emucoo.mapper.SysDptBrandMapper;
 import com.emucoo.mapper.TBrandInfoMapper;
 import com.emucoo.mapper.TFrontPlanMapper;
 import com.emucoo.mapper.TLoopPlanMapper;
@@ -169,9 +168,9 @@ public class PlanServiceImpl implements PlanService {
             .andEqualTo("dptId", user.getDptId()).andEqualTo("isDel", false).andEqualTo("isUse", true);
             List<TLoopPlan> tLoopPlans = tLoopPlanMapper.selectByExample(tLoopPlanExample);
             if (tLoopPlans.size() > 1) {
-                throw new ApiException("不能有多个巡店计划！");
+                throw new BaseException("不能有多个巡店计划！");
             } else if(tLoopPlans.size() == 0) {
-                return null;
+                throw new BaseException("巡店计划不存在！");
             }
             TLoopPlan tLoopPlan = tLoopPlans.get(0);
             Example tLoopSubPlanExample = new Example(TLoopSubPlan.class);
@@ -190,7 +189,7 @@ public class PlanServiceImpl implements PlanService {
                 cal.add(Calendar.MONTH, loopCycleCount * tLoopPlan.getPlanCycle());
                 String subCycyleStartDate = monthSdf.format(cal.getTime());
                 if(subCycyleStartDate.compareTo(tLoopPlan.getPlanEndDate()) > 0) {
-                    logger.info("计划id={}已结束！", tLoopPlan.getId());
+                    logger.info("当前用户id={}，计划id={}已结束！", user.getId(), tLoopPlan.getId());
                     return null;
                 }
                 tLoopSubPlan.setCycleBegin(monthSdf.format(cal.getTime()));
@@ -284,6 +283,9 @@ public class PlanServiceImpl implements PlanService {
             return findPlanListOut;
         } catch (Exception e) {
             logger.error("用户:{}，查询巡店计划失败", user.getId(), e);
+            if(e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
             throw new ApiException("查询巡店计划列表失败");
         }
 
@@ -318,9 +320,9 @@ public class PlanServiceImpl implements PlanService {
                     .andEqualTo("dptId", user.getDptId()).andEqualTo("isDel", false).andEqualTo("isUse", true);
             List<TLoopPlan> tLoopPlans = tLoopPlanMapper.selectByExample(tLoopPlanExample);
             if (tLoopPlans.size() > 1) {
-                throw new ServiceException("不能有多个巡店计划！");
+                throw new BaseException("不能有多个巡店计划！");
             } else if (tLoopPlans.size() == 0) {
-                return null;
+                throw new BaseException("不存在巡店计划！");
             }
             TLoopPlan tLoopPlan = tLoopPlans.get(0);
 
@@ -382,6 +384,9 @@ public class PlanServiceImpl implements PlanService {
             return planProgressOut;
         } catch (Exception e){
             logger.error("用户:{}，查询巡店计划进度失败", user.getId(), e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
             throw new ApiException("查询巡店计划进度失败");
         }
     }

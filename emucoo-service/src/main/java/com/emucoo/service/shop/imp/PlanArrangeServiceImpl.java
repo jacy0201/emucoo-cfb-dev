@@ -1,6 +1,7 @@
 package com.emucoo.service.shop.imp;
 
 import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.BaseException;
 import com.emucoo.dto.modules.shop.*;
 import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.ReportFinishStatus;
@@ -71,6 +72,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
             for (Shop shop : shopList) {
                 TFrontPlan tFrontPlan = new TFrontPlan();
                 tFrontPlan.setId(shop.getSubID());
+                if(shop.getSubID() == null) {
+                    new BaseException("subID不能为空！");
+                }
                 tFrontPlan.setShopId(shop.getShopID());
                 Date date = new Date(shop.getExPatrloShopArrangeTime());
                 tFrontPlan.setPlanPreciseTime(date);
@@ -122,6 +126,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
 
         } catch (Exception e) {
             logger.error("创建巡店安排失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
             throw new ApiException("创建巡店安排失败");
         }
 
@@ -200,77 +207,87 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
     }
 
     public PatrolShopArrangeDetailVO detail(PatrolShopArrangeDetailIn vo) {
-        PatrolShopArrangeDetailVO patrolShopArrangeDetailVO = new PatrolShopArrangeDetailVO();
-        TFrontPlan frontPlan = tFrontPlanMapper.selectByPrimaryKey(vo.getPatrolShopArrangeID());
-        List<ShopArrVO> shopArrList = new ArrayList<ShopArrVO>();
-        // 如果在巡店安排表里没找到，返回空的VO
-        if (frontPlan == null) {
-            patrolShopArrangeDetailVO.setShopArr(shopArrList);
-            return patrolShopArrangeDetailVO;
-        }
-        // 计划到店时间
-        if (frontPlan.getPlanDate() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            patrolShopArrangeDetailVO.setExPatrloShopArrangeDate(sdf.format(frontPlan.getPlanDate()));
-        }
-        TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(frontPlan.getShopId());
-        // 如果没找到相应店，也返回空的VO
-        if (shop == null) {
-            patrolShopArrangeDetailVO.setShopArr(shopArrList);
-            return patrolShopArrangeDetailVO;
-        }
-        ShopArrVO shopArr = new ShopArrVO();
-        shopArr.setShopID(shop.getId());
-        shopArr.setShopName(shop.getShopName());
-        shopArr.setPostscript(frontPlan.getRemark());
-        if (frontPlan.getPlanPreciseTime() != null) {
-            shopArr.setExPatrloShopArrangeTime(frontPlan.getPlanPreciseTime().getTime());
-        }
-
-        shopArr.setShopStatus(frontPlan.getStatus().intValue());
-        // 查询巡店安排关联的检查表
-        Example frontPlanFormExample = new Example(TFrontPlanForm.class);
-        frontPlanFormExample.createCriteria().andEqualTo("frontPlanId", vo.getPatrolShopArrangeID())
-                .andEqualTo("isDel", false);
-        List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(frontPlanFormExample);
-        // 如果检查表不为空
-        if (tFrontPlanForms != null) {
-            List<ChecklistArrVO> checklistArr = new ArrayList<ChecklistArrVO>();
-            for (TFrontPlanForm tFrontPlanForm : tFrontPlanForms) {
-                TFormMain form = tFormMainMapper.selectByPrimaryKey(tFrontPlanForm.getFormMainId());
-                // 如果检查点合法，能查到
-                if (form != null) {
-                    ChecklistArrVO checklistArrVO = new ChecklistArrVO();
-                    checklistArrVO.setChecklistID(form.getId());
-                    checklistArrVO.setChecklistName(form.getName());
-                    checklistArrVO.setChecklistStatus(tFrontPlanForm.getReportStatus().longValue());
-                    checklistArrVO.setReportID(tFrontPlanForm.getReportId());
-                    checklistArr.add(checklistArrVO);
-                }
+        try {
+            PatrolShopArrangeDetailVO patrolShopArrangeDetailVO = new PatrolShopArrangeDetailVO();
+            TFrontPlan frontPlan = tFrontPlanMapper.selectByPrimaryKey(vo.getPatrolShopArrangeID());
+            List<ShopArrVO> shopArrList = new ArrayList<ShopArrVO>();
+            // 如果在巡店安排表里没找到，返回空的VO
+            if (frontPlan == null) {
+                patrolShopArrangeDetailVO.setShopArr(shopArrList);
+                throw new BaseException("不存在安排");
+                //return patrolShopArrangeDetailVO;
             }
-            shopArr.setChecklistArr(checklistArr);
+            // 计划到店时间
+            if (frontPlan.getPlanDate() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                patrolShopArrangeDetailVO.setExPatrloShopArrangeDate(sdf.format(frontPlan.getPlanDate()));
+            }
+            TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(frontPlan.getShopId());
+            // 如果没找到相应店，也返回空的VO
+            if (shop == null) {
+                patrolShopArrangeDetailVO.setShopArr(shopArrList);
+                throw new BaseException("不存在对应店铺");
+                //return patrolShopArrangeDetailVO;
+            }
+            ShopArrVO shopArr = new ShopArrVO();
+            shopArr.setShopID(shop.getId());
+            shopArr.setShopName(shop.getShopName());
+            shopArr.setPostscript(frontPlan.getRemark());
+            if (frontPlan.getPlanPreciseTime() != null) {
+                shopArr.setExPatrloShopArrangeTime(frontPlan.getPlanPreciseTime().getTime());
+            }
+
+            shopArr.setShopStatus(frontPlan.getStatus().intValue());
+            // 查询巡店安排关联的检查表
+            Example frontPlanFormExample = new Example(TFrontPlanForm.class);
+            frontPlanFormExample.createCriteria().andEqualTo("frontPlanId", vo.getPatrolShopArrangeID())
+                    .andEqualTo("isDel", false);
+            List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(frontPlanFormExample);
+            // 如果检查表不为空
+            if (tFrontPlanForms != null) {
+                List<ChecklistArrVO> checklistArr = new ArrayList<ChecklistArrVO>();
+                for (TFrontPlanForm tFrontPlanForm : tFrontPlanForms) {
+                    TFormMain form = tFormMainMapper.selectByPrimaryKey(tFrontPlanForm.getFormMainId());
+                    // 如果检查点合法，能查到
+                    if (form != null) {
+                        ChecklistArrVO checklistArrVO = new ChecklistArrVO();
+                        checklistArrVO.setChecklistID(form.getId());
+                        checklistArrVO.setChecklistName(form.getName());
+                        checklistArrVO.setChecklistStatus(tFrontPlanForm.getReportStatus().longValue());
+                        checklistArrVO.setReportID(tFrontPlanForm.getReportId());
+                        checklistArr.add(checklistArrVO);
+                    }
+                }
+                shopArr.setChecklistArr(checklistArr);
+            }
+
+            if (frontPlan.getPlanPreciseTime() != null) {
+                shopArr.setPatrolShopStartTime(frontPlan.getPlanPreciseTime().getTime());
+            }
+            shopArr.setPatrolShopLocation(frontPlan.getActualExecuteAddress());
+            shopArr.setLatitude(frontPlan.getLatitude());
+            shopArr.setLongitude(frontPlan.getLongitude());
+
+            // 提醒 Remind_type and Remind_name
+            TRemind remind = new TRemind();
+            remind.setRemindType(frontPlan.getRemindType().intValue());
+            TRemind tRemind = tRemindMapper.selectOne(remind);
+            if (tRemind != null) {
+                shopArr.setRemindType(tRemind.getRemindType().longValue());
+                shopArr.setRemindName(tRemind.getRemindName());
+            }
+
+            shopArrList.add(shopArr);
+            patrolShopArrangeDetailVO.setShopArr(shopArrList);
+
+            return patrolShopArrangeDetailVO;
+        } catch (Exception e) {
+            logger.error("查询巡店详情失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("查询巡店详情失败！");
         }
-
-        if (frontPlan.getPlanPreciseTime() != null) {
-            shopArr.setPatrolShopStartTime(frontPlan.getPlanPreciseTime().getTime());
-        }
-        shopArr.setPatrolShopLocation(frontPlan.getActualExecuteAddress());
-        shopArr.setLatitude(frontPlan.getLatitude());
-        shopArr.setLongitude(frontPlan.getLongitude());
-
-        // 提醒 Remind_type and Remind_name
-        TRemind remind = new TRemind();
-        remind.setRemindType(frontPlan.getRemindType().intValue());
-        TRemind tRemind = tRemindMapper.selectOne(remind);
-        if (tRemind != null) {
-            shopArr.setRemindType(tRemind.getRemindType().longValue());
-            shopArr.setRemindName(tRemind.getRemindName());
-        }
-
-        shopArrList.add(shopArr);
-        patrolShopArrangeDetailVO.setShopArr(shopArrList);
-
-        return patrolShopArrangeDetailVO;
     }
     @Override
     public void patrolShop(PatrolShopInfoIn patrolShopInfoIn, SysUser user) {
