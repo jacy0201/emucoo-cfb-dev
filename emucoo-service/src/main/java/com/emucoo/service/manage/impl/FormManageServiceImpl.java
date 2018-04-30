@@ -187,6 +187,8 @@ public class FormManageServiceImpl implements FormManageService {
             disassembleFormModule(formModule);
             formMain.setTotalScore(formMain.getTotalScore().intValue() + formModule.getScore().intValue());
         });
+        
+        formMainMapper.updateByPrimaryKeySelective(formMain);
     }
 
     private void cleanOldFormInfo(TFormMain formMain) {
