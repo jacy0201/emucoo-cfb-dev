@@ -58,7 +58,7 @@ public class ChancePointController extends BaseResource {
         if(opportunity == null)
             return fail("参数错误.");
         if(chancePointService.judgeExisted(opportunity))
-            return fail("该机会点已经存在");
+            return fail("同名机会点已经存在");
         chancePointService.createChancePoint(opportunity, 0L);
         return success("ok");
     }
@@ -69,6 +69,8 @@ public class ChancePointController extends BaseResource {
         TOpportunity opportunity = param.getData();
         if(opportunity == null)
             return fail("参数错误.");
+        if(chancePointService.judgeExisted(opportunity))
+            return fail("同名机会点已经存在");
         chancePointService.updateChancePoint(opportunity, 0L);
         return success("ok");
     }
