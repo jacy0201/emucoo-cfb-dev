@@ -68,6 +68,8 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         task.setExecutorDptId(vo.getShopID());
         task.setExecuteUserIds(StringUtils.join(vo.getExecutorArray().stream().map(executor -> Long.toString(executor.getExecutorID())).collect(Collectors.toList()), ","));
         task.setAuditType(0);
+        task.setIsDel(false);
+        task.setIsUse(true);
         task.setAuditUserId(vo.getAuditorID());
         task.setOpptId(vo.getChancePointID());
         task.setLoopCycleType(vo.getTaskRepeatType());
