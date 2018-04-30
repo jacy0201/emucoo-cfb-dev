@@ -45,7 +45,7 @@ public class ChancePointController extends BaseResource {
     public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity oppt = param.getData();
         if(oppt == null)
-            return fail("parameter is wrong");
+            return fail("参数错误.");
         Long id = oppt.getId();
         TOpportunity opportunity = chancePointService.fetchChancePointById(id);
         return success(opportunity);
@@ -56,7 +56,9 @@ public class ChancePointController extends BaseResource {
     public ApiResult<String> createChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
         if(opportunity == null)
-            return fail("parameter is wrong");
+            return fail("参数错误.");
+        if(chancePointService.judgeExisted(opportunity))
+            return fail("该机会点已经存在");
         chancePointService.createChancePoint(opportunity, 0L);
         return success("ok");
     }
@@ -66,7 +68,7 @@ public class ChancePointController extends BaseResource {
     public ApiResult<String> updateChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
         if(opportunity == null)
-            return fail("parameter is wrong");
+            return fail("参数错误.");
         chancePointService.updateChancePoint(opportunity, 0L);
         return success("ok");
     }
@@ -76,7 +78,7 @@ public class ChancePointController extends BaseResource {
     public ApiResult<String> deleteChancePoint(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
         if(ids == null || ids.size() == 0)
-            return fail("parameter is wrong.");
+            return fail("参数错误.");
         chancePointService.deleteChancePoints(ids);
         return success("ok");
     }
@@ -86,7 +88,7 @@ public class ChancePointController extends BaseResource {
     public ApiResult<String> enableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
         if(ids == null || ids.size() == 0)
-            return fail("parameter is wrong.");
+            return fail("参数错误.");
         chancePointService.enableChancePoints(ids);
         return success("ok");
     }
@@ -96,7 +98,7 @@ public class ChancePointController extends BaseResource {
     public ApiResult<String> disableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
         if(ids == null || ids.size() == 0)
-            return fail("parameter is wrong.");
+            return fail("参数错误.");
         chancePointService.disableChancePoints(ids);
         return success("ok");
     }

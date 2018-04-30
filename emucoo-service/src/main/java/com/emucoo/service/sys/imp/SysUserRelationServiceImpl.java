@@ -34,6 +34,8 @@ public class SysUserRelationServiceImpl extends BaseServiceImpl<SysUserRelation>
            sysUserRelation.setChildUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getChildUserId()).getRealName());
            sysUserRelation.setUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getUserId()).getRealName());
            sysUserRelation.setPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getPostId()).getPostName());
+           sysUserRelation.setChildPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getChildPostId()).getPostName());
+
        }
        return list;
    }

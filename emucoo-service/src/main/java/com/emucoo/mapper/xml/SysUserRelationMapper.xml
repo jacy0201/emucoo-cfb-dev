@@ -8,6 +8,7 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="child_user_id" property="childUserId" jdbcType="BIGINT" />
+    <result column="child_post_id" property="childPostId" jdbcType="BIGINT" />
     <result column="post_id" property="postId" jdbcType="BIGINT" />
     <result column="dpt_id" property="dptId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
