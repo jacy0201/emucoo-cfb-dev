@@ -19,6 +19,11 @@ public class RedisClusterClient {
         return jedisCluster.setex(key, expire, jsonObject);
     }
 
+    public String buffer(String key, Object value) {
+        String jsonObj = JSON.toJSONString(value);
+        return jedisCluster.set(key, jsonObj);
+    }
+
     public <T> T getObject(String key, Class<T> clazz) {
         String jsonObject = jedisCluster.get(key);
         return StringUtil.isBlank(jsonObject) ? null : JSON.parseObject(jsonObject, clazz);

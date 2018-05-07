@@ -73,26 +73,29 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public FormOut checkoutFormInfo(SysUser user, FormIn formIn) {
-        Long arrangeId = formIn.getPatrolShopArrangeID();
+    public TShopInfo findShopInfo(FormIn formIn) {
+        return shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+    }
+
+    @Override
+    public TBrandInfo findShopBrand(Long brandId) {
+        return brandInfoMapper.selectByPrimaryKey(brandId);
+    }
+
+    @Override
+    public FormOut checkoutFormInfo(SysUser user, Long formId) {
 
         FormOut formOut = new FormOut();
-        TFormMain formMain = formMainMapper.fetchOneById(formIn.getChecklistID());
-        TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
-        if(formMain == null || shopInfo == null) {
+        TFormMain formMain = formMainMapper.fetchOneById(formId);
+        if(formMain == null) {
             return null;
         }
         if(!formMain.getIsUse() || formMain.getIsDel()) {
             return null;
         }
 
-        TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
         formOut.setFormId(formMain.getId());
         formOut.setFormName(formMain.getName());
-        formOut.setShopName(shopInfo.getShopName());
-        formOut.setBrandName(brandInfo==null?"":brandInfo.getBrandName());
-        formOut.setGradeDate(DateUtil.dateToString1(DateUtil.currentDate()));
-
         List<FormKindVo> formKindVos = new ArrayList<>();
         formOut.setKindArray(formKindVos);
 
@@ -224,7 +227,8 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public void checkinFormResult(SysUser user, FormIn formIn) {
+    public boolean checkinFormResult(SysUser user, FormIn formIn) {
+        boolean checkinWithAppCreatedOppts = false;
         // 每次存之前把旧数据删掉
         cleanOldValueByCheckResultId(user, formIn);
 
@@ -311,6 +315,7 @@ public class FormServiceImpl implements FormService {
 
                 List<FormChanceVo> otherChanceVos = problemVo.getOtherChanceArray();
                 if(otherChanceVos != null && otherChanceVos.size() > 0) {
+                    checkinWithAppCreatedOppts = true;
                     for (FormChanceVo fcv : otherChanceVos) {
                         // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
                         TOpportunity opportunity = new TOpportunity();
@@ -400,5 +405,6 @@ public class FormServiceImpl implements FormService {
         formCheckResult.setScoreRate(1.0f * score / total);
         formCheckResultMapper.updateByPrimaryKey(formCheckResult);
 
+        return checkinWithAppCreatedOppts;
     }
 }
