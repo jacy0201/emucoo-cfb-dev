@@ -37,12 +37,13 @@
         t2.*
         FROM
         sys_dpt_brand t1
-        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE t2.is_del=0
         and t1.brand_id= #{brandId}
-        <if test="dptName != null  and dptName!=''">and t2.dpt_name LIKE "%"#{dptName}"%"
+        <if test="dptName != null  and dptName!=''">
+            and t2.dpt_name LIKE "%"#{dptName}"%"
         </if>
-        <if
-                test="isUse != null">and t2.is_use = #{isUse}
+        <if test="isUse != null">
+            and t2.is_use = #{isUse}
         </if>
     </select>
 
@@ -51,13 +52,13 @@
         t2.*
         FROM
         sys_dpt_area t1
-        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE is_del=0
+        INNER JOIN sys_dept t2 ON t1.dpt_id = t2.id WHERE t2.is_del=0
         and t1.area_id= #{areaId}
         <if test="dptName != null  and dptName!=''">
             and dpt_name LIKE "%"#{dptName}"%"
         </if>
         <if test="isUse != null">
-            and is_use = #{isUse}
+            and t2.is_use = #{isUse}
         </if>
     </select>
 
