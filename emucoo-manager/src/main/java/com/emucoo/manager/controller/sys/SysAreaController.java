@@ -40,9 +40,11 @@ public class SysAreaController extends BaseResource {
 	public ApiResult<PageInfo<SysArea>> list(@RequestBody ParamVo<SysArea> param){
 		SysArea sysArea = param.getData();
 		Example example=new Example(SysArea.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=sysArea && null!=sysArea.getAreaName()) {
-			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
+			criteria.andLike("areaName", "%"+sysArea.getAreaName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysArea> areaList = sysAreaService.selectByExample(example);
 		PageInfo<SysArea> pageInfo=new PageInfo(areaList);
@@ -59,9 +61,11 @@ public class SysAreaController extends BaseResource {
 	@ApiOperation(value="查询全部分区")
 	public ApiResult<List<SysArea>> listAll(@RequestBody SysArea sysArea){
 		Example example=new Example(SysArea.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=sysArea.getAreaName()) {
-			example.createCriteria().andLike("areaName", "%"+sysArea.getAreaName()+"%");
+			criteria.andLike("areaName", "%"+sysArea.getAreaName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		List<SysArea> areaList = sysAreaService.selectByExample(example);
 		return success(areaList);
 

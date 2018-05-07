@@ -71,6 +71,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		Example example=new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("isDel",0);
+		criteria.andNotEqualTo("id",1);
         if(null!=userQuery){
 			if(StringUtil.isNotEmpty(userQuery.getRealName())){
 			    realName=userQuery.getRealName();
