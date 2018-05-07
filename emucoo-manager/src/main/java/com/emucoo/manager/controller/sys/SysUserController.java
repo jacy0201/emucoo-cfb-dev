@@ -71,19 +71,21 @@ public class SysUserController extends BaseResource {
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
         SysUser sysUserExample=null;
-        sysUserExample.setIsDel(false);
         if(StringUtil.isNotEmpty(sysUser.getUsername())){
             sysUserExample=new SysUser();
+            sysUserExample.setIsDel(false);
             sysUserExample.setUsername(sysUser.getUsername());
            if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
         }
         if(StringUtil.isNotEmpty(sysUser.getMobile())){
             sysUserExample=new SysUser();
+            sysUserExample.setIsDel(false);
             sysUserExample.setMobile(sysUser.getMobile());
             if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
         }
         if(StringUtil.isNotEmpty(sysUser.getEmail())){
             sysUserExample=new SysUser();
+            sysUserExample.setIsDel(false);
             sysUserExample.setEmail(sysUser.getEmail());
             if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
         }
