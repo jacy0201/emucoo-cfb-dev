@@ -241,8 +241,10 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         odw.setImgIds(StringUtils.join(imgids, ","));
         odw.setLoopWorkId(loopWork.getId());
         odw.setNumOptionName(oo.getFeedbackNumName());
-        odw.setNumOptionType(oo.getFeedbackNumType());
-        odw.setNumOptionValue(Double.toString(submitIn.getDigitalItemValue()));
+        if(oo.getFeedbackNeedNum()) {
+            odw.setNumOptionType(oo.getFeedbackNumType());
+            odw.setNumOptionValue(Double.toString(submitIn.getDigitalItemValue()));
+        }
         odw.setWorkTxt(submitIn.getWorkText());
 //        odw.setCreateUserId(user.getId());
         odw.setCreateTime(DateUtil.currentDate());
