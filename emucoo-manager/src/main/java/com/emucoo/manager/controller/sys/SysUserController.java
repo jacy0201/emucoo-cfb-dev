@@ -70,15 +70,18 @@ public class SysUserController extends BaseResource {
     @PostMapping("/save")
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
+        sysUser.setIsDel(false);
         if(StringUtil.isNotEmpty(sysUser.getUsername())){
-            SysUser su=new SysUser();
-            su.setUsername(sysUser.getUsername());
-            su.setIsDel(false);
-           if(null!=sysUserService.findOne(su)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+           if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+        }
+        if(StringUtil.isNotEmpty(sysUser.getMobile())){
+            if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
+        }
+        if(StringUtil.isNotEmpty(sysUser.getEmail())){
+            if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
         }
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
-        sysUser.setIsDel(false);
         sysUser.setIsAdmin(false);
         //sha256加密
         String salt = RandomStringUtils.randomAlphanumeric(20);
