@@ -139,7 +139,7 @@ public class ReportServiceImpl implements ReportService {
         List<SysPost> postions = sysPostMapper.findPositionByUserId(user.getId());
         String postStr = "";
         for(SysPost post : postions) {
-            postStr += post.getPostName();
+            postStr += post.getPostName() + ",";
         }
         if(StringUtils.isNotBlank(postStr)) {
             postStr = postStr.substring(0, postStr.length() - 1);
