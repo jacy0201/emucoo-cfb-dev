@@ -99,9 +99,9 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         //sha256加密
-        String salt = RandomStringUtils.randomAlphanumeric(20);
+        /*String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
-        sysUser.setSalt(salt);
+        sysUser.setSalt(salt);*/
         sysUserService.editUser(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
@@ -111,7 +111,7 @@ public class SysUserController extends BaseResource {
     /**
      * check用户是否关联店铺
      */
-    @ApiOperation(value="检查是否关联店铺")
+    @ApiOperation(value="检查是否关联店铺",notes = "只需传用户id参数!")
     @PostMapping("/checkHasShop")
     public ApiResult checkHasShop(@RequestBody SysUser sysUser){
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
