@@ -99,6 +99,8 @@ public class SysUserController extends BaseResource {
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
         sysUserService.editUser(sysUser);
+        //删除redis 缓存
+        redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
         return success("success");
     }
 

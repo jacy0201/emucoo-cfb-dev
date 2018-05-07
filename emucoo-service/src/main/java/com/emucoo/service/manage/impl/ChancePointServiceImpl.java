@@ -59,6 +59,8 @@ public class ChancePointServiceImpl implements ChancePointService {
         opportunity.setCreateType(1);
         opportunity.setIsUse(false);
         opportunity.setIsDel(false);
+        opportunity.setType(0);
+        opportunity.setFrontCanCreate(false);
         opportunityMapper.upsert(opportunity);
     }
 
@@ -77,7 +79,7 @@ public class ChancePointServiceImpl implements ChancePointService {
         opportunity.setCreateType(1);
         opportunity.setModifyUserId(userId);
         opportunity.setModifyTime(DateUtil.currentDate());
-        opportunityMapper.upsert(opportunity);
+        opportunityMapper.updateByPrimaryKeySelective(opportunity);
     }
 
     @Override
