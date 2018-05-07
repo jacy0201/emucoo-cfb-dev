@@ -39,9 +39,11 @@ public class SysPostController extends BaseResource {
 	public ApiResult<PageInfo<SysPost>> list(@RequestBody ParamVo<SysPost> param){
 		SysPost sysPost = param.getData();
 		Example example=new Example(SysPost.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=sysPost && null!=sysPost.getPostName()) {
-			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");
+			criteria.andLike("postName", "%"+sysPost.getPostName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<SysPost> postList = sysPostService.selectByExample(example);
 		PageInfo<SysPost> pageInfo=new PageInfo(postList);
@@ -59,9 +61,11 @@ public class SysPostController extends BaseResource {
 	@ApiOperation(value="查询全部岗位")
 	public ApiResult<List<SysPost>> listAll(@RequestBody SysPost sysPost){
 		Example example=new Example(SysPost.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=sysPost.getPostName()) {
-			example.createCriteria().andLike("postName", "%"+sysPost.getPostName()+"%");
+			criteria.andLike("postName", "%"+sysPost.getPostName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		List<SysPost> postList = sysPostService.selectByExample(example);
 		return success(postList);
 

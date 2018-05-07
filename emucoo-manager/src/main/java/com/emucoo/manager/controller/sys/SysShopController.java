@@ -39,26 +39,27 @@ public class SysShopController extends BaseResource {
 	public ApiResult<PageInfo<TShopInfo>> list(@RequestBody ParamVo<TShopInfo> param){
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=shopInfo && null!=shopInfo.getShopName()) {
-			example.createCriteria().andLike("shopName", "%"+shopInfo.getShopName()+"%");
+			criteria.andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
 
 		if(null!=shopInfo && null!=shopInfo.getAreaId()){
-			example.createCriteria().andEqualTo("areaId", shopInfo.getAreaId());
+			criteria.andEqualTo("areaId", shopInfo.getAreaId());
 		}
 		if(null!=shopInfo && null!=shopInfo.getBrandId()){
-			example.createCriteria().andEqualTo("brandId", shopInfo.getBrandId());
+			criteria.andEqualTo("brandId", shopInfo.getBrandId());
 		}
 		if(null!=shopInfo && null!=shopInfo.getProvince()){
-			example.createCriteria().andEqualTo("province", shopInfo.getProvince());
+			criteria.andEqualTo("province", shopInfo.getProvince());
 		}
 		if(null!=shopInfo && null!=shopInfo.getCity()){
-			example.createCriteria().andEqualTo("city", shopInfo.getCity());
+			criteria.andEqualTo("city", shopInfo.getCity());
 		}
 		if(null!=shopInfo && null!=shopInfo.getDistrict()){
-			example.createCriteria().andEqualTo("district", shopInfo.getDistrict());
+			criteria.andEqualTo("district", shopInfo.getDistrict());
 		}
-
+		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
 		PageInfo<TShopInfo> pageInfo=new PageInfo(shopList);
