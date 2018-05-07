@@ -58,7 +58,7 @@
             and dpt_name LIKE "%"#{dptName}"%"
         </if>
         <if test="isUse != null">
-            and is_use = #{isUse}
+            and t2.is_use = #{isUse}
         </if>
     </select>
 
