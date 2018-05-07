@@ -70,15 +70,23 @@ public class SysUserController extends BaseResource {
     @PostMapping("/save")
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
+        SysUser sysUserExample=new SysUser();
+        sysUserExample.setIsDel(false);
         if(StringUtil.isNotEmpty(sysUser.getUsername())){
-            SysUser su=new SysUser();
-            su.setUsername(sysUser.getUsername());
-            su.setIsDel(false);
-           if(null!=sysUserService.findOne(su)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+            sysUserExample.setUsername(sysUser.getUsername());
+           if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
         }
+        if(StringUtil.isNotEmpty(sysUser.getMobile())){
+            sysUserExample.setMobile(sysUser.getMobile());
+            if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
+        }
+        if(StringUtil.isNotEmpty(sysUser.getEmail())){
+            sysUserExample.setEmail(sysUser.getEmail());
+            if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
+        }
+        sysUser.setIsDel(false);
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
-        sysUser.setIsDel(false);
         sysUser.setIsAdmin(false);
         //sha256加密
         String salt = RandomStringUtils.randomAlphanumeric(20);
@@ -99,9 +107,9 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         //sha256加密
-        String salt = RandomStringUtils.randomAlphanumeric(20);
+        /*String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
-        sysUser.setSalt(salt);
+        sysUser.setSalt(salt);*/
         sysUserService.editUser(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
@@ -111,7 +119,7 @@ public class SysUserController extends BaseResource {
     /**
      * check用户是否关联店铺
      */
-    @ApiOperation(value="检查是否关联店铺")
+    @ApiOperation(value="检查是否关联店铺",notes = "只需传用户id参数!")
     @PostMapping("/checkHasShop")
     public ApiResult checkHasShop(@RequestBody SysUser sysUser){
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}

@@ -16,7 +16,6 @@ import com.emucoo.model.SysUser;
 import com.emucoo.model.TReport;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.index.IndexService;
-import com.emucoo.service.report.impl.ReportServiceImpl;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
@@ -69,6 +68,9 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 		}
 
 		if(user == null)
+			return null;
+
+		if(user.getIsDel())
 			return null;
 
 		if(!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password,user.getSalt()).toHex()))
