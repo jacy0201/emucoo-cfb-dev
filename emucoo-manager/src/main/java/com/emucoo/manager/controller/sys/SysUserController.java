@@ -14,8 +14,10 @@ import com.emucoo.dto.modules.user.UserIsUse;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.SysUserShop;
 import com.emucoo.service.sys.SysUserRoleService;
 import com.emucoo.service.sys.SysUserService;
+import com.emucoo.service.sys.SysUserShopService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -25,6 +27,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +44,8 @@ public class SysUserController extends BaseResource {
     private SysUserService sysUserService;
     @Autowired
     private SysUserRoleService sysUserRoleService;
-
+    @Autowired
+    private SysUserShopService sysUserShopService;
     @Autowired
     private RedisClusterClient redisClient;
     /**
@@ -104,6 +108,20 @@ public class SysUserController extends BaseResource {
         return success("success");
     }
 
+    /**
+     * check用户是否关联店铺
+     */
+    @ApiOperation(value="检查是否关联店铺")
+    @PostMapping("/checkHasShop")
+    public ApiResult checkHasShop(@RequestBody SysUser sysUser){
+        if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+        Example example=new Example(SysUserShop.class);
+        example.createCriteria().andEqualTo("userId",sysUser.getId()).andEqualTo("isDel","0");
+        List<SysUserShop> listUserShop=sysUserShopService.selectByExample(example);
+        if(null!=listUserShop && listUserShop.size()>0){return fail(ApiExecStatus.DAO_ERR,"已关联店铺");}
+        else{ return success("success");}
+
+    }
 
     /**
      * 设置用户品牌分区

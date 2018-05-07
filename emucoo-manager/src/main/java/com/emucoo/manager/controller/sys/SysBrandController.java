@@ -39,9 +39,11 @@ public class SysBrandController extends BaseResource {
 	public ApiResult<PageInfo<TBrandInfo>> list(@RequestBody ParamVo<TBrandInfo> param){
 		TBrandInfo brandInfo = param.getData();
 		Example example=new Example(TBrandInfo.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=brandInfo && null!=brandInfo.getBrandName()) {
-			example.createCriteria().andLike("brandName", "%"+brandInfo.getBrandName()+"%");
+			criteria.andLike("brandName", "%"+brandInfo.getBrandName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
 		PageInfo<TBrandInfo> pageInfo=new PageInfo(brandList);
@@ -58,9 +60,11 @@ public class SysBrandController extends BaseResource {
 	@ApiOperation(value="查询全部品牌")
 	public ApiResult<List<TBrandInfo>> listAll(@RequestBody TBrandInfo param){
 		Example example=new Example(TBrandInfo.class);
+		Example.Criteria criteria=example.createCriteria();
 		if(null!=param.getBrandName()) {
-			example.createCriteria().andLike("brandName", "%"+param.getBrandName()+"%");
+			criteria.andLike("brandName", "%"+param.getBrandName()+"%");
 		}
+		criteria.andEqualTo("isDel",0);
 		List<TBrandInfo> brandList = sysBrandService.selectByExample(example);
 		return success(brandList);
 
