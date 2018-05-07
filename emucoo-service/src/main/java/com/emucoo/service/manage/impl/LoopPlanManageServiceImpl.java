@@ -73,6 +73,8 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
         // 保存新的表单与计划关系
         for (TPlanFormRelation planFormRelation : plan.getPlanFormRelationList()) {
             planFormRelation.setPlanId(plan.getId());
+            planFormRelation.setIsDel(DeleteStatus.COMMON.getCode());
+            planFormRelation.setIsUse(WorkStatus.STOP_USE.getCode());
             planFormRelation.setCreateTime(now);
             planFormRelation.setModifyTime(now);
         }
