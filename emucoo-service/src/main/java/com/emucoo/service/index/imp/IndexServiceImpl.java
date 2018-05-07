@@ -118,6 +118,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 			Example example=new Example(SysUser.class);
 			example.createCriteria().andEqualTo("mobile",vo.getMobile());
 			SysUser sysUser =new SysUser();
+			sysUser.setSalt(salt);
 			sysUser.setModifyTime(new Date());
 			sysUser.setPassword(new Sha256Hash(vo.getPassword(),salt).toHex());
 			userMapper.updateByExampleSelective(sysUser,example);
