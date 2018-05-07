@@ -70,16 +70,21 @@ public class SysUserController extends BaseResource {
     @PostMapping("/save")
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
-        sysUser.setIsDel(false);
+        SysUser sysUserExample=new SysUser();
+        sysUserExample.setIsDel(false);
         if(StringUtil.isNotEmpty(sysUser.getUsername())){
-           if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+            sysUserExample.setUsername(sysUser.getUsername());
+           if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
         }
         if(StringUtil.isNotEmpty(sysUser.getMobile())){
-            if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
+            sysUserExample.setMobile(sysUser.getMobile());
+            if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
         }
         if(StringUtil.isNotEmpty(sysUser.getEmail())){
-            if(null!=sysUserService.findOne(sysUser)){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
+            sysUserExample.setEmail(sysUser.getEmail());
+            if(null!=sysUserService.findOne(sysUserExample)){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
         }
+        sysUser.setIsDel(false);
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(1L);
         sysUser.setIsAdmin(false);
