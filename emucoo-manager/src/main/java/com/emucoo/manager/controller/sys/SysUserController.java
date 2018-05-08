@@ -309,6 +309,8 @@ public class SysUserController extends BaseResource {
         SysUser sysUser=new SysUser();
         sysUser.setIsShopManager(true);
         sysUser.setIsDel(false);
+        //0-启用
+        sysUser.setStatus(0);
         List<SysUser> listUser=sysUserService.findListByWhere(sysUser);
         return success(listUser);
     }
