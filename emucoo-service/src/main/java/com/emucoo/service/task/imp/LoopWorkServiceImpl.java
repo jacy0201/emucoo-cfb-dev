@@ -129,6 +129,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
+    @Transactional
     public void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
         loopWork.setType(atai.getWorkType());
@@ -499,5 +500,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return result;
     }
 
-
+    @Override
+    @Transactional
+    public void markExpiredWorks() {
+        Date dt = DateUtil.currentDate();
+        loopWorkMapper.markExpiredExecutionWorks(dt);
+        loopWorkMapper.markExpiredAuditWorks(dt);
+    }
 }

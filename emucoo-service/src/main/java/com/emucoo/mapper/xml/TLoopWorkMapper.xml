@@ -202,5 +202,18 @@
         AND task.is_del = FALSE AND is_use = TRUE
         WHERE twork.type=3 AND twork.excute_user_id = #{excuteUserId}
     </select>
+
+
+    <update id="markExpiredExecutionWorks">
+        <![CDATA[
+        update t_loop_work set work_status=3, work_result=2 where work_status=1 and execute_deadline < #{dt} and type in (1,2,3)
+        ]]>
+    </update>
+
+    <update id="markExpiredAuditWorks">
+        <![CDATA[
+        update t_loop_work set work_status=3, work_result=1 where work_status=2 and work_result is null and audit_deadline < #{dt} and type in (1,2,3)
+        ]]>
+    </update>
     
 </mapper>
