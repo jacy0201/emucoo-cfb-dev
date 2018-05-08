@@ -38,4 +38,10 @@ public interface SysUserMapper extends MyMapper<SysUser> {
 
 
     List<String> findPushTokenByIds(List<Integer> asList);
+
+    SysUser fetchOneByMobile(String mobile);
+
+    SysUser fetchOneByEmail(String mobile);
+
+    SysUser fetchOneByUsername(String mobile);
 }
