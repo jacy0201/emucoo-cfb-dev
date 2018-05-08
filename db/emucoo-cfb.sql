@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50718
 File Encoding         : 65001
 
-Date: 2018-04-30 15:17:58
+Date: 2018-05-08 17:40:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -59,7 +59,7 @@ CREATE TABLE `sys_dept` (
   `modify_user_id` bigint(11) DEFAULT NULL COMMENT '数据修改人ID',
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COMMENT='机构信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8 COMMENT='机构信息表';
 
 -- ----------------------------
 -- Table structure for sys_district
@@ -104,7 +104,7 @@ CREATE TABLE `sys_dpt_area` (
   `modify_user_id` bigint(11) DEFAULT NULL COMMENT '数据修改人ID',
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COMMENT='机构分区关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COMMENT='机构分区关系表';
 
 -- ----------------------------
 -- Table structure for sys_dpt_brand
@@ -120,7 +120,7 @@ CREATE TABLE `sys_dpt_brand` (
   `modify_user_id` bigint(11) DEFAULT NULL COMMENT '数据修改人ID',
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='机构品牌关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COMMENT='机构品牌关系表';
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -250,7 +250,7 @@ CREATE TABLE `sys_user` (
   `status` int(8) DEFAULT '0' COMMENT '用户状态：0-启用；1-停用；2-锁定；',
   `is_shop_manager` bit(1) DEFAULT NULL COMMENT '是否是店长：0-否；1-是',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8 COMMENT='用户信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COMMENT='用户信息表';
 
 -- ----------------------------
 -- Table structure for sys_user_area
@@ -267,7 +267,7 @@ CREATE TABLE `sys_user_area` (
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`),
   UNIQUE KEY `userId_areaId` (`user_id`,`area_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 COMMENT='用户分区关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8 COMMENT='用户分区关系表';
 
 -- ----------------------------
 -- Table structure for sys_user_brand
@@ -284,7 +284,7 @@ CREATE TABLE `sys_user_brand` (
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`),
   UNIQUE KEY `userId_brandId` (`user_id`,`brand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COMMENT='用户品牌关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COMMENT='用户品牌关系表';
 
 -- ----------------------------
 -- Table structure for sys_user_post
@@ -301,7 +301,7 @@ CREATE TABLE `sys_user_post` (
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`),
   KEY `post_user` (`user_id`,`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8 COMMENT='用户机构关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8 COMMENT='用户机构关系表';
 
 -- ----------------------------
 -- Table structure for sys_user_relation
@@ -320,7 +320,7 @@ CREATE TABLE `sys_user_relation` (
   `modify_user_id` bigint(11) DEFAULT NULL COMMENT '数据修改人ID',
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_relation` (`user_id`,`child_user_id`,`post_id`,`dpt_id`) USING BTREE
+  UNIQUE KEY `user_relation` (`user_id`,`post_id`,`child_user_id`,`child_post_id`,`dpt_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户关系表';
 
 -- ----------------------------
@@ -354,7 +354,7 @@ CREATE TABLE `sys_user_shop` (
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_shop` (`user_id`,`shop_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COMMENT='用户店铺关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='用户店铺关系表';
 
 -- ----------------------------
 -- Table structure for sys_user_token
@@ -408,7 +408,7 @@ CREATE TABLE `t_comment` (
   `modify_user_id` bigint(11) DEFAULT NULL,
   `org_id` bigint(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='评论表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='评论表';
 
 -- ----------------------------
 -- Table structure for t_file
@@ -428,7 +428,7 @@ CREATE TABLE `t_file` (
   `location` varchar(255) DEFAULT NULL COMMENT '位置信息',
   `file_date` datetime DEFAULT NULL COMMENT '上传时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8 COMMENT='图片附录表';
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COMMENT='图片附录表';
 
 -- ----------------------------
 -- Table structure for t_form_add_item
@@ -483,7 +483,7 @@ CREATE TABLE `t_form_check_result` (
   `na_num` int(11) DEFAULT NULL COMMENT 'N/A项数量',
   `summary_img` varchar(255) DEFAULT NULL COMMENT '总结图片',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8 COMMENT='打表结果表';
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8 COMMENT='打表结果表';
 
 -- ----------------------------
 -- Table structure for t_form_impt_rules
@@ -497,7 +497,7 @@ CREATE TABLE `t_form_impt_rules` (
   `modify_time` datetime DEFAULT NULL,
   `form_main_id` bigint(20) DEFAULT NULL COMMENT '表单主id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8 COMMENT='表单重点项规则表';
+) ENGINE=InnoDB AUTO_INCREMENT=215 DEFAULT CHARSET=utf8 COMMENT='表单重点项规则表';
 
 -- ----------------------------
 -- Table structure for t_form_main
@@ -518,7 +518,7 @@ CREATE TABLE `t_form_main` (
   `is_del` bit(1) DEFAULT NULL,
   `is_use` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='表单主体表';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='表单主体表';
 
 -- ----------------------------
 -- Table structure for t_form_oppt
@@ -533,7 +533,7 @@ CREATE TABLE `t_form_oppt` (
   `problem_type` tinyint(1) DEFAULT NULL COMMENT '题项方案类型（1：不带抽样，2：带抽样）',
   `sub_problem_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8 COMMENT='表单机会点关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=utf8 COMMENT='表单机会点关联表';
 
 -- ----------------------------
 -- Table structure for t_form_oppt_value
@@ -555,7 +555,7 @@ CREATE TABLE `t_form_oppt_value` (
   `sub_header_id` bigint(20) DEFAULT NULL,
   `form_result_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2463 DEFAULT CHARSET=utf8 COMMENT='表单机会点纪录表';
+) ENGINE=InnoDB AUTO_INCREMENT=2539 DEFAULT CHARSET=utf8 COMMENT='表单机会点纪录表';
 
 -- ----------------------------
 -- Table structure for t_form_pbm
@@ -576,7 +576,7 @@ CREATE TABLE `t_form_pbm` (
   `is_important` bit(1) DEFAULT NULL COMMENT '是否重要（0：不重要，1：重要）',
   `form_type_id` bigint(20) DEFAULT NULL COMMENT '表单分类id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=315 DEFAULT CHARSET=utf8 COMMENT='表单题项表';
+) ENGINE=InnoDB AUTO_INCREMENT=320 DEFAULT CHARSET=utf8 COMMENT='表单题项表';
 
 -- ----------------------------
 -- Table structure for t_form_pbm_val
@@ -597,7 +597,7 @@ CREATE TABLE `t_form_pbm_val` (
   `form_result_id` bigint(20) DEFAULT NULL,
   `problem_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=581 DEFAULT CHARSET=utf8 COMMENT='表单题项值表';
+) ENGINE=InnoDB AUTO_INCREMENT=597 DEFAULT CHARSET=utf8 COMMENT='表单题项值表';
 
 -- ----------------------------
 -- Table structure for t_form_score_item
@@ -612,7 +612,7 @@ CREATE TABLE `t_form_score_item` (
   `modify_time` datetime DEFAULT NULL,
   `form_main_id` bigint(20) DEFAULT NULL COMMENT '表单主id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=171 DEFAULT CHARSET=utf8 COMMENT='表单计分项表';
+) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=utf8 COMMENT='表单计分项表';
 
 -- ----------------------------
 -- Table structure for t_form_sub_pbm
@@ -629,7 +629,7 @@ CREATE TABLE `t_form_sub_pbm` (
   `modify_user_id` bigint(11) DEFAULT NULL,
   `org_id` bigint(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 COMMENT='表单题项的子题表';
+) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8 COMMENT='表单题项的子题表';
 
 -- ----------------------------
 -- Table structure for t_form_sub_pbm_header
@@ -642,7 +642,7 @@ CREATE TABLE `t_form_sub_pbm_header` (
   `create_time` datetime DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Table structure for t_form_sub_pbm_val
@@ -658,7 +658,7 @@ CREATE TABLE `t_form_sub_pbm_val` (
   `problem_value_id` bigint(20) DEFAULT NULL,
   `form_result_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=475 DEFAULT CHARSET=utf8 COMMENT='表单子题项值 表';
+) ENGINE=InnoDB AUTO_INCREMENT=495 DEFAULT CHARSET=utf8 COMMENT='表单子题项值 表';
 
 -- ----------------------------
 -- Table structure for t_form_type
@@ -672,7 +672,7 @@ CREATE TABLE `t_form_type` (
   `form_main_id` bigint(20) DEFAULT NULL,
   `score` int(5) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8 COMMENT='表单题项类别表';
+) ENGINE=InnoDB AUTO_INCREMENT=248 DEFAULT CHARSET=utf8 COMMENT='表单题项类别表';
 
 -- ----------------------------
 -- Table structure for t_form_value
@@ -693,7 +693,7 @@ CREATE TABLE `t_form_value` (
   `total` int(11) DEFAULT NULL,
   `form_result_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=utf8 COMMENT='打表结果表';
+) ENGINE=InnoDB AUTO_INCREMENT=312 DEFAULT CHARSET=utf8 COMMENT='打表结果表';
 
 -- ----------------------------
 -- Table structure for t_front_plan
@@ -726,7 +726,7 @@ CREATE TABLE `t_front_plan` (
   `modify_user_id` bigint(20) DEFAULT NULL,
   `notice_user_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COMMENT='巡店安排表';
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COMMENT='巡店安排表';
 
 -- ----------------------------
 -- Table structure for t_front_plan_form
@@ -740,7 +740,7 @@ CREATE TABLE `t_front_plan_form` (
   `report_id` bigint(20) DEFAULT NULL,
   `report_status` tinyint(1) DEFAULT '2' COMMENT '已完成：1，未完成：2',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Table structure for t_label
@@ -798,7 +798,7 @@ CREATE TABLE `t_loop_plan` (
   `is_del` bit(1) DEFAULT NULL COMMENT '是否逻辑删除0：正常1：逻辑删除',
   `org_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='巡店计划表';
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8 COMMENT='巡店计划表';
 
 -- ----------------------------
 -- Table structure for t_loop_sub_plan
@@ -845,7 +845,7 @@ CREATE TABLE `t_loop_work` (
   `version` int(11) DEFAULT NULL COMMENT '版本号',
   `score` varchar(20) DEFAULT NULL COMMENT '实际得分',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=848 DEFAULT CHARSET=utf8 COMMENT='循环计划表产生的事务，对应??台的常规任务,前台创建的指派任务，和改善任务';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='循环计划表产生的事务，对应??台的常规任务,前台创建的指派任务，和改善任务';
 
 -- ----------------------------
 -- Table structure for t_operate_data_for_work
@@ -869,7 +869,7 @@ CREATE TABLE `t_operate_data_for_work` (
   `audit_img_ids` varchar(255) DEFAULT NULL COMMENT '审核图片id，多个图片间用【,】分割',
   `score` varchar(20) DEFAULT NULL COMMENT '实际分数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='任务操作项纪录表';
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='任务操作项纪录表';
 
 -- ----------------------------
 -- Table structure for t_operate_option
@@ -895,7 +895,7 @@ CREATE TABLE `t_operate_option` (
   `feedback_img_type` tinyint(1) DEFAULT NULL,
   `feedback_need_num` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='操作项配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COMMENT='操作项配置表';
 
 -- ----------------------------
 -- Table structure for t_opportunity
@@ -916,7 +916,7 @@ CREATE TABLE `t_opportunity` (
   `modify_user_id` bigint(11) DEFAULT NULL COMMENT '数据修改人ID',
   `org_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8 COMMENT='机会点表';
+) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=utf8 COMMENT='机会点表';
 
 -- ----------------------------
 -- Table structure for t_plan_form_relation
@@ -932,7 +932,7 @@ CREATE TABLE `t_plan_form_relation` (
   `is_use` bit(1) DEFAULT NULL,
   `is_del` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COMMENT='计划和表单关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COMMENT='计划和表单关联表';
 
 -- ----------------------------
 -- Table structure for t_remind
@@ -969,7 +969,7 @@ CREATE TABLE `t_report` (
   `org_id` bigint(11) DEFAULT NULL,
   `form_result_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8 COMMENT='报告表';
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='报告表';
 
 -- ----------------------------
 -- Table structure for t_report_oppt
@@ -983,7 +983,7 @@ CREATE TABLE `t_report_oppt` (
   `modify_time` datetime DEFAULT NULL,
   `oppt_name` varchar(100) DEFAULT NULL COMMENT '机会点名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COMMENT='表单和机会点中间表';
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8 COMMENT='表单和机会点中间表';
 
 -- ----------------------------
 -- Table structure for t_report_user
@@ -1005,6 +1005,7 @@ CREATE TABLE `t_shop_info` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '主键PK',
   `shop_name` varchar(100) DEFAULT NULL COMMENT '店铺名称',
   `short_name` varchar(50) DEFAULT NULL COMMENT '店铺简称',
+  `type` int(255) DEFAULT NULL COMMENT '店铺类型：1-直营;2-加盟',
   `shop_code` varchar(50) DEFAULT NULL COMMENT '店铺编号',
   `shop_desc` varchar(255) DEFAULT NULL COMMENT '店铺描述',
   `province` varchar(20) DEFAULT NULL COMMENT '省份',
@@ -1069,7 +1070,7 @@ CREATE TABLE `t_task` (
   `report_id` bigint(20) DEFAULT NULL COMMENT '报告id',
   `front_plan_id` bigint(20) DEFAULT NULL COMMENT '巡店安排',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='任务表';
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COMMENT='任务表';
 
 -- ----------------------------
 -- Table structure for t_task_label

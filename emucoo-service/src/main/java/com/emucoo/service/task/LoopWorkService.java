@@ -43,4 +43,5 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
 
     AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId);
 
+    void markExpiredWorks();
 }

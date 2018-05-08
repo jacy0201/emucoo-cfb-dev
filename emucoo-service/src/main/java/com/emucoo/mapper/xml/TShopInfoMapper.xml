@@ -25,6 +25,8 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
     <result column="is_use" property="isUse" jdbcType="BIT" />
+      <result column="type" property="type" jdbcType="INTEGER" />
+
   </resultMap>
 
   <select id="fetchShopsOfUser" resultMap="BaseResultMap">
@@ -38,6 +40,7 @@
       shop.short_name,
       shop.shop_desc,
       shop.brand_id,
+      shop.type,
       (
         SELECT brand.brand_name
         FROM t_brand_info brand
