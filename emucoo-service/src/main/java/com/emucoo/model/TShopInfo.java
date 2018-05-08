@@ -24,6 +24,11 @@ public class TShopInfo extends BaseEntity {
     private String shopName;
 
     /**
+     * 店铺类型：1-直营;2-加盟
+     */
+    private Integer type;
+
+    /**
      * 店铺简称
      */
     @Column(name = "short_name")
@@ -395,6 +400,14 @@ public class TShopInfo extends BaseEntity {
      */
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     /**
