@@ -337,7 +337,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 //        task.setExecutorShopIds();
 
 //        task.setCcPositionIds();
-        task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+            task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
 
         List<String> timgids = new ArrayList<String>();
         voi.getTaskImgArr().forEach(imageUrlVo -> {
