@@ -57,14 +57,9 @@
     SELECT
     shopInfo.id,
     shopInfo.shop_name
-    FROM sys_area area
-    INNER JOIN sys_user_area userArea ON userArea.user_id = #{userId} AND userArea.is_del = FALSE
-    AND userArea.area_id = area.id
-    INNER JOIN t_shop_info shopInfo ON shopInfo.area_id = area.id AND shopInfo.brand_id IN
-    <foreach collection="brandList" item="item" open="(" close=")" separator=",">
-       #{item.id}
-    </foreach>
+    FROM t_shop_info shopInfo
+    INNER JOIN sys_user_shop userShop ON userShop.shop_id = shopInfo.id
+    AND userShop.user_id = #{userId}
     AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
-    WHERE area.is_del = FALSE
   </select>
 </mapper>

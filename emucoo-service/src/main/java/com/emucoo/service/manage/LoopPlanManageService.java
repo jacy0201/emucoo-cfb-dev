@@ -17,7 +17,7 @@ public interface LoopPlanManageService {
 
     void deletePlanById(TLoopPlan plan);
 
-    List<TLoopPlan> findPlanListByCondition(TLoopPlan plan);
+    List<TLoopPlan> findPlanListByCondition(TLoopPlan plan, Integer pageNumber, Integer pageSize);
 
     TLoopPlan findPlanById(TLoopPlan plan);
 }
