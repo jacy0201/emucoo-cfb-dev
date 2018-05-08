@@ -44,6 +44,10 @@ public class SysShopController extends BaseResource {
 			criteria.andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
 
+		if(null!=shopInfo && null!=shopInfo.getType()) {
+			criteria.andEqualTo("type", shopInfo.getType());
+		}
+
 		if(null!=shopInfo && null!=shopInfo.getAreaId()){
 			criteria.andEqualTo("areaId", shopInfo.getAreaId());
 		}
@@ -80,6 +84,9 @@ public class SysShopController extends BaseResource {
 		Example.Criteria criteria=example.createCriteria();
 		if(null!=shopInfo && null!=shopInfo.getShopName()) {
 			criteria.andLike("shopName", "%"+shopInfo.getShopName()+"%");
+		}
+		if(null!=shopInfo && null!=shopInfo.getType()) {
+			criteria.andEqualTo("type", shopInfo.getType());
 		}
 		if(null!=shopInfo && null!=shopInfo.getProvince()){
 			criteria.andEqualTo("province", shopInfo.getProvince());
