@@ -137,6 +137,25 @@ public class SysUserController extends BaseResource {
     }
 
     /**
+     * 重置密码
+     */
+    @ApiOperation(value="重置密码")
+    @PostMapping("/resetPassword")
+    public ApiResult resetPassword(@RequestBody SysUser sysUser) {
+        if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"用户 id 不能为空!");}
+        //sha256加密
+        String salt = RandomStringUtils.randomAlphanumeric(20);
+        //如果前台没有传值，后台默认重置密码为"123456"
+        if(StringUtil.isEmpty(sysUser.getPassword())){sysUser.setPassword("123456");}
+        sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
+        sysUser.setSalt(salt);
+        sysUser.setModifyTime(new Date());
+        sysUser.setModifyUserId(1L);
+        sysUserService.updateSelective(sysUser);
+        return success("success");
+    }
+
+    /**
      * 设置用户品牌分区
      */
     @ApiOperation(value="设置品牌分区店铺")
