@@ -7,18 +7,15 @@ import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.dto.modules.user.UserQuery;
-import com.emucoo.model.SysDept;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.SysUserRelation;
-import com.emucoo.service.sys.SysDeptService;
-import com.emucoo.service.sys.SysUserRelationService;
-import com.emucoo.service.sys.SysUserService;
+import com.emucoo.model.*;
+import com.emucoo.service.sys.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +37,11 @@ public class SysDeptController extends BaseResource {
 	@Autowired
 	private SysUserService sysUserService;
 
+	@Autowired
+	private SysUserPostService sysUserPostService;
+
+	@Autowired
+	private SysPostService sysPostService;
 
 	/**
 	 * 查询机构列表
@@ -214,6 +216,23 @@ public class SysDeptController extends BaseResource {
 			if(StringUtil.isNotEmpty(realName)){ criteria.andLike("realName","%"+realName+"%"); }
 			list=sysUserService.selectByExample(example);
 		}
+		List<SysUserPost> userPostList=null;
+		List<SysPost> postList=null;
+		if(null!=list && list.size()>0){
+			for(SysUser user:list){
+				Example example=new Example(SysUserPost.class);
+				example.createCriteria().andEqualTo("userId",user.getId()).andEqualTo("isDel",0);
+				userPostList=sysUserPostService.selectByExample(example);
+				if(null!=userPostList && userPostList.size()>0){
+					postList=new ArrayList<>();
+					for(SysUserPost sysUserPost:userPostList) {
+						postList.add(sysPostService.findById(sysUserPost.getPostId()));
+					}
+					user.setPostList(postList);
+				}
+			}
+		}
+
 		return success(list);
 	}
 }
