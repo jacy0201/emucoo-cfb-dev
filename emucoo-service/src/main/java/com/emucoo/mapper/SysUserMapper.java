@@ -44,4 +44,8 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     SysUser fetchOneByEmail(String mobile);
 
     SysUser fetchOneByUsername(String mobile);
+
+    List<SysUser> fetchAllUsers();
+
+    List<SysUser> fetchUsersByAssociateShop(long userId);
 }

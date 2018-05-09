@@ -1,10 +1,9 @@
 package com.emucoo.dto.modules.user;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author river
@@ -21,6 +20,7 @@ public class UserLoginInfo {
     private Integer departmentType;
     private Long departmentID;
     private String departmentName;
+    private Boolean usePlan;
     private List<shop> shopNameArr = Lists.newArrayList();
     
     @Data

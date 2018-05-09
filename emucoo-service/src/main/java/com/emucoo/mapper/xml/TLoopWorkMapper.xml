@@ -42,8 +42,8 @@
         FROM t_loop_work t1
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         left join t_task t3 on t1.task_id = t3.id
-        WHERE t1.excute_user_id = #{executeUserId} AND t1.work_status = 1 AND t1.type is not null
-        and #{date} between t1.execute_begin_date and t1.execute_end_date
+        WHERE t1.excute_user_id = #{executeUserId} AND t1.work_status = 1 AND t1.type is not null and #{date} between
+        t1.execute_begin_date and t1.execute_end_date
         GROUP BY t1.id
     </select>
 
@@ -117,75 +117,73 @@
 
     <select id="getTaskImproveSubmit" resultType="com.emucoo.dto.modules.task.TaskImproveSubmit">
         select
-            s.excute_user_id as taskSubPerID,
-            s.modify_time as taskSubTimeDate,
-            t.head_img_url as taskSubPerHeadUrl,
-            k.img_ids imgUrls,
-            k.work_txt as workText,
-            k.num_option_value digitalItemValue
+        s.excute_user_id as taskSubPerID,
+        s.modify_time as taskSubTimeDate,
+        t.head_img_url as taskSubPerHeadUrl,
+        k.img_ids imgUrls,
+        k.work_txt as workText,
+        k.num_option_value digitalItemValue
         from t_loop_work s
-            left join sys_user t on t.id = s.create_user_id
-            left join t_operate_data_for_work k on k.loop_work_id = s.id
+        left join sys_user t on t.id = s.create_user_id
+        left join t_operate_data_for_work k on k.loop_work_id = s.id
         where s.id = #{loopWorkId}
     </select>
 
     <select id="getTaskImproveStatement" resultType="com.emucoo.dto.modules.task.TaskImproveStatement">
         select
-            t.oppt_id chancePointID,
-            e.name chancePointTitle,
-            k.org_id chancePointSourceID,
-            m.dpt_name chancePointSourceName,
-            t.oppt_id chancePointNum,
-            s.work_status taskStatus,
-            t.name taskTitle,
-            t.description taskExplain,
-            t.illustration_img_ids imgUrls,
-            t.task_start_date startDate,
-            t.task_end_date endDate,
-            s.execute_deadline submitDeadlineDate,
-            s.audit_deadline reviewDeadlineDate,
-            s.excute_user_id executorID,
-            s.excute_user_name executorName,
-            s.audit_user_id auditorID,
-            s.audit_user_name auditorName,
-            s.send_user_ids ccPersonNames,
-            t.loop_cycle_type taskRepeatType,
-            t.loop_cycle_value taskRepeatValue,
-            o.preinstall_score taskRank,
-            case when o.feedback_need_text=1 then 2 else 1 end feedbackText,
-            o.feedback_img_type feedbackImg,
-            o.feedback_num_type digitalItemType,
-            o.feedback_num_name digitalItemName
+        t.oppt_id chancePointID,
+        e.name chancePointTitle,
+        k.org_id chancePointSourceID,
+        m.dpt_name chancePointSourceName,
+        t.oppt_id chancePointNum,
+        s.work_status taskStatus,
+        t.name taskTitle,
+        t.description taskExplain,
+        t.illustration_img_ids imgUrls,
+        t.task_start_date startDate,
+        t.task_end_date endDate,
+        s.execute_deadline submitDeadlineDate,
+        s.audit_deadline reviewDeadlineDate,
+        s.excute_user_id executorID,
+        s.excute_user_name executorName,
+        s.audit_user_id auditorID,
+        s.audit_user_name auditorName,
+        s.send_user_ids ccPersonNames,
+        t.loop_cycle_type taskRepeatType,
+        t.loop_cycle_value taskRepeatValue,
+        o.preinstall_score taskRank,
+        case when o.feedback_need_text=1 then 2 else 1 end feedbackText,
+        o.feedback_img_type feedbackImg,
+        o.feedback_num_type digitalItemType,
+        o.feedback_num_name digitalItemName
         from t_loop_work s
-            LEFT JOIN t_task t on t.id = s.task_id
-            left join t_opportunity e on t.oppt_id = e.id
-            Left join t_operate_option o on t.id = o.task_id
-            LEFT JOIN t_front_plan k on k.id = t.front_plan_id
-            LEFT JOIN sys_dept m on m.id = k.org_id
+        LEFT JOIN t_task t on t.id = s.task_id
+        left join t_opportunity e on t.oppt_id = e.id
+        Left join t_operate_option o on t.id = o.task_id
+        LEFT JOIN t_front_plan k on k.id = t.front_plan_id
+        LEFT JOIN sys_dept m on m.id = k.org_id
         where s.id=#{loopWorkId}
     </select>
 
     <select id="findImproveTaskList" resultMap="BaseResultMap">
-      SELECT
-      twork.id,
-      twork.excute_user_id,
-      twork.excute_user_name,
-      twork.work_status,
-      twork.work_result,
-      task.id AS task_id,
-      task.name,
-      task.type,
-      task.work_id,
-      twork.sub_work_id,
-      user.head_img_url
-      FROM t_loop_work twork
-      INNER JOIN t_task task ON task.work_id = twork.work_id
-      AND task.oppt_id = #{opptId} AND task.report_id = #{reportId}
-      AND task.is_del = FALSE AND is_use = TRUE
-      INNER JOIN sys_user user ON twork.excute_user_id = user.id
-      WHERE twork.type=3
-      GROUP BY twork.excute_user_id
-      ORDER BY twork.create_time DESC
+        SELECT
+        twork.id,
+        twork.excute_user_id,
+        twork.excute_user_name,
+        twork.work_status,
+        twork.work_result,
+        task.id AS task_id,
+        task.name,
+        task.type,
+        task.work_id,
+        twork.sub_work_id,
+        user.head_img_url
+        FROM t_loop_work twork INNER JOIN t_task task ON task.work_id = twork.work_id AND task.oppt_id = #{opptId} AND
+        task.report_id = #{reportId} AND task.is_del = FALSE AND is_use = TRUE
+        INNER JOIN sys_user user ON twork.excute_user_id = user.id
+        WHERE twork.type=3
+        GROUP BY twork.excute_user_id
+        ORDER BY twork.create_time DESC
     </select>
 
     <select id="findImproveTaskListByUser" resultType="com.emucoo.model.TLoopWork">
@@ -196,10 +194,8 @@
         twork.work_status,
         twork.work_result,
         twork.sub_work_id
-        FROM t_loop_work twork
-        INNER JOIN t_task task ON task.work_id = twork.work_id
-        AND task.oppt_id = #{opptId} AND task.report_id = #{reportId}
-        AND task.is_del = FALSE AND is_use = TRUE
+        FROM t_loop_work twork INNER JOIN t_task task ON task.work_id = twork.work_id AND task.oppt_id = #{opptId} AND
+        task.report_id = #{reportId} AND task.is_del = FALSE AND is_use = TRUE
         WHERE twork.type=3 AND twork.excute_user_id = #{excuteUserId}
     </select>
 
@@ -215,5 +211,31 @@
         update t_loop_work set work_status=3, work_result=1 where work_status=2 and work_result is null and audit_deadline < #{dt} and type in (1,2,3)
         ]]>
     </update>
-    
+
+
+    <select id="fetchCommonTaskStatement" resultType="com.emucoo.dto.modules.task.TaskCommonStatement">
+        select
+            s.work_status taskStatus,
+            t.name taskTitle,
+            t.description taskExplain,
+            s.execute_begin_date startDate,
+            s.execute_end_date endDate,
+            s.execute_deadline submitDeadline,
+            s.audit_deadline reviewDeadline,
+            s.excute_user_id executorID,
+            s.excute_user_name executorName,
+            s.audit_user_id auditorID,
+            s.audit_user_name auditorName,
+            (select group_concat(real_name) from sys_user where find_in_set(id, s.send_user_ids)) ccPersonNames,
+            s.send_user_ids ccPersonIds,
+            t.loop_cycle_type taskRepeatType,
+            t.loop_cycle_value taskRepeatValue,
+            t.preinstall_score taskRank,
+            t.audit_type reviewItemType,
+            (select group_concat(img_url) from t_file where find_in_set(id, t.illustration_img_ids)) imgurls
+        from t_loop_work s left join t_task t on s.task_id = t.id
+        where s.work_id = #{workId} and s.sub_work_id = #{subWorkId} and s.type=#{workType}
+    </select>
+
+
 </mapper>

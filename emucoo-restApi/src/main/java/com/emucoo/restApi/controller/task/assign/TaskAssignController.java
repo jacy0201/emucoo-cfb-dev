@@ -13,9 +13,6 @@ import com.emucoo.service.task.LoopWorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/task/assign")
 public class TaskAssignController extends AppBaseController {
@@ -44,31 +41,7 @@ public class TaskAssignController extends AppBaseController {
     @PostMapping("/fetchContacts")
     public AppResult<ContactsVo_O> fetchContacts(@RequestBody ParamVo<ContactsVo_I> params) {
 	    ContactsVo_I contactsVo_i = params.getData();
-	    int contactsType = Integer.parseInt(contactsVo_i.getContactsType());
-
-	    List<SysUser> users = userService.findAll();
-	    List<ContactVo> allContacts = new ArrayList<ContactVo>();
-
-	    for(SysUser tu : users) {
-	        if(tu.getIsAdmin() != null && tu.getIsAdmin()) {
-	            continue;
-            }
-	        ContactVo cv = new ContactVo();
-	        cv.setContactsID(tu.getId());
-	        cv.setContactsName(tu.getRealName()==null?"":tu.getRealName());
-	        cv.setContactsHeadUrl(tu.getHeadImgUrl()==null?"":tu.getHeadImgUrl());
-            allContacts.add(cv);
-        }
-
-        ContactsVo_O result = new ContactsVo_O();
-        result.setAllContactsArr(allContacts);
-        int len = allContacts.size();
-        if(len > 9) {
-            List<ContactVo> topContacts = allContacts.subList(0, 9);
-            result.setTopContactsArr(topContacts);
-        } else {
-            result.setTopContactsArr(allContacts);
-        }
+        ContactsVo_O result = userService.fetchContacts(contactsVo_i);
         return success(result);
 
     }

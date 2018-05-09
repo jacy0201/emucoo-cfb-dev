@@ -1,9 +1,10 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
 
 @Table(name = "sys_dept")
 public class SysDept extends BaseEntity {
@@ -141,6 +142,9 @@ public class SysDept extends BaseEntity {
      */
     @Column(name = "is_del")
     private Boolean isDel;
+
+    @Column(name = "use_plan")
+    private Boolean usePlan;
 
     /**
      * 获取机构ID
@@ -482,5 +486,13 @@ public class SysDept extends BaseEntity {
 
     public void setBrandList(List<TBrandInfo> brandList) {
         this.brandList = brandList;
+    }
+
+    public Boolean getUsePlan() {
+        return usePlan;
+    }
+
+    public void setUsePlan(Boolean usePlan) {
+        this.usePlan = usePlan;
     }
 }

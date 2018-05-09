@@ -142,4 +142,17 @@
         select * from sys_user where is_del != 1 and username = #{username} limit 1
     </select>
 
+    <select id="fetchAllUsers" resultMap="BaseResultMap">
+        select * from sys_user where is_del != 1 and is_admin != 1
+    </select>
+
+
+    <select id="fetchUsersByAssociateShop" resultMap="BaseResultMap">
+        select * from sys_user where is_del != 1 and id in (
+            select distinct user_id from sys_user_shop where shop_id in (
+                select id from t_shop_info where shop_manager_id=#{userId}
+            )
+        )
+    </select>
+
 </mapper>
