@@ -10,7 +10,7 @@ import java.util.List;
 public interface TShopInfoMapper extends MyMapper<TShopInfo> {
     List<TShopInfo> fetchShopsOfUser(Long id);
 
-    List<TShopInfo> selectShopListByUserAndAreaBrand(@Param("userId") Long id, @Param("areaId") Long precinctID,
+    List<TShopInfo> selectShopListByUserAndAreaBrand(@Param("userIds") List<String> ids, @Param("areaId") Long precinctID,
                                                 @Param("brandList")List<TBrandInfo> brandInfos);
 
     List<TShopInfo> selectShopListByUserId(@Param("userId")Long userId, @Param("brandList")List<TBrandInfo> brandInfos);

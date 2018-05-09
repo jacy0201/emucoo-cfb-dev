@@ -17,6 +17,7 @@ import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.SysAreaMapper;
 import com.emucoo.mapper.SysDeptMapper;
+import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.mapper.TBrandInfoMapper;
 import com.emucoo.mapper.TFrontPlanMapper;
 import com.emucoo.mapper.TLoopPlanMapper;
@@ -45,6 +46,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,21 +84,31 @@ public class PlanServiceImpl implements PlanService {
     @Autowired
     private TPlanFormRelationMapper tPlanFormRelationMapper;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
     public FindShopListOut findShopList(SysUser user, FindShopListIn findShopListIn) {
+        FindShopListOut findShopListOut = new FindShopListOut();
         //查询品牌
         List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
-        List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(user.getId(), findShopListIn.getPrecinctID(), brandInfos);
-        FindShopListOut findShopListOut = new FindShopListOut();
-        List<ShopVo> shopVos = new ArrayList<ShopVo>();
-        if(CollectionUtils.isNotEmpty(shopList)) {
-            for(TShopInfo tShopInfo : shopList) {
-                ShopVo shopVo = new ShopVo();
-                shopVo.setShopID(tShopInfo.getId());
-                shopVo.setShopName(tShopInfo.getShopName());
-                shopVo.setBrandName(tShopInfo.getBrandName());
-                shopVos.add(shopVo);
+        // 查询当前用户的下级用户
+        String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
+        List<String> userIdList = Arrays.asList(userIds.split(","));
+        if(CollectionUtils.isNotEmpty(userIdList)) {
+            userIdList.remove(0);
+            List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(userIdList, findShopListIn.getPrecinctID(), brandInfos);
+
+            List<ShopVo> shopVos = new ArrayList<ShopVo>();
+            if (CollectionUtils.isNotEmpty(shopList)) {
+                for (TShopInfo tShopInfo : shopList) {
+                    ShopVo shopVo = new ShopVo();
+                    shopVo.setShopID(tShopInfo.getId());
+                    shopVo.setShopName(tShopInfo.getShopName());
+                    shopVo.setBrandName(tShopInfo.getBrandName());
+                    shopVos.add(shopVo);
+                }
+                findShopListOut.setShopArr(shopVos);
             }
-            findShopListOut.setShopArr(shopVos);
         }
 
         return findShopListOut;
@@ -327,8 +339,6 @@ public class PlanServiceImpl implements PlanService {
             } else {
                 return null;
             }
-
-
             //计算进度
             Calendar calendar = Calendar.getInstance();
             String year = String.valueOf(calendar.get(Calendar.YEAR));
@@ -369,7 +379,7 @@ public class PlanServiceImpl implements PlanService {
                 List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserId(user.getId(), brandInfos);
                 // 子计划内需要的总打表次数
                 int totleCountInSubPlan = totalFormUseCount * shopList.size();
-                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds);
+                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds, user.getId());
 
                 int actualFinishCount = 0;
                 for (HashMap<String, Long> item : tFrontPlanSummary) {
