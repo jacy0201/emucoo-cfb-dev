@@ -21,6 +21,7 @@
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
         <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
         <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="use_plan" property="usePlan" jdbcType="BIT"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
         <result column="district" property="district" jdbcType="VARCHAR"/>
