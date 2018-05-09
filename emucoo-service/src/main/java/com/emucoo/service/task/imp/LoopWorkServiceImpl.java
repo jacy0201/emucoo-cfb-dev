@@ -132,6 +132,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
+        if(loopWork == null)
+            return;
         loopWork.setType(atai.getWorkType());
         loopWork.setWorkResult(atai.getReviewResult());
         loopWork.setAuditUserId(user.getId());
