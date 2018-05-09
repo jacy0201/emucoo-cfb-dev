@@ -143,8 +143,6 @@ public class SysDept extends BaseEntity {
     @Column(name = "is_del")
     private Boolean isDel;
 
-    @Column(name = "use_plan")
-    private Boolean usePlan;
 
     /**
      * 是否可以查看巡店计划1：可以；0：不可以
@@ -502,11 +500,4 @@ public class SysDept extends BaseEntity {
         this.brandList = brandList;
     }
 
-    public Boolean getUsePlan() {
-        return usePlan;
-    }
-
-    public void setUsePlan(Boolean usePlan) {
-        this.usePlan = usePlan;
-    }
 }
