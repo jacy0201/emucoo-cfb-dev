@@ -95,7 +95,6 @@
       </if>
       AND is_del = FALSE
     </where>
-    <!--LIMIT #{pageMargin}, #{pageSize}-->
   </select>
 
   <select id="findPlanById" parameterType="com.emucoo.model.TLoopPlan" resultMap="planMap">

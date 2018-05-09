@@ -99,8 +99,8 @@ public class LoopPlanManageServiceImpl extends BaseServiceImpl<TLoopPlan> implem
         tPlanFormRelationMapper.deleteById(plan.getId());
     }
 
-    public List<TLoopPlan> findPlanListByCondition(TLoopPlan plan, Integer pageNumber, Integer pageSize) {
-        List<TLoopPlan> planList = tLoopPlanMapper.findPlanListByCondition(plan, pageSize, pageSize * (pageNumber - 1));
+    public List<TLoopPlan> findPlanListByCondition(TLoopPlan plan) {
+        List<TLoopPlan> planList = tLoopPlanMapper.findPlanListByCondition(plan);
         return planList;
     }
 
