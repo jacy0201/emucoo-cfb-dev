@@ -1,24 +1,16 @@
 package com.emucoo.service.task.imp;
 
 import com.emucoo.dto.modules.task.*;
-import com.emucoo.mapper.TFileMapper;
-import com.emucoo.mapper.TLoopWorkMapper;
-import com.emucoo.mapper.TOperateDataForWorkMapper;
-import com.emucoo.mapper.TTaskMapper;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.TFile;
-import com.emucoo.model.TLoopWork;
-import com.emucoo.model.TOperateDataForWork;
+import com.emucoo.mapper.*;
+import com.emucoo.model.*;
 import com.emucoo.service.task.TaskCommonService;
 import com.emucoo.utils.DateUtil;
+import com.emucoo.utils.WaterMarkUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +28,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Autowired
     private TFileMapper fileMapper;
 
+    @Autowired
+    private TOperateOptionMapper operateOptionMapper;
+
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn voi) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(voi.getWorkID(), voi.getSubID(), voi.getWorkType());
@@ -43,7 +38,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         TaskCommonDetailOut out = new TaskCommonDetailOut();
         // taskStatement
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(voi.getWorkType(), voi.getWorkID(), voi.getSubID());
-        if(taskStatement != null) {
+        if (taskStatement != null) {
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
                 taskStatement.setTaskImgArr(Arrays.asList(imgUrls.split(",")).stream().map(url -> {
                     ImageUrl imgurl = new ImageUrl();
@@ -127,20 +122,115 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    public void submitTask(TaskCommonSubmitIn vo, SysUser user) {
+    public void submitTask(TaskCommonSubmitIn taskCommonSubmitIn, SysUser user) {
+        TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonSubmitIn.getWorkID(), taskCommonSubmitIn.getSubID(), taskCommonSubmitIn.getWorkType());
+        TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
+        HashMap<Long, TOperateOption> optMaps = new HashMap<>();
+        for (TOperateOption opt : options) {
+            optMaps.put(opt.getId(), opt);
+        }
+        loopWork.setExcuteUserId(user.getId());
+        loopWork.setExcuteUserName(user.getUsername());
+        loopWork.setModifyTime(DateUtil.currentDate());
+//        task.getAuditDeadline()
+        loopWork.setWorkStatus(2);
+
+        loopWorkMapper.updateWorkStatus(loopWork);
+
+        List<TOperateDataForWork> odfws1 = new ArrayList<>();
+        List<TOperateDataForWork> odfws2 = new ArrayList<>();
+
+        List<TaskCommonSubmitIn.TaskItem> taskItemArr = taskCommonSubmitIn.getTaskItemArr();
+        for (TaskCommonSubmitIn.TaskItem taskItem : taskItemArr) {
+            List<TaskCommonSubmitIn.TaskItem.ImgUrl> executeImgArr = taskItem.getExecuteImgArr();
+            List<String> imgids = new ArrayList<>();
+            executeImgArr.stream().forEach(imgUrl -> {
+                String nurl = WaterMarkUtils.genPicUrlWithWaterMark(imgUrl.getImgUrl(), imgUrl.getLocation(), DateUtil.dateToString(new Date(imgUrl.getDate())));
+                Date dt = new Date(imgUrl.getDate());
+                String loc = imgUrl.getLocation();
+                TFile img = new TFile();
+                img.setImgUrl(nurl);
+                img.setLocation(loc);
+                img.setFileDate(dt);
+                img.setCreateUserId(user.getId());
+                img.setModifyUserId(user.getId());
+                img.setCreateTime(DateUtil.currentDate());
+                img.setModifyTime(DateUtil.currentDate());
+                fileMapper.insert(img);
+                imgids.add(Long.toString(img.getId()));
+            });
+
+            TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
+            if(odfw == null){
+                odfw = new TOperateDataForWork();
+                odfws1.add(odfw);
+            } else {
+                odfws2.add(odfw);
+            }
+
+            TOperateOption option = optMaps.get(taskItem.getTaskItemID());
+
+            odfw.setTaskItemId(taskItem.getTaskItemID());
+            odfw.setLoopWorkId(loopWork.getId());
+            odfw.setWorkTxt(taskItem.getWorkText());
+            odfw.setImgIds(StringUtils.join(imgids, ","));
+            odfw.setNumOptionType(option.getFeedbackNumType());
+            odfw.setNumOptionName(option.getFeedbackNumName());
+            odfw.setNumOptionValue(String.valueOf(taskItem.getDigitalItemValue()));
+            odfw.setCreateTime(DateUtil.currentDate());
+            odfw.setModifyTime(DateUtil.currentDate());
+        }
+
+        operateDataForWorkMapper.insertList(odfws1);
+        for(TOperateDataForWork odfw : odfws2) {
+            operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
+        }
 
     }
 
     @Override
-    public void auditTask(TaskCommonAuditIn vo, SysUser user) {
+    public void auditTask(TaskCommonAuditIn taskCommonAuditIn, SysUser user) {
+        TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonAuditIn.getWorkID(), taskCommonAuditIn.getSubID(), taskCommonAuditIn.getWorkType());
 
+        List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
+        HashMap<Long, TOperateOption> optMaps = new HashMap<>();
+        for (TOperateOption opt : options) {
+            optMaps.put(opt.getId(), opt);
+        }
+        loopWork.setAuditUserId(user.getId());
+        loopWork.setAuditUserName(user.getUsername());
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
+
+        List<TaskCommonAuditIn.AuditTaskItem> taskItemArr = taskCommonAuditIn.getReviewArr();
+        for (TaskCommonAuditIn.AuditTaskItem taskItem : taskItemArr) {
+            // 任务审核
+            TOperateDataForWork odfw  = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
+            odfw.setTaskItemId(taskItem.getTaskItemID());
+            odfw.setLoopWorkId(loopWork.getId());
+            odfw.setAuditResult(taskItem.getReviewResult());
+            odfw.setAuditContent(taskItem.getReviewOpinion());
+            odfw.setAuditUserId(user.getId());
+            List<ImageUrl> imgarr = taskItem.getReviewImgArr();
+            List<String> imgids = new ArrayList<>();
+            if(imgarr != null) {
+                imgarr.forEach(imga -> {
+                    TFile img = new TFile();
+                    img.setImgUrl(imga.getImgUrl());
+                    fileMapper.insert(img);
+                    imgids.add(String.valueOf(img.getId()));
+                });
+            }
+            odfw.setAuditImgIds(StringUtils.join(imgids, ","));
+            operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
+        }
     }
 
     @Override
     public void editExcImgs(ExecuteImgIn vo, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(vo.getWorkID(), vo.getSubID());
         TOperateDataForWork opData = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
-        if(StringUtils.isBlank(opData.getImgIds()))
+        if (StringUtils.isBlank(opData.getImgIds()))
             return;
 
         fileMapper.deleteByIds(opData.getImgIds());
@@ -153,7 +243,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         List<ExecuteImgIn.ExecuteImg> inimgs = vo.getExecuteImgArr();
         List<TFile> newImgs = new ArrayList<>();
-        for(ExecuteImgIn.ExecuteImg inimg : inimgs) {
+        for (ExecuteImgIn.ExecuteImg inimg : inimgs) {
             TFile nimg = new TFile();
             nimg.setImgUrl(inimg.getImgUrl());
             nimg.setModifyUserId(user.getId());

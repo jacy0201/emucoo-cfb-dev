@@ -28,4 +28,9 @@
   <select id="fetchOneByTaskId" resultMap="BaseResultMap">
     select * from t_operate_option where task_id=#{taskId} limit 1
   </select>
+
+
+  <select id="fetchOptionsByTaskId" resultMap="BaseResultMap">
+    select * from t_operate_option where task_id=#{taskId}
+  </select>
 </mapper>

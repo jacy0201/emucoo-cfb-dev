@@ -310,4 +310,12 @@ public class FormManageServiceImpl implements FormManageService {
             formAddItemMapper.insertList(formAddItems);
         }
     }
+
+    @Override
+    public TFormMain fetchFormReportSettings(Long id) {
+        TFormMain formMain = formMainMapper.fetchOneById(id);
+        List<TFormAddItem> formAddItems = formAddItemMapper.findFormAddItemsByFormMainId(formMain.getId());
+        formMain.setAddItems(formAddItems);
+        return formMain;
+    }
 }
