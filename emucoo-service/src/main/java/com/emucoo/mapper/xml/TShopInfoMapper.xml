@@ -52,10 +52,7 @@
       <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
           #{userid}
       </foreach>
-      WHERE shop.area_id = #{areaId} AND shop.brand_id IN
-      <foreach collection="brandList" item="item" open="(" close=")" separator=",">
-          #{item.id}
-      </foreach>
+      WHERE shop.area_id = #{areaId}
       AND shop.is_del = FALSE AND shop.is_use = TRUE
   </select>
 
@@ -66,6 +63,18 @@
     FROM t_shop_info shopInfo
     INNER JOIN sys_user_shop userShop ON userShop.shop_id = shopInfo.id
     AND userShop.user_id = #{userId}
+    AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
+  </select>
+  <select id="selectShopListByUserIds" parameterType="ArrayList" resultType="com.emucoo.model.TShopInfo">
+    SELECT
+    shopInfo.id,
+    shopInfo.shop_name
+    FROM t_shop_info shopInfo
+    INNER JOIN sys_user_shop userShop ON userShop.shop_id = shopInfo.id
+    AND userShop.user_id IN
+    <foreach collection="list" item="userid" open="(" close=")" separator=",">
+      #{userid}
+    </foreach>
     AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
   </select>
     <update id="updateByManagerId" parameterType="Long">
