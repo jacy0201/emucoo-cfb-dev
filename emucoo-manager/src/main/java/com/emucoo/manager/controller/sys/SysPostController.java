@@ -109,7 +109,8 @@ public class SysPostController extends BaseResource {
 	@ApiOperation(value="删除岗位")
 	public ApiResult delete(@RequestBody SysPost post){
 		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
-		sysPostService.deleteById(post.getId());
+		post.setIsDel(true);
+		sysPostService.updateSelective(post);
 		return success("success");
 	}
 }
