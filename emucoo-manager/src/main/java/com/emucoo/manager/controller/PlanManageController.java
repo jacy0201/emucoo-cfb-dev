@@ -178,7 +178,7 @@ public class PlanManageController extends BaseResource {
         }
         TLoopPlan plan = param.getData();
         PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
-        List<TLoopPlan> tLoopPlans = loopPlanManageService.findPlanListByCondition(plan, param.getPageNumber(), param.getPageSize());
+        List<TLoopPlan> tLoopPlans = loopPlanManageService.findPlanListByCondition(plan);
         return success(new PageInfo<>(tLoopPlans));
     }
 

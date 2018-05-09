@@ -15,7 +15,7 @@ public interface TLoopPlanMapper extends MyMapper<TLoopPlan> {
 
     void deletePlanById(TLoopPlan plan);
 
-    List<TLoopPlan> findPlanListByCondition(@Param("plan")TLoopPlan plan, @Param("pageSize")Integer pageSize, @Param("pageMargin")Integer pageMargin);
+    List<TLoopPlan> findPlanListByCondition(TLoopPlan plan);
 
     TLoopPlan findPlanById(TLoopPlan plan);
 }
