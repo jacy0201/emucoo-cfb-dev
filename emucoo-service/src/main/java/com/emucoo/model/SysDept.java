@@ -143,6 +143,12 @@ public class SysDept extends BaseEntity {
     private Boolean isDel;
 
     /**
+     * 是否可以查看巡店计划1：可以；0：不可以
+     */
+    @Column(name = "use_plan")
+    private Boolean usePlan;
+
+    /**
      * 获取机构ID
      *
      * @return id - 机构ID
@@ -249,6 +255,14 @@ public class SysDept extends BaseEntity {
      */
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Boolean getUsePlan() {
+        return usePlan;
+    }
+
+    public void setUsePlan(Boolean usePlan) {
+        this.usePlan = usePlan;
     }
 
     /**
