@@ -17,43 +17,43 @@ public class SysUserRelation extends BaseEntity {
     private String userName;
 
     /**
-     * child_user_id下级id
+     * parent_user_id上级id
      */
-    @Column(name = "child_user_id")
-    private Long childUserId;
+    @Column(name = "parent_user_id")
+    private Long parentUserId;
 
     /**
-     * child_user_id 的 postId
+     * parent_user_id 的 postId
      */
-    @Column(name = "child_post_id")
-    private Long childPostId;
+    @Column(name = "parent_post_id")
+    private Long parentPostId;
 
 
-    public Long getChildPostId() {
-        return childPostId;
+    public Long getParentPostId() {
+        return parentPostId;
     }
 
-    public void setChildPostId(Long childPostId) {
-        this.childPostId = childPostId;
+    public void setParentPostId(Long parentPostId) {
+        this.parentPostId = parentPostId;
     }
 
-    public String getChildPostName() {
-        return childPostName;
+    public String getParentPostName() {
+        return parentPostName;
     }
 
-    public void setChildPostName(String childPostName) {
-        this.childPostName = childPostName;
+    public void setParentPostName(String parentPostName) {
+        this.parentPostName = parentPostName;
     }
 
     /**
-     * 下级用户岗位
+     * 上级用户岗位
      */
 
     @Transient
-    private String childPostName;
+    private String parentPostName;
 
     @Transient
-    private String childUserName;
+    private String parentUserName;
 
     public String getUserName() {
         return userName;
@@ -63,12 +63,12 @@ public class SysUserRelation extends BaseEntity {
         this.userName = userName;
     }
 
-    public String getChildUserName() {
-        return childUserName;
+    public String getParentUserName() {
+        return parentUserName;
     }
 
-    public void setChildUserName(String childUserName) {
-        this.childUserName = childUserName;
+    public void setParentUserName(String parentUserName) {
+        this.parentUserName = parentUserName;
     }
 
     public String getPostName() {
@@ -154,21 +154,21 @@ public class SysUserRelation extends BaseEntity {
     }
 
     /**
-     * 获取child_user_id下级id
+     * 获取parent_user_id下级id
      *
-     * @return child_user_id - child_user_id下级id
+     * @return
      */
-    public Long getChildUserId() {
-        return childUserId;
+    public Long getParentUserId() {
+        return parentUserId;
     }
 
     /**
-     * 设置child_user_id下级id
+     * 设置parent_user_id下级id
      *
-     * @param childUserId child_user_id下级id
+     * @param parentUserId
      */
-    public void setChildUserId(Long childUserId) {
-        this.childUserId = childUserId;
+    public void setParentUserId(Long parentUserId) {
+        this.parentUserId = parentUserId;
     }
 
     /**

@@ -48,11 +48,11 @@
       ) AS brandName
       FROM t_shop_info shop
       INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
-      AND userShop.user_id = #{userId}
-      WHERE shop.area_id = #{areaId} AND shop.brand_id IN
-      <foreach collection="brandList" item="item" open="(" close=")" separator=",">
-          #{item.id}
+      AND userShop.user_id IN
+      <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
+          #{userid}
       </foreach>
+      WHERE shop.area_id = #{areaId}
       AND shop.is_del = FALSE AND shop.is_use = TRUE
   </select>
 
@@ -60,14 +60,26 @@
     SELECT
     shopInfo.id,
     shopInfo.shop_name
-    FROM sys_area area
-    INNER JOIN sys_user_area userArea ON userArea.user_id = #{userId} AND userArea.is_del = FALSE
-    AND userArea.area_id = area.id
-    INNER JOIN t_shop_info shopInfo ON shopInfo.area_id = area.id AND shopInfo.brand_id IN
-    <foreach collection="brandList" item="item" open="(" close=")" separator=",">
-       #{item.id}
+    FROM t_shop_info shopInfo
+    INNER JOIN sys_user_shop userShop ON userShop.shop_id = shopInfo.id
+    AND userShop.user_id = #{userId}
+    AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
+  </select>
+  <select id="selectShopListByUserIds" parameterType="ArrayList" resultType="com.emucoo.model.TShopInfo">
+    SELECT
+    shopInfo.id,
+    shopInfo.shop_name
+    FROM t_shop_info shopInfo
+    INNER JOIN sys_user_shop userShop ON userShop.shop_id = shopInfo.id
+    AND userShop.user_id IN
+    <foreach collection="list" item="userid" open="(" close=")" separator=",">
+      #{userid}
     </foreach>
     AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
-    WHERE area.is_del = FALSE
   </select>
+    <update id="updateByManagerId" parameterType="Long">
+        UPDATE t_shop_info
+        SET shop_manager_id = NULL
+        WHERE shop_manager_id = #{userId}
+    </update>
 </mapper>

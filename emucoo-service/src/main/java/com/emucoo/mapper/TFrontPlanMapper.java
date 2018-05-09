@@ -17,9 +17,11 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
     void addUnArrangeToPlan(TFrontPlan tFrontPlan);
 
     List<TFrontPlan> findArrangeListByAreaId(@Param(value = "areaId") Long areaId, @Param(value = "year") String year,
-                                             @Param(value = "month") String month, @Param(value = "brandList")List<TBrandInfo> brandInfos);
+                                             @Param(value = "month") String month, @Param(value = "brandList") List<TBrandInfo> brandInfos,
+                                             @Param(value = "userIds")List<String> userIds);
 
-    List<HashMap<String, Long>> findFinishedArrangeListByForms(@Param(value = "planId") Long planId, @Param(value = "formIds") List<Long> formIds);
+    List<HashMap<String, Long>> findFinishedArrangeListByForms(@Param(value = "planId") Long planId, @Param(value = "formIds") List<Long> formIds,
+                                                               @Param(value = "userIds") List<String> userIds);
 
     void deleteFrontPlanByIds(List<Long> subIds);
 

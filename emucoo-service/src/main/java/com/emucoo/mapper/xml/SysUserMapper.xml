@@ -155,4 +155,8 @@
         )
     </select>
 
+    <select id="findAllChildListByParentId" parameterType="Long" resultType="String">
+        select getChildPersonList(#{userId})
+    </select>
+
 </mapper>

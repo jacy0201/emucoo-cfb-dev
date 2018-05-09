@@ -115,11 +115,13 @@
     (
       SELECT
       shop.id
-      from t_shop_info shop WHERE shop.area_id = #{areaId}
-      AND shop.brand_id IN
-      <foreach collection="brandList" item="item" open="(" close=")" separator=",">
-        #{item.id}
+      from t_shop_info shop
+      INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
+      AND userShop.user_id IN
+      <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
+        #{userid}
       </foreach>
+      WHERE shop.area_id = #{areaId}
     )
     AND plan.arrange_year = #{year} AND plan.arrange_month = #{month}
     AND plan.is_del = FALSE
@@ -132,6 +134,11 @@
      FROM t_front_plan plan
      INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
      AND planForm.report_status=1 AND planForm.is_del = FALSE
+     INNER JOIN sys_user_shop userShop ON userShop.shop_id = plan.shop_id
+     AND userShop.user_id IN
+     <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
+       #{userid}
+     </foreach>
      WHERE planForm.form_main_id IN
      <foreach collection="formIds" item="item" open="(" close=")" separator=",">
       #{item}

@@ -48,4 +48,6 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     List<SysUser> fetchAllUsers();
 
     List<SysUser> fetchUsersByAssociateShop(long userId);
+
+    String findAllChildListByParentId(Long userId);
 }

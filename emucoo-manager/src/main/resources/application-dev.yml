@@ -6,7 +6,6 @@ spring:
     password: ${password}
     url: jdbc:mysql://192.168.16.173:3306/emucoo-cfb?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
   redis:
-      database: 1
       cluster:
         nodes: 192.168.16.179:7000,192.168.16.179:7001,192.168.16.179:7002,199.168.16.180:7001,192.168.16.180:7002,192.168.16.180:7003
 

@@ -7,18 +7,15 @@ import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.dto.modules.user.UserQuery;
-import com.emucoo.model.SysDept;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.SysUserRelation;
-import com.emucoo.service.sys.SysDeptService;
-import com.emucoo.service.sys.SysUserRelationService;
-import com.emucoo.service.sys.SysUserService;
+import com.emucoo.model.*;
+import com.emucoo.service.sys.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +37,11 @@ public class SysDeptController extends BaseResource {
 	@Autowired
 	private SysUserService sysUserService;
 
+	@Autowired
+	private SysUserPostService sysUserPostService;
+
+	@Autowired
+	private SysPostService sysPostService;
 
 	/**
 	 * 查询机构列表
@@ -132,9 +134,9 @@ public class SysDeptController extends BaseResource {
 	public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-		if(sysUserRelation.getChildUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childUserId 不能为空!");}
+		if(sysUserRelation.getParentUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentUserId 不能为空!");}
 		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
-		if(sysUserRelation.getChildPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childPostId 不能为空!");}
+		if(sysUserRelation.getParentPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentPostId 不能为空!");}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(1L);
@@ -170,9 +172,12 @@ public class SysDeptController extends BaseResource {
 	//@RequiresPermissions("sys:user:deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
-		sysUserRelation=sysUserRelationService.findById(sysUserRelation.getId());
-		if(null!=sysUserRelation.getChildUserId()){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
+		Example example =new Example(SysUserRelation.class);
+		example.createCriteria().andEqualTo("parentUserId",sysUserRelation.getUserId());
+		List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
+		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
 
 		sysUserRelationService.deleteById(sysUserRelation.getId());
 		return success("success");
@@ -214,6 +219,23 @@ public class SysDeptController extends BaseResource {
 			if(StringUtil.isNotEmpty(realName)){ criteria.andLike("realName","%"+realName+"%"); }
 			list=sysUserService.selectByExample(example);
 		}
+		List<SysUserPost> userPostList=null;
+		List<SysPost> postList=null;
+		if(null!=list && list.size()>0){
+			for(SysUser user:list){
+				Example example=new Example(SysUserPost.class);
+				example.createCriteria().andEqualTo("userId",user.getId()).andEqualTo("isDel",0);
+				userPostList=sysUserPostService.selectByExample(example);
+				if(null!=userPostList && userPostList.size()>0){
+					postList=new ArrayList<>();
+					for(SysUserPost sysUserPost:userPostList) {
+						postList.add(sysPostService.findById(sysUserPost.getPostId()));
+					}
+					user.setPostList(postList);
+				}
+			}
+		}
+
 		return success(list);
 	}
 }
