@@ -267,9 +267,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	public void editUser(SysUser sysUser){
 		//删除用户店铺关系
 		if(null!=sysUser.getIsShopManager() && !sysUser.getIsShopManager()){
-			Example example=new Example(SysUserShop.class);
-			example.createCriteria().andEqualTo(sysUser.getId());
-			sysUserShopMapper.deleteByExample(example);
+			shopInfoMapper.updateByManagerId(sysUser.getId());
 		}
 		sysUserMapper.updateByPrimaryKeySelective(sysUser);
 		//先删除用户之前的岗位关系

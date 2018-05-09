@@ -162,7 +162,8 @@ public class SysShopController extends BaseResource {
 	@ApiOperation(value="删除店铺")
 	public ApiResult delete(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
-		sysShopService.deleteById(shopInfo.getId());
+		shopInfo.setIsDel(true);
+		sysShopService.updateSelective(shopInfo);
 		return success("success");
 	}
 

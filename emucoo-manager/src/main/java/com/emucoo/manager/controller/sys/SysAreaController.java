@@ -107,7 +107,8 @@ public class SysAreaController extends BaseResource {
 	@ApiOperation(value="删除分区")
 	public ApiResult delete(@RequestBody SysArea area){
 		if(area.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
-		sysAreaService.deleteById(area.getId());
+		area.setIsDel(true);
+		sysAreaService.updateSelective(area);
 		return success("success");
 	}
 }

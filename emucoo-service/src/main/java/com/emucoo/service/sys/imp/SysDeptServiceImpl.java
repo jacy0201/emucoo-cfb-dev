@@ -43,6 +43,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		String dptName="";
 		Boolean isUse=null;
 		List<SysDept> deptList=null;
+		criteria.andEqualTo("isDel",false);
 		if(null!=deptQuery && null!=deptQuery.getDptName() && !"".equals(deptQuery.getDptName())){
 			dptName=deptQuery.getDptName();
 			criteria.andLike("dptName","%"+dptName+"%");
@@ -127,7 +128,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 	private void getDeptTreeList(List<Long> subIdList, List<Long> deptIdList){
 		for(Long deptId : subIdList){
 			List<Long> list = queryDetpIdList(deptId);
-			if(list.size() > 0){
+			if(null!=list && list.size() > 0){
 				getDeptTreeList(list, deptIdList);
 			}
 
@@ -242,7 +243,8 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 		sysDptBrand.setDptId(sysDept.getId());
 		sysDptBrandMapper.delete(sysDptBrand);
 
-		sysDeptMapper.delete(sysDept);
+		sysDept.setIsDel(true);
+		sysDeptMapper.updateByPrimaryKeySelective(sysDept);
 	}
 
 
