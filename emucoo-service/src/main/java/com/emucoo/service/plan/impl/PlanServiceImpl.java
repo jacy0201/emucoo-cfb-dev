@@ -93,7 +93,7 @@ public class PlanServiceImpl implements PlanService {
         List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
         // 查询当前用户的下级用户
         String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
-        List<String> userIdList = Arrays.asList(userIds.split(","));
+        List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
         if(CollectionUtils.isNotEmpty(userIdList)) {
             userIdList.remove(0);
             List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(userIdList, findShopListIn.getPrecinctID(), brandInfos);

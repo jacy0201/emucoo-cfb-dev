@@ -142,4 +142,8 @@
         select * from sys_user where is_del != 1 and username = #{username} limit 1
     </select>
 
+    <select id="findAllChildListByParentId" parameterType="Long" resultType="String">
+        select getChildPersonList(#{userId})
+    </select>
+
 </mapper>
