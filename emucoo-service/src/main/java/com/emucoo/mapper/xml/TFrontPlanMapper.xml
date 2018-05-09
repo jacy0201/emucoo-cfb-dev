@@ -115,7 +115,10 @@
     (
       SELECT
       shop.id
-      from t_shop_info shop WHERE shop.area_id = #{areaId}
+      from t_shop_info shop
+      INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
+      AND userShop.user_id = #{userId}
+      WHERE shop.area_id = #{areaId}
       AND shop.brand_id IN
       <foreach collection="brandList" item="item" open="(" close=")" separator=",">
         #{item.id}

@@ -21,6 +21,7 @@
       cycle_end,
       plan_id,
       dpt_id,
+      cur_cycle_count,
       create_time,
       modify_time
     ) VALUES (
@@ -28,6 +29,7 @@
       #{cycleEnd},
       #{planId},
       #{dptId},
+      #{curCycleCount},
       #{createTime},
       #{modifyTime}
     )

@@ -35,6 +35,7 @@ import com.emucoo.model.TShopInfo;
 import com.emucoo.service.plan.PlanService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.Months;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,9 +148,9 @@ public class PlanServiceImpl implements PlanService {
             String yearMonth = findPlanListIn.getMonth();
             String year = "";
             String month = "";
-            Calendar calendar = Calendar.getInstance();
-            year = String.valueOf(calendar.get(Calendar.YEAR));
-            month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            Calendar nowCalendar = Calendar.getInstance();
+            year = String.valueOf(nowCalendar.get(Calendar.YEAR));
+            month = String.valueOf(nowCalendar.get(Calendar.MONTH) + 1);
             if (month.length() < 2) {
                 month = "0" + month;
             }
@@ -175,36 +176,47 @@ public class PlanServiceImpl implements PlanService {
             }
             TLoopPlan tLoopPlan = tLoopPlans.get(0);
             Example tLoopSubPlanExample = new Example(TLoopSubPlan.class);
-            tLoopSubPlanExample.createCriteria().andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
+            tLoopSubPlanExample.createCriteria().andEqualTo("planId", tLoopPlan.getId()).andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
                     .andGreaterThanOrEqualTo("cycleEnd", yearMonth).andEqualTo("isDel", false);
             List<TLoopSubPlan> tLoopSubPlans = tLoopSubPlanMapper.selectByExample(tLoopSubPlanExample);
             if(tLoopSubPlans.size() == 0) {
+                if(tLoopPlan.getPlanStartDate().compareTo(yearMonth) > 0  || tLoopPlan.getPlanEndDate().compareTo(yearMonth) < 0) {
+                    throw new BaseException("月份超过边界！");
+                }
                 TLoopSubPlan tLoopSubPlan = new TLoopSubPlan();
                 // 计算当前周期月份
                 int loopCycleCount = tLoopPlan.getPlanCycleCount();
                 Calendar cal = Calendar.getInstance();
                 SimpleDateFormat monthSdf = new SimpleDateFormat("yyyyMM");
                 Date planStartDate = monthSdf.parse(tLoopPlan.getPlanStartDate());
+               /* tLoopSubPlanExample.clear();
+                tLoopSubPlanExample.createCriteria().andEqualTo("planId", tLoopPlan.getId()).andEqualTo("dptId", user.getDptId()).andEqualTo("isDel", false);
+                tLoopSubPlanExample.setOrderByClause("cur_cycle_count desc");
+                List<TLoopSubPlan> dptSubPlans = tLoopSubPlanMapper.selectByExample(tLoopSubPlanExample);
+                Date planEndDate = monthSdf.parse(tLoopPlan.getPlanEndDate());*/
                 cal.setTime(planStartDate);
-                // 每个子周期数*已循环周期数+计划开始月份，等于当前新建周期开始的月份
-                cal.add(Calendar.MONTH, loopCycleCount * tLoopPlan.getPlanCycle());
+                Calendar targetCal = Calendar.getInstance();
+                targetCal.setTime(monthSdf.parse(yearMonth));
+                int diffMonth = targetCal.get(Calendar.MONTH) - cal.get(Calendar.MONTH) + (targetCal.get(Calendar.YEAR) - cal.get(Calendar.YEAR)) * 12;
+                int diffCycleTimes = diffMonth / tLoopPlan.getPlanCycle();
+
+                // 每个子周期数*循环周期数+计划开始月份，等于当前新建周期开始的月份
+                cal.add(Calendar.MONTH, diffCycleTimes * tLoopPlan.getPlanCycle());
                 String subCycyleStartDate = monthSdf.format(cal.getTime());
-                if(subCycyleStartDate.compareTo(tLoopPlan.getPlanEndDate()) > 0) {
-                    logger.info("当前用户id={}，计划id={}已结束！", user.getId(), tLoopPlan.getId());
-                    return null;
-                }
-                tLoopSubPlan.setCycleBegin(monthSdf.format(cal.getTime()));
+                tLoopSubPlan.setCycleBegin(subCycyleStartDate);
                 // 计算当前子周期结束月份
-                cal.add(Calendar.MONTH, tLoopPlan.getPlanCycle());
+                cal.add(Calendar.MONTH, tLoopPlan.getPlanCycle() - 1 <= 0 ? 0 : tLoopPlan.getPlanCycle() - 1);
                 String subCycleEndDate = monthSdf.format(cal.getTime()).compareTo(tLoopPlan.getPlanEndDate()) >= 0 ? tLoopPlan.getPlanEndDate() : monthSdf.format(cal.getTime());
                 tLoopSubPlan.setCycleEnd(subCycleEndDate);
                 // 组装月份列表给前端
                 List<PatrolShopCycle> patrolShopCycles = new ArrayList<PatrolShopCycle>();
                 Date cycleStartDate = monthSdf.parse(subCycyleStartDate);
                 Date cycleEndDate = monthSdf.parse(subCycleEndDate);
+                cal.setTime(cycleEndDate);
+                cal.roll(Calendar.DAY_OF_MONTH, -1);
                 Calendar dd = Calendar.getInstance();//定义日期实例
                 dd.setTime(cycleStartDate);//设置日期起始时间
-                while (dd.getTime().before(cycleEndDate)) {//判断是否到结束日期
+                while (dd.getTime().before(cal.getTime())) {//判断是否到结束日期
                     String monthStr = monthSdf.format(dd.getTime());
                     dd.add(Calendar.MONTH, 1);//进行当前日期月份加1
 
@@ -221,10 +233,11 @@ public class PlanServiceImpl implements PlanService {
                 tLoopSubPlan.setCreateTime(now);
                 tLoopSubPlan.setModifyTime(now);
                 tLoopSubPlan.setIsDel(DeleteStatus.COMMON.getCode());
+                tLoopSubPlan.setCurCycleCount(diffCycleTimes + 1);
                 // 新增子周期计划
                 tLoopSubPlanMapper.addLoopSubPlan(tLoopSubPlan);
                 //更新计划中的已执行周期数统计
-                tLoopPlan.setPlanCycleCount(tLoopPlan.getPlanCycleCount() + 1);
+                //tLoopPlan.setPlanCycleCount(tLoopPlan.getPlanCycleCount() + 1);
                 tLoopPlan.setModifyTime(now);
                 tLoopPlan.setModifyUserId(user.getId());
                 tLoopPlanMapper.updateByPrimaryKey(tLoopPlan);
@@ -261,7 +274,7 @@ public class PlanServiceImpl implements PlanService {
                 areaOut.setPrecinctID(area.getId());
                 areaOut.setPrecinctName(area.getAreaName());
                 // 获取巡店安排
-                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, brandInfos);
+                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, brandInfos, user.getId());
                 if(CollectionUtils.isNotEmpty(frontPlans)) {
                     List<ShopVo> shopArr = new ArrayList<>();
                     for(TFrontPlan frontPlan : frontPlans) {
@@ -339,57 +352,64 @@ public class PlanServiceImpl implements PlanService {
             tLoopSubPlanExample.createCriteria().andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
                     .andGreaterThanOrEqualTo("cycleEnd", yearMonth).andEqualTo("isDel", false);
             List<TLoopSubPlan> tLoopSubPlans = tLoopSubPlanMapper.selectByExample(tLoopSubPlanExample);
-            TLoopSubPlan tLoopSubPlan = tLoopSubPlans.get(0);
+            if(CollectionUtils.isNotEmpty(tLoopSubPlans)) {
+                TLoopSubPlan tLoopSubPlan = tLoopSubPlans.get(0);
 
-            //查询该计划需要打表总数量
-            Long planId = tLoopPlans.get(0).getId();
-            Example tPlanFormRelationExample = new Example(TPlanFormRelation.class);
-            tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false);
-            List<TPlanFormRelation> tPlanFormRelations = tPlanFormRelationMapper.selectByExample(tPlanFormRelationExample);
-            int totalFormUseCount = 0;
-            List<Long> formIds = new ArrayList<>();
-            for(TPlanFormRelation tPlanFormRelation : tPlanFormRelations) {
-                totalFormUseCount += tPlanFormRelation.getFormUseCount();
-                formIds.add(tPlanFormRelation.getFormMainId());
-            }
-            List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserId(user.getId(), brandInfos);
-            // 子计划内需要的总打表次数
-            int totleCountInSubPlan = totalFormUseCount * shopList.size();
-            List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds);
-
-            int actualFinishCount = 0;
-            for(HashMap<String, Long> item : tFrontPlanSummary) {
+                //查询该计划需要打表总数量
+                Long planId = tLoopPlans.get(0).getId();
+                Example tPlanFormRelationExample = new Example(TPlanFormRelation.class);
+                tPlanFormRelationExample.createCriteria().andEqualTo("planId", planId).andEqualTo("isDel", false);
+                List<TPlanFormRelation> tPlanFormRelations = tPlanFormRelationMapper.selectByExample(tPlanFormRelationExample);
+                int totalFormUseCount = 0;
+                List<Long> formIds = new ArrayList<>();
                 for (TPlanFormRelation tPlanFormRelation : tPlanFormRelations) {
-                    if(tPlanFormRelation.getFormMainId().equals(item.get("formId"))) {
-                        if(tPlanFormRelation.getFormUseCount() >= item.get("shopCount")) {
-                            actualFinishCount += item.get("shopCount");
-                        } else {
-                            actualFinishCount += tPlanFormRelation.getFormUseCount();
+                    totalFormUseCount += tPlanFormRelation.getFormUseCount();
+                    formIds.add(tPlanFormRelation.getFormMainId());
+                }
+                List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserId(user.getId(), brandInfos);
+                // 子计划内需要的总打表次数
+                int totleCountInSubPlan = totalFormUseCount * shopList.size();
+                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds);
+
+                int actualFinishCount = 0;
+                for (HashMap<String, Long> item : tFrontPlanSummary) {
+                    for (TPlanFormRelation tPlanFormRelation : tPlanFormRelations) {
+                        if (tPlanFormRelation.getFormMainId().equals(item.get("formId"))) {
+                            if (tPlanFormRelation.getFormUseCount() >= item.get("shopCount")) {
+                                actualFinishCount += item.get("shopCount");
+                            } else {
+                                actualFinishCount += tPlanFormRelation.getFormUseCount();
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
-            float progress = 0f;
-            if (totleCountInSubPlan == 0) {
-                progress = 0;
-            } else {
-                progress = (float) actualFinishCount / totleCountInSubPlan;
-            }
+                float progress = 0f;
+                if (totleCountInSubPlan == 0) {
+                    progress = 0;
+                } else {
+                    progress = (float) actualFinishCount / totleCountInSubPlan;
+                }
 
-            planProgressOut.setProgress(progress);
-            //统计进度是否正常
-            float finishArrangeNumEveryMonth = (float)totleCountInSubPlan / tLoopPlan.getPlanCycle();
-            int differ = calendar.get(Calendar.MONTH) + 1 - Integer.valueOf(tLoopSubPlan.getCycleBegin().substring(4, 6));
-            float shouldFinishNum = finishArrangeNumEveryMonth * differ;
-            if(actualFinishCount >= shouldFinishNum) {
+                planProgressOut.setProgress(progress);
+                //统计进度是否正常
+                float finishArrangeNumEveryMonth = (float) totleCountInSubPlan / tLoopPlan.getPlanCycle();
+                int differ = calendar.get(Calendar.MONTH) + 1 - Integer.valueOf(tLoopSubPlan.getCycleBegin().substring(4, 6));
+                float shouldFinishNum = finishArrangeNumEveryMonth * differ;
+                if (actualFinishCount >= shouldFinishNum) {
+                    //返回正常
+                    planProgressOut.setProgressStatus(1);
+
+                } else {
+                    // 异常
+                    planProgressOut.setProgressStatus(2);
+                }
+            } else {
+                planProgressOut.setProgress(0);
                 //返回正常
                 planProgressOut.setProgressStatus(1);
-
-            } else {
-                // 异常
-                planProgressOut.setProgressStatus(2);
             }
+
             return planProgressOut;
         } catch (Exception e){
             logger.error("用户:{}，查询巡店计划进度失败", user.getId(), e);

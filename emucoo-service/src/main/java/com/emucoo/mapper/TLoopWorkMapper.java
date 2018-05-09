@@ -36,4 +36,8 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     List<TLoopWork> findImproveTaskList(@Param("opptId")Long opptId, @Param("reportId")Long reportId);
 
     List<TLoopWork> findImproveTaskListByUser(@Param("opptId") Long opptId, @Param("reportId") Long reportId, @Param("excuteUserId")Long excuteUserId);
+
+    void markExpiredAuditWorks(Date dt);
+
+    void markExpiredExecutionWorks(Date dt);
 }

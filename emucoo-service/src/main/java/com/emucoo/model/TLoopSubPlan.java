@@ -28,6 +28,9 @@ public class TLoopSubPlan extends BaseEntity {
     @Column(name = "plan_id")
     private Long planId;
 
+    @Column(name = "cur_cycle_count")
+    private Integer curCycleCount;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -85,6 +88,14 @@ public class TLoopSubPlan extends BaseEntity {
      */
     public void setPlanId(Long planId) {
         this.planId = planId;
+    }
+
+    public Integer getCurCycleCount() {
+        return curCycleCount;
+    }
+
+    public void setCurCycleCount(Integer curCycleCount) {
+        this.curCycleCount = curCycleCount;
     }
 
     /**
