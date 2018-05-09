@@ -117,7 +117,7 @@ public class SysUserController extends BaseResource {
         sysUser.setSalt(salt);*/
         sysUserService.editUser(sysUser);
         //删除redis 缓存
-        redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
+        redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
         return success("success");
     }
 
@@ -152,6 +152,8 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(1L);
         sysUserService.updateSelective(sysUser);
+        //删除redis 缓存
+        redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
         return success("success");
     }
 
@@ -199,7 +201,7 @@ public class SysUserController extends BaseResource {
         sysUserService.modifyUserBatch(userList);
         for(SysUser su:userList){
             //删除redis 缓存
-            redisClient.delete(ISystem.IUSER.USER_TOKEN + su.getId());
+            redisClient.delete(ISystem.IUSER.USER + su.getId());
         }
         return success("success");
     }
@@ -218,7 +220,7 @@ public class SysUserController extends BaseResource {
         sysUser.setModifyUserId(1L);
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
-        redisClient.delete(ISystem.IUSER.USER_TOKEN + sysUser.getId());
+        redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
         return success("success");
     }
 
@@ -258,7 +260,7 @@ public class SysUserController extends BaseResource {
         if(status==1){
             for(SysUser su:userList){
                 //删除redis 缓存
-                redisClient.delete(ISystem.IUSER.USER_TOKEN + su.getId());
+                redisClient.delete(ISystem.IUSER.USER + su.getId());
             }
         }
         return success("success");
@@ -283,7 +285,7 @@ public class SysUserController extends BaseResource {
         //停用
         if(status==1){
             //删除redis 缓存
-            redisClient.delete(ISystem.IUSER.USER_TOKEN + id);
+            redisClient.delete(ISystem.IUSER.USER + id);
         }
         return success("success");
     }
