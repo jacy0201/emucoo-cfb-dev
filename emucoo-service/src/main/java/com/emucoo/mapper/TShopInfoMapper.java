@@ -14,4 +14,6 @@ public interface TShopInfoMapper extends MyMapper<TShopInfo> {
                                                 @Param("brandList")List<TBrandInfo> brandInfos);
 
     List<TShopInfo> selectShopListByUserId(@Param("userId")Long userId, @Param("brandList")List<TBrandInfo> brandInfos);
+
+   void updateByManagerId(@Param("userId")Long userId);
 }

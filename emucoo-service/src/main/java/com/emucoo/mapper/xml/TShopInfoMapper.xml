@@ -65,4 +65,9 @@
     AND userShop.user_id = #{userId}
     AND shopInfo.is_del = FALSE AND shopInfo.is_use = TRUE
   </select>
+    <update id="updateByManagerId" parameterType="Long">
+        UPDATE t_shop_info
+        SET shop_manager_id = NULL
+        WHERE shop_manager_id = #{userId}
+    </update>
 </mapper>

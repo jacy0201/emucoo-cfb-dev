@@ -106,7 +106,8 @@ public class SysBrandController extends BaseResource {
 	@ApiOperation(value="删除品牌")
 	public ApiResult delete(@RequestBody TBrandInfo brand){
 		if(brand.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
-		sysBrandService.deleteById(brand.getId());
+		brand.setIsDel(true);
+		sysBrandService.updateSelective(brand);
 		return success("success");
 	}
 }
