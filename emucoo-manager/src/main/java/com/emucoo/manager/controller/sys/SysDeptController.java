@@ -134,9 +134,9 @@ public class SysDeptController extends BaseResource {
 	public ApiResult addChildUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-		if(sysUserRelation.getChildUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childUserId 不能为空!");}
+		if(sysUserRelation.getParentUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentUserId 不能为空!");}
 		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
-		if(sysUserRelation.getChildPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"childPostId 不能为空!");}
+		if(sysUserRelation.getParentPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentPostId 不能为空!");}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(1L);
@@ -172,9 +172,12 @@ public class SysDeptController extends BaseResource {
 	//@RequiresPermissions("sys:user:deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
+		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
-		sysUserRelation=sysUserRelationService.findById(sysUserRelation.getId());
-		if(null!=sysUserRelation.getChildUserId()){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
+		Example example =new Example(SysUserRelation.class);
+		example.createCriteria().andEqualTo("parentUserId",sysUserRelation.getUserId());
+		List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
+		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
 
 		sysUserRelationService.deleteById(sysUserRelation.getId());
 		return success("success");
