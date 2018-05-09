@@ -38,4 +38,20 @@
         WHERE area.is_del = FALSE
     </select>
 
+    <select id="findAreaListByUserIds" parameterType="ArrayList" resultType="com.emucoo.model.SysArea">
+      SELECT
+        area.id,
+        area.area_name,
+        area.area_desc
+        FROM sys_area area
+        INNER JOIN sys_user_area userArea
+        ON userArea.user_id IN
+        <foreach collection="list" item="userid" open="(" close=")" separator=",">
+            #{userid}
+        </foreach>
+        AND userArea.area_id = area.id
+        AND userArea.is_del = FALSE
+        WHERE area.is_del = FALSE
+    </select>
+
 </mapper>

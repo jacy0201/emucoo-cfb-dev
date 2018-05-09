@@ -90,25 +90,22 @@ public class PlanServiceImpl implements PlanService {
     public FindShopListOut findShopList(SysUser user, FindShopListIn findShopListIn) {
         FindShopListOut findShopListOut = new FindShopListOut();
         //查询品牌
-        List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
+        List<TBrandInfo> brandInfos = null;//tBrandInfoMapper.findBrandListByUserId(user.getId());
         // 查询当前用户的下级用户
         String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
         List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
-        if(CollectionUtils.isNotEmpty(userIdList)) {
-            userIdList.remove(0);
-            List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(userIdList, findShopListIn.getPrecinctID(), brandInfos);
+        List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(userIdList, findShopListIn.getPrecinctID(), brandInfos);
 
-            List<ShopVo> shopVos = new ArrayList<ShopVo>();
-            if (CollectionUtils.isNotEmpty(shopList)) {
-                for (TShopInfo tShopInfo : shopList) {
-                    ShopVo shopVo = new ShopVo();
-                    shopVo.setShopID(tShopInfo.getId());
-                    shopVo.setShopName(tShopInfo.getShopName());
-                    shopVo.setBrandName(tShopInfo.getBrandName());
-                    shopVos.add(shopVo);
-                }
-                findShopListOut.setShopArr(shopVos);
+        List<ShopVo> shopVos = new ArrayList<ShopVo>();
+        if (CollectionUtils.isNotEmpty(shopList)) {
+            for (TShopInfo tShopInfo : shopList) {
+                ShopVo shopVo = new ShopVo();
+                shopVo.setShopID(tShopInfo.getId());
+                shopVo.setShopName(tShopInfo.getShopName());
+                shopVo.setBrandName(tShopInfo.getBrandName());
+                shopVos.add(shopVo);
             }
+            findShopListOut.setShopArr(shopVos);
         }
 
         return findShopListOut;
@@ -274,19 +271,22 @@ public class PlanServiceImpl implements PlanService {
                 }
                 findPlanListOut.setPatrolShopCycle(patrolShopCycles);
             }
-
+            // 查询当前用户的下级用户
+            String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
+            List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
             // 获取分区
-            List<SysArea> areaList = sysAreaMapper.findAreaListByUserId(user.getId());
+            List<SysArea> areaList = sysAreaMapper.findAreaListByUserIds(userIdList);
             //查询品牌
-            List<TBrandInfo> brandInfos = tBrandInfoMapper.findBrandListByUserId(user.getId());
+            List<TBrandInfo> brandInfos = null;//tBrandInfoMapper.findBrandListByUserId(user.getId());
             List<PrecinctArr> precinctArr = new ArrayList<>();
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
             for (SysArea area : areaList) {
                 PrecinctArr areaOut = new PrecinctArr();
                 areaOut.setPrecinctID(area.getId());
                 areaOut.setPrecinctName(area.getAreaName());
                 // 获取巡店安排
-                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, brandInfos, user.getId());
+                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, brandInfos, userIdList);
                 if(CollectionUtils.isNotEmpty(frontPlans)) {
                     List<ShopVo> shopArr = new ArrayList<>();
                     for(TFrontPlan frontPlan : frontPlans) {
@@ -376,10 +376,15 @@ public class PlanServiceImpl implements PlanService {
                     totalFormUseCount += tPlanFormRelation.getFormUseCount();
                     formIds.add(tPlanFormRelation.getFormMainId());
                 }
-                List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserId(user.getId(), brandInfos);
+                // 查询当前用户的下级用户
+                String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
+                List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
+
+                List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserIds(userIdList);
+
                 // 子计划内需要的总打表次数
                 int totleCountInSubPlan = totalFormUseCount * shopList.size();
-                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds, user.getId());
+                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds, userIdList);
 
                 int actualFinishCount = 0;
                 for (HashMap<String, Long> item : tFrontPlanSummary) {
