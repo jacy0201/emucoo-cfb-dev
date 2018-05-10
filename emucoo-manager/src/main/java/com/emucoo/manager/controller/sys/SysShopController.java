@@ -100,6 +100,7 @@ public class SysShopController extends BaseResource {
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
 		Example.Criteria criteria=example.createCriteria();
+		criteria.andEqualTo("isDel",false);
 		if(null!=shopInfo && null!=shopInfo.getShopName()) {
 			criteria.andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
