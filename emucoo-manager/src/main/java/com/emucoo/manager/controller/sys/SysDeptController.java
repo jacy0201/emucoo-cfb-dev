@@ -137,6 +137,9 @@ public class SysDeptController extends BaseResource {
 		if(sysUserRelation.getParentUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentUserId 不能为空!");}
 		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
 		if(sysUserRelation.getParentPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"parentPostId 不能为空!");}
+		if(sysUserRelation.getUserId()==sysUserRelation.getParentUserId() && sysUserRelation.getPostId()==sysUserRelation.getParentPostId()){
+			return fail(ApiExecStatus.INVALID_PARAM," 同一用户上下级岗位不能相同!");
+		}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(1L);
