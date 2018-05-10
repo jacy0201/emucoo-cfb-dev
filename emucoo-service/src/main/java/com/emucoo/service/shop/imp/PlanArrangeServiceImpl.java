@@ -261,8 +261,8 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 shopArr.setChecklistArr(checklistArr);
             }
 
-            if (frontPlan.getPlanPreciseTime() != null) {
-                shopArr.setPatrolShopStartTime(frontPlan.getPlanPreciseTime().getTime());
+            if (frontPlan.getActualExecuteTime() != null) {
+                shopArr.setPatrolShopStartTime(frontPlan.getActualExecuteTime().getTime());
             }
             shopArr.setPatrolShopLocation(frontPlan.getActualExecuteAddress());
             shopArr.setLatitude(frontPlan.getLatitude());

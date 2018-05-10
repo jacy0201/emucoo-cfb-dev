@@ -46,6 +46,9 @@ public class TFormPbmVal extends BaseEntity {
     @Column(name = "is_score")
     private Boolean isScore;
 
+    @Column(name = "is_important")
+    private Boolean isImportant;
+
     @Column(name = "org_id")
     private Long orgId;
 
@@ -133,6 +136,14 @@ public class TFormPbmVal extends BaseEntity {
      */
     public void setScore(Integer score) {
         this.score = score;
+    }
+
+    public Boolean getIsImportant() {
+        return isImportant;
+    }
+
+    public void setIsImportant(Boolean isImportant) {
+        this.isImportant = isImportant;
     }
 
     /**

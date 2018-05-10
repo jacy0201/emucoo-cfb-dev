@@ -19,6 +19,9 @@ public class TReportOppt extends BaseEntity {
     @Column(name = "oppt_name")
     private String opptName;
 
+    @Column(name = "oppt_desc")
+    private String opptDesc;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -73,6 +76,14 @@ public class TReportOppt extends BaseEntity {
 
     public void setOpptName(String opptName) {
         this.opptName = opptName;
+    }
+
+    public String getOpptDesc() {
+        return opptDesc;
+    }
+
+    public void setOpptDesc(String opptDesc) {
+        this.opptDesc = opptDesc;
     }
 
     /**

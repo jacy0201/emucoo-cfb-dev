@@ -40,6 +40,9 @@ public class TFormOpptValue extends BaseEntity {
     @Column(name = "oppt_name")
     private String opptName;
 
+    @Column(name = "oppt_desc")
+    private String opptDesc;
+
     @Column(name = "problem_value_id")
     private Long problemValueId;
 
@@ -187,6 +190,14 @@ public class TFormOpptValue extends BaseEntity {
      */
     public void setOpptName(String opptName) {
         this.opptName = opptName;
+    }
+
+    public String getOpptDesc() {
+        return opptDesc;
+    }
+
+    public void setOpptDesc(String opptDesc) {
+        this.opptDesc = opptDesc;
     }
 
     /**

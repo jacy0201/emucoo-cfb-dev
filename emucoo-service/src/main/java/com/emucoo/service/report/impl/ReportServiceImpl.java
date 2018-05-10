@@ -273,8 +273,9 @@ public class ReportServiceImpl implements ReportService {
                             .append("#").append(subPbmValForThisOppt.getSubProblemName());
                 }
                 chancePointVo.setChanceContent(pbmCascadingRelation.toString());
-                TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
-                chancePointVo.setChanceDescription(tOpportunity.getDescription());
+                //TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
+                //chancePointVo.setChanceDescription(tOpportunity.getDescription());
+                chancePointVo.setChanceDescription(tFormOpptValue.getOpptDesc());
                 chancePointVos.add(chancePointVo);
             }
             reportOut.setChancePointArr(chancePointVos);
@@ -556,6 +557,7 @@ public class ReportServiceImpl implements ReportService {
                 TReportOppt tReportOppt = new TReportOppt();
                 tReportOppt.setOpptId(tFormOpptValue.getOpptId());
                 tReportOppt.setOpptName(tFormOpptValue.getOpptName());
+                tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
                 tReportOppts.add(tReportOppt);
             }
             if(CollectionUtils.isNotEmpty(tReportOppts)) {
@@ -685,8 +687,9 @@ public class ReportServiceImpl implements ReportService {
                         .append("#").append(subPbmValForThisOppt.getSubProblemName());
             }
             chancePointVo.setChanceContent(pbmCascadingRelation.toString());
-            TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
-            chancePointVo.setChanceDescription(tOpportunity.getDescription());
+            //TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
+            //chancePointVo.setChanceDescription(tOpportunity.getDescription());
+            chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());
             List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
             chancePointVo.setWorkArr(workArr);
             chancePointVos.add(chancePointVo);
