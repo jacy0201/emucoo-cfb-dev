@@ -32,6 +32,8 @@ public class DateUtil {
 	public static final DateFormat MMDD = new SimpleDateFormat("MMdd");
 	
 	public static final DateFormat YYYYMM = new SimpleDateFormat("yyyyMM");
+
+	public static final DateFormat YYYY_MM = new SimpleDateFormat("yyyy-MM");
 	
 	/**
 	 * 时间转换为yyyy-MM-dd HH:mm:ss格式的字符串
@@ -67,6 +69,15 @@ public class DateUtil {
 	
 	public static String simple3(Date date) {
 		return YYYYMM.format(date);
+	}
+
+	/**
+	 * format: YYYY-MM
+	 * @param date
+	 * @return
+	 */
+	public static String simple4(Date date) {
+		return YYYY_MM.format(date);
 	}
 	
 	public static Date strToDate(String dateString){
