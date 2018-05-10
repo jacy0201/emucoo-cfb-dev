@@ -8,6 +8,7 @@ import com.emucoo.model.SysAppVersion;
 import com.emucoo.service.version.SysAppVersionService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sys/version")
+@Api(description="版本管理" )
 public class SysAppVersionController extends BaseResource {
 
 	@Autowired
