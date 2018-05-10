@@ -31,10 +31,16 @@ public class SysUserRelationServiceImpl extends BaseServiceImpl<SysUserRelation>
         example.createCriteria().andEqualTo("dptId",dptId);
        List<SysUserRelation> list=sysUserRelationMapper.selectByExample(example);
        for (SysUserRelation sysUserRelation :list){
-           sysUserRelation.setParentUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getParentUserId()).getRealName());
+           if(null!=sysUserRelation.getParentUserId()){
+              sysUserRelation.setParentUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getParentUserId()).getRealName());
+           }
            sysUserRelation.setUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getUserId()).getRealName());
-           sysUserRelation.setPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getPostId()).getPostName());
-           sysUserRelation.setParentPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getParentPostId()).getPostName());
+           if(null!=sysUserRelation.getPostId()) {
+               sysUserRelation.setPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getPostId()).getPostName());
+           }
+           if(null!=sysUserRelation.getParentPostId()){
+              sysUserRelation.setParentPostName(sysPostMapper.selectByPrimaryKey(sysUserRelation.getParentPostId()).getPostName());
+           }
 
        }
        return list;
