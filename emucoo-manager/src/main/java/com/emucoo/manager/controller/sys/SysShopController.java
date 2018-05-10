@@ -75,14 +75,16 @@ public class SysShopController extends BaseResource {
 		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
-		for (TShopInfo shop :shopList){
-			if(null!=shop.getAreaId()){
-				shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
-			}
-			if(null!=shop.getBrandId()){
-				shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
-			}
+		if(null!=shopList && shopList.size()>0) {
+			for (TShopInfo shop : shopList) {
+				if (null != shop.getAreaId()) {
+					shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
+				}
+				if (null != shop.getBrandId()) {
+					shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
+				}
 
+			}
 		}
 		PageInfo<TShopInfo> pageInfo=new PageInfo(shopList);
 		return success(pageInfo);
@@ -120,14 +122,16 @@ public class SysShopController extends BaseResource {
 			criteria.andEqualTo("district", shopInfo.getDistrict());
 		}
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
-		for (TShopInfo shop :shopList){
-			if(null!=shop.getAreaId()){
-				shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
-			}
-			if(null!=shop.getBrandId()){
-				shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
-			}
+		if(null!=shopList && shopList.size()>0){
+			for (TShopInfo shop :shopList){
+				if(null!=shop.getAreaId()){
+					shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
+				}
+				if(null!=shop.getBrandId()){
+					shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
+				}
 
+			}
 		}
 		return success(shopList);
 
