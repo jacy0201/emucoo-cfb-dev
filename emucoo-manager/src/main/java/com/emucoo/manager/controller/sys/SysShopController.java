@@ -53,6 +53,10 @@ public class SysShopController extends BaseResource {
 			criteria.andEqualTo("type", shopInfo.getType());
 		}
 
+		if(null!=shopInfo && null!=shopInfo.getIsUse()) {
+			criteria.andEqualTo("isUse", shopInfo.getIsUse());
+		}
+
 		if(null!=shopInfo && null!=shopInfo.getAreaId()){
 			criteria.andEqualTo("areaId", shopInfo.getAreaId());
 		}
@@ -101,6 +105,9 @@ public class SysShopController extends BaseResource {
 		}
 		if(null!=shopInfo && null!=shopInfo.getType()) {
 			criteria.andEqualTo("type", shopInfo.getType());
+		}
+		if(null!=shopInfo && null!=shopInfo.getIsUse()) {
+			criteria.andEqualTo("isUse", shopInfo.getIsUse());
 		}
 		if(null!=shopInfo && null!=shopInfo.getProvince()){
 			criteria.andEqualTo("province", shopInfo.getProvince());
