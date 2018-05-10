@@ -286,6 +286,7 @@ public class FormServiceImpl implements FormService {
                 formPbmVal.setFormValueId(formValue.getId());
                 formPbmVal.setIsNa(problemVo.getIsNA());
                 formPbmVal.setIsScore(problemVo.getIsScore());
+                formPbmVal.setIsImportant(problemVo.getIsImportant());
                 formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                 formPbmVal.setProblemName(problemVo.getProblemName());
                 formPbmVal.setProblemSchemaType(problemVo.getProblemType());
@@ -304,6 +305,11 @@ public class FormServiceImpl implements FormService {
                         formOpptValue.setIsPick(formChanceVo.getIsPick());
                         formOpptValue.setOpptId(formChanceVo.getChanceID());
                         formOpptValue.setOpptName(formChanceVo.getChanceName());
+                        TOpportunity tOpportunity = opportunityMapper.selectByPrimaryKey(formChanceVo.getChanceID());
+                        if(tOpportunity != null) {
+                            formOpptValue.setOpptDesc(tOpportunity.getDescription());
+                        }
+
                         formOpptValue.setProblemId(problemVo.getProblemID());
                         formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
                         formOpptValue.setProblemValueId(formPbmVal.getId());
@@ -350,6 +356,7 @@ public class FormServiceImpl implements FormService {
                         formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
                         formOpptValue.setProblemId(problemVo.getProblemID());
                         formOpptValue.setOpptName(fcv.getChanceName());
+                        formOpptValue.setOpptDesc(opptDescription);
                         formOpptValue.setOpptId(opportunity.getId());
                         formOpptValue.setIsPick(fcv.getIsPick());
                         formOpptValue.setFormResultId(formCheckResult.getId());
