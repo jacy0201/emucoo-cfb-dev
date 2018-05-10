@@ -98,7 +98,7 @@ public interface BaseService<T> {
      */
     Integer updateSelective(T record);
 
-    Integer updateByExampleSelective(T t,Example example);
+    Integer updateByExampleSelective(T t,Object example);
 
     /**
      * 根据id删除数据
@@ -125,7 +125,7 @@ public interface BaseService<T> {
     Integer deleteByCondition(Class<T> clazz, String property, List<Object> values);
 
 
-    Integer deleteByExample(Example example);
+    Integer deleteByExample(Object example);
 
     /**
      * 根据条件做删除

@@ -129,7 +129,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 	}
 
 
-	public Integer updateByExampleSelective(T t,Example example) {
+	public Integer updateByExampleSelective(T t,Object example) {
 		return this.mapper.updateByExampleSelective(t,example);
 	}
 
@@ -146,7 +146,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 		return this.mapper.deleteByPrimaryKey(id);
 	}
 
-	public Integer deleteByExample(Example example) {
+	public Integer deleteByExample(Object example) {
 		return this.mapper.deleteByExample(example);
 	}
 
