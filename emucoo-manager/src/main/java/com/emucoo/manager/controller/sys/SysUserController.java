@@ -97,6 +97,8 @@ public class SysUserController extends BaseResource {
         String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
+        //用户状态：0-启用；1-停用；2-锁定；
+        sysUser.setStatus(1);
         sysUserService.addUser(sysUser);
         return success("success");
     }
