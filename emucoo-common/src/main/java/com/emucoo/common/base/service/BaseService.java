@@ -2,6 +2,7 @@ package com.emucoo.common.base.service;
 
 import com.emucoo.common.base.model.BaseEntity;
 import com.github.pagehelper.PageInfo;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -74,6 +75,14 @@ public interface BaseService<T> {
     int saveList(List<T> list);
 
     /**
+     *  对象的 id 主键值 会返回到record 对象
+     * @param record
+     * @return
+     */
+    Integer saveUseGeneratedKeys(T record);
+
+
+    /**
      * 修改数据，返回成功的条数
      *
      * @param record
@@ -88,6 +97,8 @@ public interface BaseService<T> {
      * @return
      */
     Integer updateSelective(T record);
+
+    Integer updateByExampleSelective(T t,Example example);
 
     /**
      * 根据id删除数据
@@ -112,6 +123,9 @@ public interface BaseService<T> {
      * @return
      */
     Integer deleteByCondition(Class<T> clazz, String property, List<Object> values);
+
+
+    Integer deleteByExample(Example example);
 
     /**
      * 根据条件做删除

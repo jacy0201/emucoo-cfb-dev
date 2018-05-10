@@ -103,6 +103,11 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 		return this.mapper.insertList(list);
 	}
 
+	public Integer saveUseGeneratedKeys(T record) {
+		return this.mapper.insertUseGeneratedKeys(record);
+	}
+
+
 	/**
 	 * 修改数据，返回成功的条数
 	 * 
@@ -123,6 +128,14 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 		return this.mapper.updateByPrimaryKeySelective(record);
 	}
 
+
+	public Integer updateByExampleSelective(T t,Example example) {
+		return this.mapper.updateByExampleSelective(t,example);
+	}
+
+
+
+
 	/**
 	 * 根据id删除数据
 	 * 
@@ -132,6 +145,11 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 	public Integer deleteById(Long id) {
 		return this.mapper.deleteByPrimaryKey(id);
 	}
+
+	public Integer deleteByExample(Example example) {
+		return this.mapper.deleteByExample(example);
+	}
+
 
 	public Integer deleteByIds(String ids) {
 		return mapper.deleteByIds(ids);
