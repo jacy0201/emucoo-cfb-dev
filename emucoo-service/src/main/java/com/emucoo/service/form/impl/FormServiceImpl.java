@@ -346,6 +346,7 @@ public class FormServiceImpl implements FormService {
 //                    formOpptValue.setSubProblemUnitScore();
 //                    formOpptValue.setSubProblemId();
 //                    formOpptValue.setSubHeaderId();
+                        formOpptValue.setProblemValueId(formPbmVal.getId());
                         formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
                         formOpptValue.setProblemId(problemVo.getProblemID());
                         formOpptValue.setOpptName(fcv.getChanceName());

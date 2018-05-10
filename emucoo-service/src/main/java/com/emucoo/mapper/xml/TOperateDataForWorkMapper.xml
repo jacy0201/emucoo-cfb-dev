@@ -54,4 +54,8 @@
         from t_loop_work w left join t_operate_data_for_work d on w.id=d.loop_work_id
         where w.work_id=#{workId} and w.sub_work_id=#{subWorkId}
     </select>
+
+    <select id="fetchOneByTaskItemIdAndLoopWorkId" resultMap="BaseResultMap">
+        select * from t_operate_data_for_work where task_item_id=#{taskItemId} and loop_work_id=#{loopWorkId}
+    </select>
 </mapper>

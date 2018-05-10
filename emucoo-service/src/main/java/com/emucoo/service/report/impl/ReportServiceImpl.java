@@ -240,45 +240,45 @@ public class ReportServiceImpl implements ReportService {
                 .andEqualTo("isPick", true);
         List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
             // 根据题项id或子题项id查询关联的机会点信息
-            if(formAllSubPbmValueIds.size() > 0) {
-                List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds);
-                reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
-                List<ChancePointVo> chancePointVos = new ArrayList<>();
-                for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
-                    ChancePointVo chancePointVo = new ChancePointVo();
-                    chancePointVo.setChancePointID(tFormOpptValue.getOpptId());
-                    chancePointVo.setChancePointTitle(tFormOpptValue.getOpptName());
-                    /*Example formOpptValExp = new Example(TFormOpptValue.class);
-                    formOpptValExp.createCriteria().andEqualTo("opptId", tFormOpptValue.getOpptId()).andEqualTo("isPick", true);
-                    List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
-                    // 计算该机会点使用情况
-                    List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId());
-                    chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
-                    // 查询该机会点关联的题项信息
-                    TFormPbmVal pbmValForThisOppt = null;
-                    TFormSubPbmVal subPbmValForThisOppt = null;
-                    if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
-                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
-                    } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
-                        subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
-                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
-                    }
-                    // 查询所属题项类型
-                    TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
-                    StringBuilder pbmCascadingRelation = new StringBuilder();
-                    if (subPbmValForThisOppt == null) {
-                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
-                    } else {
-                        pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName())
-                                .append("#").append(subPbmValForThisOppt.getSubProblemName());
-                    }
-                    chancePointVo.setChanceContent(pbmCascadingRelation.toString());
-                    TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
-                    chancePointVo.setChanceDescription(tOpportunity.getDescription());
-                    chancePointVos.add(chancePointVo);
+
+            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds.size() > 0 ? formAllSubPbmValueIds : null);
+            reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
+            List<ChancePointVo> chancePointVos = new ArrayList<>();
+            for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
+                ChancePointVo chancePointVo = new ChancePointVo();
+                chancePointVo.setChancePointID(tFormOpptValue.getOpptId());
+                chancePointVo.setChancePointTitle(tFormOpptValue.getOpptName());
+                /*Example formOpptValExp = new Example(TFormOpptValue.class);
+                formOpptValExp.createCriteria().andEqualTo("opptId", tFormOpptValue.getOpptId()).andEqualTo("isPick", true);
+                List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
+                // 计算该机会点使用情况
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId());
+                chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
+                // 查询该机会点关联的题项信息
+                TFormPbmVal pbmValForThisOppt = null;
+                TFormSubPbmVal subPbmValForThisOppt = null;
+                if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
+                    pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
+                    subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
+                    pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                 }
-                reportOut.setChancePointArr(chancePointVos);
+                // 查询所属题项类型
+                TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                StringBuilder pbmCascadingRelation = new StringBuilder();
+                if (subPbmValForThisOppt == null) {
+                    pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
+                } else {
+                    pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName())
+                            .append("#").append(subPbmValForThisOppt.getSubProblemName());
+                }
+                chancePointVo.setChanceContent(pbmCascadingRelation.toString());
+                TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
+                chancePointVo.setChanceDescription(tOpportunity.getDescription());
+                chancePointVos.add(chancePointVo);
             }
+            reportOut.setChancePointArr(chancePointVos);
+
 
         }
 

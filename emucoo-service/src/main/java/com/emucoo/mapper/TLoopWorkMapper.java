@@ -1,6 +1,7 @@
 package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
+import com.emucoo.dto.modules.task.TaskCommonStatement;
 import com.emucoo.dto.modules.task.TaskImproveStatement;
 import com.emucoo.dto.modules.task.TaskImproveSubmit;
 import com.emucoo.model.TLoopWork;
@@ -40,4 +41,6 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     void markExpiredAuditWorks(Date dt);
 
     void markExpiredExecutionWorks(Date dt);
+
+    TaskCommonStatement fetchCommonTaskStatement(@Param("workType") Integer workType, @Param("workId") String workId, @Param("subWorkId") String subId);
 }

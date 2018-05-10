@@ -1,11 +1,11 @@
 package com.emucoo.service.sys;
 
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.dto.modules.task.ContactsVo_I;
+import com.emucoo.dto.modules.task.ContactsVo_O;
 import com.emucoo.model.SysUser;
 import com.github.pagehelper.PageInfo;
 import tk.mybatis.mapper.entity.Example;
-
-import java.util.List;
 
 /**
  * Created by fujg on 2017/1/19.
@@ -47,4 +47,5 @@ public interface UserService extends BaseService<SysUser> {
 
     SysUser findUserByMobile(String mobile);
 
+    ContactsVo_O fetchContacts(ContactsVo_I contactsVo_i);
 }

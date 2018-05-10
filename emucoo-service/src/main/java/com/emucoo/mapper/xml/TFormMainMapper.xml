@@ -18,6 +18,7 @@
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
         <result column="is_del" property="isDel" jdbcType="BIT"/>
         <result column="is_use" property="isUse" jdbcType="BIT"/>
+
     </resultMap>
 
     <insert id="upsert" parameterType="com.emucoo.model.TFormMain">

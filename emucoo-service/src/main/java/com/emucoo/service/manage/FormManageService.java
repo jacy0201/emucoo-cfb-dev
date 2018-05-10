@@ -27,4 +27,6 @@ public interface FormManageService {
     public List<TFormMain> findFormList();
 
     void saveFormReportSettings(TFormMain formMain);
+
+    TFormMain fetchFormReportSettings(Long id);
 }

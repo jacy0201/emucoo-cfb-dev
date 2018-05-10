@@ -8,18 +8,17 @@ import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.sys.UserService;
 import com.emucoo.service.task.TaskCommonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/api/task/common")
 public class TaskCommonController extends AppBaseController{
 	
-    @Resource
+    @Autowired
     private TaskCommonService taskCommonService;
 
-    @Resource
+    @Autowired
     private UserService userService;
 	 
 	@PostMapping("/taskDetail")

@@ -12,10 +12,7 @@ import com.qiniu.util.StringMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -139,6 +136,13 @@ public class FormManageController extends BaseResource {
         }
         formManageService.saveFormReportSettings(formMain);
         return success("ok");
+    }
+
+    @ApiOperation(value = "获取报告配置信息")
+    @PostMapping(value = "/getReport")
+    public ApiResult<TFormMain> getReport(@RequestBody ParamVo<TFormMain> paramVo) {
+        TFormMain formMain = formManageService.fetchFormReportSettings(paramVo.getData().getId());
+        return success(formMain);
     }
 
     @ApiOperation(value = "获得图片上传token")
