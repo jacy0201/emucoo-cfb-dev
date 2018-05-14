@@ -9,11 +9,11 @@ import java.util.List;
  * 行事历列表查询结果
  */
 @Data
-public class ListWorkOut {
+public class CalendarListOut {
     //月份
     private String month;
     //用户ID
     private Long userId;
-    //任务集合
+    //巡店任务
     private List<WorkVO> workList;
 }

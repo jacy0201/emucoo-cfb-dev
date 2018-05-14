@@ -53,6 +53,10 @@ public class SysShopController extends BaseResource {
 			criteria.andEqualTo("type", shopInfo.getType());
 		}
 
+		if(null!=shopInfo && null!=shopInfo.getIsUse()) {
+			criteria.andEqualTo("isUse", shopInfo.getIsUse());
+		}
+
 		if(null!=shopInfo && null!=shopInfo.getAreaId()){
 			criteria.andEqualTo("areaId", shopInfo.getAreaId());
 		}
@@ -71,14 +75,16 @@ public class SysShopController extends BaseResource {
 		criteria.andEqualTo("isDel",0);
 		PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "create_time desc");
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
-		for (TShopInfo shop :shopList){
-			if(null!=shop.getAreaId()){
-				shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
-			}
-			if(null!=shop.getBrandId()){
-				shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
-			}
+		if(null!=shopList && shopList.size()>0) {
+			for (TShopInfo shop : shopList) {
+				if (null != shop.getAreaId()) {
+					shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
+				}
+				if (null != shop.getBrandId()) {
+					shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
+				}
 
+			}
 		}
 		PageInfo<TShopInfo> pageInfo=new PageInfo(shopList);
 		return success(pageInfo);
@@ -96,11 +102,15 @@ public class SysShopController extends BaseResource {
 		TShopInfo shopInfo = param.getData();
 		Example example=new Example(TShopInfo.class);
 		Example.Criteria criteria=example.createCriteria();
+		criteria.andEqualTo("isDel",false);
 		if(null!=shopInfo && null!=shopInfo.getShopName()) {
 			criteria.andLike("shopName", "%"+shopInfo.getShopName()+"%");
 		}
 		if(null!=shopInfo && null!=shopInfo.getType()) {
 			criteria.andEqualTo("type", shopInfo.getType());
+		}
+		if(null!=shopInfo && null!=shopInfo.getIsUse()) {
+			criteria.andEqualTo("isUse", shopInfo.getIsUse());
 		}
 		if(null!=shopInfo && null!=shopInfo.getProvince()){
 			criteria.andEqualTo("province", shopInfo.getProvince());
@@ -112,14 +122,16 @@ public class SysShopController extends BaseResource {
 			criteria.andEqualTo("district", shopInfo.getDistrict());
 		}
 		List<TShopInfo> shopList = sysShopService.selectByExample(example);
-		for (TShopInfo shop :shopList){
-			if(null!=shop.getAreaId()){
-				shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
-			}
-			if(null!=shop.getBrandId()){
-				shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
-			}
+		if(null!=shopList && shopList.size()>0){
+			for (TShopInfo shop :shopList){
+				if(null!=shop.getAreaId()){
+					shop.setAreaName(sysAreaService.findById(shop.getAreaId()).getAreaName());
+				}
+				if(null!=shop.getBrandId()){
+					shop.setBrandName(sysBrandService.findById(shop.getBrandId()).getBrandName());
+				}
 
+			}
 		}
 		return success(shopList);
 
