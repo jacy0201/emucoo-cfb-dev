@@ -1,7 +1,9 @@
 package com.emucoo.service.calendar;
 
-import com.emucoo.dto.modules.calendar.CalendarListIn;
-import com.emucoo.dto.modules.calendar.CalendarListOut;
+import com.emucoo.dto.modules.calendar.CalendarListDateIn;
+import com.emucoo.dto.modules.calendar.CalendarListDateOut;
+import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
+import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
 
 /**
  * 行事历
@@ -11,10 +13,17 @@ import com.emucoo.dto.modules.calendar.CalendarListOut;
 public interface CalendarService {
 
     /**
-     * 获取行事历列表
-     * @param calendarListIn
+     * 按月份获取用户行事历列表
+     * @param calendarListMonthIn
      * @return
      */
-    CalendarListOut listCalendar(CalendarListIn calendarListIn);
+    CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListMonthIn);
+
+    /**
+     * 按日期获取用户行事历列表
+     * @param calendarListDateIn
+     * @return
+     */
+    CalendarListDateOut listCalendarDate(CalendarListDateIn calendarListDateIn);
 
 }
