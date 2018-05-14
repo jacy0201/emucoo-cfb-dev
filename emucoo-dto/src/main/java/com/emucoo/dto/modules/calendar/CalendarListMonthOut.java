@@ -1,5 +1,6 @@
 package com.emucoo.dto.modules.calendar;
 
+import com.emucoo.dto.modules.task.WorkVo_O;
 import lombok.Data;
 
 import java.util.List;
@@ -9,11 +10,11 @@ import java.util.List;
  * 行事历列表查询结果
  */
 @Data
-public class CalendarListOut {
+public class CalendarListMonthOut {
     //月份
     private String month;
     //用户ID
     private Long userId;
-    //巡店任务
-    private List<WorkVO> workList;
+    //行事历任务
+    private List<WorkVo_O.Work> workArr;
 }

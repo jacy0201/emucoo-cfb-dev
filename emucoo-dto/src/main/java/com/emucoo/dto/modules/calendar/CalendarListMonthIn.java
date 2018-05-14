@@ -4,11 +4,11 @@ import lombok.Data;
 
 /**
  * Created by jacy .
- * 行事历列表查询
+ * 按月份查询行事历列表
  */
 @Data
-public class CalendarListIn {
-    //月份
+public class CalendarListMonthIn {
+    //月份 201803
     private String month;
     //用户ID
     private Long userId;
