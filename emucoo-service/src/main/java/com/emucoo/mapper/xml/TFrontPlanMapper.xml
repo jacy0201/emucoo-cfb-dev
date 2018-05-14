@@ -128,13 +128,14 @@
       </foreach>
       WHERE shop.area_id = #{areaId}
     )
-    AND plan.arrange_year = #{year} AND plan.arrange_month = #{month}
+    AND plan.arrange_year = #{year} AND plan.arrange_month = #{month} AND plan.sub_plan_id = #{subPlanId}
     AND plan.is_del = FALSE
   </select>
 
-  <select id="findFinishedArrangeListByForms"  resultType="HashMap">
+  <select id="findFinishedArrangeListByForms"  resultType="com.emucoo.model.ShopFormUseSummary">
      SELECT
-     COUNT(plan.shop_id) AS shopCount,
+     plan.shop_id AS shopId,
+     COUNT(planForm.form_main_id) AS formCount,
      planForm.form_main_id AS formId
      FROM t_front_plan plan
      INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
@@ -149,7 +150,7 @@
       #{item}
      </foreach>
     AND plan.sub_plan_id = #{planId} AND plan.status=4 AND plan.is_del = FALSE
-    GROUP BY planForm.form_main_id
+    GROUP BY plan.shop_id, planForm.form_main_id
   </select>
 
   <update id="deleteFrontPlanByIds" parameterType="ArrayList">
