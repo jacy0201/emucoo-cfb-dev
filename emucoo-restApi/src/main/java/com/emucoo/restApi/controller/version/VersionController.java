@@ -6,6 +6,7 @@ import com.emucoo.dto.modules.sys.VersionVO;
 import com.emucoo.model.SysAppVersion;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.service.version.SysAppVersionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,7 @@ public class VersionController extends AppBaseController  {
         sysAppVersion.setAppVersion(versionQuery.getAppVersion());
         sysAppVersion.setIsDel(false);
         SysAppVersion appVersion=sysAppVersionService.findOne(sysAppVersion);
+        if(null==appVersion){return fail(AppExecStatus.INVALID_PARAM,"无效的版本!");}
         Example example=new Example(SysAppVersion.class);
         example.createCriteria().andEqualTo("appType",appVersion.getAppType()).andEqualTo("isDel",false)
                 .andEqualTo("isUse",true).andGreaterThan("id",appVersion.getId());
