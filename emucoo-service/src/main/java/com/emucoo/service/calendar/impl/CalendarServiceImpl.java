@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
+
 /**
  * 行事历
  * @author Jacy
@@ -30,7 +32,8 @@ public class CalendarServiceImpl implements CalendarService {
         Long userId=calendarListIn.getUserId();
         Example example=new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId",userId);
-        tFrontPlanMapper.selectByExample(example);
+        List<TFrontPlan> list= tFrontPlanMapper.selectByExample(example);
+
         return calendarListOut;
     }
 

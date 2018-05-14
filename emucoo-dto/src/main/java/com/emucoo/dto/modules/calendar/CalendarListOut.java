@@ -14,6 +14,6 @@ public class CalendarListOut {
     private String month;
     //用户ID
     private Long userId;
-    //任务集合
+    //巡店任务
     private List<WorkVO> workList;
 }
