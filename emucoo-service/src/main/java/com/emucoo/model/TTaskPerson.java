@@ -15,11 +15,20 @@ public class TTaskPerson extends BaseEntity {
     @Column(name = "dpt_id")
     private Long dptId;
 
+    @Column(name = "dpt_name")
+    private String dptName;
+
     @Column(name = "position_id")
     private Long positionId;
 
+    @Column(name = "position_name")
+    private String positionName;
+
     @Column(name = "shop_id")
     private Long shopId;
+
+    @Column(name = "shop_name")
+    private String shopName;
 
     /**
      * 1：选择部门 2：选择店铺
@@ -31,7 +40,7 @@ public class TTaskPerson extends BaseEntity {
      * 1:执行人 2：抄送人
      */
     @Column(name = "person_type")
-    private Boolean personType;
+    private Integer personType;
 
     /**
      * @return id
@@ -126,7 +135,7 @@ public class TTaskPerson extends BaseEntity {
      *
      * @return person_type - 1:执行人 2：抄送人
      */
-    public Boolean getPersonType() {
+    public Integer getPersonType() {
         return personType;
     }
 
@@ -135,7 +144,31 @@ public class TTaskPerson extends BaseEntity {
      *
      * @param personType 1:执行人 2：抄送人
      */
-    public void setPersonType(Boolean personType) {
+    public void setPersonType(Integer personType) {
         this.personType = personType;
+    }
+
+    public String getDptName() {
+        return dptName;
+    }
+
+    public void setDptName(String dptName) {
+        this.dptName = dptName;
+    }
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 }

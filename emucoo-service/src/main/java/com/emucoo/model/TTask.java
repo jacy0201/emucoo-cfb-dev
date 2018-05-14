@@ -1,9 +1,10 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
 
 @Table(name = "t_task")
 public class TTask extends BaseEntity {
@@ -68,6 +69,9 @@ public class TTask extends BaseEntity {
     @Column(name = "execute_user_ids")
     private String executeUserIds;
 
+    @Column(name = "execute_user_type")
+    private Integer executeUserType;
+
     /**
      * 执行人岗位ids
      */
@@ -108,7 +112,7 @@ public class TTask extends BaseEntity {
      * 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
     @Column(name = "duration_time_type")
-    private Boolean durationTimeType;
+    private Integer durationTimeType;
 
     /**
      * 重复任务开始日期
@@ -183,6 +187,9 @@ public class TTask extends BaseEntity {
      */
     @Column(name = "audit_dpt_id")
     private Long auditDptId;
+
+    @Column(name = "audit_dpt_name")
+    private String auditDptName;
 
     /**
      * 版本
@@ -526,7 +533,7 @@ public class TTask extends BaseEntity {
      *
      * @return duration_time_type - 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
-    public Boolean getDurationTimeType() {
+    public Integer getDurationTimeType() {
         return durationTimeType;
     }
 
@@ -535,7 +542,7 @@ public class TTask extends BaseEntity {
      *
      * @param durationTimeType 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
-    public void setDurationTimeType(Boolean durationTimeType) {
+    public void setDurationTimeType(Integer durationTimeType) {
         this.durationTimeType = durationTimeType;
     }
 
@@ -883,5 +890,21 @@ public class TTask extends BaseEntity {
 
     public void setWorkList(List<TLoopWork> workList) {
         this.workList = workList;
+    }
+
+    public Integer getExecuteUserType() {
+        return executeUserType;
+    }
+
+    public void setExecuteUserType(Integer executeUserType) {
+        this.executeUserType = executeUserType;
+    }
+
+    public String getAuditDptName() {
+        return auditDptName;
+    }
+
+    public void setAuditDptName(String auditDptName) {
+        this.auditDptName = auditDptName;
     }
 }
