@@ -53,12 +53,28 @@ public class SysAppVersionController extends BaseResource {
     @PostMapping ("/save")
     @ApiOperation(value="创建版本")
     public ApiResult save(@RequestBody SysAppVersion sysAppVersion){
+        //检查版本号是否存在
+        if (checkHasVersion(sysAppVersion)) return fail(ApiExecStatus.INVALID_PARAM, "版本号已存在!");
         sysAppVersion.setCreateTime(new Date());
         sysAppVersion.setCreateUserId(1L);
         sysAppVersion.setIsDel(false);
         sysAppVersion.setIsUse(false);
         sysAppVersionService.saveSelective(sysAppVersion);
         return success("success");
+    }
+
+    //检查版本号是否存在
+    private boolean checkHasVersion(SysAppVersion sysAppVersion) {
+        Example example=new Example(SysAppVersion.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andEqualTo("isDel",false)
+                .andEqualTo("appType",sysAppVersion.getAppType())
+                .andEqualTo("appVersion",sysAppVersion.getAppVersion());
+        List<SysAppVersion> list=sysAppVersionService.selectByExample(example);
+        if(null!=list && list.size()>0){
+            return true;
+        }
+        return false;
     }
 
     /**

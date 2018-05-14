@@ -9,10 +9,12 @@ package com.emucoo.utils;
 public final class ConstantsUtil {
 
 	public interface LoopWork {
-		// t_loop_work 1常规任务 2指派任务 3改善任务
+		// t_loop_work 1常规任务 2指派任务 3改善任务 4 巡店安排 5工作备忘
 		public static final Integer TYPE_ONE = 1;
 		public static final Integer TYPE_TWO = 2;
 		public static final Integer TYPE_THREE = 3;
+		public static final Integer TYPE_FOUR = 4;
+		public static final Integer TYPE_FIVE = 5;
 		
 		// 1：未提交 2：已提交 3：已过期
 		public static final Integer WORK_STATUS_ONE = 1;
