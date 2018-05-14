@@ -1,15 +1,18 @@
 package com.emucoo.restApi.controller.calendar;
 
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.calendar.CalendarListIn;
-import com.emucoo.dto.modules.calendar.CalendarListOut;
+import com.emucoo.dto.modules.calendar.CalendarListDateIn;
+import com.emucoo.dto.modules.calendar.CalendarListDateOut;
+import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
+import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.calendar.CalendarService;
-import com.emucoo.service.plan.PlanService;
 import com.emucoo.utils.DateUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,7 @@ import java.util.Date;
  * 行事历
  */
 @RestController
+@Api(description="行事历接口")
 @RequestMapping("/api/calendar")
 public class CalendarController extends AppBaseController {
 
@@ -38,14 +42,32 @@ public class CalendarController extends AppBaseController {
      * @param request
      * @return
      */
-    @PostMapping(value = "/listWork")
-    public AppResult listWork(@RequestBody ParamVo<CalendarListIn> params, HttpServletRequest request) {
-        CalendarListIn calendarListIn = params.getData();
+    @ApiOperation(value="查询用户某月行事历")
+    @PostMapping(value = "/listMonth")
+    public AppResult listMonth(@RequestBody ParamVo<CalendarListMonthIn> params, HttpServletRequest request) {
+        CalendarListMonthIn calendarListIn = params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         if (null==calendarListIn.getUserId()){ calendarListIn.setUserId(user.getId()); }
         if (null==calendarListIn.getMonth()){ calendarListIn.setMonth(DateUtil.simple4(new Date())); }
-        CalendarListOut calendarListOut=calendarService.listCalendar(calendarListIn);
-        return success(calendarListOut);
+        CalendarListMonthOut calendarListMonthOut =calendarService.listCalendarMonth(calendarListIn);
+        return success(calendarListMonthOut);
+    }
+
+    /**
+     * 查询用户某天行事历
+     * @param params
+     * @param request
+     * @return
+     */
+    @ApiOperation(value="查询用户某天行事历")
+    @PostMapping(value = "/listDate")
+    public AppResult listDate(@RequestBody ParamVo<CalendarListDateIn> params, HttpServletRequest request) {
+        CalendarListDateIn calendarListDateIn = params.getData();
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        if (null==calendarListDateIn.getUserId()){ calendarListDateIn.setUserId(user.getId()); }
+        if (null==calendarListDateIn.getDate()) calendarListDateIn.setDate(new Date());
+        CalendarListDateOut calendarListDateOut =calendarService.listCalendarDate(calendarListDateIn);
+        return success(calendarListDateOut);
     }
 
 

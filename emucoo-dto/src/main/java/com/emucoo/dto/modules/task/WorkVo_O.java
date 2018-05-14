@@ -20,6 +20,7 @@ public class WorkVo_O {
         private Long id;
         private String workID;
         private String subID;
+        //任务类型：1-常规任务 2-指派任务 3-改善任务  4-巡店安排；5-工作备忘
         private Integer workType;
         private Task task = new Task();
         private Inspection inspection = new Inspection();
