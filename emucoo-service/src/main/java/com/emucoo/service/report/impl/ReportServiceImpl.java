@@ -579,7 +579,7 @@ public class ReportServiceImpl implements ReportService {
             return report.getId();
 
         }catch (Exception e){
-            logger.error("保存报告错误！");
+            logger.error("保存报告错误！", e);
             if(StringUtils.isNotBlank(e.getMessage())) {
                 try {
                     throw e;
