@@ -63,7 +63,12 @@ public class PlanManageController extends BaseResource {
                 return fail(ApiExecStatus.INVALID_PARAM, "请选择表单！");
             }
         }
-        loopPlanManageService.addPlan(plan);
+        try {
+            loopPlanManageService.addPlan(plan);
+        } catch (Exception e) {
+            return fail(e.getMessage());
+        }
+
         return success("success");
     }
 

@@ -18,4 +18,6 @@ public interface TLoopPlanMapper extends MyMapper<TLoopPlan> {
     List<TLoopPlan> findPlanListByCondition(TLoopPlan plan);
 
     TLoopPlan findPlanById(TLoopPlan plan);
+
+    List<TLoopPlan> selectPlansByDptAndDate(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("dptId")Long dptId);
 }

@@ -24,15 +24,7 @@ import com.emucoo.mapper.TLoopPlanMapper;
 import com.emucoo.mapper.TLoopSubPlanMapper;
 import com.emucoo.mapper.TPlanFormRelationMapper;
 import com.emucoo.mapper.TShopInfoMapper;
-import com.emucoo.model.SysArea;
-import com.emucoo.model.SysDept;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.TBrandInfo;
-import com.emucoo.model.TFrontPlan;
-import com.emucoo.model.TLoopPlan;
-import com.emucoo.model.TLoopSubPlan;
-import com.emucoo.model.TPlanFormRelation;
-import com.emucoo.model.TShopInfo;
+import com.emucoo.model.*;
 import com.emucoo.service.plan.PlanService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -188,11 +180,12 @@ public class PlanServiceImpl implements PlanService {
             tLoopSubPlanExample.createCriteria().andEqualTo("planId", tLoopPlan.getId()).andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
                     .andGreaterThanOrEqualTo("cycleEnd", yearMonth).andEqualTo("isDel", false);
             List<TLoopSubPlan> tLoopSubPlans = tLoopSubPlanMapper.selectByExample(tLoopSubPlanExample);
+            TLoopSubPlan tLoopSubPlan = null;
             if(tLoopSubPlans.size() == 0) {
                 if(tLoopPlan.getPlanStartDate().compareTo(yearMonth) > 0  || tLoopPlan.getPlanEndDate().compareTo(yearMonth) < 0) {
                     throw new BaseException("月份超过边界！");
                 }
-                TLoopSubPlan tLoopSubPlan = new TLoopSubPlan();
+                tLoopSubPlan = new TLoopSubPlan();
                 // 计算当前周期月份
                 int loopCycleCount = tLoopPlan.getPlanCycleCount();
                 Calendar cal = Calendar.getInstance();
@@ -251,7 +244,7 @@ public class PlanServiceImpl implements PlanService {
                 tLoopPlan.setModifyUserId(user.getId());
                 tLoopPlanMapper.updateByPrimaryKey(tLoopPlan);
             } else {
-                TLoopSubPlan tLoopSubPlan = tLoopSubPlans.get(0);
+                tLoopSubPlan = tLoopSubPlans.get(0);
                 List<PatrolShopCycle> patrolShopCycles = new ArrayList<PatrolShopCycle>();
                 Date cycleStartDate = new SimpleDateFormat("yyyyMM").parse(tLoopSubPlan.getCycleBegin());
                 Date cycleEndDate = new SimpleDateFormat("yyyyMM").parse(tLoopSubPlan.getCycleEnd());
@@ -286,7 +279,7 @@ public class PlanServiceImpl implements PlanService {
                 areaOut.setPrecinctID(area.getId());
                 areaOut.setPrecinctName(area.getAreaName());
                 // 获取巡店安排
-                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, brandInfos, userIdList);
+                List<TFrontPlan> frontPlans = tFrontPlanMapper.findArrangeListByAreaId(area.getId(), year, month, tLoopSubPlan.getId(), userIdList);
                 if(CollectionUtils.isNotEmpty(frontPlans)) {
                     List<ShopVo> shopArr = new ArrayList<>();
                     for(TFrontPlan frontPlan : frontPlans) {
@@ -359,7 +352,7 @@ public class PlanServiceImpl implements PlanService {
             TLoopPlan tLoopPlan = tLoopPlans.get(0);
 
             Example tLoopSubPlanExample = new Example(TLoopSubPlan.class);
-            tLoopSubPlanExample.createCriteria().andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
+            tLoopSubPlanExample.createCriteria().andEqualTo("planId", tLoopPlan.getId()).andEqualTo("dptId", user.getDptId()).andLessThanOrEqualTo("cycleBegin", yearMonth)
                     .andGreaterThanOrEqualTo("cycleEnd", yearMonth).andEqualTo("isDel", false);
             List<TLoopSubPlan> tLoopSubPlans = tLoopSubPlanMapper.selectByExample(tLoopSubPlanExample);
             if(CollectionUtils.isNotEmpty(tLoopSubPlans)) {
@@ -384,18 +377,17 @@ public class PlanServiceImpl implements PlanService {
 
                 // 子计划内需要的总打表次数
                 int totleCountInSubPlan = totalFormUseCount * shopList.size();
-                List<HashMap<String, Long>> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds, userIdList);
+                List<ShopFormUseSummary> tFrontPlanSummary = tFrontPlanMapper.findFinishedArrangeListByForms(tLoopSubPlan.getId(), formIds, userIdList);
 
                 int actualFinishCount = 0;
-                for (HashMap<String, Long> item : tFrontPlanSummary) {
+                for (ShopFormUseSummary item : tFrontPlanSummary) {
                     for (TPlanFormRelation tPlanFormRelation : tPlanFormRelations) {
-                        if (tPlanFormRelation.getFormMainId().equals(item.get("formId"))) {
-                            if (tPlanFormRelation.getFormUseCount() >= item.get("shopCount")) {
-                                actualFinishCount += item.get("shopCount");
+                        if (tPlanFormRelation.getFormMainId().equals(item.getFormId())) {
+                            if (tPlanFormRelation.getFormUseCount() >= item.getFormCount()) {
+                                actualFinishCount += item.getFormCount();
                             } else {
                                 actualFinishCount += tPlanFormRelation.getFormUseCount();
                             }
-                            break;
                         }
                     }
                 }

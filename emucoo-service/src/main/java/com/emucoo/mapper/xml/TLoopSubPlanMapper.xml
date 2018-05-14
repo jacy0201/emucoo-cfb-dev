@@ -15,6 +15,9 @@
   </resultMap>
 
   <insert id="addLoopSubPlan" parameterType="com.emucoo.model.TLoopSubPlan">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     INSERT INTO t_loop_sub_plan
     (
       cycle_begin,

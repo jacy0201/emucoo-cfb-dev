@@ -115,4 +115,19 @@
     ON pf.plan_id = plan.id
     WHERE plan.id=#{id}
   </select>
+
+  <select id="selectPlansByDptAndDate" resultType="com.emucoo.model.TLoopPlan">
+    SELECT
+    id,
+    name,
+    description,
+    dpt_id,
+    is_use,
+    plan_start_date,
+    plan_end_date,
+    plan_cycle
+    FROM t_loop_plan
+    WHERE dpt_id = #{dptId} AND is_del = FALSE
+    AND ((plan_start_date &lt;= #{startDate} AND plan_end_date >= #{startDate}) OR (plan_start_date &lt;= #{endDate} AND plan_end_date >= #{endDate}))
+  </select>
 </mapper>
