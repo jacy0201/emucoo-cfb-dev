@@ -25,7 +25,9 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     List<TLoopWork> listPendingReview(@Param("auditUserId") Long auditUserId, @Param("ldt") Date ldt, @Param("rdt") Date rdt);
 
-    List<TLoopWork> calendarList(@Param("userId") Long userId,@Param("executeTime") Date executeTime);
+    List<TLoopWork> calendarMonthList(@Param("userId") Long userId,@Param("yearStr") String yearStr,@Param("monthStr")  String monthStr);
+
+    List<TLoopWork> calendarDateList(@Param("userId") Long userId,@Param("executeDate") String executeDate);
 
     int countPendingExecuteWorkNum(@Param("submitUserId") Long submitUserId, @Param("today") Date today);
 

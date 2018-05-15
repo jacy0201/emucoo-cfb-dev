@@ -4,6 +4,7 @@ import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.mapper.SysPostMapper;
 import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.mapper.SysUserRelationMapper;
+import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserRelation;
 import com.emucoo.service.sys.SysUserRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,8 @@ public class SysUserRelationServiceImpl extends BaseServiceImpl<SysUserRelation>
        List<SysUserRelation> list=sysUserRelationMapper.selectByExample(example);
        for (SysUserRelation sysUserRelation :list){
            if(null!=sysUserRelation.getParentUserId()){
-              sysUserRelation.setParentUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getParentUserId()).getRealName());
+               SysUser sysUser=sysUserMapper.selectByPrimaryKey(sysUserRelation.getParentUserId());
+               if(null!=sysUser)sysUserRelation.setParentUserName(sysUser.getRealName());
            }
            sysUserRelation.setUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getUserId()).getRealName());
            if(null!=sysUserRelation.getPostId()) {

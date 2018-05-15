@@ -11,4 +11,6 @@ spring:
 publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJ8hIQck8O61Ev0F8C3YLQv6qwhZ7G4oMy53jwwiL/8L2n3aEHRtUySJlRDSV891M7+IksolgtHoyou9LaIJP9sCAwEAAQ==
 password: gh9C+z6OhPoMFfBm0/oZXhidM9a5NBDIcqIgEXV4EH2pO8chIOEnJjMlrAb7uvlJHyUfwlrp2J+jjiEqylDAtw==
 
-
+logging:
+  config: classpath:logback-base.xml
+  path: logs

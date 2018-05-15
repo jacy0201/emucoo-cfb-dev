@@ -10,8 +10,8 @@ import java.util.Date;
  */
 @Data
 public class CalendarListDateIn {
-    //月份 2018-04-22
-    private Date  date;
+    //日期 2018-04-22
+    private String  executeDate;
     //用户ID
     private Long userId;
     
