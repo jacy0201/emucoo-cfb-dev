@@ -22,8 +22,18 @@
     <select id="fetchFilesByIds" resultMap="BaseResultMap">
         select * from t_file
         where id in
-        <foreach collection="list" item="id" open="(" close=")" separator=",">
-            #{id}
+        <foreach collection="list" item="it" open="(" close=")" separator=",">
+            #{it}
         </foreach>
     </select>
+
+    <delete id="dropByIds">
+        delete from t_file
+        <where>
+            id in
+            <foreach collection="list" item="it" open="(" close=")" separator=",">
+                #{it}
+            </foreach>
+        </where>
+    </delete>
 </mapper>

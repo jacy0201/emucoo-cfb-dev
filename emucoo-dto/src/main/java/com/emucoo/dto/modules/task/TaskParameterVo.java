@@ -27,14 +27,15 @@ public class TaskParameterVo {
         private String weight;
         private Boolean needFeedbackText;
         private String feedbackTextName;
-        private String feedbackTextContent;
+        private String feedbackTextDescription;
         private Boolean needFeedbackNum;
         private String feedbackNumName;
         private Integer feedbackNumType;
         private Boolean needFeedbackImg;
+        private String feedbackImgName;
         private Integer feedbackImgCount;
         private Integer feedbackImgType;
-        private Long feedbackImgSampleId;
+        private String feedbackImgSampleUrl;
     }
 
     private Long id;

@@ -20,4 +20,8 @@
     <select id="fetchByTaskId" resultMap="BaseResultMap">
         select * from t_task_person where task_id=#{id}
     </select>
+
+    <delete id="dropByTaskId">
+        delete from t_task_person where task_id=#{taskId}
+    </delete>
 </mapper>

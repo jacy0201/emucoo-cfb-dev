@@ -244,8 +244,39 @@
             t.audit_type reviewItemType,
             (select group_concat(img_url) from t_file where find_in_set(id, t.illustration_img_ids)) imgurls
         from t_loop_work s left join t_task t on s.task_id = t.id
-        where s.work_id = #{workId} and s.sub_work_id = #{subWorkId} and s.type=#{workType}
+        where s.id = #{loopWorkId}
     </select>
 
+    <select id="fetchTaskCommonItem" resultType="com.emucoo.dto.modules.task.TaskCommonItemVo">
+        select
+            b.task_item_id as taskItemID,
+            c.name as taskItemTitle,
+            c.feedback_img_example_id as taskItemImgArr,
+            case when c.feedback_need_text = 0 then 1 else 2 end as feedbackText,
+            case when c.feedback_img_type = 0 then 1 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2 else 3 end as feedbackImg,
+            c.feedback_num_name as digitalItemName,
+            c.feedback_num_type as digitalItemType,
+            b.id as taskSubID,
+            d.head_img_url as taskSubHeadUrl,
+            a.modify_time as taskSubTime,
+            b.work_txt as workText,
+            b.img_ids as executeImgArr,
+            b.num_option_value as digitalItemValue,
+            b.audit_result as reviewResult,
+            b.id as reviewID,
+            b.audit_content as reviewOpinion,
+            b.modify_time as reviewTime,
+            b.audit_user_id as auditorID,
+            e.real_name as auditorName,
+            e.head_img_url as auditorHeadUrl,
+            b.audit_img_ids as reviewImgArr
+
+        from t_loop_work a left join t_operate_data_for_work b on a.id = b.loop_work_id
+            left join t_operate_option c on c.id = b.task_item_id
+            left join sys_user d on a.excute_user_id = d.id
+            left join sys_user e on b.audit_user_id = e.id
+
+        where a.id=#{loopWorkId}
+    </select>
 
 </mapper>

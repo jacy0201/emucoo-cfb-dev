@@ -46,7 +46,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         TaskCommonDetailOut out = new TaskCommonDetailOut();
         // taskStatement
-        TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(voi.getWorkType(), voi.getWorkID(), voi.getSubID());
+        TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
                 taskStatement.setTaskImgArr(Arrays.asList(imgUrls.split(",")).stream().map(url -> {
@@ -59,7 +59,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         // TODO:
 
-//        List<TaskCommonItemVo> list = loopWorkMapper.getTaskCommonItem(voi.getWorkID(), voi.getSubID());
+
+        List<TaskCommonItemVo> list = loopWorkMapper.fetchTaskCommonItem(loopWork.getId());
 //        List<TaskCommonItem> itemList = new ArrayList<TaskCommonItem>();
 //        if (list != null && list.size() > 0) {
 //            for (TaskCommonItemVo vo : list) {
@@ -415,7 +416,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
         vo.setCcUserPositions(ccDpts);
 
-        if(vo.getExeUserType() == 1) {
+        if(vo.getExeUserType() == 1) { // 1: 按部门
             List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
             for (TTaskPerson taskPerson : exePersons) {
                 TaskParameterVo.DeptPosition dpt = null;
@@ -445,7 +446,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
             vo.setExeDeptPositions(exeDpts);
 
-        } else {
+        } else { // 2: 按店铺
             List<TaskParameterVo.IdNamePair> exeShps = new ArrayList<>();
             for (TTaskPerson taskPerson : exePersons) {
                 TaskParameterVo.IdNamePair exeShp = vo.new IdNamePair();
@@ -480,14 +481,17 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             taskOption.setName(option.getName());
             taskOption.setNeedFeedbackText(option.getFeedbackNeedText());
             taskOption.setFeedbackTextName(option.getFeedbackTextName());
-            taskOption.setFeedbackTextContent(option.getFeedbackTextDescription());
+            taskOption.setFeedbackTextDescription(option.getFeedbackTextDescription());
             taskOption.setNeedFeedbackImg(option.getFeedbackNeedNum());
             taskOption.setFeedbackNumName(option.getFeedbackNumName());
             taskOption.setFeedbackNumType(option.getFeedbackNumType());
             taskOption.setNeedFeedbackImg(option.getFeedbackImgType()==0?false:true);
             taskOption.setFeedbackImgType(option.getFeedbackImgFromAlbum()?1:0);
             taskOption.setFeedbackImgCount(option.getFeedbackImgMaxCount());
-            taskOption.setFeedbackImgSampleId(option.getFeedbackImgExampleId());
+            if(option.getFeedbackImgExampleId() != null) {
+                TFile imgsample = fileMapper.selectByPrimaryKey(option.getFeedbackImgExampleId());
+                taskOption.setFeedbackImgSampleUrl(imgsample==null?"":imgsample.getImgUrl());
+            }
             taskOption.setScore(option.getPreinstallScore());
             taskOption.setWeight(option.getPreinstallWeight());
             taskOptions.add(taskOption);
@@ -497,8 +501,133 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         return vo;
     }
 
+    private void cleanOldConfigForCommonTask(TTask task) {
+        if(task.getIllustrationImgIds() != null){
+            List<String> ids = Arrays.asList(task.getIllustrationImgIds().split(","));
+            if(ids.size() > 0)
+                fileMapper.dropByIds(ids);
+        }
+        operateOptionMapper.dropSampleImagesByTaskId(task.getId());
+        operateOptionMapper.dropByTaskId(task.getId());
+        taskPersonMapper.dropByTaskId(task.getId());
+
+    }
+
     @Override
     public void configCommonTask(TaskParameterVo data) {
+        TTask task = taskMapper.selectByPrimaryKey(data.getId());
+        if(task == null){
+            task = new TTask();
+            task.setId(data.getId());
+            task.setCreateTime(DateUtil.currentDate());
+            task.setModifyTime(DateUtil.currentDate());
+        } else {
+            cleanOldConfigForCommonTask(task);
+        }
+        // task基本信息
+        task.setName(data.getName());
+        task.setDescription(data.getDescription());
+        if(data.getImgUrls() != null){
+            Iterator<ImageUrl> it = data.getImgUrls().iterator();
+            List<String> imgids = new ArrayList<>();
+            while(it.hasNext()) {
+                TFile imgfile = new TFile();
+                imgfile.setImgUrl(it.next().getImgUrl());
+                fileMapper.insert(imgfile);
+                imgids.add(Long.toString(imgfile.getId()));
+            }
+            task.setIllustrationImgIds(StringUtils.join(imgids, ","));
+        }
+
+        // 截止时间
+        task.setExecuteDeadline(String.format("%d:%d", data.getExeCloseHour(), data.getExeCloseMinute()));
+        task.setExecuteRemindTime(String.format("%d:%d", data.getExeRemindHour(), data.getExeRemindMinute()));
+        task.setAuditDeadline(String.format("%d:%d", data.getAuditCloseHour(), data.getAuditCloseMinute()));
+
+        // 执行人信息
+        task.setExecuteUserType(data.getExeUserType());
+        if(data.getExeUserType() == 1) { // 1: 按部门
+            data.getExeDeptPositions().forEach(deptPosition -> {
+                deptPosition.getPositions().forEach(position -> {
+                    TTaskPerson taskPerson = new TTaskPerson();
+                    taskPerson.setDptId(deptPosition.getDept().getId());
+                    taskPerson.setDptName(deptPosition.getDept().getName());
+                    taskPerson.setPositionId(position.getId());
+                    taskPerson.setPositionName(position.getName());
+                    taskPerson.setPersonType(1); // 1: 执行人 2：抄送人
+                    taskPersonMapper.insert(taskPerson);
+                });
+            });
+        } else { // 2:按店铺
+            data.getExeUserShops().forEach(shop -> {
+                TTaskPerson taskPerson = new TTaskPerson();
+                taskPerson.setPersonType(1);
+                taskPerson.setShopId(shop.getId());
+                taskPerson.setShopName(shop.getName());
+                taskPersonMapper.insert(taskPerson);
+            });
+            task.setAuditDptId(data.getAuditDeptId());
+            task.setAuditDptName(data.getAuditDeptName());
+        }
+
+        data.getCcUserPositions().forEach(ccDept -> {
+            ccDept.getPositions().forEach(ccPos -> {
+                TTaskPerson taskPerson = new TTaskPerson();
+                taskPerson.setDptId(ccDept.getDept().getId());
+                taskPerson.setDptName(ccDept.getDept().getName());
+                taskPerson.setPositionId(ccPos.getId());
+                taskPerson.setPositionName(ccPos.getName());
+                taskPerson.setPersonType(2);
+                taskPersonMapper.insert(taskPerson);
+            });
+        });
+
+        // 持续周期
+        task.setDurationTimeType(data.getDurationType());
+        task.setTaskStartDate(DateUtil.strToYYMMDDDate(data.getDurationBegin()));
+        task.setTaskEndDate(DateUtil.strToYYMMDDDate(data.getDurationEnd()));
+
+        // 循环周期
+        task.setLoopCycleType(data.getRepeatType());
+        if(task.getLoopCycleType() == 1) { // 1: 每隔多少天一次
+            task.setLoopCycleValue(Integer.toString(data.getIntervalDays()));
+        } else { // 2，3：每周（1-7），每月（1-31）
+            task.setLoopCycleValue(StringUtils.join(data.getDays(), ","));
+        }
+
+        // 评分方式
+        task.setScoreType(data.getScoreType().byteValue());
+        task.setPreinstallScore(data.getScoreValue());
+        task.setPreinstallWeight(data.getScoreWeight());
+
+        if(data.getTaskOptions() != null){
+            data.getTaskOptions().forEach(taskOption -> {
+                TOperateOption option = new TOperateOption();
+                option.setCreateTime(DateUtil.currentDate());
+                option.setModifyTime(DateUtil.currentDate());
+                option.setTaskId(data.getId());
+                option.setName(taskOption.getName());
+                option.setPreinstallScore(taskOption.getScore());
+                option.setPreinstallWeight(taskOption.getWeight());
+                option.setFeedbackNeedText(taskOption.getNeedFeedbackText());
+                option.setFeedbackTextName(taskOption.getFeedbackTextName());
+                option.setFeedbackTextDescription(taskOption.getFeedbackTextDescription());
+                option.setFeedbackNeedNum(taskOption.getNeedFeedbackNum());
+                option.setFeedbackNumName(taskOption.getFeedbackNumName());
+                option.setFeedbackNumType(taskOption.getFeedbackNumType());
+                option.setFeedbackImgType(taskOption.getNeedFeedbackImg()?1:0);
+                option.setFeedbackImgFromAlbum(taskOption.getFeedbackImgType()==1?true:false);
+                option.setFeedbackImgName(taskOption.getFeedbackImgName());
+                option.setFeedbackImgMaxCount(taskOption.getFeedbackImgCount());
+                if(StringUtils.isNotBlank(taskOption.getFeedbackImgSampleUrl())) {
+                    TFile img = new TFile();
+                    img.setImgUrl(taskOption.getFeedbackImgSampleUrl());
+                    fileMapper.insert(img);
+                    option.setFeedbackImgExampleId(img.getId());
+                }
+                operateOptionMapper.insert(option);
+            });
+        }
 
     }
 }
