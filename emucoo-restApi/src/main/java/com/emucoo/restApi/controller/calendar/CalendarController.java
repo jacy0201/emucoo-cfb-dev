@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +35,6 @@ public class CalendarController extends AppBaseController {
 
     @Resource
     private CalendarService calendarService;
-
-    @Resource
-    private SysUserService sysUserService;
 
     /**
      * 获取指定用户,指定月份行事历
