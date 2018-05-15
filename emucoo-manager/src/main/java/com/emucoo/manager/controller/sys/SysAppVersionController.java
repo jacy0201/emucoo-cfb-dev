@@ -40,7 +40,7 @@ public class SysAppVersionController extends BaseResource {
         criteria.andEqualTo("isDel",false);
         if(null!=sysAppVersion.getAppType()){criteria.andEqualTo("appType",sysAppVersion.getAppType());}
         if(null!=sysAppVersion.getAppVersion()){criteria.andEqualTo("appVersion",sysAppVersion.getAppVersion());}
-        PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "update_id desc");
+        PageHelper.startPage(param.getPageNumber(), param.getPageSize(), "id desc");
         List<SysAppVersion> list=sysAppVersionService.selectByExample(example);
         PageInfo<SysAppVersion> pageInfo=new PageInfo(list);
         return success(pageInfo);
