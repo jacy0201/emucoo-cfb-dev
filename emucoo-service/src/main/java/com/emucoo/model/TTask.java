@@ -72,17 +72,17 @@ public class TTask extends BaseEntity {
     @Column(name = "execute_user_type")
     private Integer executeUserType;
 
-    /**
-     * 执行人岗位ids
-     */
-    @Column(name = "executor_position_ids")
-    private String executorPositionIds;
-
-    /**
-     * 执行人店铺ids
-     */
-    @Column(name = "executor_shop_ids")
-    private String executorShopIds;
+//    /**
+//     * 执行人岗位ids
+//     */
+//    @Column(name = "executor_position_ids")
+//    private String executorPositionIds;
+//
+//    /**
+//     * 执行人店铺ids
+//     */
+//    @Column(name = "executor_shop_ids")
+//    private String executorShopIds;
 
     /**
      * 抄送人ids
@@ -90,11 +90,11 @@ public class TTask extends BaseEntity {
     @Column(name = "cc_user_ids")
     private String ccUserIds;
 
-    /**
-     * 抄送人岗位ids
-     */
-    @Column(name = "cc_position_ids")
-    private String ccPositionIds;
+//    /**
+//     * 抄送人岗位ids
+//     */
+//    @Column(name = "cc_position_ids")
+//    private String ccPositionIds;
 
     /**
      * 评分方式（1：任务评分，2：操作项评分）
@@ -425,36 +425,36 @@ public class TTask extends BaseEntity {
      *
      * @return executor_position_ids - 执行人岗位ids
      */
-    public String getExecutorPositionIds() {
-        return executorPositionIds;
-    }
+//    public String getExecutorPositionIds() {
+//        return executorPositionIds;
+//    }
 
     /**
      * 设置执行人岗位ids
      *
      * @param executorPositionIds 执行人岗位ids
      */
-    public void setExecutorPositionIds(String executorPositionIds) {
-        this.executorPositionIds = executorPositionIds;
-    }
+//    public void setExecutorPositionIds(String executorPositionIds) {
+//        this.executorPositionIds = executorPositionIds;
+//    }
 
     /**
      * 获取执行人店铺ids
      *
      * @return executor_shop_ids - 执行人店铺ids
      */
-    public String getExecutorShopIds() {
-        return executorShopIds;
-    }
+//    public String getExecutorShopIds() {
+//        return executorShopIds;
+//    }
 
     /**
      * 设置执行人店铺ids
      *
      * @param executorShopIds 执行人店铺ids
      */
-    public void setExecutorShopIds(String executorShopIds) {
-        this.executorShopIds = executorShopIds;
-    }
+//    public void setExecutorShopIds(String executorShopIds) {
+//        this.executorShopIds = executorShopIds;
+//    }
 
     /**
      * 获取抄送人ids
@@ -479,18 +479,18 @@ public class TTask extends BaseEntity {
      *
      * @return cc_position_ids - 抄送人岗位ids
      */
-    public String getCcPositionIds() {
-        return ccPositionIds;
-    }
+//    public String getCcPositionIds() {
+//        return ccPositionIds;
+//    }
 
     /**
      * 设置抄送人岗位ids
      *
      * @param ccPositionIds 抄送人岗位ids
      */
-    public void setCcPositionIds(String ccPositionIds) {
-        this.ccPositionIds = ccPositionIds;
-    }
+//    public void setCcPositionIds(String ccPositionIds) {
+//        this.ccPositionIds = ccPositionIds;
+//    }
 
     /**
      * 获取评分方式（1：任务评分，2：操作项评分）
