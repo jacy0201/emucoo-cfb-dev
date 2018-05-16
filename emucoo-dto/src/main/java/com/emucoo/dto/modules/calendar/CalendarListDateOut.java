@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class CalendarListDateOut {
     //日期
-    private Date date;
+    private String date;
     //用户ID
     private Long userId;
     //行事历任务

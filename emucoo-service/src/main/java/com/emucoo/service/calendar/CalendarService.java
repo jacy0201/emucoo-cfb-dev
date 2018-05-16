@@ -4,6 +4,9 @@ import com.emucoo.dto.modules.calendar.CalendarListDateIn;
 import com.emucoo.dto.modules.calendar.CalendarListDateOut;
 import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
 import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
+import com.emucoo.model.SysUser;
+
+import java.util.List;
 
 /**
  * 行事历
@@ -25,5 +28,11 @@ public interface CalendarService {
      * @return
      */
     CalendarListDateOut listCalendarDate(CalendarListDateIn calendarListDateIn);
+
+    /**
+     * 查询当前用户的下级用户
+     * @return
+     */
+    List<SysUser> listLowerUser(Long userId);
 
 }

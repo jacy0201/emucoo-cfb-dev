@@ -57,13 +57,25 @@
         GROUP BY t1.id
     </select>
 
-    <select id="calendarList" resultType="com.emucoo.model.TLoopWork">
+    <select id="calendarMonthList" resultType="com.emucoo.model.TLoopWork">
         SELECT t1.*, t2.head_img_url, t2.real_name, t3.`name` AS taskTitle
         FROM t_loop_work t1
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
-        WHERE t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId}
-        AND   #{executeTime} between t1.execute_begin_date and t1.execute_end_date
+        WHERE  (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
+        AND    (year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
+                OR
+               (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr})
+        GROUP BY t1.id
+    </select>
+
+    <select id="calendarDateList" resultType="com.emucoo.model.TLoopWork">
+        SELECT t1.*, t2.head_img_url, t2.real_name, t3.`name` AS taskTitle
+        FROM t_loop_work t1
+        LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
+        LEFT JOIN t_task t3 ON t1.task_id = t3.id
+        WHERE (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
+        AND   #{executeDate} between t1.execute_begin_date and t1.execute_end_date
         GROUP BY t1.id
     </select>
 
