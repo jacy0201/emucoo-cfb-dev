@@ -40,6 +40,27 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Autowired
     private TTaskPersonMapper taskPersonMapper;
 
+    @Autowired
+    private SysUserMapper userMapper;
+
+    @Autowired
+    private TTaskCommentMapper commentMapper;
+
+    private List<ImageUrl> convertImgIds2Urls(String ids){
+        if(ids == null)
+            return new ArrayList<>();
+        return Arrays.asList(ids.split(",")).stream().map(iid -> {
+            TFile img = fileMapper.selectByPrimaryKey(iid);
+            if (img == null) {
+                return null;
+            } else {
+                ImageUrl url = new ImageUrl();
+                url.setImgUrl(img.getImgUrl());
+                return url;
+            }
+        }).filter(url -> url != null).collect(Collectors.toList());
+    }
+
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn voi) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(voi.getWorkID(), voi.getSubID(), voi.getWorkType());
@@ -49,71 +70,90 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
-                taskStatement.setTaskImgArr(Arrays.asList(imgUrls.split(",")).stream().map(url -> {
-                    ImageUrl imgurl = new ImageUrl();
-                    imgurl.setImgUrl(url);
-                    return imgurl;
-                }).collect(Collectors.toList()));
+                taskStatement.setTaskImgArr(convertImgIds2Urls(imgUrls));
             });
         }
 
         // TODO:
 
-
         List<TaskCommonItemVo> list = loopWorkMapper.fetchTaskCommonItem(loopWork.getId());
-//        List<TaskCommonItem> itemList = new ArrayList<TaskCommonItem>();
-//        if (list != null && list.size() > 0) {
-//            for (TaskCommonItemVo vo : list) {
-//                TaskCommonItem item = new TaskCommonItem();
-//                item.setTaskItemID(Long.toString(vo.getTaskItemID()));
-//                item.setTaskItemTitle(vo.getTaskItemTitle());
-//                item.setFeedbackText(vo.getFeedbackText());
-//                item.setFeedbackImg(vo.getFeedbackImg());
-//                item.setDigitalItemName(vo.getDigitalItemName());
-//                item.setDigitalItemType(vo.getDigitalItemType());
-//                item.setTaskItemImgArr(convertToList(vo.getItemImgUrls()));
-//                // TaskSubmit
-//                TaskCommonItem.TaskSubmit submit = new TaskCommonItem().new TaskSubmit();
-//                submit.setTaskSubID(vo.getTaskSubID());
-//                submit.setTaskSubHeadUrl(vo.getTaskSubHeadUrl());
-//                submit.setTaskSubTime(vo.getTaskSubTime());
-//                submit.setWorkText(vo.getWorkText());
-//                submit.setDigitalItemValue(vo.getDigitalItemValue());
-//                submit.setExecuteImgArr(convertToList(vo.getImageUrls()));
-//                item.setTaskSubmit(submit);
-//                // TaskReview
-//                TaskCommonItem.TaskReview review = new TaskCommonItem().new TaskReview();
-//                review.setReviewResult(vo.getReviewResult());
-//                review.setReviewID(vo.getReviewID());
-//                review.setReviewOpinion(vo.getReviewOpinion());
-//                review.setReviewTime(vo.getReviewTime());
-//                review.setAuditorID(vo.getAuditorID());
-//                review.setAuditorName(vo.getAuditorName());
-//                review.setAuditorHeadUrl(vo.getAuditorHeadUrl());
-//                review.setReviewImgArr(convertToList(vo.getImgUrls()));
-//                item.setTaskReview(review);
-//                itemList.add(item);
-//            }
-//        }
-//
+        List<TaskCommonItem> itemList = new ArrayList<TaskCommonItem>();
+        if (list != null && list.size() > 0) {
+            for (TaskCommonItemVo vo : list) {
+                TaskCommonItem item = new TaskCommonItem();
+                item.setTaskItemID(Long.toString(vo.getTaskItemID()));
+                item.setTaskItemTitle(vo.getTaskItemTitle());
+                item.setFeedbackText(vo.getFeedbackText());
+                item.setFeedbackImg(vo.getFeedbackImg());
+                item.setDigitalItemName(vo.getDigitalItemName());
+                item.setDigitalItemType(vo.getDigitalItemType());
+                item.setTaskItemImgArr(convertImgIds2Urls(vo.getItemImgUrls()));
+
+                // TaskSubmit
+                TaskCommonItem.TaskSubmit submit = new TaskCommonItem().new TaskSubmit();
+                submit.setTaskSubID(vo.getTaskSubID());
+                submit.setTaskSubHeadUrl(vo.getTaskSubHeadUrl());
+                submit.setTaskSubTime(vo.getTaskSubTime());
+                submit.setWorkText(vo.getWorkText());
+                submit.setDigitalItemValue(vo.getDigitalItemValue());
+                submit.setExecuteImgArr(convertImgIds2Urls(vo.getImageUrls()));
+                item.setTaskSubmit(submit);
+                // TaskReview
+                TaskCommonItem.TaskReview review = new TaskCommonItem().new TaskReview();
+                review.setReviewResult(vo.getReviewResult());
+                review.setReviewID(vo.getReviewID());
+                review.setReviewOpinion(vo.getReviewOpinion());
+                review.setReviewTime(vo.getReviewTime());
+                review.setAuditorID(vo.getAuditorID());
+                review.setAuditorName(vo.getAuditorName());
+                review.setAuditorHeadUrl(vo.getAuditorHeadUrl());
+                review.setReviewImgArr(convertImgIds2Urls(vo.getImgUrls()));
+                item.setTaskReview(review);
+                itemList.add(item);
+            }
+        }
+
 //        WorkAudit workAudit = workAuditMapper.getWorkAudit(voi.getWorkID(), voi.getSubID());
-//        Review review = new Review();
-//        if (workAudit != null) {
-//            review.setAuditorID(workAudit.getUserId());
-//            review.setAuditorName(workAudit.getUserName());
-//            review.setAuditorHeadUrl(workAudit.getUserHeadUrl());
-//            review.setReviewID(workAudit.getId());
-//            review.setReviewResult(workAudit.getAuditResult());
-//            review.setReviewOpinion(workAudit.getContent());
-//            review.setReviewTime(workAudit.getCreateTime().getTime());
-//            review.setReviewImgArr(convertToList(workAudit.getImgUrls()));
-//        }
-//
+        Review review = new Review();
+
+        review.setReviewID(loopWork.getId());
+        review.setReviewResult(loopWork.getWorkResult());
+        review.setReviewTime(loopWork.getAuditTime().getTime());
+        review.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
+        if (loopWork.getAuditUserId() != null) {
+            SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
+            if(auditUser != null) {
+                review.setAuditorName(auditUser.getRealName());
+                review.setAuditorHeadUrl(auditUser.getHeadImgUrl());
+            }
+        }
+//        review.setReviewOpinion(workAudit.getContent());
+//        review.setReviewImgArr(convertToList(workAudit.getImgUrls()));
+
+
+        List<TTaskComment> comments = commentMapper.fetchByLoopWorkId(loopWork.getId());
+        List<Answer> answerList = new ArrayList<Answer>();
+        if (comments != null && comments.size() > 0){
+            for(TTaskComment comment : comments) {
+                Answer answer = new Answer();
+                answer.setReplyID(comment.getId().intValue());
+                answer.setReplyContent(comment.getContent());
+                answer.setReplyTime(comment.getCreateTime().getTime());
+                answer.setAnswerID(comment.getCreateUserId().intValue());
+                if(comment.getCreateUserId() != null) {
+                    SysUser commentUser = userMapper.selectByPrimaryKey(comment.getCreateUserId());
+                    if(commentUser != null)
+                        answer.setAnswerName(commentUser.getRealName());
+                        answer.setAnswerHeadUrl(commentUser.getHeadImgUrl());
+                }
+                answer.setReplyAction(1);
+                answer.setReplyImgArr(new ArrayList<>());
+                answerList.add(answer);
+            }
+        }
 //        List<WorkAnswer> workAnswerList = workAnswerMapper.fetchAssignWorkAnswers(voi.getWorkID(), voi.getSubID());
-//        List<Answer> answerList = new ArrayList<Answer>();
 //        if (workAnswerList != null && workAnswerList.size() > 0) {
 //            for (WorkAnswer workAnswer : workAnswerList) {
-//                Answer answer = new Answer();
 //                answer.setReplyID(Integer.parseInt(String.valueOf(workAnswer.getId())));
 //                answer.setReplyContent(workAnswer.getContent());
 //                answer.setReplyTime(workAnswer.getCreateTime().getTime());
@@ -125,11 +165,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 //                answerList.add(answer);
 //            }
 //        }
-//
-//        out.setTaskStatement(taskStatement);
-//        out.setTaskItemArr(itemList);
-//        out.setAllTaskReview(review);
-//        out.setTaskReplyArr(answerList);
+
+        out.setTaskStatement(taskStatement);
+        out.setTaskItemArr(itemList);
+        out.setAllTaskReview(review);
+        out.setTaskReplyArr(answerList);
         return out;
     }
 

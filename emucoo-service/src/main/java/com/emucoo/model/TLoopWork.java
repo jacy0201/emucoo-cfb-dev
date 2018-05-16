@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_loop_work")
 public class TLoopWork extends BaseEntity {
@@ -139,6 +140,9 @@ public class TLoopWork extends BaseEntity {
      * 实际得分
      */
     private String score;
+
+    @Column(name = "audit_time")
+    private Date auditTime;
 
     @Transient
     private TTask task;
@@ -574,5 +578,13 @@ public class TLoopWork extends BaseEntity {
 
     public void setExecuteUserHeadImgUrl(String executeUserHeadImgUrl) {
         this.executeUserHeadImgUrl = executeUserHeadImgUrl;
+    }
+
+    public Date getAuditTime() {
+        return auditTime;
+    }
+
+    public void setAuditTime(Date auditTime) {
+        this.auditTime = auditTime;
     }
 }

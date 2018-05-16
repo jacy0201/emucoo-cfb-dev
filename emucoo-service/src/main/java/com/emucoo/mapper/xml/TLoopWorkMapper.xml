@@ -24,6 +24,7 @@
         <result column="execute_remind_time" property="executeRemindTime" jdbcType="TIMESTAMP"/>
         <result column="execute_deadline" property="executeDeadline" jdbcType="TIMESTAMP"/>
         <result column="audit_deadline" property="auditDeadline" jdbcType="TIMESTAMP"/>
+        <result column="audit_time" property="auditTime" jdbcType="DATE" />
         <result column="task_id" property="taskId" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
@@ -263,7 +264,7 @@
         select
             b.task_item_id as taskItemID,
             c.name as taskItemTitle,
-            c.feedback_img_example_id as taskItemImgArr,
+            c.feedback_img_example_id as itemImgUrls,
             case when c.feedback_need_text = 0 then 1 else 2 end as feedbackText,
             case when c.feedback_img_type = 0 then 1 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2 else 3 end as feedbackImg,
             c.feedback_num_name as digitalItemName,
@@ -272,8 +273,8 @@
             d.head_img_url as taskSubHeadUrl,
             a.modify_time as taskSubTime,
             b.work_txt as workText,
-            b.img_ids as executeImgArr,
             b.num_option_value as digitalItemValue,
+            b.img_ids as imageUrls,
             b.audit_result as reviewResult,
             b.id as reviewID,
             b.audit_content as reviewOpinion,
@@ -281,7 +282,7 @@
             b.audit_user_id as auditorID,
             e.real_name as auditorName,
             e.head_img_url as auditorHeadUrl,
-            b.audit_img_ids as reviewImgArr
+            b.audit_img_ids as imgUrls
 
         from t_loop_work a left join t_operate_data_for_work b on a.id = b.loop_work_id
             left join t_operate_option c on c.id = b.task_item_id

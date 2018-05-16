@@ -21,7 +21,7 @@
     </resultMap>
 
     <select id="fetchByLoopWorkId" resultMap="BaseResultMap">
-        select * from t_comment where union_id=#{loopWorkId}
+        select * from t_comment where union_id=#{loopWorkId} and is_del != 1
     </select>
 
     <select id="" resultType="com.emucoo.model.TTaskComment">
