@@ -177,11 +177,10 @@ public class SysDeptController extends BaseResource {
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
 		//检查该用户是否有下级，如果有下级需先删除下级用户
-		Example example =new Example(SysUserRelation.class);
+		/*Example example =new Example(SysUserRelation.class);
 		example.createCriteria().andEqualTo("parentUserId",sysUserRelation.getUserId());
 		List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
-		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}
-
+		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}*/
 		sysUserRelationService.deleteById(sysUserRelation.getId());
 		return success("success");
 	}
