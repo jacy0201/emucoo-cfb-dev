@@ -1,6 +1,7 @@
 package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.BaseException;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.report.AdditionItemVo;
 import com.emucoo.dto.modules.report.ChancePointVo;
@@ -190,8 +191,6 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 统计重点项得分为0的项
-        /*formPbmValueExp.createCriteria().andIn("formProblemId", formPbmIds).andEqualTo("score", 0);
-        List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.selectByExample(formPbmValueExp);*/
         List<FormRulesVo> formRulesVos = new ArrayList<>();
         FormRulesVo formRulesVo = new FormRulesVo();
         formRulesVo.setItemID(1);
@@ -200,10 +199,6 @@ public class ReportServiceImpl implements ReportService {
         formRulesVos.add(formRulesVo);
         // 统计N/A项
 
-        /*Example formPbmValueExp = new Example(TFormPbmValMapper.class);
-        formPbmValueExp.clear();
-        formPbmValueExp.createCriteria().andIn("formProblemValueId", formAllPbmValueIds).andEqualTo("isNa", true);
-        List<TFormPbmVal> naFormPbms = tFormPbmValMapper.selectByExample(formPbmValueExp);*/
         List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),
                 reportIn.getPatrolShopArrangeID());
         int naNum = 0;
@@ -235,12 +230,7 @@ public class ReportServiceImpl implements ReportService {
                 formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
             }
 
-        /*Example formOpptValExp = new Example(TFormOpptValue.class);
-        formOpptValExp.createCriteria().andIn("problemValueId", formAllPbmValueIds).orIn("subProblemValueId", formAllSubPbmValueIds)
-                .andEqualTo("isPick", true);
-        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
             // 根据题项id或子题项id查询关联的机会点信息
-
             List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds.size() > 0 ? formAllSubPbmValueIds : null);
             reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
             List<ChancePointVo> chancePointVos = new ArrayList<>();
@@ -420,6 +410,13 @@ public class ReportServiceImpl implements ReportService {
     public Long saveReport(SysUser user, ReportVo reportIn) {
 
         try{
+            Example planFormExp = new Example(TFrontPlanForm.class);
+            planFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("formMainId", reportIn.getChecklistID())
+                    .andEqualTo("reportStatus", 1);
+            List<TFrontPlanForm> planForms = tFrontPlanFormMapper.selectByExample(planFormExp);
+            if(planForms.size() > 0) {
+                throw new BaseException("报告请勿重复保存！");
+            }
             //获取规则
             // 重点项失分统计
             List<TFormPbm> tFormPbms = tFormPbmMapper.findFormPbmsByFormMainId(reportIn.getChecklistID());
@@ -476,9 +473,6 @@ public class ReportServiceImpl implements ReportService {
             // 更新结果
             tFormCheckResultMapper.saveFormResult(checkResult);
 
-            /*Example formResultExp = new Example(TFormCheckResult.class);
-            formResultExp.createCriteria().andEqualTo("formMainId", reportIn.getChecklistID())
-                    .andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID());*/
             TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
             if (result == null) {
                 throw new ApiException("打表结果不存在！");
@@ -580,12 +574,8 @@ public class ReportServiceImpl implements ReportService {
 
         }catch (Exception e){
             logger.error("保存报告错误！", e);
-            if(StringUtils.isNotBlank(e.getMessage())) {
-                try {
-                    throw e;
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
             }
             throw new ApiException("保存报告错误！");
         }
