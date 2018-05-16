@@ -414,7 +414,7 @@ public class ReportServiceImpl implements ReportService {
             planFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("formMainId", reportIn.getChecklistID())
                     .andEqualTo("reportStatus", 1);
             List<TFrontPlanForm> planForms = tFrontPlanFormMapper.selectByExample(planFormExp);
-            if(planForms.size() > 0) {
+            if(CollectionUtils.isNotEmpty(planForms)) {
                 throw new BaseException("报告请勿重复保存！");
             }
             //获取规则
@@ -426,7 +426,6 @@ public class ReportServiceImpl implements ReportService {
                 if (tFormPbm.getImportant()) {
                     formImportPbmIds.add(tFormPbm.getId());
                 }
-
             }
             int importNum = 0;
             if (formImportPbmIds.size() > 0) {
@@ -460,7 +459,7 @@ public class ReportServiceImpl implements ReportService {
             checkResult.setSummary(reportIn.getSummary());
             checkResult.setScore(reportIn.getRealScore());
             if(reportIn.getRealTotal() == 0) {
-                throw new ApiException("分值统计异常！");
+                throw new BaseException("分值统计异常！");
             }
             checkResult.setActualTotal(reportIn.getRealTotal());
             checkResult.setScoreRate((float)reportIn.getRealScore() / reportIn.getRealTotal() * 100);
@@ -475,7 +474,7 @@ public class ReportServiceImpl implements ReportService {
 
             TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
             if (result == null) {
-                throw new ApiException("打表结果不存在！");
+                throw new BaseException("打表结果不存在！");
             }
             List<TFormAddItemValue> tFormAddItemValues = new ArrayList<>();
             if(CollectionUtils.isNotEmpty(reportIn.getAdditionArray())) {
