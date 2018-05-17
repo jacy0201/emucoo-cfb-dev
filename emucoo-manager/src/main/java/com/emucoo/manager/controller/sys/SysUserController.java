@@ -12,6 +12,7 @@ import com.emucoo.dto.modules.sys.IdsVo;
 import com.emucoo.dto.modules.sys.UserBrandAreaShop;
 import com.emucoo.dto.modules.user.UserIsUse;
 import com.emucoo.dto.modules.user.UserQuery;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.SysUserShop;
@@ -91,7 +92,7 @@ public class SysUserController extends BaseResource {
         }
         sysUser.setIsDel(false);
         sysUser.setCreateTime(new Date());
-        sysUser.setCreateUserId(1L);
+        sysUser.setCreateUserId(ShiroUtils.getUserId());
         sysUser.setIsAdmin(false);
         //sha256加密
         String salt = RandomStringUtils.randomAlphanumeric(20);
@@ -112,7 +113,7 @@ public class SysUserController extends BaseResource {
     public ApiResult edit(@RequestBody SysUser sysUser){
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
-        sysUser.setModifyUserId(1L);
+        sysUser.setModifyUserId(ShiroUtils.getUserId());
         //sha256加密
         /*String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
@@ -152,7 +153,7 @@ public class SysUserController extends BaseResource {
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
         sysUser.setSalt(salt);
         sysUser.setModifyTime(new Date());
-        sysUser.setModifyUserId(1L);
+        sysUser.setModifyUserId(ShiroUtils.getUserId());
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
@@ -167,7 +168,7 @@ public class SysUserController extends BaseResource {
     // @RequiresPermissions("sys:user:setBrandArea")
     public ApiResult setBrandAreaShop(@RequestBody UserBrandAreaShop userBrandAreaShop){
         if(null==userBrandAreaShop.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-        sysUserService.setBrandAreaShop(userBrandAreaShop);
+        sysUserService.setBrandAreaShop(userBrandAreaShop,ShiroUtils.getUserId());
         return success("success");
     }
 
@@ -194,7 +195,7 @@ public class SysUserController extends BaseResource {
             for (String id:idArr){
                 sysUser =new SysUser();
                 sysUser.setIsDel(true);
-                sysUser.setModifyUserId(1L);
+                sysUser.setModifyUserId(ShiroUtils.getUserId());
                 sysUser.setModifyTime(new Date());
                 sysUser.setId(Long.parseLong(id));
                 userList.add(sysUser);
@@ -219,7 +220,7 @@ public class SysUserController extends BaseResource {
         if(sysUser.getId()==Constant.SUPER_ADMIN){ return fail(ApiExecStatus.FAIL,"系统管理员不能删除"); }
         sysUser.setIsDel(true);
         sysUser.setModifyTime(new Date());
-        sysUser.setModifyUserId(1L);
+        sysUser.setModifyUserId(ShiroUtils.getUserId());
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
@@ -252,7 +253,7 @@ public class SysUserController extends BaseResource {
             for (String id:idArr){
                 sysUser =new SysUser();
                 sysUser.setStatus(status);
-                sysUser.setModifyUserId(1L);
+                sysUser.setModifyUserId(ShiroUtils.getUserId());
                 sysUser.setModifyTime(new Date());
                 sysUser.setId(Long.parseLong(id));
                 userList.add(sysUser);

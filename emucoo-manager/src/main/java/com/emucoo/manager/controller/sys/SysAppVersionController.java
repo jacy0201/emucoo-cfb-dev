@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysAppVersion;
 import com.emucoo.service.version.SysAppVersionService;
 import com.github.pagehelper.PageHelper;
@@ -56,7 +57,7 @@ public class SysAppVersionController extends BaseResource {
         //检查版本号是否存在
         if (checkHasVersion(sysAppVersion)) return fail(ApiExecStatus.INVALID_PARAM, "版本号已存在!");
         sysAppVersion.setCreateTime(new Date());
-        sysAppVersion.setCreateUserId(1L);
+        sysAppVersion.setCreateUserId(ShiroUtils.getUserId());
         sysAppVersion.setIsDel(false);
         sysAppVersion.setIsUse(false);
         sysAppVersionService.saveSelective(sysAppVersion);

@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysPost;
 import com.emucoo.service.sys.SysPostService;
 import com.github.pagehelper.PageHelper;
@@ -81,7 +82,7 @@ public class SysPostController extends BaseResource {
 	@ApiOperation(value="添加岗位")
 	public ApiResult save(@RequestBody SysPost post){
 		post.setCreateTime(new Date());
-		post.setCreateUserId(1L);
+		post.setCreateUserId(ShiroUtils.getUserId());
 		post.setIsDel(false);
 		sysPostService.saveSelective(post);
 		return success("success");
@@ -96,7 +97,7 @@ public class SysPostController extends BaseResource {
 	public ApiResult update(@RequestBody SysPost post){
 		if(post.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		post.setModifyTime(new Date());
-		post.setModifyUserId(1L);
+		post.setModifyUserId(ShiroUtils.getUserId());
 		sysPostService.updateSelective(post);
 		return success("success");
 	}

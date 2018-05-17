@@ -7,6 +7,7 @@ import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.dto.modules.user.UserQuery;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.*;
 import io.swagger.annotations.Api;
@@ -63,6 +64,7 @@ public class SysDeptController extends BaseResource {
 	@PostMapping("/save")
 	//@RequiresPermissions("sys:dept:save")
 	public ApiResult save(@RequestBody SysDept dept){
+		dept.setCreateUserId(ShiroUtils.getUserId());
 		sysDeptService.saveDept(dept);
 		return success("success");
 	}
@@ -75,6 +77,7 @@ public class SysDeptController extends BaseResource {
 	//@RequiresPermissions("sys:dept:update")
 	public ApiResult update(@RequestBody SysDept dept){
 		if(dept.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"机构 id 不能为空!");}
+		dept.setCreateUserId(ShiroUtils.getUserId());
 		sysDeptService.updateDept(dept);
 		return success("success");
 	}
@@ -142,7 +145,7 @@ public class SysDeptController extends BaseResource {
 		}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
-		sysUserRelation.setCreateUserId(1L);
+		sysUserRelation.setCreateUserId(ShiroUtils.getUserId());
 		sysUserRelationService.saveSelective(sysUserRelation);
 		return success("success");
 	}
@@ -160,7 +163,7 @@ public class SysDeptController extends BaseResource {
 		if(sysUserRelation.getPostId()==null){return fail(ApiExecStatus.INVALID_PARAM,"postId 不能为空!");}
 		sysUserRelation.setIsDel(false);
 		sysUserRelation.setCreateTime(new Date());
-		sysUserRelation.setCreateUserId(1L);
+		sysUserRelation.setCreateUserId(ShiroUtils.getUserId());
 		sysUserRelationService.saveSelective(sysUserRelation);
 		return success("success");
 	}

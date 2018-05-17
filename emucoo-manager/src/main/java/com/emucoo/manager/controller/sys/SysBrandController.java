@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.TBrandInfo;
 import com.emucoo.service.sys.SysBrandService;
 import com.github.pagehelper.PageHelper;
@@ -79,7 +80,7 @@ public class SysBrandController extends BaseResource {
 	@ApiOperation(value="添加品牌")
 	public ApiResult save(@RequestBody TBrandInfo brand){
 		brand.setCreateTime(new Date());
-		brand.setCreateUserId(1L);
+		brand.setCreateUserId(ShiroUtils.getUserId());
 		brand.setIsDel(false);
 		sysBrandService.saveSelective(brand);
 		return success("success");
@@ -93,7 +94,7 @@ public class SysBrandController extends BaseResource {
 	@ApiOperation(value="修改品牌")
 	public ApiResult update(@RequestBody TBrandInfo brand){
 		brand.setModifyTime(new Date());
-		brand.setModifyUserId(1L);
+		brand.setModifyUserId(ShiroUtils.getUserId());
 		sysBrandService.updateSelective(brand);
 		return success("success");
 	}
