@@ -73,7 +73,7 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 TFrontPlan tFrontPlan = new TFrontPlan();
                 tFrontPlan.setId(shop.getSubID());
                 if(shop.getSubID() == null) {
-                    new BaseException("subID不能为空！");
+                    throw new BaseException("subID不能为空！");
                 }
                 tFrontPlan.setShopId(shop.getShopID());
                 Date date = new Date(shop.getExPatrloShopArrangeTime());
