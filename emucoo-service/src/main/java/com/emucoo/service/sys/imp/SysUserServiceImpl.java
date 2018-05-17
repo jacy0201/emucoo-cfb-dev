@@ -7,6 +7,8 @@ import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.SysUserService;
+import com.emucoo.common.Constant;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +73,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		Example example=new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("isDel",0);
-		criteria.andNotEqualTo("id",1);
+		SysUser su=(SysUser)SecurityUtils.getSubject().getPrincipal();
+        //如果不是 超级管理员登录，则不能查询 管理员级别的账号
+		if(!Constant.SUPER_ADMIN.equals(su.getId())) {
+			criteria.andNotEqualTo("isAdmin", true);
+		}
         if(null!=userQuery){
 			if(StringUtil.isNotEmpty(userQuery.getRealName())){
 			    realName=userQuery.getRealName();

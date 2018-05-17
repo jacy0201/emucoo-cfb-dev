@@ -219,8 +219,7 @@ public class SysDeptController extends BaseResource {
 		}else{
 			Example example=new Example(SysUser.class);
 			Example.Criteria criteria=example.createCriteria();
-			criteria.andEqualTo("dptId",deptId);
-			criteria.andEqualTo("isDel",0);
+			criteria.andEqualTo("dptId",deptId).andEqualTo("isDel",0).andEqualTo("isAdmin",false);
 			if(StringUtil.isNotEmpty(realName)){ criteria.andLike("realName","%"+realName+"%"); }
 			list=sysUserService.selectByExample(example);
 		}
