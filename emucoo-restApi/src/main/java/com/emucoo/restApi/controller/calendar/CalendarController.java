@@ -80,9 +80,7 @@ public class CalendarController extends AppBaseController {
     @PostMapping(value = "/listLowerUser")
     public AppResult listLowerUser() {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        if(null==redisClient.getObject(ISystem.IUSER.USER_RECENT+user.getId(),)){
 
-        }
         List<SysUser> list= calendarService.listLowerUser(user.getId());
         //redisClient.set(ISystem.IUSER.USER_RECENT+user.getId(),list,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
         //返回按姓名首字母排序的集合;
