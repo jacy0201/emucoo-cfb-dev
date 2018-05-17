@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisCluster;
 
+import java.util.List;
+
 @Component
 public class RedisClusterClient {
     private static final Logger logger = Logger.getLogger(RedisClusterClient.class);
@@ -35,4 +37,27 @@ public class RedisClusterClient {
         }
     }
 
+    /**
+     * 将一个值插入到列表头部，value可以重复，返回列表的长度
+     * @param key
+     * @param value String
+     * @return 返回List的长度
+     */
+    public  Long lpush(String key, String value){
+        Long length =jedisCluster.lpush(key,value);
+        return length;
+    }
+
+    /**
+     * 获取List列表
+     * @param key
+     * @param start long，开始索引
+     * @param end long， 结束索引
+     * @return List<String>
+     */
+    public  List<String> lrange(String key, long start, long end){
+        List<String> list = jedisCluster.lrange(key, start, end);
+        return list;
+    }
+    
 }
