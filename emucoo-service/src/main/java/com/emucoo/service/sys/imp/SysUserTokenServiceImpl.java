@@ -31,8 +31,6 @@ public class SysUserTokenServiceImpl extends BaseServiceImpl<SysUserToken> imple
 	
 	@Override
 	public SysUserToken getToken(long userId) {
-		//生成一个token
-		String token = TokenUtils.generateValue();
 		//当前时间
 		Date now = new Date();
 		//过期时间
@@ -43,16 +41,16 @@ public class SysUserTokenServiceImpl extends BaseServiceImpl<SysUserToken> imple
 		if(tokenEntity == null){
 			tokenEntity = new SysUserToken();
 			tokenEntity.setId(userId);
-			tokenEntity.setToken(token);
+			//创建token
+			tokenEntity.setToken(TokenUtils.generateValue());
 			tokenEntity.setUpdateTime(now);
 			tokenEntity.setExpireTime(expireTime);
 			//保存token
 			 sysUserTokenMapper.insertSelective(tokenEntity);
 		}else{
-			tokenEntity.setToken(token);
 			tokenEntity.setUpdateTime(now);
 			tokenEntity.setExpireTime(expireTime);
-			//更新token
+			//更新token有效期
 			sysUserTokenMapper.updateByPrimaryKeySelective(tokenEntity);
 		}
 		return tokenEntity;

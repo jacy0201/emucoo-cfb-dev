@@ -20,7 +20,7 @@ public interface CalendarService {
      * @param calendarListMonthIn
      * @return
      */
-    CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListMonthIn);
+    CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListMonthIn,Long currentUserId);
 
     /**
      * 按日期获取用户行事历列表
@@ -33,6 +33,6 @@ public interface CalendarService {
      * 查询当前用户的下级用户
      * @return
      */
-    List<SysUser> listLowerUser(Long userId);
+    List<SysUser> listLowerUser(Long currentUserId);
 
 }

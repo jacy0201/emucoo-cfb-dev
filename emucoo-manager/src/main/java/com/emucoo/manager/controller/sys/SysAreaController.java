@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.SysArea;
 import com.emucoo.model.TBrandInfo;
 import com.emucoo.service.sys.SysAreaService;
@@ -80,7 +81,7 @@ public class SysAreaController extends BaseResource {
 	@ApiOperation(value="添加分区")
 	public ApiResult save(@RequestBody SysArea area){
 		area.setCreateTime(new Date());
-		area.setCreateUserId(1L);
+		area.setCreateUserId(ShiroUtils.getUserId());
 		area.setIsDel(false);
 		sysAreaService.saveSelective(area);
 		return success("success");
@@ -94,7 +95,7 @@ public class SysAreaController extends BaseResource {
 	@ApiOperation(value="修改分区")
 	public ApiResult update(@RequestBody SysArea area){
 		area.setModifyTime(new Date());
-		area.setModifyUserId(1L);
+		area.setModifyUserId(ShiroUtils.getUserId());
 		sysAreaService.updateSelective(area);
 		return success("success");
 	}

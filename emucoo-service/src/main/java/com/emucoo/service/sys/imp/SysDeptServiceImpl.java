@@ -138,11 +138,10 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public  void saveDept(SysDept sysDept){
+	public void saveDept(SysDept sysDept){
 		sysDept.setIsDel(false);
 		sysDept.setIsUse(false);
 		sysDept.setCreateTime(new Date());
-		sysDept.setCreateUserId(1L);
 		//一级机构的 父ID为0
 		if(null==sysDept.getParentId()){
 			sysDept.setParentId(0L);
@@ -159,7 +158,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 				sysDptArea.setAreaId(area.getId());
 				sysDptArea.setDptId(deptId);
 				sysDptArea.setCreateTime(new Date());
-				sysDptArea.setCreateUserId(1L);
+				sysDptArea.setCreateUserId(sysDept.getCreateUserId());
 				sysDptArea.setIsDel(false);
 				sysDptAreaMapper.insertSelective(sysDptArea);
 			}
@@ -174,7 +173,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 				sysDptBrand.setBrandId(brandInfo.getId());
 				sysDptBrand.setDptId(Long.parseLong(deptId+""));
 				sysDptBrand.setCreateTime(new Date());
-				sysDptBrand.setCreateUserId(1L);
+				sysDptBrand.setCreateUserId(sysDept.getCreateUserId());
 				sysDptBrand.setIsDel(false);
 				sysDptBrandMapper.insertSelective(sysDptBrand);
 			}
@@ -186,7 +185,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 	@Transactional(rollbackFor = Exception.class)
 	public  void updateDept(SysDept sysDept){
 		sysDept.setModifyTime(new Date());
-		sysDept.setModifyUserId(1L);
+		sysDept.setModifyUserId(sysDept.getCreateUserId());
 		sysDeptMapper.updateByPrimaryKeySelective(sysDept);
 
 		//添加机构地区关联信息
@@ -204,7 +203,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 				sysDptArea.setAreaId(area.getId());
 				sysDptArea.setDptId(sysDept.getId());
 				sysDptArea.setCreateTime(new Date());
-				sysDptArea.setCreateUserId(1L);
+				sysDptArea.setCreateUserId(sysDept.getCreateUserId());
 				sysDptArea.setIsDel(false);
 				sysDptAreaMapper.insertSelective(sysDptArea);
 			}
@@ -224,7 +223,7 @@ public class SysDeptServiceImpl extends BaseServiceImpl<SysDept> implements SysD
 				sysDptBrand.setBrandId(brandInfo.getId());
 				sysDptBrand.setDptId(sysDept.getId());
 				sysDptBrand.setCreateTime(new Date());
-				sysDptBrand.setCreateUserId(1L);
+				sysDptBrand.setCreateUserId(sysDept.getCreateUserId());
 				sysDptBrand.setIsDel(false);
 				sysDptBrandMapper.insertSelective(sysDptBrand);
 			}
