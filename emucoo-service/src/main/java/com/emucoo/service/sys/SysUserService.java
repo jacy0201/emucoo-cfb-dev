@@ -56,7 +56,7 @@ public interface SysUserService extends BaseService<SysUser> {
 	/**
 	 * 设置用户品牌分区
 	 */
-	void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop);
+	void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop,Long createUserId);
 
 	/**
 	 * 批量修改用户

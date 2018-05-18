@@ -9,13 +9,13 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.Collator;
-import java.util.*;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 行事历
@@ -26,19 +26,19 @@ import java.util.*;
 @Service
 public class CalendarServiceImpl implements CalendarService {
 
-    @Autowired
+    @Resource
     private TFrontPlanMapper tFrontPlanMapper;
-    @Autowired
+    @Resource
     private TFrontPlanFormMapper tFrontPlanFormMapper;
-    @Autowired
+    @Resource
     private TFormMainMapper tFormMainMapper;
-    @Autowired
+    @Resource
     private TShopInfoMapper tShopInfoMapper;
-    @Autowired
+    @Resource
     private TLoopWorkMapper tLoopWorkMapper;
-    @Autowired
+    @Resource
     private TTaskMapper taskMapper;
-    @Autowired
+    @Resource
     private SysUserMapper sysUserMapper;
 
     public CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListIn){
@@ -53,6 +53,7 @@ public class CalendarServiceImpl implements CalendarService {
         example.createCriteria().andEqualTo("arrangeeId",calendarListIn.getUserId())
         .andEqualTo("arrangeYear",yearStr).andEqualTo("arrangeMonth",monthStr)
         .andEqualTo("isDel",false);
+        example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list= tFrontPlanMapper.selectByExample(example);
         //设置巡店安排
         if(null!=list && list.size()>0){
@@ -85,6 +86,7 @@ public class CalendarServiceImpl implements CalendarService {
         example.createCriteria().andEqualTo("arrangeeId",calendarListIn.getUserId())
                 .andEqualTo("plan_date",calendarListIn.getExecuteDate())
                 .andEqualTo("isDel",false);
+        example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list= tFrontPlanMapper.selectByExample(example);
         //设置巡店安排
         if(null!=list && list.size()>0){
@@ -157,26 +159,7 @@ public class CalendarServiceImpl implements CalendarService {
               list.add(sysUser);
           }
        }
-       //根据姓名首字母排序
-        return orderUserList(list);
-    }
-
-    //根据姓名首字母排序
-    private List<SysUser> orderUserList(List<SysUser> list){
-        HashMap<String,SysUser> map =new HashMap<>();
-        String [] nameArr=new String[list.size()];
-        for(int i=0;i<list.size();i++){
-            nameArr[i]=list.get(i).getRealName();
-            map.put(nameArr[i],list.get(i));
-        }
-
-        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
-        Arrays.sort(nameArr,comparator);
-        list.clear();
-        for(int n=nameArr.length-1;n>=0;n--){
-            if(map.containsKey(nameArr[n]))
-                list.add(map.get(nameArr[n]));
-        }
         return list;
     }
+
 }

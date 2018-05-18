@@ -410,6 +410,7 @@ public class FormServiceImpl implements FormService {
         }
 
         formCheckResult.setScore(score);
+        total = total == 0 ? 1 : total;
         formCheckResult.setScoreRate(1.0f * score / total);
         formCheckResultMapper.updateByPrimaryKey(formCheckResult);
 

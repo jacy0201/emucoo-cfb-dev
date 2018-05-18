@@ -84,6 +84,6 @@
     </delete>
 
     <select id="judgeExistsByName" resultType="java.lang.Integer">
-        select count(*) from t_opportunity where create_type=1 and name=#{name}
+        select count(*) from t_opportunity where create_type=1 and name=#{name} and is_del != 1
     </select>
 </mapper>

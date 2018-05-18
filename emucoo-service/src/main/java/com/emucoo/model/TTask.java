@@ -1,9 +1,10 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
 
 @Table(name = "t_task")
 public class TTask extends BaseEntity {
@@ -68,17 +69,20 @@ public class TTask extends BaseEntity {
     @Column(name = "execute_user_ids")
     private String executeUserIds;
 
-    /**
-     * 执行人岗位ids
-     */
-    @Column(name = "executor_position_ids")
-    private String executorPositionIds;
+    @Column(name = "execute_user_type")
+    private Integer executeUserType;
 
-    /**
-     * 执行人店铺ids
-     */
-    @Column(name = "executor_shop_ids")
-    private String executorShopIds;
+//    /**
+//     * 执行人岗位ids
+//     */
+//    @Column(name = "executor_position_ids")
+//    private String executorPositionIds;
+//
+//    /**
+//     * 执行人店铺ids
+//     */
+//    @Column(name = "executor_shop_ids")
+//    private String executorShopIds;
 
     /**
      * 抄送人ids
@@ -86,11 +90,11 @@ public class TTask extends BaseEntity {
     @Column(name = "cc_user_ids")
     private String ccUserIds;
 
-    /**
-     * 抄送人岗位ids
-     */
-    @Column(name = "cc_position_ids")
-    private String ccPositionIds;
+//    /**
+//     * 抄送人岗位ids
+//     */
+//    @Column(name = "cc_position_ids")
+//    private String ccPositionIds;
 
     /**
      * 评分方式（1：任务评分，2：操作项评分）
@@ -108,7 +112,7 @@ public class TTask extends BaseEntity {
      * 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
     @Column(name = "duration_time_type")
-    private Boolean durationTimeType;
+    private Integer durationTimeType;
 
     /**
      * 重复任务开始日期
@@ -183,6 +187,9 @@ public class TTask extends BaseEntity {
      */
     @Column(name = "audit_dpt_id")
     private Long auditDptId;
+
+    @Column(name = "audit_dpt_name")
+    private String auditDptName;
 
     /**
      * 版本
@@ -418,36 +425,36 @@ public class TTask extends BaseEntity {
      *
      * @return executor_position_ids - 执行人岗位ids
      */
-    public String getExecutorPositionIds() {
-        return executorPositionIds;
-    }
+//    public String getExecutorPositionIds() {
+//        return executorPositionIds;
+//    }
 
     /**
      * 设置执行人岗位ids
      *
      * @param executorPositionIds 执行人岗位ids
      */
-    public void setExecutorPositionIds(String executorPositionIds) {
-        this.executorPositionIds = executorPositionIds;
-    }
+//    public void setExecutorPositionIds(String executorPositionIds) {
+//        this.executorPositionIds = executorPositionIds;
+//    }
 
     /**
      * 获取执行人店铺ids
      *
      * @return executor_shop_ids - 执行人店铺ids
      */
-    public String getExecutorShopIds() {
-        return executorShopIds;
-    }
+//    public String getExecutorShopIds() {
+//        return executorShopIds;
+//    }
 
     /**
      * 设置执行人店铺ids
      *
      * @param executorShopIds 执行人店铺ids
      */
-    public void setExecutorShopIds(String executorShopIds) {
-        this.executorShopIds = executorShopIds;
-    }
+//    public void setExecutorShopIds(String executorShopIds) {
+//        this.executorShopIds = executorShopIds;
+//    }
 
     /**
      * 获取抄送人ids
@@ -472,18 +479,18 @@ public class TTask extends BaseEntity {
      *
      * @return cc_position_ids - 抄送人岗位ids
      */
-    public String getCcPositionIds() {
-        return ccPositionIds;
-    }
+//    public String getCcPositionIds() {
+//        return ccPositionIds;
+//    }
 
     /**
      * 设置抄送人岗位ids
      *
      * @param ccPositionIds 抄送人岗位ids
      */
-    public void setCcPositionIds(String ccPositionIds) {
-        this.ccPositionIds = ccPositionIds;
-    }
+//    public void setCcPositionIds(String ccPositionIds) {
+//        this.ccPositionIds = ccPositionIds;
+//    }
 
     /**
      * 获取评分方式（1：任务评分，2：操作项评分）
@@ -526,7 +533,7 @@ public class TTask extends BaseEntity {
      *
      * @return duration_time_type - 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
-    public Boolean getDurationTimeType() {
+    public Integer getDurationTimeType() {
         return durationTimeType;
     }
 
@@ -535,7 +542,7 @@ public class TTask extends BaseEntity {
      *
      * @param durationTimeType 任务持续时间类型（0：不重复，1：每天，2：每周，3：每月，4：每年）
      */
-    public void setDurationTimeType(Boolean durationTimeType) {
+    public void setDurationTimeType(Integer durationTimeType) {
         this.durationTimeType = durationTimeType;
     }
 
@@ -883,5 +890,21 @@ public class TTask extends BaseEntity {
 
     public void setWorkList(List<TLoopWork> workList) {
         this.workList = workList;
+    }
+
+    public Integer getExecuteUserType() {
+        return executeUserType;
+    }
+
+    public void setExecuteUserType(Integer executeUserType) {
+        this.executeUserType = executeUserType;
+    }
+
+    public String getAuditDptName() {
+        return auditDptName;
+    }
+
+    public void setAuditDptName(String auditDptName) {
+        this.auditDptName = auditDptName;
     }
 }

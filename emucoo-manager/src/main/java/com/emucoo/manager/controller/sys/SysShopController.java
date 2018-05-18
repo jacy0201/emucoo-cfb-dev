@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.manager.shiro.ShiroUtils;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.sys.SysAreaService;
 import com.emucoo.service.sys.SysBrandService;
@@ -146,7 +147,7 @@ public class SysShopController extends BaseResource {
 	@ApiOperation(value="添加店铺")
 	public ApiResult save(@RequestBody TShopInfo shopInfo){
 		shopInfo.setCreateTime(new Date());
-		shopInfo.setCreateUserId(1L);
+		shopInfo.setCreateUserId(ShiroUtils.getUserId());
 		shopInfo.setIsDel(false);
 		sysShopService.saveSelective(shopInfo);
 		return success("success");
@@ -161,7 +162,7 @@ public class SysShopController extends BaseResource {
 	public ApiResult update(@RequestBody TShopInfo shopInfo){
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		shopInfo.setModifyTime(new Date());
-		shopInfo.setModifyUserId(1L);
+		shopInfo.setModifyUserId(ShiroUtils.getUserId());
 		sysShopService.updateSelective(shopInfo);
 		return success("success");
 	}
@@ -189,7 +190,7 @@ public class SysShopController extends BaseResource {
 		if(shopInfo.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 参数不能为空!");}
 		if(shopInfo.getIsUse()==null){return fail(ApiExecStatus.INVALID_PARAM,"启用/停用 参数不能为空!");}
 		shopInfo.setModifyTime(new Date());
-		shopInfo.setModifyUserId(1L);
+		shopInfo.setModifyUserId(ShiroUtils.getUserId());
 		sysShopService.updateSelective(shopInfo);
 		return success("success");
 	}
