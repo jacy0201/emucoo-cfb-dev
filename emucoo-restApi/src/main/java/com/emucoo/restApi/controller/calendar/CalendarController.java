@@ -1,10 +1,7 @@
 package com.emucoo.restApi.controller.calendar;
 
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.calendar.CalendarListDateIn;
-import com.emucoo.dto.modules.calendar.CalendarListDateOut;
-import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
-import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
+import com.emucoo.dto.modules.calendar.*;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -89,6 +86,21 @@ public class CalendarController extends AppBaseController {
         List<SysUser> list = calendarService.listLowerUser(user.getId());
         //返回按姓名首字母排序的集合;
         return success(list);
+    }
+
+    /**
+     * 删除行事历
+     *
+     */
+    @ApiOperation(value = "删除行事历")
+    @PostMapping(value = "/delete")
+    public AppResult delete(@RequestBody ParamVo<CalendarDelVO> params) {
+        CalendarDelVO calendarDelVO=params.getData();
+        checkParam(calendarDelVO.getId(),"id不能为空!");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        calendarService.deleteCalendar(calendarDelVO,user.getId());
+        //返回按姓名首字母排序的集合;
+        return success("success");
     }
 
 }

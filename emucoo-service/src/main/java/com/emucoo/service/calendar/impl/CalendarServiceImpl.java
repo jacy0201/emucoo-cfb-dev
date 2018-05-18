@@ -1,10 +1,7 @@
 package com.emucoo.service.calendar.impl;
 
 import com.emucoo.dto.base.ISystem;
-import com.emucoo.dto.modules.calendar.CalendarListDateIn;
-import com.emucoo.dto.modules.calendar.CalendarListDateOut;
-import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
-import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
+import com.emucoo.dto.modules.calendar.*;
 import com.emucoo.dto.modules.task.WorkVo_O;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -136,6 +133,77 @@ public class CalendarServiceImpl implements CalendarService {
         return calendarListDateOut;
     }
 
+    /**
+     * 查询当前用户最近查看用户列表
+     * @param currentUserId
+     * @return
+     */
+    public List<SysUser> listLowerUser(Long currentUserId) {
+        String userIds = sysUserMapper.findAllChildListByParentId(currentUserId);
+        String[] userArr = userIds.split(",");
+        List<SysUser> list = null;
+        if (null != userArr && userArr.length > 2) {
+            list = new ArrayList<>();
+            ArrayUtils.remove(userArr, 0);
+            ArrayUtils.remove(userArr, 1);
+            for (int i = 0; i < userArr.length; i++) {
+                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userArr[i]));
+                list.add(sysUser);
+            }
+        }
+        //返回按姓名首字母排序的集合
+        if (null != list && list.size() > 0)
+            return orderUserList(list, currentUserId);
+        else
+            return null;
+    }
+
+    public void deleteCalendar(CalendarDelVO calendarDelVO, Long currentUserId) {
+        Integer workType = calendarDelVO.getWorkType();
+        Long id =Long.parseLong(calendarDelVO.getId());
+        if(ConstantsUtil.LoopWork.TYPE_FOUR.equals(workType)){
+            TFrontPlan tFrontPlan=new TFrontPlan();
+            tFrontPlan.setId(id);
+            tFrontPlan.setIsDel(true);
+            tFrontPlan.setModifyUserId(currentUserId);
+            tFrontPlan.setModifyTime(new Date());
+            tFrontPlanMapper.updateByPrimaryKeySelective(tFrontPlan);
+        }
+
+
+
+    }
+
+    //根据姓名首字母排序
+    private List<SysUser> orderUserList(List<SysUser> list, Long currentUserId) {
+        HashMap<String, SysUser> map = new HashMap<>();
+        String[] nameArr = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            nameArr[i] = list.get(i).getRealName();
+            map.put(nameArr[i], list.get(i));
+        }
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        Arrays.sort(nameArr, comparator);
+        list.clear();
+        String [] userArr=new String[list.size()];
+        if (!jedisCluster.exists(ISystem.IUSER.USER_RECENT + currentUserId)) {
+            for (int n = nameArr.length - 1; n >= 0; n--) {
+                if (map.containsKey(nameArr[n])) {
+                    userArr[n] = map.get(nameArr[n]).getId().toString();
+                }
+            }
+            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userArr));
+        } else {
+            String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
+            String[] userIdArr = userStr.split(",");
+            for (int n = 0; n < userIdArr.length; n++) {
+                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
+                list.add(sysUser);
+            }
+        }
+        return list;
+    }
+
     private WorkVo_O.Work getFrontPlanWork(TFrontPlan frontPlan) {
         WorkVo_O.Work work = new WorkVo_O.Work();
         work.setId(frontPlan.getId());
@@ -177,58 +245,4 @@ public class CalendarServiceImpl implements CalendarService {
         return work;
     }
 
-    /**
-     * 查询当前用户最近查看用户列表
-     * @param currentUserId
-     * @return
-     */
-    public List<SysUser> listLowerUser(Long currentUserId) {
-        String userIds = sysUserMapper.findAllChildListByParentId(currentUserId);
-        String[] userArr = userIds.split(",");
-        List<SysUser> list = null;
-        if (null != userArr && userArr.length > 2) {
-            list = new ArrayList<>();
-            ArrayUtils.remove(userArr, 0);
-            ArrayUtils.remove(userArr, 1);
-            for (int i = 0; i < userArr.length; i++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userArr[i]));
-                list.add(sysUser);
-            }
-        }
-        //返回按姓名首字母排序的集合
-        if (null != list && list.size() > 0)
-            return orderUserList(list, currentUserId);
-        else
-            return null;
-    }
-
-    //根据姓名首字母排序
-    private List<SysUser> orderUserList(List<SysUser> list, Long currentUserId) {
-        HashMap<String, SysUser> map = new HashMap<>();
-        String[] nameArr = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            nameArr[i] = list.get(i).getRealName();
-            map.put(nameArr[i], list.get(i));
-        }
-        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
-        Arrays.sort(nameArr, comparator);
-        list.clear();
-        String [] userArr=new String[list.size()];
-        if (!jedisCluster.exists(ISystem.IUSER.USER_RECENT + currentUserId)) {
-            for (int n = nameArr.length - 1; n >= 0; n--) {
-                if (map.containsKey(nameArr[n])) {
-                    userArr[n] = map.get(nameArr[n]).getId().toString();
-                }
-            }
-            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userArr));
-        } else {
-            String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
-            String[] userIdArr = userStr.split(",");
-            for (int n = 0; n < userIdArr.length; n++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
-                list.add(sysUser);
-            }
-        }
-        return list;
-    }
 }
