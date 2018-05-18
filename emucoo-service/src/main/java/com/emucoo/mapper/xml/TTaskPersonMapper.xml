@@ -24,4 +24,50 @@
     <delete id="dropByTaskId">
         delete from t_task_person where task_id=#{taskId}
     </delete>
+
+    <select id="filterTaskExecutorsByDpt" resultType="com.emucoo.model.SysUser">
+        select a.position_id as currentPosId, c.* from t_task_person a
+                inner join sys_user_post b on a.position_id = b.post_id
+                inner join sys_user c on b.user_id = c.id and a.dpt_id = c.dpt_id
+        where a.task_id=#{taskId} and a.person_type = 1 and c.is_del != 1
+    </select>
+
+    <select id="filterTaskExecutorsByShop" resultType="com.emucoo.model.SysUser">
+        select a.shop_id as currentShopId, c.* from t_task_person a
+            inner join t_shop_info b on a.shop_id = b.id
+            inner join sys_user c on b.shop_manager_id = c.id
+        where a.task_id=#{taskId} and a.person_type = 1 and c.is_del != 1 and b.is_del != 1
+    </select>
+
+    <select id="filterSendersByExecutorShop" resultType="com.emucoo.model.SysUser">
+        select distinct a.* from sys_user a
+            inner join t_task_person b on a.dpt_id = b.dpt_id
+            inner join sys_user_post c on a.id = c.user_id and b.position_id = c.post_id
+            inner join sys_user_brand d on d.user_id = a.id
+            inner join sys_user_area e on e.user_id = a.id
+            inner join t_brand_info f on f.id = d.brand_id and f.is_del != 1
+            inner join sys_area g on g.id = e.area_id and g.is_del != 1
+            inner join t_shop_info h on h.brand_id = f.id and h.area_id = g.id and h.is_del != 1
+        where b.task_id = #{taskId} and b.person_type = 2 and h.shop_manager_id = #{userId} and a.is_del != 1
+    </select>
+
+    <select id="filterSendersByExecutorDpt" resultType="com.emucoo.model.SysUser">
+        select distinct a.* from sys_user a
+            inner join sys_user_post b on a.id = b.post_id
+            inner join t_task_person c on b.position_id = b.post_id and a.dpt_id = c.dpt_id
+        where c.task_id = #{taskId} and c.person_type = 2 and a.is_del != 1
+    </select>
+
+    <select id="fetchSupervisorsOfShop" resultType="com.emucoo.model.SysUser">
+        select distinct a.* from sys_user a
+            inner join sys_user_shop b on a.id = b.user_id
+        where b.shop_id = #{shopId} and a.dpt_id = #{deptId} and a.is_del != 1
+    </select>
+
+    <select id="fetchImmediateSuperiorOfUser" resultType="com.emucoo.model.SysUser">
+        select a.* from sys_user a
+            inner join sys_user_relation b on a.id = b.parent_user_id
+        where b.user_id = #{userId} and b.dpt_id = #{deptId} and b.post_id = #{positionId}
+        limit 1
+    </select>
 </mapper>

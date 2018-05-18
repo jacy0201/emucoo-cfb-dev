@@ -4,6 +4,7 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.manage.FormManageService;
 import com.emucoo.utils.DateUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,7 +103,7 @@ public class FormManageServiceImpl implements FormManageService {
     public TFormMain fetchFormDetail(Long id) {
 
         TFormMain formMain = formMainMapper.fetchOneById(id);
-        if(formMain.getCcDptIds() != null) {
+        if(StringUtils.isNotBlank(formMain.getCcDptIds())) {
             List<Long> ids = Arrays.stream(formMain.getCcDptIds().split(",")).map(str -> Long.parseLong(str)).collect(Collectors.toList());
             List<SysDept> ccDepts = sysDeptMapper.fetchByIds(ids);
             formMain.setCcDepts(ccDepts);
@@ -273,6 +274,8 @@ public class FormManageServiceImpl implements FormManageService {
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
                 if(problem.getOppts() != null && problem.getOppts().size() > 0) {
                     problem.getOppts().forEach(oppt -> {
+                        if(oppt.getId() == null)
+                            return;
                         TFormOppt formOppt = new TFormOppt();
                         formOppt.setProblemId(problem.getId());
                         formOppt.setProblemType(problem.getProblemSchemaType());

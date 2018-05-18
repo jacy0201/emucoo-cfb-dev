@@ -5,6 +5,7 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.TaskCommonService;
 import com.emucoo.utils.DateUtil;
+import com.emucoo.utils.TaskUniqueIdUtils;
 import com.emucoo.utils.WaterMarkUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,16 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Autowired
     private TTaskCommentMapper commentMapper;
+
+    @Autowired
+    private SysUserRelationMapper userRelationMapper;
+
+    @Autowired
+    private TShopInfoMapper shopInfoMapper;
+
+    @Autowired
+    private SysUserShopMapper userShopMapper;
+
 
     private List<ImageUrl> convertImgIds2Urls(String ids){
         if(ids == null)
@@ -503,9 +514,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         vo.setDurationEnd(DateUtil.dateToString1(task.getTaskEndDate()));
 
         vo.setRepeatType(task.getLoopCycleType());
-        if(task.getLoopCycleType() == 1) {
-            vo.setIntervalDays(Integer.parseInt(task.getLoopCycleValue()));
-        } else {
+        if(StringUtils.isNotBlank(task.getLoopCycleValue())) {
             vo.setDays(Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(str -> Integer.parseInt(str)).collect(Collectors.toList()));
         }
 
@@ -627,13 +636,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         task.setTaskStartDate(DateUtil.strToYYMMDDDate(data.getDurationBegin()));
         task.setTaskEndDate(DateUtil.strToYYMMDDDate(data.getDurationEnd()));
 
-        // 循环周期
+        // 循环周期 1: 每隔多少天一次,  2，3：每周（1-7），每月（1-31)
         task.setLoopCycleType(data.getRepeatType());
-        if(task.getLoopCycleType() == 1) { // 1: 每隔多少天一次
-            task.setLoopCycleValue(Integer.toString(data.getIntervalDays()));
-        } else { // 2，3：每周（1-7），每月（1-31）
-            task.setLoopCycleValue(StringUtils.join(data.getDays(), ","));
-        }
+        task.setLoopCycleValue(StringUtils.join(data.getDays(), ","));
 
         // 评分方式
         task.setScoreType(data.getScoreType().byteValue());
@@ -669,5 +674,179 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             });
         }
 
+    }
+
+
+    /**
+     *
+     * 根据定时任务的定义，为定时任务创建每天要执行的实例，规则是：
+     * 1：根据执行人的定义，每个执行人创建一个任务实例
+     * 2：根据执行时间和执行周期定义，每次执行创建一个执行实例
+     * 3：根据执行截止时间定义，计算出提醒截止时间，审核截止时间
+     *
+     */
+    @Override
+    public void buildCommonTaskInstance() {
+        // list all common task: filter by the duration time
+        Date tomorrow = DateUtil.dateAddDay(DateUtil.currentDate(), 1);
+        List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(tomorrow);
+        for(TTask commonTask : commonTasks) {
+            createCommonLoopWork(commonTask, tomorrow);
+        }
+    }
+
+    private void createCommonLoopWork(TTask commonTask, Date tomorrow) {
+        if(!tomorrowIsExecuteDate(commonTask, tomorrow))
+            return;
+        List<SysUser> executors = determinExecutors(commonTask);
+
+        // 因为拆分的具体的loop work没有跨天执行的，所以可以直接计算出明天就是该任务实例的执行日期
+        Date exeBeginDt = tomorrow;
+        Date exeEndDt = tomorrow;
+        Date exeDeadLine = DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(exeBeginDt) + commonTask.getExecuteDeadline().replace(":", "") + "00");
+        Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30);
+
+        if(commonTask.getExecuteRemindTime() != null) {
+            String[] remindStr = commonTask.getExecuteRemindTime().split(":");
+            if (remindStr.length == 1) {
+                exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, Integer.parseInt(remindStr[0].trim()));
+            }
+            if (remindStr.length == 2) {
+                exeRemindTime = DateUtil.timeBackward(exeDeadLine, Integer.parseInt(remindStr[0]), Integer.parseInt(remindStr[1]));
+            }
+        }
+
+        List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(commonTask.getId());
+
+        String uniWorkId = TaskUniqueIdUtils.genUniqueId();
+        for(SysUser executor : executors) {
+            TLoopWork loopWork = new TLoopWork();
+//            loopWork.setAuditDeadline();
+//            loopWork.setAuditTime();
+            SysUser auditor = determinAuditorByExecutorType(executor, commonTask);
+            if(auditor != null) {
+                loopWork.setAuditUserId(auditor.getId());
+                loopWork.setAuditUserName(auditor.getRealName());
+            }
+            loopWork.setCreateTime(DateUtil.currentDate());
+//            loopWork.setCreateUserId();
+//            loopWork.setCreateUserName();
+            loopWork.setExcuteUserId(executor.getId());
+            loopWork.setExcuteUserName(executor.getRealName());
+            loopWork.setExecuteBeginDate(exeBeginDt);
+            loopWork.setExecuteDeadline(exeDeadLine);
+            loopWork.setExecuteEndDate(exeEndDt);
+            loopWork.setExecuteRemindTime(exeRemindTime);
+            loopWork.setExecuteUserHeadImgUrl(executor.getHeadImgUrl());
+//            loopWork.setId();
+            loopWork.setModifyTime(DateUtil.currentDate());
+//            loopWork.setScore();
+            List<SysUser> ccPersons = determineSendersByExecutorType(executor, commonTask);
+            if(ccPersons != null && ccPersons.size() > 0) {
+                loopWork.setSendUserIds(StringUtils.join(ccPersons.stream().map(person -> Long.toString(person.getId())).collect(Collectors.toList()), ","));
+            }
+            loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
+//            loopWork.setTask();
+            loopWork.setTaskId(commonTask.getId());
+            loopWork.setType(1);
+//            loopWork.setVersion();
+            loopWork.setWorkId(uniWorkId);
+//            loopWork.setWorkResult();
+            loopWork.setWorkStatus(1);
+
+            loopWorkMapper.insert(loopWork);
+
+            createCommonLoopWorkOperateOptions(commonTask, loopWork, options);
+
+        }
+    }
+
+    private List<SysUser> determineSendersByExecutorType(SysUser executor, TTask commonTask) {
+        // 任务执行者选择店铺时，抄送人选择部门及岗位，只有符合条件且品牌和分区同时包含任务执行者所在店铺的品牌及分区的人员才可收到任务的抄送信息
+        if(commonTask.getExecuteUserType() == 2) {
+            return taskPersonMapper.filterSendersByExecutorShop(executor.getId(), commonTask.getId());
+        } else { // 任务执行者选择部门及岗位时，抄送人选择部门及岗位，符合条件的所有人员均可收到任务的抄送信息；
+            return taskPersonMapper.filterSendersByExecutorDpt(commonTask.getId());
+        }
+    }
+
+    private List<SysUser> determinExecutors(TTask commonTask) {
+        if(commonTask.getExecuteUserType() == 1) {
+            return taskPersonMapper.filterTaskExecutorsByDpt(commonTask.getId());
+        } else {
+            return taskPersonMapper.filterTaskExecutorsByShop(commonTask.getId());
+        }
+    }
+
+    private boolean tomorrowIsExecuteDate(TTask commonTask, Date tomorrow) {
+        boolean flag = false;
+        int cycleType = commonTask.getLoopCycleType() == null ? 0 : commonTask.getLoopCycleType();
+        switch(cycleType) {
+            case 1:
+                int interval = commonTask.getLoopCycleValue() == null ? 0 : Integer.parseInt(commonTask.getLoopCycleValue());
+                Date dt = commonTask.getTaskStartDate();
+                while(DateUtil.compare(dt, commonTask.getTaskEndDate()) < 0){
+                    if(DateUtil.compare(dt, tomorrow) == 0) {
+                        flag = true;
+                        break;
+                    }
+                    dt = DateUtil.dateAddDay(dt, interval);
+                }
+                break;
+            case 2:
+                int dayOfWeek = DateUtil.getDayOfWeek(tomorrow);
+                String weekDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
+                Set<Integer> daysWeek = new HashSet<Integer>(Arrays.asList(weekDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
+                if(daysWeek.contains(dayOfWeek)) {
+                    flag = true;
+                }
+                break;
+            case 3:
+                int dayOfMonth = DateUtil.getDay(tomorrow);
+                String monthDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
+                Set<Integer> daysMonth = new HashSet<Integer>(Arrays.asList(monthDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
+                if(daysMonth.contains(dayOfMonth)){
+                    flag = true;
+                }
+                break;
+        }
+        return flag;
+    }
+
+    private SysUser determinAuditorByExecutorType(SysUser executor, TTask commonTask) {
+        if(commonTask.getExecuteUserType() == 2){ // 执行人按店铺：审核人是指定审核部门里对执行人店铺有数据权限的人。
+            Long auditDeptId = commonTask.getAuditDptId();
+            List<SysUser> supervisors = taskPersonMapper.fetchSupervisorsOfShop(auditDeptId, executor.getCurrentShopId());
+            if(supervisors != null && supervisors.size() > 0) {
+                int index = Long.valueOf(Math.round(Math.random() * (supervisors.size() - 1))).intValue();
+                return supervisors.get(index);
+            } else {
+                return null;
+            }
+        } else { // 执行人按部门: 审核人是执行人的直接上级
+            return taskPersonMapper.fetchImmediateSuperiorOfUser(executor.getId(), executor.getDptId(), executor.getCurrentPosId());
+        }
+    }
+
+    private void createCommonLoopWorkOperateOptions(TTask commonTask, TLoopWork loopWork, List<TOperateOption> options) {
+        if(commonTask.getScoreType() == 1) { // 任务整体评分
+            return;
+        }
+        // 任务按操作项评分时，要报操作项也实例化
+        if(options != null && options.size() > 0) {
+            List<TOperateDataForWork> opOpts = new ArrayList<>();
+            for(TOperateOption option : options) {
+                TOperateDataForWork opOpt = new TOperateDataForWork();
+                opOpt.setCreateTime(DateUtil.currentDate());
+                opOpt.setImgOptionName(option.getFeedbackImgName());
+                opOpt.setLoopWorkId(loopWork.getId());
+                opOpt.setModifyTime(DateUtil.currentDate());
+                opOpt.setNumOptionName(option.getFeedbackNumName());
+                opOpt.setNumOptionType(option.getFeedbackNumType());
+                opOpt.setTaskItemId(option.getId());
+                opOpts.add(opOpt);
+            }
+            operateDataForWorkMapper.insertList(opOpts);
+        }
     }
 }
