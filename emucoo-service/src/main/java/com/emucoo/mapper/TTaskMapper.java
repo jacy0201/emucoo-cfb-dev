@@ -4,6 +4,7 @@ import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.TTask;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TTaskMapper extends MyMapper<TTask> {
@@ -18,4 +19,6 @@ public interface TTaskMapper extends MyMapper<TTask> {
     void removeCommonTaskByIds(List<Long> ids);
 
     void switchCommonTaskByIds(@Param("ids") List<Long> data, @Param("sw") boolean sw);
+
+    List<TTask> filterAvailableCommonTask(Date tomorrow);
 }

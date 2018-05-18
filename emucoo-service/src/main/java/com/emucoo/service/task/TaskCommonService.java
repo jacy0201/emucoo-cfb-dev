@@ -32,4 +32,6 @@ public interface TaskCommonService {
     TaskParameterVo detailCommonTask(Long taskId);
 
     void configCommonTask(TaskParameterVo data);
+
+    void buildCommonTaskInstance();
 }

@@ -17,10 +17,10 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.manage.FormManageService;
 import com.emucoo.utils.DateUtil;
-import net.sf.jsqlparser.statement.delete.Delete;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,7 +120,7 @@ public class FormManageServiceImpl implements FormManageService {
     public TFormMain fetchFormDetail(Long id) {
 
         TFormMain formMain = formMainMapper.fetchOneById(id);
-        if(formMain.getCcDptIds() != null) {
+        if(StringUtils.isNotBlank(formMain.getCcDptIds())) {
             List<Long> ids = Arrays.stream(formMain.getCcDptIds().split(",")).map(str -> Long.parseLong(str)).collect(Collectors.toList());
             List<SysDept> ccDepts = sysDeptMapper.fetchByIds(ids);
             formMain.setCcDepts(ccDepts);

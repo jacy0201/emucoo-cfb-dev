@@ -1,7 +1,6 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -181,6 +180,27 @@ public class SysUser extends BaseEntity {
     @Transient
     private String dptName;
 
+    @Transient
+    private Long currentPosId;
+
+    @Transient
+    private Long currentShopId;
+
+    public Long getCurrentPosId() {
+        return currentPosId;
+    }
+
+    public void setCurrentPosId(Long currentPosId) {
+        this.currentPosId = currentPosId;
+    }
+
+    public Long getCurrentShopId() {
+        return currentShopId;
+    }
+
+    public void setCurrentShopId(Long currentShopId) {
+        this.currentShopId = currentShopId;
+    }
 
     /**
      * 获取用户ID

@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: emotwo
-    password: ${password}
-    url: jdbc:mysql://192.168.16.173:3306/emucoo-cfb?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/emucoo-test?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
   redis:
       cluster:
         nodes: 192.168.16.179:7000,192.168.16.179:7001,192.168.16.179:7002,199.168.16.180:7001,192.168.16.180:7002,192.168.16.180:7003
