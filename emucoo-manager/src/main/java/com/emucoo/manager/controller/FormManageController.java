@@ -129,7 +129,7 @@ public class FormManageController extends BaseResource {
         if(formDetail == null)
             return fail("parameter is wrong.");
         // 当表单有改动当时候，要把app打表时当表单模版缓存清理一下
-        String keyPrefix = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formDetail.getId()) + ":";
+        String keyPrefix = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formDetail.getId()) + ":u";
         List<String> bufferKeys = formManageService.fetchAllBufferedFormTemplate(keyPrefix);
         for(String key : bufferKeys) {
             redisCluster.del(key);

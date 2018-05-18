@@ -43,7 +43,7 @@ public class FormController extends AppBaseController {
             return fail(AppExecStatus.FAIL, "该门店不存在！");
 
         // 因为有可能有用户通过app创建的form机会点，所以key里要有user对信息
-        String key = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formIn.getChecklistID()) + ":" + Long.toString(user.getId()) ;
+        String key = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formIn.getChecklistID()) + ":u" + Long.toString(user.getId()) ;
         FormOut formOut = redisClusterClient.getObject(key, FormOut.class);
         if(formOut == null) {
             formOut = formService.checkoutFormInfo(user, formIn.getChecklistID());
@@ -68,7 +68,7 @@ public class FormController extends AppBaseController {
 
         FormIn formIn = params.getData();
         if(formService.checkinFormResult(user, formIn)){ // 如果有app创建的机会点，要把缓存里的form信息清除
-            String key = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formIn.getChecklistID()) + ":" + Long.toString(user.getId()) ;
+            String key = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formIn.getChecklistID()) + ":u" + Long.toString(user.getId()) ;
             redisClusterClient.delete(key);
         };
         return success("ok");
