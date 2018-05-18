@@ -1,5 +1,7 @@
 package com.emucoo.service.manage;
 
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
+import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.model.TFormMain;
 
 import java.util.List;
@@ -29,4 +31,8 @@ public interface FormManageService {
     void saveFormReportSettings(TFormMain formMain);
 
     TFormMain fetchFormReportSettings(Long id);
+
+    void saveAbilityForm(AbilityFormMain formMain);
+
+    AbilityFormMain getAbilityForm(GetFormInfoIn formIn);
 }

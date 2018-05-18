@@ -41,8 +41,21 @@ public class TFormSubPbm extends BaseEntity {
     @Column(name = "modify_user_id")
     private Long modifyUserId;
 
+    /**
+     * 检查方式
+     */
+    @Column(name = "check_method")
+    private String checkMethod;
+
+    /**
+     * 子表单id
+     */
+    @Column(name = "sub_form_id")
+    private Long subFormId;
+
     @Column(name = "org_id")
     private Long orgId;
+
 
     @Transient
     private TOpportunity opportunity;
@@ -172,6 +185,22 @@ public class TFormSubPbm extends BaseEntity {
         this.modifyUserId = modifyUserId;
     }
 
+    public String getCheckMethod() {
+        return checkMethod;
+    }
+
+    public void setCheckMethod(String checkMethod) {
+        this.checkMethod = checkMethod;
+    }
+
+    public Long getSubFormId() {
+        return subFormId;
+    }
+
+    public void setSubFormId(Long subFormId) {
+        this.subFormId = subFormId;
+    }
+
     /**
      * @return org_id
      */
@@ -193,4 +222,5 @@ public class TFormSubPbm extends BaseEntity {
     public void setOpportunity(TOpportunity opportunity) {
         this.opportunity = opportunity;
     }
+
 }

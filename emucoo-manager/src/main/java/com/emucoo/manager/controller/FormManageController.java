@@ -1,8 +1,11 @@
 package com.emucoo.manager.controller;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
+import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.manager.config.QiNiuConfig;
 import com.emucoo.model.TFormMain;
 import com.emucoo.service.manage.FormManageService;
@@ -11,6 +14,7 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -151,8 +155,27 @@ public class FormManageController extends BaseResource {
         StringMap policy = new StringMap();
         String returnBody = "{\"url\":\"" + qiNiuConfig.getBaseUrl() + "/$(key)\",\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize)}";
         policy.put("returnBody", returnBody);
-        String token = qiniuAuth.uploadToken(qiNiuConfig.getBucket(), null, qiNiuConfig.getExpires(), policy) ;
+        String token = qiniuAuth.uploadToken(qiNiuConfig.getBucket(), null, qiNiuConfig.getExpires(), policy);
         return success(token);
     }
 
+    @PostMapping(value = "/saveAbilityForm")
+    public ApiResult<String> saveAbilityForm(@RequestBody ParamVo<AbilityFormMain> paramVo) {
+        AbilityFormMain formMain = paramVo.getData();
+        if (StringUtils.isBlank(formMain.getFormName())) {
+            return fail(ApiExecStatus.INVALID_PARAM, "表单名不能为空！");
+        }
+        formManageService.saveAbilityForm(formMain);
+        return success("success");
+    }
+
+    @PostMapping(value = "/getAbilityForm")
+    public ApiResult<AbilityFormMain> getAbilityForm(@RequestBody ParamVo<GetFormInfoIn> paramVo) {
+        GetFormInfoIn formIn = paramVo.getData();
+        if (formIn.getFormID() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "表单id不能为空！");
+        }
+        AbilityFormMain form = formManageService.getAbilityForm(formIn);
+        return success(form);
+    }
 }

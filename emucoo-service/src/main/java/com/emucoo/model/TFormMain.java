@@ -67,6 +67,8 @@ public class TFormMain extends BaseEntity {
     @Column(name = "is_del")
     private Boolean isDel;
 
+    @Column(name = "parent_form_id")
+    private Long parentFormId;
 
     @Transient
     private List<SysDept> ccDepts;
@@ -327,5 +329,13 @@ public class TFormMain extends BaseEntity {
 
     public void setCcDepts(List<SysDept> ccDepts) {
         this.ccDepts = ccDepts;
+    }
+
+    public Long getParentFormId() {
+        return parentFormId;
+    }
+
+    public void setParentFormId(Long parentFormId) {
+        this.parentFormId = parentFormId;
     }
 }

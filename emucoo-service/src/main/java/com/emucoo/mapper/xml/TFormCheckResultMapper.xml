@@ -13,6 +13,16 @@
     <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT" />
     <result column="score_rate" property="scoreRate" jdbcType="REAL" />
     <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="actual_total" jdbcType="VARCHAR" property="actualTotal"/>
+    <result column="impt_item_deny_num" jdbcType="INTEGER" property="imptItemDenyNum"/>
+    <result column="na_num" jdbcType="INTEGER" property="naNum"/>
+    <result column="summary_img" jdbcType="VARCHAR" property="summaryImg"/>
+    <result column="is_done" jdbcType="BIT" property="isDone"/>
+    <result column="is_pass" jdbcType="BIT" property="isPass"/>
+    <result column="result_can_use" jdbcType="BIT" property="resultCanUse"/>
+    <result column="form_sub_pbm_id" jdbcType="BIGINT" property="formSubPbmId"/>
+    <result column="form_pbm_id" jdbcType="BIGINT" property="formPbmId"/>
+    <result column="parent_form_id" jdbcType="BIGINT" property="parentFormId"/>
     <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />

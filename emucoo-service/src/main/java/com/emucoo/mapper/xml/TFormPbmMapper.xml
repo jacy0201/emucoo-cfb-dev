@@ -18,6 +18,8 @@
         <result column="is_important" property="isImportant" jdbcType="BIT"/>
         <result column="form_type_id" property="formTypeId" jdbcType="BIGINT"/>
         <result column="description_hit" property="descriptionHit" jdbcType="LONGVARCHAR"/>
+        <result column="check_method" property="checkMethod" jdbcType="VARCHAR"/>
+        <result column="sub_form_id" property="subFormId" jdbcType="BIGINT"/>
     </resultMap>
 
     <resultMap id="pbmMap" type="com.emucoo.model.TFormPbm">

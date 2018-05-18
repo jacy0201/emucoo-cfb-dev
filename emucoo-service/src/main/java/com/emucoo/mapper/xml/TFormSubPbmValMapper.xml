@@ -13,6 +13,10 @@
         <result column="sub_problem_name" property="subProblemName" jdbcType="VARCHAR"/>
         <result column="problem_value_id" property="problemValueId" jdbcType="BIGINT"/>
         <result column="form_result_id" property="formResultId" jdbcType="BIGINT"/>
+        <result column="sub_form_id" jdbcType="BIGINT" property="subFormId"/>
+        <result column="is_pass" jdbcType="BIGINT" property="isPass"/>
+        <result column="notes" jdbcType="VARCHAR" property="notes"/>
+        <result column="problem_description" jdbcType="LONGVARCHAR" property="problemDescription"/>
     </resultMap>
 
     <select id="fetchOneSubPbmValue" resultMap="BaseResultMap">
