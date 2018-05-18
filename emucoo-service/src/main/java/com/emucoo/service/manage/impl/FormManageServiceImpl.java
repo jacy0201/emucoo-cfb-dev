@@ -49,6 +49,9 @@ public class FormManageServiceImpl implements FormManageService {
     @Autowired
     private SysDeptMapper sysDeptMapper;
 
+    @Autowired
+    private SysUserMapper userMapper;
+
     @Override
     public int countFormsByNameKeyword(String keyword) {
         return formMainMapper.countFormsByName(keyword);
@@ -320,5 +323,15 @@ public class FormManageServiceImpl implements FormManageService {
         List<TFormAddItem> formAddItems = formAddItemMapper.findFormAddItemsByFormMainId(formMain.getId());
         formMain.setAddItems(formAddItems);
         return formMain;
+    }
+
+    @Override
+    public List<String> fetchAllBufferedFormTemplate(String keyPrefix) {
+        List<SysUser> users = userMapper.fetchAllUsers();
+        List<String> keys = new ArrayList<>();
+        if(users != null){
+            users.forEach(u -> keys.add(keyPrefix + Long.toString(u.getId())));
+        }
+        return keys;
     }
 }

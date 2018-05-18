@@ -1,5 +1,6 @@
 package com.emucoo.restApi.controller.form;
 
+import com.emucoo.common.Constant;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
@@ -23,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/form")
 public class FormController extends AppBaseController {
 
-    private final String FORM_BUFFER_PREFIX = "form:buffer:prefix:";
-
     @Autowired
     private FormService formService;
 
@@ -43,8 +42,8 @@ public class FormController extends AppBaseController {
         if(shopInfo == null)
             return fail(AppExecStatus.FAIL, "该门店不存在！");
 
-        // 因为有可能有用户通过app创建对form，所以key里要有user对信息
-        String key = FORM_BUFFER_PREFIX + ":" + Long.toString(user.getId()) + ":" +  Long.toString(formIn.getChecklistID());
+        // 因为有可能有用户通过app创建的form机会点，所以key里要有user对信息
+        String key = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formIn.getChecklistID()) + ":" + Long.toString(user.getId()) ;
         FormOut formOut = redisClusterClient.getObject(key, FormOut.class);
         if(formOut == null) {
             formOut = formService.checkoutFormInfo(user, formIn.getChecklistID());
@@ -68,8 +67,8 @@ public class FormController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
 
         FormIn formIn = params.getData();
-        if(formService.checkinFormResult(user, formIn)){ // 如果有app创建对机会点，要把缓存里对form信息清除
-            String key = FORM_BUFFER_PREFIX + ":" + Long.toString(user.getId()) + ":" + Long.toString(formIn.getChecklistID());
+        if(formService.checkinFormResult(user, formIn)){ // 如果有app创建的机会点，要把缓存里的form信息清除
+            String key = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formIn.getChecklistID()) + ":" + Long.toString(user.getId()) ;
             redisClusterClient.delete(key);
         };
         return success("ok");

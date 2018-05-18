@@ -125,4 +125,10 @@ public class Constant {
 	 */
 	public static final String PAGE_UNSELECT = "0";
 
+
+	/**
+	 * 打表表单缓存前缀
+	 */
+	public static final String FORM_BUFFER_PREFIX = "form:template:buffer:prefix:";
+
 }

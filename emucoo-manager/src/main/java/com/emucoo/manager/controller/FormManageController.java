@@ -1,5 +1,6 @@
 package com.emucoo.manager.controller;
 
+import com.emucoo.common.Constant;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
@@ -12,7 +13,11 @@ import com.qiniu.util.StringMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,6 +36,9 @@ public class FormManageController extends BaseResource {
 
     @Autowired
     private FormManageService formManageService;
+
+    @Autowired
+    private JedisCluster redisCluster;
 
     @ApiOperation(value = "表单列表", httpMethod = "POST")
     @PostMapping("/list")
@@ -116,6 +124,12 @@ public class FormManageController extends BaseResource {
         TFormMain formDetail = paramVo.getData();
         if(formDetail == null)
             return fail("parameter is wrong.");
+        // 当表单有改动当时候，要把app打表时当表单模版缓存清理一下
+        String keyPrefix = Constant.FORM_BUFFER_PREFIX + ":" + Long.toString(formDetail.getId()) + ":";
+        List<String> bufferKeys = formManageService.fetchAllBufferedFormTemplate(keyPrefix);
+        for(String key : bufferKeys) {
+            redisCluster.del(key);
+        }
         formManageService.saveFormDetail(formDetail);
         return success("ok");
     }
