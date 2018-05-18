@@ -1,9 +1,25 @@
 package com.emucoo.service.manage.impl;
 
+import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.BaseException;
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
+import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
+import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
+import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
+import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
+import com.emucoo.dto.modules.abilityForm.ProblemVo;
+import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
+import com.emucoo.dto.modules.abilityForm.SubProblemVo;
+import com.emucoo.enums.Constant;
+import com.emucoo.enums.DeleteStatus;
+import com.emucoo.enums.WorkStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.manage.FormManageService;
 import com.emucoo.utils.DateUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FormManageServiceImpl implements FormManageService {
+    private Logger logger = LoggerFactory.getLogger(FormManageServiceImpl.class);
 
     @Autowired
     private TFormMainMapper formMainMapper;
@@ -329,9 +346,406 @@ public class FormManageServiceImpl implements FormManageService {
     public List<String> fetchAllBufferedFormTemplate(String keyPrefix) {
         List<SysUser> users = userMapper.fetchAllUsers();
         List<String> keys = new ArrayList<>();
-        if(users != null){
+        if (users != null) {
             users.forEach(u -> keys.add(keyPrefix + Long.toString(u.getId())));
         }
         return keys;
+    }
+
+    @Transactional
+    public void saveAbilityForm(AbilityFormMain formMain) {
+        try {
+            Date now = new Date();
+            TFormMain newFormMain = new TFormMain();
+            newFormMain.setName(formMain.getFormName());
+            newFormMain.setIsDel(DeleteStatus.COMMON.getCode());
+            newFormMain.setCreateTime(now);
+            newFormMain.setModifyTime(now);
+            newFormMain.setUse(WorkStatus.STOP_USE.getCode());
+            newFormMain.setOrgId(Constant.orgId);
+            // 保存表单主体数据
+            formMainMapper.insert(newFormMain);
+            for (AbilitySubForm subForm : formMain.getSubFormArray()) {
+                TFormMain subFormMain = new TFormMain();
+                subFormMain.setName(subForm.getSubFormName());
+                subFormMain.setIsDel(DeleteStatus.COMMON.getCode());
+                subFormMain.setCreateTime(now);
+                subFormMain.setModifyTime(now);
+                subFormMain.setOrgId(Constant.orgId);
+                subFormMain.setParentFormId(newFormMain.getId());
+                // 保存子表
+                formMainMapper.insert(subFormMain);
+                if (CollectionUtils.isNotEmpty(subForm.getSubFormKindArray())) {
+                    for (AbilitySubFormKind subFormKind : subForm.getSubFormKindArray()) {
+                        TFormType formType = new TFormType();
+                        formType.setFormMainId(subFormMain.getId());
+                        formType.setCreateTime(now);
+                        formType.setModifyTime(now);
+                        formType.setTypeName(subFormKind.getKindName());
+                        // 保存表单类型
+                        formTypeMapper.insert(formType);
+                        if (CollectionUtils.isNotEmpty(subFormKind.getProblemArray())) {
+                            for (ProblemVo problem : subFormKind.getProblemArray()) {
+                                TFormPbm formPbm = new TFormPbm();
+                                formPbm.setName(problem.getProblemName());
+                                formPbm.setCheckMethod(problem.getCheckMode());
+                                formPbm.setFormTypeId(formType.getId());
+                                formPbm.setCreateTime(now);
+                                formPbm.setModifyTime(now);
+                                if (problem.getIsSubList()) {
+                                    TFormMain savedformMain = saveSubForm(problem.getSubListObject(), subFormMain.getId());
+                                    if (savedformMain != null) {
+                                        formPbm.setSubFormId(savedformMain.getId());
+                                    }
+                                }
+                                // 保存题项数据
+                                formPbmMapper.insert(formPbm);
+                                if (CollectionUtils.isNotEmpty(problem.getSubProblemArray())) {
+                                    for (SubProblemVo subProblemVo : problem.getSubProblemArray()) {
+                                        TFormSubPbm formSubPbm = new TFormSubPbm();
+                                        formSubPbm.setSubProblemName(subProblemVo.getSubProblemName());
+                                        formSubPbm.setCreateTime(now);
+                                        formSubPbm.setModifyTime(now);
+                                        formSubPbm.setCheckMethod(subProblemVo.getCheckMode());
+                                        formSubPbm.setFormProblemId(formPbm.getId());
+                                        formSubPbm.setOrgId(Constant.orgId);
+                                        if (subProblemVo.getIsSubList()) {
+                                            TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), subFormMain.getId());
+                                            if (savedformMain != null) {
+                                                formSubPbm.setSubFormId(savedformMain.getId());
+                                            }
+                                        }
+                                        // 保存子题数据
+                                        formSubPbmMapper.insert(formSubPbm);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("创建能力模型表单失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("创建能力模型表单失败！");
+        }
+    }
+
+    /**
+     * 保存子表数据
+     * @param formMain
+     * @param parentFormId
+     * @return
+     */
+    private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId) {
+        Date now = new Date();
+        TFormMain newFormMain = new TFormMain();
+        newFormMain.setName(formMain.getSubFormName());
+        newFormMain.setIsDel(DeleteStatus.COMMON.getCode());
+        newFormMain.setCreateTime(now);
+        newFormMain.setModifyTime(now);
+        newFormMain.setParentFormId(parentFormId);
+        newFormMain.setOrgId(Constant.orgId);
+        // 保存表单主体数据
+        formMainMapper.insert(newFormMain);
+        if (CollectionUtils.isNotEmpty(formMain.getSubFormKindArray())) {
+            for (AbilitySubFormKind subFormKind : formMain.getSubFormKindArray()) {
+                TFormType formType = new TFormType();
+                formType.setFormMainId(newFormMain.getId());
+                formType.setCreateTime(now);
+                formType.setModifyTime(now);
+                formType.setTypeName(subFormKind.getKindName());
+                // 保存表单类型
+                formTypeMapper.insert(formType);
+                if (CollectionUtils.isNotEmpty(subFormKind.getProblemArray())) {
+                    for (ProblemVo problem : subFormKind.getProblemArray()) {
+                        TFormPbm formPbm = new TFormPbm();
+                        formPbm.setName(problem.getProblemName());
+                        formPbm.setFormTypeId(formType.getId());
+                        formPbm.setCheckMethod(problem.getCheckMode());
+                        formPbm.setCreateTime(now);
+                        formPbm.setModifyTime(now);
+                        // 保存题项数据
+                        formPbmMapper.insert(formPbm);
+                        if (CollectionUtils.isNotEmpty(problem.getSubProblemArray())) {
+                            for (SubProblemVo subProblemVo : problem.getSubProblemArray()) {
+                                TFormSubPbm formSubPbm = new TFormSubPbm();
+                                formSubPbm.setSubProblemName(subProblemVo.getSubProblemName());
+                                formSubPbm.setCreateTime(now);
+                                formSubPbm.setModifyTime(now);
+                                formSubPbm.setCheckMethod(subProblemVo.getCheckMode());
+                                formSubPbm.setFormProblemId(formPbm.getId());
+                                formSubPbm.setOrgId(Constant.orgId);
+                                if (subProblemVo.getIsSubList()) {
+                                    TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), formMain.getSubFormID());
+                                    if (savedformMain != null) {
+                                        formSubPbm.setSubFormId(savedformMain.getId());
+                                    }
+                                }
+                                // 保存子题数据
+                                formSubPbmMapper.insert(formSubPbm);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return newFormMain;
+    }
+
+    public AbilityFormMain getAbilityForm(GetFormInfoIn formIn) {
+        try {
+            AbilityFormMain formVo = new AbilityFormMain();
+            TFormMain form = formMainMapper.selectByPrimaryKey(formIn.getFormID());
+            if(form != null) {
+                formVo.setFormID(form.getId());
+                formVo.setFormName(form.getName());
+                Example formMainExp = new Example(TFormMain.class);
+                formMainExp.createCriteria().andEqualTo("parentFormId", form.getId());
+                List<TFormMain> formMains = formMainMapper.selectByExample(formMainExp);
+                // 组装顶级子表的模板
+                if(CollectionUtils.isNotEmpty(formMains)) {
+                    List<AbilitySubForm> subForms = new ArrayList<>();
+                    for (TFormMain formMain : formMains) {
+                        AbilitySubForm topSubForm = new AbilitySubForm();
+                        topSubForm.setSubFormID(formMain.getId());
+                        topSubForm.setSubFormName(formMain.getName());
+                        // 查询表单类型及下属题项与子题项
+                        List<TFormType> formTypes = formTypeMapper.findFormTypeTreeUntilSubPbmByFormId(formMain.getId());
+                        // 组装表单题目与子题
+                        if(CollectionUtils.isNotEmpty(formTypes)) {
+                            List<AbilitySubFormKind> subFormKindArray = new ArrayList<>();
+                            for(TFormType saveFormType : formTypes) {
+                                AbilitySubFormKind formKind = new AbilitySubFormKind();
+                                formKind.setKindID(saveFormType.getId());
+                                formKind.setKindName(saveFormType.getTypeName());
+                                // 组装题项
+                                if(CollectionUtils.isNotEmpty(saveFormType.getProblems())) {
+                                    List<Long> pbmIds = new ArrayList<>();
+                                    List<ProblemVo> problemArray = new ArrayList<>();
+                                    for(TFormPbm formPbm : saveFormType.getProblems()) {
+                                        ProblemVo problemVo = new ProblemVo();
+                                        problemVo.setProblemID(formPbm.getId());
+                                        problemVo.setCheckMode(formPbm.getCheckMethod());
+                                        problemVo.setProblemName(formPbm.getName());
+                                        pbmIds.add(formPbm.getId());
+                                        // 组装子题
+                                        if(CollectionUtils.isNotEmpty(formPbm.getSubProblems())) {
+                                            problemVo.setIsSubProblem(true);
+                                            List<SubProblemVo> subProblemArray = new ArrayList<>();
+                                            List<Long> subPbmIds = new ArrayList<>();
+                                            for(TFormSubPbm formSubPbm : formPbm.getSubProblems()) {
+                                                SubProblemVo subProblemVo = new SubProblemVo();
+                                                subProblemVo.setSubProblemID(formSubPbm.getId());
+                                                subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
+                                                subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
+                                                if (formSubPbm.getSubFormId() != null) {
+                                                    subProblemVo.setIsSubList(true);
+                                                    // 查询子表信息
+                                                    AbilitySubForm subForm = findSubForm(formSubPbm.getSubFormId());
+                                                    subProblemVo.setSubListObject(subForm);
+                                                } else {
+                                                    subProblemVo.setIsSubList(false);
+                                                }
+                                                subPbmIds.add(formSubPbm.getId());
+                                                subProblemArray.add(subProblemVo);
+                                            }
+
+                                            // 查询机会点
+                                            List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2);
+                                            if (CollectionUtils.isNotEmpty(formOppts)) {
+                                                for(SubProblemVo subProblemVo : subProblemArray) {
+                                                    for (TFormOppt formOppt : formOppts) {
+                                                        if(formOppt.getProblemId().equals(subProblemVo.getSubProblemID())) {
+                                                            ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
+                                                            subProblemChanceVo.setChanceID(formOppt.getOpptId());
+                                                            subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                            List<ProblemChanceVo> subProblemChanceVos = subProblemVo.getSubProblemChanceArray();
+                                                            if(subProblemChanceVos != null) {
+                                                                subProblemChanceVos.add(subProblemChanceVo);
+                                                            } else {
+                                                                subProblemChanceVos = new ArrayList<>();
+                                                                subProblemChanceVos.add(subProblemChanceVo);
+                                                            }
+                                                            subProblemVo.setSubProblemChanceArray(subProblemChanceVos);
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            problemVo.setSubProblemArray(subProblemArray);
+                                        } else {
+                                            problemVo.setIsSubProblem(false);
+                                        }
+                                        if(formPbm.getSubFormId() != null) {
+                                            problemVo.setIsSubList(true);
+                                            // 查询子表信息
+                                            AbilitySubForm subForm = findSubForm(formPbm.getSubFormId());
+                                            problemVo.setSubListObject(subForm);
+                                        } else {
+                                            problemVo.setIsSubList(false);
+                                        }
+
+                                        problemArray.add(problemVo);
+                                    }
+                                    // 查询机会点
+                                    List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1);
+                                    if (CollectionUtils.isNotEmpty(formOppts)) {
+                                        for (ProblemVo problemVo : problemArray) {
+                                            for (TFormOppt formOppt : formOppts) {
+                                                if (formOppt.getProblemId().equals(problemVo.getProblemID())) {
+                                                    ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
+                                                    subProblemChanceVo.setChanceID(formOppt.getOpptId());
+                                                    subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                    List<ProblemChanceVo> problemChanceVos = problemVo.getChanceArray();
+                                                    if (problemChanceVos != null) {
+                                                        problemChanceVos.add(subProblemChanceVo);
+                                                    } else {
+                                                        problemChanceVos = new ArrayList<>();
+                                                        problemChanceVos.add(subProblemChanceVo);
+                                                    }
+                                                    problemVo.setChanceArray(problemChanceVos);
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    formKind.setProblemArray(problemArray);
+                                }
+                                subFormKindArray.add(formKind);
+                            }
+                            topSubForm.setSubFormKindArray(subFormKindArray);
+                        }
+                        subForms.add(topSubForm);
+                    }
+                    formVo.setSubFormArray(subForms);
+                }
+            }
+            return formVo;
+        } catch (Exception e) {
+            logger.error("查询能力模型表单失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("查询能力模型表单失败！");
+        }
+    }
+
+    /**
+     * 根据id查询子表
+     * @param subFormId
+     * @return
+     */
+    private AbilitySubForm findSubForm(Long subFormId) {
+        AbilitySubForm abilitySubForm = null;
+        TFormMain formMain = formMainMapper.selectByPrimaryKey(subFormId);
+        if(formMain != null) {
+            abilitySubForm = new AbilitySubForm();
+            abilitySubForm.setSubFormID(formMain.getId());
+            abilitySubForm.setSubFormName(formMain.getName());
+            // 查询表单类型及下属题项与子题项
+            List<TFormType> formTypes = formTypeMapper.findFormTypeTreeUntilSubPbmByFormId(formMain.getId());
+            // 组装表单题目与子题
+            if (CollectionUtils.isNotEmpty(formTypes)) {
+                List<AbilitySubFormKind> subFormKindArray = new ArrayList<>();
+                for (TFormType saveFormType : formTypes) {
+                    AbilitySubFormKind formKind = new AbilitySubFormKind();
+                    formKind.setKindID(saveFormType.getId());
+                    formKind.setKindName(saveFormType.getTypeName());
+                    // 组装题项
+                    if (CollectionUtils.isNotEmpty(saveFormType.getProblems())) {
+                        List<Long> pbmIds = new ArrayList<>();
+                        List<ProblemVo> problemArray = new ArrayList<>();
+                        for (TFormPbm formPbm : saveFormType.getProblems()) {
+                            ProblemVo problemVo = new ProblemVo();
+                            problemVo.setProblemID(formPbm.getId());
+                            problemVo.setCheckMode(formPbm.getCheckMethod());
+                            problemVo.setProblemName(formPbm.getName());
+                            pbmIds.add(formPbm.getId());
+                            // 组装子题
+                            if (CollectionUtils.isNotEmpty(formPbm.getSubProblems())) {
+                                problemVo.setIsSubProblem(true);
+                                List<Long> subPbmIds = new ArrayList<>();
+                                List<SubProblemVo> subProblemArray = new ArrayList<>();
+                                for (TFormSubPbm formSubPbm : formPbm.getSubProblems()) {
+                                    SubProblemVo subProblemVo = new SubProblemVo();
+                                    subProblemVo.setSubProblemID(formSubPbm.getId());
+                                    subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
+                                    subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
+                                    if (formSubPbm.getSubFormId() != null) {
+                                        subProblemVo.setIsSubList(true);
+                                    } else {
+                                        subProblemVo.setIsSubList(false);
+                                    }
+                                    subPbmIds.add(formSubPbm.getId());
+                                    subProblemArray.add(subProblemVo);
+                                }
+                                // 查询机会点
+                                List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2);
+                                if (CollectionUtils.isNotEmpty(formOppts)) {
+                                    for (SubProblemVo subProblemVo : subProblemArray) {
+                                        for (TFormOppt formOppt : formOppts) {
+                                            if (formOppt.getProblemId().equals(subProblemVo.getSubProblemID())) {
+                                                ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
+                                                subProblemChanceVo.setChanceID(formOppt.getOpptId());
+                                                subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                List<ProblemChanceVo> subProblemChanceVos = subProblemVo.getSubProblemChanceArray();
+                                                if (subProblemChanceVos != null) {
+                                                    subProblemChanceVos.add(subProblemChanceVo);
+                                                } else {
+                                                    subProblemChanceVos = new ArrayList<>();
+                                                    subProblemChanceVos.add(subProblemChanceVo);
+                                                }
+                                                subProblemVo.setSubProblemChanceArray(subProblemChanceVos);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                problemVo.setSubProblemArray(subProblemArray);
+                            } else {
+                                problemVo.setIsSubProblem(false);
+                            }
+                            if (formPbm.getSubFormId() != null) {
+                                problemVo.setIsSubList(true);
+                            } else {
+                                problemVo.setIsSubList(false);
+                            }
+                            problemArray.add(problemVo);
+                        }
+                        // 查询机会点
+                        List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1);
+                        if (CollectionUtils.isNotEmpty(formOppts)) {
+                            for (ProblemVo problemVo : problemArray) {
+                                for (TFormOppt formOppt : formOppts) {
+                                    if (formOppt.getProblemId().equals(problemVo.getProblemID())) {
+                                        ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
+                                        subProblemChanceVo.setChanceID(formOppt.getOpptId());
+                                        subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                        List<ProblemChanceVo> problemChanceVos = problemVo.getChanceArray();
+                                        if (problemChanceVos != null) {
+                                            problemChanceVos.add(subProblemChanceVo);
+                                        } else {
+                                            problemChanceVos = new ArrayList<>();
+                                            problemChanceVos.add(subProblemChanceVo);
+                                        }
+                                        problemVo.setChanceArray(problemChanceVos);
+                                    }
+                                }
+                            }
+
+                        }
+                        formKind.setProblemArray(problemArray);
+                    }
+                    subFormKindArray.add(formKind);
+                }
+                abilitySubForm.setSubFormKindArray(subFormKindArray);
+            }
+        }
+        return abilitySubForm;
     }
 }

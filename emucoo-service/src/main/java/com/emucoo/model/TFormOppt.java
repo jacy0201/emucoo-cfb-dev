@@ -16,6 +16,9 @@ public class TFormOppt extends BaseEntity {
     @Column(name = "problem_id")
     private Long problemId;
 
+    @Transient
+    private String opptName;
+
     /**
      * 机会点id
      */
@@ -85,6 +88,14 @@ public class TFormOppt extends BaseEntity {
      */
     public void setOpptId(Long opptId) {
         this.opptId = opptId;
+    }
+
+    public String getOpptName() {
+        return opptName;
+    }
+
+    public void setOpptName(String opptName) {
+        this.opptName = opptName;
     }
 
     /**

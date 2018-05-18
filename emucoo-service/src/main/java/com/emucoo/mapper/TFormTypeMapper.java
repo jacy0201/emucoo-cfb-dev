@@ -12,4 +12,6 @@ public interface TFormTypeMapper extends MyMapper<TFormType> {
     void upsert(TFormType formType);
 
     void dropByFormMainId(Long id);
+
+    List<TFormType> findFormTypeTreeUntilSubPbmByFormId(Long id);
 }

@@ -70,6 +70,11 @@ public class TFormPbmVal extends BaseEntity {
     @Column(name = "form_result_id")
     private Long formResultId;
 
+    private String notes;
+
+    @Column(name = "sub_form_id")
+    private Long subFormId;
+
     /**
      * @return id
      */
@@ -252,15 +257,16 @@ public class TFormPbmVal extends BaseEntity {
     /**
      * @param problemName
      */
-    public void setProblemName(String problemName) {
-        this.problemName = problemName;
-    }
+        public void setProblemName (String problemName){
+            this.problemName = problemName;
+        }
 
-    /**
-     * 获取题项描述
-     *
-     * @return problem_description - 题项描述
-     */
+        /**
+         * 获取题项描述
+         *
+         * @return problem_description - 题项描述
+         */
+
     public String getProblemDescription() {
         return problemDescription;
     }
@@ -280,5 +286,21 @@ public class TFormPbmVal extends BaseEntity {
 
     public void setFormResultId(Long formResultId) {
         this.formResultId = formResultId;
+    }
+
+    public Long getSubFormId() {
+        return subFormId;
+    }
+
+    public void setSubFormId(Long subFormId) {
+        this.subFormId = subFormId;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

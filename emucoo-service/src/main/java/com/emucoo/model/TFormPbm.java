@@ -69,6 +69,12 @@ public class TFormPbm extends BaseEntity {
     @Column(name = "description_hit")
     private String descriptionHit;
 
+    @Column(name = "check_method")
+    private String checkMethod;
+
+    @Column(name = "sub_form_id")
+    private Long subFormId;
+
     @Transient
     private List<TOpportunity> oppts;
 
@@ -322,5 +328,21 @@ public class TFormPbm extends BaseEntity {
 
     public void setSubProblemHeads(List<TFormSubPbmHeader> subProblemHeads) {
         this.subProblemHeads = subProblemHeads;
+    }
+
+    public String getCheckMethod() {
+        return checkMethod;
+    }
+
+    public void setCheckMethod(String checkMethod) {
+        this.checkMethod = checkMethod;
+    }
+
+    public Long getSubFormId() {
+        return subFormId;
+    }
+
+    public void setSubFormId(Long subFormId) {
+        this.subFormId = subFormId;
     }
 }

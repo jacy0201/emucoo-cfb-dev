@@ -14,6 +14,8 @@
         <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
         <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+        <result column="check_method" property="checkMethod" jdbcType="VARCHAR"/>
+        <result column="sub_form_id" property="subFormId" jdbcType="BIGINT"/>
     </resultMap>
 
     <resultMap id="opptMap" type="com.emucoo.model.TOpportunity">

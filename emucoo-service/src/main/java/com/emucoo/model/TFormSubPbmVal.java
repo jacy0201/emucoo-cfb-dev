@@ -35,6 +35,17 @@ public class TFormSubPbmVal extends BaseEntity {
     @Column(name = "form_result_id")
     private Long formResultId;
 
+    @Column(name = "sub_form_id")
+    private Long subFormId;
+
+    @Column(name = "is_pass")
+    private Long isPass;
+
+    @Column(name = "problem_description")
+    private String problemDescription;
+
+    private String notes;
+
     /**
      * @return id
      */
@@ -143,5 +154,37 @@ public class TFormSubPbmVal extends BaseEntity {
 
     public void setFormResultId(Long formResultId) {
         this.formResultId = formResultId;
+    }
+
+    public Long getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(Long isPass) {
+        this.isPass = isPass;
+    }
+
+    public String getProblemDescription() {
+        return problemDescription;
+    }
+
+    public void setProblemDescription(String problemDescription) {
+        this.problemDescription = problemDescription;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Long getSubFormId() {
+        return subFormId;
+    }
+
+    public void setSubFormId(Long subFormId) {
+        this.subFormId = subFormId;
     }
 }

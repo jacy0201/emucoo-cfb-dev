@@ -42,7 +42,7 @@
         <javaClientGenerator targetPackage="com.emucoo.mapper" targetProject="D:\generator"
                              type="XMLMAPPER"/>
 
-        <table tableName="t_report_oppt">
+        <table tableName="t_form_sub_pbm_val">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
       </table>

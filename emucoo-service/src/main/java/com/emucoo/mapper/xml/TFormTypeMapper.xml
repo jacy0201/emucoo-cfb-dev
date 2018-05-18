@@ -10,6 +10,18 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
         <result column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
+        <collection property="problems" ofType="com.emucoo.model.TFormPbm" javaType="ArrayList">
+            <id column="form_pbm_id" property="id" jdbcType="BIGINT"/>
+            <result column="check_method" property="checkMethod" jdbcType="VARCHAR"/>
+            <result column="sub_form_id" property="subFormId" jdbcType="BIGINT"/>
+            <result column="name" property="name" jdbcType="VARCHAR"/>
+            <collection property="subProblems" ofType="com.emucoo.model.TFormSubPbm" javaType="ArrayList">
+                <id column="form_sub_pbm_id" property="id" jdbcType="BIGINT"/>
+                <result column="sub_check_method" property="checkMethod" jdbcType="VARCHAR"/>
+                <result column="sub_pbm_form_id" property="subFormId" jdbcType="BIGINT"/>
+                <result column="sub_problem_name" property="subProblemName" jdbcType="VARCHAR"/>
+            </collection>
+        </collection>
     </resultMap>
 
     <select id="findFormTypesByFormMainId" resultMap="BaseResultMap">
@@ -25,4 +37,22 @@
     <delete id="dropByFormMainId">
         delete from t_form_type where form_main_id=#{id}
     </delete>
+
+    <select id="findFormTypeTreeUntilSubPbmByFormId" parameterType="Long" resultMap="BaseResultMap">
+      SELECT
+      formType.id,
+      formType.type_name,
+      formPbm.id AS form_pbm_id,
+      formPbm.name,
+      formPbm.check_method,
+      formPbm.sub_form_id,
+      formSubPbm.id AS form_sub_pbm_id,
+      formSubPbm.sub_problem_name AS sub_problem_name,
+      formSubPbm.check_method AS sub_check_method,
+      formSubPbm.sub_form_id AS sub_pbm_form_id
+      FROM t_form_pbm formPbm
+      RIGHT JOIN t_form_type formType ON formPbm.form_type_id = formType.id
+      LEFT JOIN t_form_sub_pbm formSubPbm ON formSubPbm.form_problem_id = formPbm.id
+      WHERE formType.form_main_id = #{id}
+    </select>
 </mapper>

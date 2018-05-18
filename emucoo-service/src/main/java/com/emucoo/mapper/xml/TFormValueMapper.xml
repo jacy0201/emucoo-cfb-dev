@@ -17,6 +17,7 @@
         <result column="score_rate" property="scoreRate" jdbcType="REAL"/>
         <result column="score" property="score" jdbcType="INTEGER"/>
         <result column="total" property="total" jdbcType="INTEGER"/>
+        <result column="is_pass" jdbcType="BIT" property="isPass"/>
     </resultMap>
 
     <select id="fetchOneFormValue" resultMap="BaseResultMap">

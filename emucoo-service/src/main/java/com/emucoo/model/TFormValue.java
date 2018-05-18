@@ -59,6 +59,9 @@ public class TFormValue extends BaseEntity {
     @Column(name = "form_result_id")
     private Long formResultId;
 
+    @Column(name = "is_pass")
+    private Boolean isPass;
+
     /**
      * @return id
      */
@@ -237,5 +240,13 @@ public class TFormValue extends BaseEntity {
 
     public void setTotal(Integer total) {
         this.total = total;
+    }
+
+    public Boolean getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(Boolean isPass) {
+        this.isPass = isPass;
     }
 }

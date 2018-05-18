@@ -63,6 +63,36 @@ public class TFormCheckResult extends BaseEntity {
 
     @Column(name = "summary_img")
     private String summaryImg;
+
+    /**
+     * 该表结果是否可用
+     */
+    @Column(name = "result_can_use")
+    private Boolean resultCanUse;
+
+    /**
+     * 该表是否完成打分
+     */
+    @Column(name = "is_done")
+    private Boolean isDone;
+
+    /**
+     * 该表的打分结果是否通过
+     */
+    @Column(name = "is_pass")
+    private Boolean isPass;
+
+    @Column(name = "form_sub_pbm_id")
+    private Long formSubPbmId;
+
+    @Column(name = "form_pbm_id")
+    private Long formPbmId;
+
+    /**
+     * 子表关联的主表id
+     */
+    @Column(name = "parent_form_id")
+    private Long parentFormId;
     /**
      * 提交结果的用户id
      */
@@ -314,5 +344,53 @@ public class TFormCheckResult extends BaseEntity {
 
     public void setSummaryImg(String summaryImg) {
         this.summaryImg = summaryImg;
+    }
+
+    public Boolean getResultCanUse() {
+        return resultCanUse;
+    }
+
+    public void setResultCanUse(Boolean resultCanUse) {
+        this.resultCanUse = resultCanUse;
+    }
+
+    public Boolean getIsDone() {
+        return isDone;
+    }
+
+    public void setIsDone(Boolean isDone) {
+        this.isDone = isDone;
+    }
+
+    public Boolean getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(Boolean isPass) {
+        this.isPass = isPass;
+    }
+
+    public Long getFormSubPbmId() {
+        return formSubPbmId;
+    }
+
+    public void setFormSubPbmId(Long formSubPbmId) {
+        this.formSubPbmId = formSubPbmId;
+    }
+
+    public Long getFormPbmId() {
+        return formPbmId;
+    }
+
+    public void setFormPbmId(Long formPbmId) {
+        this.formPbmId = formPbmId;
+    }
+
+    public Long getParentFormId() {
+        return parentFormId;
+    }
+
+    public void setParentFormId(Long parentFormId) {
+        this.parentFormId = parentFormId;
     }
 }
