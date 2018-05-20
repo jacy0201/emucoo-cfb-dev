@@ -1,6 +1,7 @@
 package com.emucoo.service.task;
 
 import com.emucoo.dto.modules.task.*;
+import com.emucoo.model.SysPost;
 import com.emucoo.model.SysUser;
 
 import java.util.List;
@@ -34,4 +35,6 @@ public interface TaskCommonService {
     void configCommonTask(TaskParameterVo data);
 
     void buildCommonTaskInstance();
+
+    List<SysPost> listPositionsOfDept(Long deptId);
 }
