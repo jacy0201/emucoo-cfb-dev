@@ -849,4 +849,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             operateDataForWorkMapper.insertList(opOpts);
         }
     }
+
+    @Override
+    public List<SysPost> listPositionsOfDept(Long deptId) {
+        return taskPersonMapper.listPositionsOfDept(deptId);
+    }
 }

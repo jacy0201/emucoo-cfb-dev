@@ -4,6 +4,7 @@ import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.task.TaskParameterVo;
+import com.emucoo.model.SysPost;
 import com.emucoo.service.task.TaskCommonService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -115,6 +116,16 @@ public class TaskManageController extends BaseResource {
             return fail("参数错误!");
         taskCommonService.configCommonTask(data);
         return success("Ok");
+    }
+
+    @ApiOperation(value = "根据部门id查处岗位", httpMethod = "POST")
+    @PostMapping("/listDeptPos")
+    public ApiResult<List<SysPost>> listDeptPos(@RequestBody ParamVo<Long> param) {
+        Long deptId = param.getData();
+        if(deptId == null)
+            return fail("参数错误!");
+        List<SysPost> positions = taskCommonService.listPositionsOfDept(deptId);
+        return success(positions);
     }
 
 
