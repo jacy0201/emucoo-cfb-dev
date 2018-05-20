@@ -1,9 +1,6 @@
 package com.emucoo.service.calendar;
 
-import com.emucoo.dto.modules.calendar.CalendarListDateIn;
-import com.emucoo.dto.modules.calendar.CalendarListDateOut;
-import com.emucoo.dto.modules.calendar.CalendarListMonthIn;
-import com.emucoo.dto.modules.calendar.CalendarListMonthOut;
+import com.emucoo.dto.modules.calendar.*;
 import com.emucoo.model.SysUser;
 
 import java.util.List;
@@ -34,5 +31,13 @@ public interface CalendarService {
      * @return
      */
     List<SysUser> listLowerUser(Long currentUserId);
+
+
+    /**
+     * 删除行事历
+     * @param id
+     * @param currentUserId
+     */
+    void deleteCalendar(CalendarDelVO calendarDelVO, Long currentUserId);
 
 }
