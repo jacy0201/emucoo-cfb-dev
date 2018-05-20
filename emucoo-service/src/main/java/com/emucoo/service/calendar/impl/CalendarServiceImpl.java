@@ -105,7 +105,7 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarListDateOut calendarListDateOut = new CalendarListDateOut();
         WorkVo_O.Work work = null;
         List<WorkVo_O.Work> workArr = new ArrayList<>();
-        calendarListDateOut.setDate(calendarListIn.getExecuteDate());
+        calendarListDateOut.setExecuteDate(calendarListIn.getExecuteDate());
         calendarListDateOut.setUserId(calendarListIn.getUserId());
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
