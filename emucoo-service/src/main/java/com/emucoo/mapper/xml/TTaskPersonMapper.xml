@@ -70,4 +70,9 @@
         where b.user_id = #{userId} and b.dpt_id = #{deptId} and b.post_id = #{positionId}
         limit 1
     </select>
+
+    <select id="listPositionsByDept" resultType="com.emucoo.model.SysPost">
+        select distinct a.* from sys_post a inner join sys_user_post b on a.id = b.post_id inner join sys_user c on b.user_id = c.id
+        where c.is_del != 1 and c.dpt_id = #{deptId}
+    </select>
 </mapper>

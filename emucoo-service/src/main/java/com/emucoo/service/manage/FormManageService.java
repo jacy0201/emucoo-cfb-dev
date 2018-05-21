@@ -32,6 +32,8 @@ public interface FormManageService {
 
     TFormMain fetchFormReportSettings(Long id);
 
+    List<String> fetchAllBufferedFormTemplate(String keyPrefix);
+
     void saveAbilityForm(AbilityFormMain formMain);
 
     AbilityFormMain getAbilityForm(GetFormInfoIn formIn);
