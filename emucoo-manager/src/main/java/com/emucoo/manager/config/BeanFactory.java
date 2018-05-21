@@ -3,6 +3,7 @@ package com.emucoo.manager.config;
 
 import cn.jpush.api.JPushClient;
 import com.emucoo.manager.component.rong.RongCloud;
+import com.qiniu.util.Auth;
 import com.xiaomi.xmpush.server.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,11 +15,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class BeanFactory {
     @Autowired
+    private QiNiuConfig qiNiuConfig;
+    @Autowired
     private RedisConnectionFactory factory;
     @Autowired
     private RongcloudConfig rongcloudConfig;
-    @Autowired
-    private QiNiuConfig qiNiuConfig;
     @Autowired
     private JiguangConfig jiguangConfig;
     @Autowired
@@ -40,10 +41,10 @@ public class BeanFactory {
         return RongCloud.getInstance(rongcloudConfig.getAppKey(), rongcloudConfig.getAppSecret());
     }
 
-//    @Bean("qiniuAuth")
-//    public Auth getQiniuAuth() {
-//        return Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
-//    }
+    @Bean("qiniuAuth")
+    public Auth getQiniuAuth() {
+        return Auth.create(qiNiuConfig.getAccessKey(), qiNiuConfig.getSecretKey());
+    }
 
     @Bean("jpushClient")
     public JPushClient getJPushClinet() {

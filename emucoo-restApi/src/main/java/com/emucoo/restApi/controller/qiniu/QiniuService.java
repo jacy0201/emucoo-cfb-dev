@@ -1,8 +1,7 @@
 package com.emucoo.restApi.controller.qiniu;
 
-import com.google.gson.Gson;
-
 import com.emucoo.restApi.config.QiNiuConfig;
+import com.google.gson.Gson;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
@@ -10,18 +9,16 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
+import java.io.File;
+import java.io.IOException;
 
 @Service
 public class QiniuService {
