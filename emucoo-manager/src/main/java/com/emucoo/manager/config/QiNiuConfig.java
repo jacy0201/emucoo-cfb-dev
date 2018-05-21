@@ -1,12 +1,10 @@
 package com.emucoo.manager.config;
 
 
-import com.qiniu.util.Auth;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "qiniu")
 public class QiNiuConfig {
 
@@ -58,10 +56,5 @@ public class QiNiuConfig {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
-    }
-
-    @Bean("qiniuAuth")
-    public Auth qiniuAuth() {
-	    return Auth.create(accessKey, secretKey);
     }
 }

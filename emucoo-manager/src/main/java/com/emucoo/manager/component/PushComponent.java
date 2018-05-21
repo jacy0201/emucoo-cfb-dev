@@ -15,7 +15,6 @@ import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.push.model.notification.Notification.Builder;
 import com.emucoo.manager.config.JiguangConfig;
 import com.emucoo.manager.config.XiaomiPushConfig;
-import com.emucoo.mapper.SysUserMapper;
 import com.xiaomi.xmpush.server.Constants;
 import com.xiaomi.xmpush.server.Message;
 import com.xiaomi.xmpush.server.Sender;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,8 +37,6 @@ public class PushComponent {
 	private static Logger logger = LoggerFactory.getLogger(PushComponent.class);
 
 	@Autowired
-	private SysUserMapper userMapper;
-	@Autowired
 	private JPushClient jPushClient;
 	@Autowired
 	private Sender xiaomiSender;
@@ -49,18 +45,14 @@ public class PushComponent {
 	@Autowired
 	private JiguangConfig jiguangConfig;
 
-	public int pushMessage(String title, String content, Map<String, String> extra, Integer... toUserId) {
-		List<Integer> asList = Arrays.asList(toUserId);
-		List<String> list = userMapper.findPushTokenByIds(asList);
-		if (list.isEmpty()) {
-			// 没有目的地
-			logger.warn("消息推送失败,没有poshToken,toUsers:{}", asList);
+	public int pushMessage(String title, String content, Map<String, String> extra, List<String> pushTokens) {
+		if (pushTokens.isEmpty()) {
 			return 0;
 		}
 		List<String> jpush = new ArrayList<>();
 		List<String> huawei = new ArrayList<>();
 		List<String> xiaomi = new ArrayList<>();
-		for (String pushToken : list) {
+		for (String pushToken : pushTokens) {
 			if (StringUtils.isBlank(pushToken)) {
 				continue;
 			}
