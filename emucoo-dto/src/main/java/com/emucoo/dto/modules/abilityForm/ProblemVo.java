@@ -17,6 +17,7 @@ public class ProblemVo {
     private Boolean isSubList;
     private List<SubProblemVo> subProblemArray;
     private List<ProblemChanceVo> chanceArray;
+    private List<ProblemChanceVo> otherChanceArray;
     private AbilitySubForm subListObject;
 
     public void setProblemName(String problemName) {
@@ -113,5 +114,13 @@ public class ProblemVo {
 
     public void setChanceArray(List<ProblemChanceVo> chanceArray) {
         this.chanceArray = chanceArray;
+    }
+
+    public List<ProblemChanceVo> getOtherChanceArray() {
+        return otherChanceArray;
+    }
+
+    public void setOtherChanceArray(List<ProblemChanceVo> otherChanceArray) {
+        this.otherChanceArray = otherChanceArray;
     }
 }

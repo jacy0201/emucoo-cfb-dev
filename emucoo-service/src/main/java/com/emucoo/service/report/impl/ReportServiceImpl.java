@@ -308,7 +308,7 @@ public class ReportServiceImpl implements ReportService {
             String summaryImgUrl = "";
             hasHit = false;
             for (TFormScoreItem tFormScoreItem : tFormScoreItems) {
-                if (totalScoreRate * 100 > tFormScoreItem.getScoreBegin()) {
+                if (totalScoreRate * 100 >= tFormScoreItem.getScoreBegin()) {
                     summaryImgUrl = tFormScoreItem.getName();
                     hasHit = true;
                     break;
@@ -412,7 +412,7 @@ public class ReportServiceImpl implements ReportService {
         try{
             Example planFormExp = new Example(TFrontPlanForm.class);
             planFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("formMainId", reportIn.getChecklistID())
-                    .andEqualTo("reportStatus", 1);
+                    .andEqualTo("reportStatus", 1).andEqualTo("isDel", false);
             List<TFrontPlanForm> planForms = tFrontPlanFormMapper.selectByExample(planFormExp);
             if(CollectionUtils.isNotEmpty(planForms)) {
                 throw new BaseException("报告请勿重复保存！");

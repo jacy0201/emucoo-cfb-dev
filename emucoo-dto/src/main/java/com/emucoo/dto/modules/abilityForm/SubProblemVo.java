@@ -15,6 +15,7 @@ public class SubProblemVo {
     private Boolean isPass;
     private Boolean isSubList;
     private List<ProblemChanceVo> subProblemChanceArray;
+    private List<ProblemChanceVo> subOtherChanceArray;
     private AbilitySubForm subListObject;
 
     public void setSubProblemName(String subProblemName) {
@@ -95,5 +96,13 @@ public class SubProblemVo {
 
     public void setSubListObject(AbilitySubForm subListObject) {
         this.subListObject = subListObject;
+    }
+
+    public List<ProblemChanceVo> getSubOtherChanceArray() {
+        return subOtherChanceArray;
+    }
+
+    public void setSubOtherChanceArray(List<ProblemChanceVo> subOtherChanceArray) {
+        this.subOtherChanceArray = subOtherChanceArray;
     }
 }

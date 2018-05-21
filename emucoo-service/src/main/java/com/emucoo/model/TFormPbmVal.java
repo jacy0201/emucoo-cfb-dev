@@ -72,6 +72,12 @@ public class TFormPbmVal extends BaseEntity {
 
     private String notes;
 
+    @Column(name = "is_pass")
+    private Boolean isPass;
+
+    @Column(name = "check_method")
+    private String checkMethod;
+
     @Column(name = "sub_form_id")
     private Long subFormId;
 
@@ -302,5 +308,21 @@ public class TFormPbmVal extends BaseEntity {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getCheckMethod() {
+        return checkMethod;
+    }
+
+    public void setCheckMethod(String checkMethod) {
+        this.checkMethod = checkMethod;
+    }
+
+    public Boolean getIsPass() {
+        return isPass;
+    }
+
+    public void setIsPass(Boolean isPass) {
+        this.isPass = isPass;
     }
 }

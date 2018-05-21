@@ -183,6 +183,7 @@ public class FormManageController extends BaseResource {
         return success("success");
     }
 
+    @ApiOperation(value = "获取能力模型表单配置")
     @PostMapping(value = "/getAbilityForm")
     public ApiResult<AbilityFormMain> getAbilityForm(@RequestBody ParamVo<GetFormInfoIn> paramVo) {
         GetFormInfoIn formIn = paramVo.getData();
