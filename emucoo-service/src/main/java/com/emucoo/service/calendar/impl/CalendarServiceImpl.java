@@ -212,7 +212,7 @@ public class CalendarServiceImpl implements CalendarService {
         WorkVo_O.Work work = new WorkVo_O.Work();
         work.setId(frontPlan.getId());
         work.setSubID(frontPlan.getSubPlanId().toString());
-        work.setWorkID(frontPlan.getLoopPlanId().toString());
+        work.setWorkID(frontPlan.getId().toString());
         work.setWorkType(ConstantsUtil.LoopWork.TYPE_FOUR);
         WorkVo_O.Work.Inspection inspection = work.getInspection();
         inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
