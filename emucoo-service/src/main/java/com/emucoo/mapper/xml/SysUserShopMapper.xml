@@ -14,4 +14,14 @@
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
   </resultMap>
+
+  <select id="findResponsiblePersonOfShop" resultType="com.emucoo.model.SysUserShop">
+    SELECT
+    userShop.id,
+    userShop.user_id,
+    userShop.shop_id
+    FROM sys_user_shop userShop
+    INNER JOIN sys_user user ON user.id = userShop.user_id AND user.dpt_id = #{dptId}
+    WHERE userShop.shop_id = #{shopId} AND userShop.is_del = FALSE
+  </select>
 </mapper>
