@@ -56,7 +56,7 @@ public class CalendarServiceImpl implements CalendarService {
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                 .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
-                .andEqualTo("isDel", false);
+                .andEqualTo("isDel", 0);
         example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
         //设置巡店安排
@@ -114,7 +114,7 @@ public class CalendarServiceImpl implements CalendarService {
         calendarListDateOut.setUserId(calendarListIn.getUserId());
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
-                .andEqualTo("plan_date", calendarListIn.getExecuteDate())
+                .andEqualTo("planDate", calendarListIn.getExecuteDate())
                 .andEqualTo("isDel", false);
         example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
