@@ -498,7 +498,7 @@ public class ReportServiceImpl implements ReportService {
             report.setCreateTime(now);
             report.setCreateUserId(user.getId());
             report.setOrgId(Constant.orgId);
-            report.setReporterDptName(reportIn.getInspectorName());
+
             // 查询店铺名
             TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(reportIn.getShopID());
             report.setShopId(shop.getId());
