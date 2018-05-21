@@ -35,5 +35,13 @@ public class RedisClusterClient {
         }
     }
 
+    public  Boolean  existsKey(String key){
+        return jedisCluster.exists(key);
+    }
+
+    public String  get(String key){
+        return jedisCluster.get(key);
+    }
+
 
 }
