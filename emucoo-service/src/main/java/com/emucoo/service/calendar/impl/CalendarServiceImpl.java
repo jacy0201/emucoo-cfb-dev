@@ -56,7 +56,7 @@ public class CalendarServiceImpl implements CalendarService {
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                 .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
-                .andEqualTo("isDel", false);
+                .andEqualTo("isDel", 0);
         example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
         //设置巡店安排
@@ -114,7 +114,7 @@ public class CalendarServiceImpl implements CalendarService {
         calendarListDateOut.setUserId(calendarListIn.getUserId());
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
-                .andEqualTo("plan_date", calendarListIn.getExecuteDate())
+                .andEqualTo("planDate", calendarListIn.getExecuteDate())
                 .andEqualTo("isDel", false);
         example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
@@ -212,7 +212,7 @@ public class CalendarServiceImpl implements CalendarService {
         WorkVo_O.Work work = new WorkVo_O.Work();
         work.setId(frontPlan.getId());
         work.setSubID(frontPlan.getSubPlanId().toString());
-        work.setWorkID(frontPlan.getLoopPlanId().toString());
+        work.setWorkID(frontPlan.getId().toString());
         work.setWorkType(ConstantsUtil.LoopWork.TYPE_FOUR);
         WorkVo_O.Work.Inspection inspection = work.getInspection();
         inspection.setInspStartTime(frontPlan.getPlanPreciseTime());

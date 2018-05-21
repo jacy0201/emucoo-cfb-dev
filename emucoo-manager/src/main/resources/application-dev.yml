@@ -16,3 +16,9 @@ password: gh9C+z6OhPoMFfBm0/oZXhidM9a5NBDIcqIgEXV4EH2pO8chIOEnJjMlrAb7uvlJHyUfwl
 logging:
   config: classpath:logback-base.xml
   path: logs
+
+jiguangPush:
+  isApnsProduction: false
+
+xiaomiPush:
+  isDebug: true

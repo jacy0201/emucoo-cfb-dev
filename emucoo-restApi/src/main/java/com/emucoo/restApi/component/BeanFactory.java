@@ -1,20 +1,18 @@
 package com.emucoo.restApi.component;
 
+import cn.jpush.api.JPushClient;
 import com.emucoo.restApi.config.JiguangConfig;
 import com.emucoo.restApi.config.QiNiuConfig;
 import com.emucoo.restApi.config.RongcloudConfig;
 import com.emucoo.restApi.config.XiaomiPushConfig;
 import com.qiniu.util.Auth;
 import com.xiaomi.xmpush.server.Sender;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import cn.jpush.api.JPushClient;
 
 @Configuration
 public class BeanFactory {
