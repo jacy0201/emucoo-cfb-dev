@@ -1,8 +1,8 @@
 package com.emucoo.job;
 
-import com.emucoo.common.util.MsgPushTool;
 import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.model.SysUser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit test for simple App.
@@ -32,12 +31,12 @@ public class JobAppTest {
 
     @Test
     public void testPushMessage() {
-        SysUser user = userMapper.selectByPrimaryKey(1);
+        SysUser user = userMapper.selectByPrimaryKey(67L);
         List<String> tokens = new ArrayList<>();
         tokens.add(user.getPushToken());
         Map<String, String> extra = new HashMap<>();
         int count = msgPushTool.pushMessage("test", "test", extra, tokens);
-        assertThat(count).isGreaterThan(0);
+        Assert.assertTrue(count > 0);
     }
 
 }
