@@ -118,7 +118,7 @@ public class TaskManageController extends BaseResource {
         return success("Ok");
     }
 
-    @ApiOperation(value = "根据部门id查处岗位", httpMethod = "POST")
+    @ApiOperation(value = "根据部门id查出岗位", httpMethod = "POST")
     @PostMapping("/listDeptPos")
     public ApiResult<List<SysPost>> listDeptPos(@RequestBody ParamVo<Long> param) {
         Long deptId = param.getData();

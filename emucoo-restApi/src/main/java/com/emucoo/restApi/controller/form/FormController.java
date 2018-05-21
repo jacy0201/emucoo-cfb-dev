@@ -1,7 +1,10 @@
 package com.emucoo.restApi.controller.form;
 
+import org.springframework.web.bind.annotation.RestController;
+
 import com.emucoo.common.Constant;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.model.SysUser;
@@ -14,6 +17,7 @@ import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.service.form.FormService;
 import com.emucoo.utils.DateUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,6 +77,19 @@ public class FormController extends AppBaseController {
         };
         return success("ok");
     }
+
+    @PostMapping(value = "saveAbilityFormResult")
+    public AppResult<String> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+        AbilityFormMain formIn = params.getData();
+        checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(formIn.getFormID(), "表单id不能为空！");
+        checkParam(formIn.getShopID(), "店铺id不能为空！");
+        formService.saveAbilityFormResult(formIn, user);
+
+        return success("ok");
+    }
+
 
 
 }

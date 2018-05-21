@@ -1,16 +1,30 @@
 package com.emucoo.service.form.impl;
 
+import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.BaseException;
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
+import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
+import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
+import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
+import com.emucoo.dto.modules.abilityForm.ProblemVo;
+import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.dto.modules.form.*;
+import com.emucoo.enums.Constant;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.form.FormService;
 import com.emucoo.utils.DateUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class FormServiceImpl implements FormService {
 
+    private Logger logger = LoggerFactory.getLogger(FormServiceImpl.class);
     @Autowired
     private  TFormMainMapper formMainMapper;
 
@@ -416,4 +431,515 @@ public class FormServiceImpl implements FormService {
 
         return checkinWithAppCreatedOppts;
     }
+
+    @Override
+    @Transactional
+    public boolean saveAbilityFormResult(AbilityFormMain formIn, SysUser user) {
+        try {
+            Example formResultExp = new Example(TFormCheckResult.class);
+            formResultExp.createCriteria().andEqualTo("frontPlanId", formIn.getPatrolShopArrangeID()).andEqualTo("formMainId", formIn.getFormID());
+            List<TFormCheckResult> formResults = formCheckResultMapper.selectByExample(formResultExp);
+            if(CollectionUtils.isNotEmpty(formResults)) {
+                throw new BaseException("请勿重复保存打表结果！");
+            }
+            Date now = new Date();
+            TFormCheckResult formResult = new TFormCheckResult();
+            // 统计最后结论
+            if(CollectionUtils.isNotEmpty(formIn.getSubFormArray())) {
+                int cnt = 0;
+                int size = formIn.getSubFormArray().size();
+                for(AbilitySubForm subForm : formIn.getSubFormArray()) {
+                    cnt++;
+                    if(subForm.getIsDone() && !subForm.getIsPass()) {
+                        formResult.setSummary(subForm.getSubFormName());
+                        break;
+                    }
+                    if(cnt == size) {
+                        formResult.setSummary(subForm.getSubFormName());
+                    }
+                }
+            } else {
+                throw new BaseException("数据异常，打表数据缺失！");
+            }
+            formResult.setFormMainId(formIn.getFormID());
+            formResult.setOrgId(Constant.orgId);
+            formResult.setFormMainName(formIn.getFormName());
+            formResult.setCreateTime(now);
+            formResult.setModifyTime(now);
+            formResult.setFrontPlanId(formIn.getPatrolShopArrangeID());
+            formResult.setCreateUserId(user.getId());
+            formResult.setShopId(formIn.getShopID());
+            formResult.setShopName(formIn.getShopName());
+            // 保存主打表结果
+            formCheckResultMapper.insert(formResult);
+
+            boolean checkinWithAppCreatedOppts = false;
+
+            List<SysPost> positions = sysPostMapper.findPositionByUserId(user.getId());
+            List<String> pstns = positions.stream().map(p -> p.getPostName()).collect(Collectors.toList());
+            String opptDescription = "前端创建-" + formIn.getFormName() + "-" + user.getDptName() + "-" + StringUtils.join(pstns, "|") + "-" + user.getRealName();
+
+            for (AbilitySubForm subForm : formIn.getSubFormArray()) {
+                TFormCheckResult subFormResult = new TFormCheckResult();
+                subFormResult.setIsPass(subForm.getIsPass());
+                subFormResult.setIsDone(subForm.getIsDone());
+                subFormResult.setFormMainId(subForm.getSubFormID());
+                subFormResult.setFormMainName(subForm.getSubFormName());
+                subFormResult.setResultCanUse(subForm.getIsUsable());
+                subFormResult.setParentFormId(formIn.getFormID());
+                subFormResult.setCreateTime(now);
+                subFormResult.setModifyTime(now);
+                subFormResult.setCreateUserId(user.getId());
+                subFormResult.setOrgId(Constant.orgId);
+                // 保存子表打表结果
+                formCheckResultMapper.insert(subFormResult);
+
+                if(CollectionUtils.isNotEmpty(subForm.getSubFormKindArray())) {
+                    for(AbilitySubFormKind formKind : subForm.getSubFormKindArray()) {
+                        TFormValue formValue = new TFormValue();
+                        formValue.setFormResultId(subFormResult.getId());
+                        formValue.setIsDone(formKind.getIsDone());
+                        formValue.setIsPass(formKind.getIsPass());
+                        formValue.setCreateTime(now);
+                        formValue.setModifyTime(now);
+                        formValue.setFromTypeId(formKind.getKindID());
+                        formValue.setFormTypeName(formKind.getKindName());
+                        // 保存表单类型打表结果
+                        formValueMapper.insert(formValue);
+                        if(CollectionUtils.isNotEmpty(formKind.getProblemArray())) {
+                            List<ProblemVo> problemVos = formKind.getProblemArray();
+                            for(ProblemVo problemVo : problemVos) {
+                                TFormPbmVal formPbmVal = new TFormPbmVal();
+                                formPbmVal.setCreateTime(now);
+                                formPbmVal.setModifyTime(now);
+                                formPbmVal.setFormProblemId(problemVo.getProblemID());
+                                formPbmVal.setIsPass(problemVo.getIsPass());
+                                formPbmVal.setIsScore(problemVo.getIsDone());
+                                formPbmVal.setFormResultId(subFormResult.getId());
+                                formPbmVal.setFormValueId(formValue.getId());
+                                formPbmVal.setProblemDescription(problemVo.getDescription());
+                                formPbmVal.setProblemName(problemVo.getProblemName());
+                                Integer problemType = 0;
+                                if(CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
+                                    problemType = 2;
+                                    formPbmVal.setProblemSchemaType(problemType);
+                                } else {
+                                    problemType = 1;
+                                    formPbmVal.setProblemSchemaType(problemType);
+                                }
+                                formPbmVal.setOrgId(Constant.orgId);
+                                formPbmVal.setNotes(problemVo.getNotes());
+                                formPbmVal.setCheckMethod(problemVo.getCheckMode());
+                                if(problemVo.getIsSubList()) {
+                                    formPbmVal.setSubFormId(problemVo.getSubListObject().getSubFormID());
+                                }
+                                // 保存题项结果
+                                formPbmValMapper.insert(formPbmVal);
+
+                                List<ProblemChanceVo> chanceVos = problemVo.getChanceArray();
+                                if (CollectionUtils.isNotEmpty(chanceVos)) {
+                                    List<TFormOpptValue> opptVals = new ArrayList<>();
+                                    for (ProblemChanceVo formChanceVo : chanceVos) {
+                                        TFormOpptValue formOpptValue = new TFormOpptValue();
+                                        formOpptValue.setCreateTime(now);
+                                        formOpptValue.setModifyTime(now);
+                                        formOpptValue.setFormResultId(subFormResult.getId());
+                                        formOpptValue.setIsPick(formChanceVo.getIsPick());
+                                        formOpptValue.setOpptId(formChanceVo.getChanceID());
+                                        formOpptValue.setOpptName(formChanceVo.getChanceName());
+                                        TOpportunity tOpportunity = opportunityMapper.selectByPrimaryKey(formChanceVo.getChanceID());
+                                        if (tOpportunity != null) {
+                                            formOpptValue.setOpptDesc(tOpportunity.getDescription());
+                                        }
+
+                                        formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+
+                                        opptVals.add(formOpptValue);
+                                    }
+                                    formOpptValueMapper.insertList(opptVals);
+                                }
+
+                                List<ProblemChanceVo> otherChanceVos = problemVo.getOtherChanceArray();
+                                if (CollectionUtils.isNotEmpty(otherChanceVos)) {
+                                    checkinWithAppCreatedOppts = true;
+                                    for (ProblemChanceVo fcv : otherChanceVos) {
+                                        // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
+                                        TOpportunity opportunity = new TOpportunity();
+                                        opportunity.setName(fcv.getChanceName());
+                                        opportunity.setDescription(opptDescription);
+                                        opportunity.setIsUse(true);
+                                        opportunity.setIsDel(false);
+                                        opportunity.setFrontCanCreate(true);
+                                        opportunity.setType(0);
+                                        opportunity.setCreateType(2);
+                                        opportunity.setCreateTime(now);
+                                        opportunity.setCreateUserId(user.getId());
+                                        opportunity.setModifyTime(now);
+                                        opportunity.setModifyUserId(user.getId());
+                                        opportunityMapper.insert(opportunity);
+
+                                        // 把机会点和题目的关系保存起来
+                                        TFormOppt formOppt = new TFormOppt();
+                                        formOppt.setOpptId(opportunity.getId());
+                                        formOppt.setProblemId(problemVo.getProblemID());
+                                        formOppt.setProblemType(problemType);
+                                        formOppt.setCreateTime(now);
+                                        formOppt.setModifyTime(now);
+                                        formOpptMapper.insert(formOppt);
+
+                                        TFormOpptValue formOpptValue = new TFormOpptValue();
+                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setOpptName(fcv.getChanceName());
+                                        formOpptValue.setOpptDesc(opptDescription);
+                                        formOpptValue.setOpptId(opportunity.getId());
+                                        formOpptValue.setIsPick(fcv.getIsPick());
+                                        formOpptValue.setFormResultId(subFormResult.getId());
+                                        formOpptValue.setCreateTime(DateUtil.currentDate());
+                                        formOpptValue.setModifyTime(DateUtil.currentDate());
+
+                                        formOpptValueMapper.insert(formOpptValue);
+                                    }
+                                }
+                                // 保存子表
+                                if(problemVo.getIsSubList().equals(true)) {
+                                    saveSubAbilityForm(problemVo.getSubListObject(), subFormResult.getId(), user, opptDescription);
+                                }
+                                List<SubProblemVo> subProblemVos = problemVo.getSubProblemArray();
+                                if (CollectionUtils.isNotEmpty(subProblemVos)) {
+                                    for (SubProblemVo subProblemVo : subProblemVos) {
+                                        TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
+                                        subPbmVal.setCreateTime(now);
+                                        subPbmVal.setModifyTime(now);
+                                        subPbmVal.setFormResultId(subFormResult.getId());
+                                        subPbmVal.setIsPass(subProblemVo.getIsPass());
+                                        subPbmVal.setIsScore(subProblemVo.getIsDone());
+                                        subPbmVal.setProblemValueId(formPbmVal.getId());
+                                        subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
+                                        subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
+                                        subPbmVal.setNotes(subProblemVo.getNotes());
+                                        subPbmVal.setCheckMethod(subProblemVo.getCheckMode());
+                                        if (subProblemVo.getIsSubList()) {
+                                            subPbmVal.setSubFormId(subProblemVo.getSubListObject().getSubFormID());
+                                        }
+                                        subPbmVal.setProblemDescription(subProblemVo.getDescription());
+                                        formSubPbmValMapper.insert(subPbmVal);
+
+                                        List<ProblemChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
+                                        if(CollectionUtils.isNotEmpty(subChanceVos)) {
+                                            List<TFormOpptValue> opptVals = new ArrayList<>();
+                                            for (ProblemChanceVo formChanceVo : subChanceVos) {
+                                                TFormOpptValue formOpptValue = new TFormOpptValue();
+                                                formOpptValue.setCreateTime(now);
+                                                formOpptValue.setModifyTime(now);
+                                                formOpptValue.setFormResultId(subFormResult.getId());
+                                                formOpptValue.setIsPick(formChanceVo.getIsPick());
+                                                formOpptValue.setOpptId(formChanceVo.getChanceID());
+                                                formOpptValue.setOpptName(formChanceVo.getChanceName());
+                                                TOpportunity tOpportunity = opportunityMapper.selectByPrimaryKey(formChanceVo.getChanceID());
+                                                if (tOpportunity != null) {
+                                                    formOpptValue.setOpptDesc(tOpportunity.getDescription());
+                                                }
+
+                                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                                formOpptValue.setProblemType(problemType.byteValue());
+                                                formOpptValue.setProblemValueId(formPbmVal.getId());
+
+                                                opptVals.add(formOpptValue);
+                                            }
+                                            formOpptValueMapper.insertList(opptVals);
+                                        }
+                                        List<ProblemChanceVo> subOtherChanceVos = subProblemVo.getSubOtherChanceArray();
+                                        if (CollectionUtils.isNotEmpty(subOtherChanceVos)) {
+                                            checkinWithAppCreatedOppts = true;
+                                            for (ProblemChanceVo fcv : otherChanceVos) {
+                                                // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
+                                                TOpportunity opportunity = new TOpportunity();
+                                                opportunity.setName(fcv.getChanceName());
+                                                opportunity.setDescription(opptDescription);
+                                                opportunity.setIsUse(true);
+                                                opportunity.setIsDel(false);
+                                                opportunity.setFrontCanCreate(true);
+                                                opportunity.setType(0);
+                                                opportunity.setCreateType(2);
+                                                opportunity.setCreateTime(now);
+                                                opportunity.setCreateUserId(user.getId());
+                                                opportunity.setModifyTime(now);
+                                                opportunity.setModifyUserId(user.getId());
+                                                opportunityMapper.insert(opportunity);
+
+                                                // 把机会点和题目的关系保存起来
+                                                TFormOppt formOppt = new TFormOppt();
+                                                formOppt.setOpptId(opportunity.getId());
+                                                formOppt.setProblemId(problemVo.getProblemID());
+                                                formOppt.setProblemType(problemType);
+                                                formOppt.setCreateTime(now);
+                                                formOppt.setModifyTime(now);
+                                                formOpptMapper.insert(formOppt);
+
+                                                TFormOpptValue formOpptValue = new TFormOpptValue();
+                                                formOpptValue.setProblemValueId(formPbmVal.getId());
+                                                formOpptValue.setProblemType(problemType.byteValue());
+                                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                                formOpptValue.setOpptName(fcv.getChanceName());
+                                                formOpptValue.setOpptDesc(opptDescription);
+                                                formOpptValue.setOpptId(opportunity.getId());
+                                                formOpptValue.setIsPick(fcv.getIsPick());
+                                                formOpptValue.setFormResultId(subFormResult.getId());
+                                                formOpptValue.setCreateTime(now);
+                                                formOpptValue.setModifyTime(now);
+
+                                                formOpptValueMapper.insert(formOpptValue);
+                                            }
+                                        }
+                                        // 保存子表
+                                        if (subProblemVo.getIsSubList().equals(true)) {
+                                            saveSubAbilityForm(subProblemVo.getSubListObject(), subFormResult.getId(), user, opptDescription);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            return checkinWithAppCreatedOppts;
+        } catch (Exception e) {
+            logger.error("保存能力模型打表结果失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("保存能力模型打表结果失败！");
+        }
+    }
+
+    private boolean saveSubAbilityForm(AbilitySubForm subForm, Long resultFormId, SysUser user, String opptDescription) {
+        Date now = new Date();
+        boolean checkinWithAppCreatedOppts = false;
+        TFormCheckResult subFormResult = new TFormCheckResult();
+        subFormResult.setIsPass(subForm.getIsPass());
+        subFormResult.setIsDone(subForm.getIsDone());
+        subFormResult.setFormMainId(subForm.getSubFormID());
+        subFormResult.setFormMainName(subForm.getSubFormName());
+        subFormResult.setResultCanUse(subForm.getIsUsable());
+        subFormResult.setParentFormId(resultFormId);
+        subFormResult.setCreateTime(now);
+        subFormResult.setModifyTime(now);
+        subFormResult.setCreateUserId(user.getId());
+        subFormResult.setOrgId(Constant.orgId);
+        // 保存子表打表结果
+        formCheckResultMapper.insert(subFormResult);
+
+        if (CollectionUtils.isNotEmpty(subForm.getSubFormKindArray())) {
+            for (AbilitySubFormKind formKind : subForm.getSubFormKindArray()) {
+                TFormValue formValue = new TFormValue();
+                formValue.setFormResultId(subFormResult.getId());
+                formValue.setIsDone(formKind.getIsDone());
+                formValue.setIsPass(formKind.getIsPass());
+                formValue.setCreateTime(now);
+                formValue.setModifyTime(now);
+                formValue.setFromTypeId(formKind.getKindID());
+                formValue.setFormTypeName(formKind.getKindName());
+                // 保存表单类型打表结果
+                formValueMapper.insert(formValue);
+                if (CollectionUtils.isNotEmpty(formKind.getProblemArray())) {
+                    List<ProblemVo> problemVos = formKind.getProblemArray();
+                    for (ProblemVo problemVo : problemVos) {
+                        TFormPbmVal formPbmVal = new TFormPbmVal();
+                        formPbmVal.setCreateTime(now);
+                        formPbmVal.setModifyTime(now);
+                        formPbmVal.setFormProblemId(problemVo.getProblemID());
+                        formPbmVal.setIsPass(problemVo.getIsPass());
+                        formPbmVal.setIsScore(problemVo.getIsDone());
+                        formPbmVal.setFormResultId(subFormResult.getId());
+                        formPbmVal.setFormValueId(formValue.getId());
+                        formPbmVal.setProblemDescription(problemVo.getDescription());
+                        formPbmVal.setProblemName(problemVo.getProblemName());
+                        Integer problemType = 0;
+                        if (CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
+                            problemType = 2;
+                            formPbmVal.setProblemSchemaType(problemType);
+                        } else {
+                            problemType = 1;
+                            formPbmVal.setProblemSchemaType(problemType);
+                        }
+                        formPbmVal.setOrgId(Constant.orgId);
+                        formPbmVal.setNotes(problemVo.getNotes());
+                        formPbmVal.setCheckMethod(problemVo.getCheckMode());
+                        if (problemVo.getIsSubList()) {
+                            formPbmVal.setSubFormId(problemVo.getSubListObject().getSubFormID());
+                        }
+                        // 保存题项结果
+                        formPbmValMapper.insert(formPbmVal);
+
+                        List<ProblemChanceVo> chanceVos = problemVo.getChanceArray();
+                        if (CollectionUtils.isNotEmpty(chanceVos)) {
+                            List<TFormOpptValue> opptVals = new ArrayList<>();
+                            for (ProblemChanceVo formChanceVo : chanceVos) {
+                                TFormOpptValue formOpptValue = new TFormOpptValue();
+                                formOpptValue.setCreateTime(now);
+                                formOpptValue.setModifyTime(now);
+                                formOpptValue.setFormResultId(subFormResult.getId());
+                                formOpptValue.setIsPick(formChanceVo.getIsPick());
+                                formOpptValue.setOpptId(formChanceVo.getChanceID());
+                                formOpptValue.setOpptName(formChanceVo.getChanceName());
+                                TOpportunity tOpportunity = opportunityMapper.selectByPrimaryKey(formChanceVo.getChanceID());
+                                if (tOpportunity != null) {
+                                    formOpptValue.setOpptDesc(tOpportunity.getDescription());
+                                }
+
+                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                formOpptValue.setProblemType(problemType.byteValue());
+                                formOpptValue.setProblemValueId(formPbmVal.getId());
+
+                                opptVals.add(formOpptValue);
+                            }
+                            formOpptValueMapper.insertList(opptVals);
+                        }
+
+                        List<ProblemChanceVo> otherChanceVos = problemVo.getOtherChanceArray();
+                        if (CollectionUtils.isNotEmpty(otherChanceVos)) {
+                            checkinWithAppCreatedOppts = true;
+                            for (ProblemChanceVo fcv : otherChanceVos) {
+                                // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
+                                TOpportunity opportunity = new TOpportunity();
+                                opportunity.setName(fcv.getChanceName());
+                                opportunity.setDescription(opptDescription);
+                                opportunity.setIsUse(true);
+                                opportunity.setIsDel(false);
+                                opportunity.setFrontCanCreate(true);
+                                opportunity.setType(0);
+                                opportunity.setCreateType(2);
+                                opportunity.setCreateTime(now);
+                                opportunity.setCreateUserId(user.getId());
+                                opportunity.setModifyTime(now);
+                                opportunity.setModifyUserId(user.getId());
+                                opportunityMapper.insert(opportunity);
+
+                                // 把机会点和题目的关系保存起来
+                                TFormOppt formOppt = new TFormOppt();
+                                formOppt.setOpptId(opportunity.getId());
+                                formOppt.setProblemId(problemVo.getProblemID());
+                                formOppt.setProblemType(problemType);
+                                formOppt.setCreateTime(now);
+                                formOppt.setModifyTime(now);
+                                formOpptMapper.insert(formOppt);
+
+                                TFormOpptValue formOpptValue = new TFormOpptValue();
+                                formOpptValue.setProblemValueId(formPbmVal.getId());
+                                formOpptValue.setProblemType(problemType.byteValue());
+                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                formOpptValue.setOpptName(fcv.getChanceName());
+                                formOpptValue.setOpptDesc(opptDescription);
+                                formOpptValue.setOpptId(opportunity.getId());
+                                formOpptValue.setIsPick(fcv.getIsPick());
+                                formOpptValue.setFormResultId(subFormResult.getId());
+                                formOpptValue.setCreateTime(now);
+                                formOpptValue.setModifyTime(now);
+
+                                formOpptValueMapper.insert(formOpptValue);
+                            }
+                        }
+                        List<SubProblemVo> subProblemVos = problemVo.getSubProblemArray();
+                        if (CollectionUtils.isNotEmpty(subProblemVos)) {
+                            for (SubProblemVo subProblemVo : subProblemVos) {
+                                TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
+                                subPbmVal.setCreateTime(now);
+                                subPbmVal.setModifyTime(now);
+                                subPbmVal.setFormResultId(subFormResult.getId());
+                                subPbmVal.setIsPass(subProblemVo.getIsPass());
+                                subPbmVal.setIsScore(subProblemVo.getIsDone());
+                                subPbmVal.setProblemValueId(formPbmVal.getId());
+                                subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
+                                subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
+                                subPbmVal.setNotes(subProblemVo.getNotes());
+                                subPbmVal.setCheckMethod(subProblemVo.getCheckMode());
+                                if (subProblemVo.getIsSubList()) {
+                                    subPbmVal.setSubFormId(subProblemVo.getSubListObject().getSubFormID());
+                                }
+                                subPbmVal.setProblemDescription(subProblemVo.getDescription());
+                                formSubPbmValMapper.insert(subPbmVal);
+
+                                List<ProblemChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
+                                if (CollectionUtils.isNotEmpty(subChanceVos)) {
+                                    List<TFormOpptValue> opptVals = new ArrayList<>();
+                                    for (ProblemChanceVo formChanceVo : subChanceVos) {
+                                        TFormOpptValue formOpptValue = new TFormOpptValue();
+                                        formOpptValue.setCreateTime(now);
+                                        formOpptValue.setModifyTime(now);
+                                        formOpptValue.setFormResultId(subFormResult.getId());
+                                        formOpptValue.setIsPick(formChanceVo.getIsPick());
+                                        formOpptValue.setOpptId(formChanceVo.getChanceID());
+                                        formOpptValue.setOpptName(formChanceVo.getChanceName());
+                                        TOpportunity tOpportunity = opportunityMapper.selectByPrimaryKey(formChanceVo.getChanceID());
+                                        if (tOpportunity != null) {
+                                            formOpptValue.setOpptDesc(tOpportunity.getDescription());
+                                        }
+
+                                        formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+
+                                        opptVals.add(formOpptValue);
+                                    }
+                                    formOpptValueMapper.insertList(opptVals);
+                                }
+                                List<ProblemChanceVo> subOtherChanceVos = subProblemVo.getSubOtherChanceArray();
+                                if (CollectionUtils.isNotEmpty(subOtherChanceVos)) {
+                                    checkinWithAppCreatedOppts = true;
+                                    for (ProblemChanceVo fcv : otherChanceVos) {
+                                        // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
+                                        TOpportunity opportunity = new TOpportunity();
+                                        opportunity.setName(fcv.getChanceName());
+                                        opportunity.setDescription(opptDescription);
+                                        opportunity.setIsUse(true);
+                                        opportunity.setIsDel(false);
+                                        opportunity.setFrontCanCreate(true);
+                                        opportunity.setType(0);
+                                        opportunity.setCreateType(2);
+                                        opportunity.setCreateTime(now);
+                                        opportunity.setCreateUserId(user.getId());
+                                        opportunity.setModifyTime(now);
+                                        opportunity.setModifyUserId(user.getId());
+                                        opportunityMapper.insert(opportunity);
+
+                                        // 把机会点和题目的关系保存起来
+                                        TFormOppt formOppt = new TFormOppt();
+                                        formOppt.setOpptId(opportunity.getId());
+                                        formOppt.setProblemId(problemVo.getProblemID());
+                                        formOppt.setProblemType(problemType);
+                                        formOppt.setCreateTime(now);
+                                        formOppt.setModifyTime(now);
+                                        formOpptMapper.insert(formOppt);
+
+                                        TFormOpptValue formOpptValue = new TFormOpptValue();
+                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setOpptName(fcv.getChanceName());
+                                        formOpptValue.setOpptDesc(opptDescription);
+                                        formOpptValue.setOpptId(opportunity.getId());
+                                        formOpptValue.setIsPick(fcv.getIsPick());
+                                        formOpptValue.setFormResultId(subFormResult.getId());
+                                        formOpptValue.setCreateTime(now);
+                                        formOpptValue.setModifyTime(now);
+
+                                        formOpptValueMapper.insert(formOpptValue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return checkinWithAppCreatedOppts;
+    }
+
+
 }

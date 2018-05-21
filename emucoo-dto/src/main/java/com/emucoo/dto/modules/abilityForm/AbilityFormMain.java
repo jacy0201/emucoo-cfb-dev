@@ -6,12 +6,30 @@ import java.util.List;
  * Created by sj on 2018/5/17.
  */
 public class AbilityFormMain {
+    private Long patrolShopArrangeID;
+    private Long shopID;
     private Long formID;
     private String formName;
     private String shopName;
     private String gradeDate;
     private String brandName;
     private List<AbilitySubForm> subFormArray;
+
+    public Long getPatrolShopArrangeID() {
+        return patrolShopArrangeID;
+    }
+
+    public void setPatrolShopArrangeID(Long patrolShopArrangeID) {
+        this.patrolShopArrangeID = patrolShopArrangeID;
+    }
+
+    public Long getShopID() {
+        return shopID;
+    }
+
+    public void setShopID(Long shopID) {
+        this.shopID = shopID;
+    }
 
     public Long getFormID() {
         return formID;

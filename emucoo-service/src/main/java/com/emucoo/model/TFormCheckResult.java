@@ -82,12 +82,6 @@ public class TFormCheckResult extends BaseEntity {
     @Column(name = "is_pass")
     private Boolean isPass;
 
-    @Column(name = "form_sub_pbm_id")
-    private Long formSubPbmId;
-
-    @Column(name = "form_pbm_id")
-    private Long formPbmId;
-
     /**
      * 子表关联的主表id
      */
@@ -370,21 +364,6 @@ public class TFormCheckResult extends BaseEntity {
         this.isPass = isPass;
     }
 
-    public Long getFormSubPbmId() {
-        return formSubPbmId;
-    }
-
-    public void setFormSubPbmId(Long formSubPbmId) {
-        this.formSubPbmId = formSubPbmId;
-    }
-
-    public Long getFormPbmId() {
-        return formPbmId;
-    }
-
-    public void setFormPbmId(Long formPbmId) {
-        this.formPbmId = formPbmId;
-    }
 
     public Long getParentFormId() {
         return parentFormId;
