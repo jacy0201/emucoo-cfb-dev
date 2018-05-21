@@ -8,6 +8,7 @@ import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisCluster;
@@ -97,7 +98,7 @@ public class CalendarServiceImpl implements CalendarService {
             userIdArr = (String[]) ArrayUtils.removeElement(userIdArr, queryUserId.toString());
             //将被查看人员重新设置到第一位
             userIdArr[0] = queryUserId.toString();
-            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userIdArr));
+            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, StringUtils.join(userIdArr, ","));
         }
 
     }
@@ -142,14 +143,12 @@ public class CalendarServiceImpl implements CalendarService {
      */
     public List<SysUser> listLowerUser(Long currentUserId) {
         String userIds = sysUserMapper.findAllChildListByParentId(currentUserId);
-        String[] userArr = userIds.split(",");
+        List<String> userArr = new ArrayList<>(Arrays.asList(userIds.split(",")));
         List<SysUser> list = null;
-        if (null != userArr && userArr.length > 2) {
+        if (null != userArr && userArr.size() > 2) {
             list = new ArrayList<>();
-            ArrayUtils.remove(userArr, 0);
-            ArrayUtils.remove(userArr, 1);
-            for (int i = 0; i < userArr.length; i++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userArr[i]));
+            for (int i = 2; i < userArr.size(); i++) {
+                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userArr.get(i)));
                 list.add(sysUser);
             }
         }
@@ -186,15 +185,16 @@ public class CalendarServiceImpl implements CalendarService {
         }
         Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
         Arrays.sort(nameArr, comparator);
-        list.clear();
         String [] userArr=new String[list.size()];
+        list.clear();
         if (!jedisCluster.exists(ISystem.IUSER.USER_RECENT + currentUserId)) {
             for (int n = nameArr.length - 1; n >= 0; n--) {
                 if (map.containsKey(nameArr[n])) {
                     userArr[n] = map.get(nameArr[n]).getId().toString();
+                    list.add(map.get(nameArr[n]));
                 }
             }
-            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userArr));
+            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, StringUtils.join(userArr, ","));
         } else {
             String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
             String[] userIdArr = userStr.split(",");
