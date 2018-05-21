@@ -1,5 +1,6 @@
 package com.emucoo.service.form;
 
+import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.model.SysUser;
@@ -23,4 +24,6 @@ public interface FormService {
     TShopInfo findShopInfo(FormIn formIn);
 
     TBrandInfo findShopBrand(Long brandId);
+
+    boolean saveAbilityFormResult(AbilityFormMain formIn, SysUser user);
 }

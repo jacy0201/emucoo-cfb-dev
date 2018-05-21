@@ -145,8 +145,8 @@ public class FormManageServiceImpl implements FormManageService {
         List<TFormType> formTypes = formTypeMapper.findFormTypesByFormMainId(id);
         formTypes.forEach(formType -> {
             List<TFormPbm> formPbms = formPbmMapper.findFormPbmsByFormTypeId(formType.getId());
-            for(TFormPbm formPbm : formPbms) {
-                if(formPbm.getProblemSchemaType() == 2) {
+            for (TFormPbm formPbm : formPbms) {
+                if (formPbm.getProblemSchemaType() == 2) {
                     List<TFormSubPbm> subPbms = formSubPbmMapper.findSubPbmsByPbmId(formPbm.getId());
                     formPbm.setSubProblems(subPbms);
                     List<TFormSubPbmHeader> subPbmHeaders = formSubPbmHeaderMapper.findFormSubPbmHeadersByFormPbmId(formPbm.getId());
@@ -498,10 +498,19 @@ public class FormManageServiceImpl implements FormManageService {
                 // 组装顶级子表的模板
                 if(CollectionUtils.isNotEmpty(formMains)) {
                     List<AbilitySubForm> subForms = new ArrayList<>();
+                    int cnt = 0;
                     for (TFormMain formMain : formMains) {
+                        cnt++;
                         AbilitySubForm topSubForm = new AbilitySubForm();
                         topSubForm.setSubFormID(formMain.getId());
                         topSubForm.setSubFormName(formMain.getName());
+                        if(cnt == 1) {
+                            topSubForm.setIsUsable(true);
+                        } else {
+                            topSubForm.setIsUsable(false);
+                        }
+                        topSubForm.setIsDone(false);
+                        topSubForm.setIsPass(false);
                         // 查询表单类型及下属题项与子题项
                         List<TFormType> formTypes = formTypeMapper.findFormTypeTreeUntilSubPbmByFormId(formMain.getId());
                         // 组装表单题目与子题
@@ -511,6 +520,8 @@ public class FormManageServiceImpl implements FormManageService {
                                 AbilitySubFormKind formKind = new AbilitySubFormKind();
                                 formKind.setKindID(saveFormType.getId());
                                 formKind.setKindName(saveFormType.getTypeName());
+                                formKind.setIsDone(false);
+                                formKind.setIsPass(false);
                                 // 组装题项
                                 if(CollectionUtils.isNotEmpty(saveFormType.getProblems())) {
                                     List<Long> pbmIds = new ArrayList<>();
@@ -520,6 +531,8 @@ public class FormManageServiceImpl implements FormManageService {
                                         problemVo.setProblemID(formPbm.getId());
                                         problemVo.setCheckMode(formPbm.getCheckMethod());
                                         problemVo.setProblemName(formPbm.getName());
+                                        problemVo.setIsDone(false);
+                                        problemVo.setIsPass(false);
                                         pbmIds.add(formPbm.getId());
                                         // 组装子题
                                         if(CollectionUtils.isNotEmpty(formPbm.getSubProblems())) {
@@ -530,6 +543,8 @@ public class FormManageServiceImpl implements FormManageService {
                                                 SubProblemVo subProblemVo = new SubProblemVo();
                                                 subProblemVo.setSubProblemID(formSubPbm.getId());
                                                 subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
+                                                subProblemVo.setIsDone(false);
+                                                subProblemVo.setIsPass(false);
                                                 subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
                                                 if (formSubPbm.getSubFormId() != null) {
                                                     subProblemVo.setIsSubList(true);
@@ -552,6 +567,7 @@ public class FormManageServiceImpl implements FormManageService {
                                                             ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
                                                             subProblemChanceVo.setChanceID(formOppt.getOpptId());
                                                             subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                            subProblemChanceVo.setIsPick(false);
                                                             List<ProblemChanceVo> subProblemChanceVos = subProblemVo.getSubProblemChanceArray();
                                                             if(subProblemChanceVos != null) {
                                                                 subProblemChanceVos.add(subProblemChanceVo);
@@ -586,15 +602,16 @@ public class FormManageServiceImpl implements FormManageService {
                                         for (ProblemVo problemVo : problemArray) {
                                             for (TFormOppt formOppt : formOppts) {
                                                 if (formOppt.getProblemId().equals(problemVo.getProblemID())) {
-                                                    ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
-                                                    subProblemChanceVo.setChanceID(formOppt.getOpptId());
-                                                    subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                    ProblemChanceVo problemChanceVo = new ProblemChanceVo();
+                                                    problemChanceVo.setChanceID(formOppt.getOpptId());
+                                                    problemChanceVo.setChanceName(formOppt.getOpptName());
+                                                    problemChanceVo.setIsPick(false);
                                                     List<ProblemChanceVo> problemChanceVos = problemVo.getChanceArray();
                                                     if (problemChanceVos != null) {
-                                                        problemChanceVos.add(subProblemChanceVo);
+                                                        problemChanceVos.add(problemChanceVo);
                                                     } else {
                                                         problemChanceVos = new ArrayList<>();
-                                                        problemChanceVos.add(subProblemChanceVo);
+                                                        problemChanceVos.add(problemChanceVo);
                                                     }
                                                     problemVo.setChanceArray(problemChanceVos);
                                                 }
@@ -635,6 +652,9 @@ public class FormManageServiceImpl implements FormManageService {
             abilitySubForm = new AbilitySubForm();
             abilitySubForm.setSubFormID(formMain.getId());
             abilitySubForm.setSubFormName(formMain.getName());
+            abilitySubForm.setIsPass(false);
+            abilitySubForm.setIsDone(false);
+            abilitySubForm.setIsUsable(false);
             // 查询表单类型及下属题项与子题项
             List<TFormType> formTypes = formTypeMapper.findFormTypeTreeUntilSubPbmByFormId(formMain.getId());
             // 组装表单题目与子题
@@ -644,6 +664,8 @@ public class FormManageServiceImpl implements FormManageService {
                     AbilitySubFormKind formKind = new AbilitySubFormKind();
                     formKind.setKindID(saveFormType.getId());
                     formKind.setKindName(saveFormType.getTypeName());
+                    formKind.setIsDone(false);
+                    formKind.setIsPass(false);
                     // 组装题项
                     if (CollectionUtils.isNotEmpty(saveFormType.getProblems())) {
                         List<Long> pbmIds = new ArrayList<>();
@@ -653,6 +675,8 @@ public class FormManageServiceImpl implements FormManageService {
                             problemVo.setProblemID(formPbm.getId());
                             problemVo.setCheckMode(formPbm.getCheckMethod());
                             problemVo.setProblemName(formPbm.getName());
+                            problemVo.setIsDone(false);
+                            problemVo.setIsPass(false);
                             pbmIds.add(formPbm.getId());
                             // 组装子题
                             if (CollectionUtils.isNotEmpty(formPbm.getSubProblems())) {
@@ -664,6 +688,8 @@ public class FormManageServiceImpl implements FormManageService {
                                     subProblemVo.setSubProblemID(formSubPbm.getId());
                                     subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
                                     subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
+                                    subProblemVo.setIsDone(false);
+                                    subProblemVo.setIsPass(false);
                                     if (formSubPbm.getSubFormId() != null) {
                                         subProblemVo.setIsSubList(true);
                                     } else {
@@ -681,6 +707,7 @@ public class FormManageServiceImpl implements FormManageService {
                                                 ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
                                                 subProblemChanceVo.setChanceID(formOppt.getOpptId());
                                                 subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                                subProblemChanceVo.setIsPick(false);
                                                 List<ProblemChanceVo> subProblemChanceVos = subProblemVo.getSubProblemChanceArray();
                                                 if (subProblemChanceVos != null) {
                                                     subProblemChanceVos.add(subProblemChanceVo);
@@ -711,15 +738,16 @@ public class FormManageServiceImpl implements FormManageService {
                             for (ProblemVo problemVo : problemArray) {
                                 for (TFormOppt formOppt : formOppts) {
                                     if (formOppt.getProblemId().equals(problemVo.getProblemID())) {
-                                        ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
-                                        subProblemChanceVo.setChanceID(formOppt.getOpptId());
-                                        subProblemChanceVo.setChanceName(formOppt.getOpptName());
+                                        ProblemChanceVo problemChanceVo = new ProblemChanceVo();
+                                        problemChanceVo.setChanceID(formOppt.getOpptId());
+                                        problemChanceVo.setChanceName(formOppt.getOpptName());
+                                        problemChanceVo.setIsPick(false);
                                         List<ProblemChanceVo> problemChanceVos = problemVo.getChanceArray();
                                         if (problemChanceVos != null) {
-                                            problemChanceVos.add(subProblemChanceVo);
+                                            problemChanceVos.add(problemChanceVo);
                                         } else {
                                             problemChanceVos = new ArrayList<>();
-                                            problemChanceVos.add(subProblemChanceVo);
+                                            problemChanceVos.add(problemChanceVo);
                                         }
                                         problemVo.setChanceArray(problemChanceVos);
                                     }

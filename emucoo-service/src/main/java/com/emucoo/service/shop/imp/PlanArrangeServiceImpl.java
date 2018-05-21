@@ -21,6 +21,7 @@ import com.emucoo.model.TRemind;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.shop.PlanArrangeService;
 import com.emucoo.utils.TimeTaskUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +140,10 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
         try {
             List<Shop> shopList = planArrangeEditIn.getShopArr();
             for (Shop shop : shopList) {
+                TFrontPlan plan = tFrontPlanMapper.selectByPrimaryKey(planArrangeEditIn.getPatrolShopArrangeID());
+                if(plan != null && plan.getIsDel().equals(false) && plan.getStatus() >= ShopArrangeStatus.CHECKING.getCode()) {
+                    throw new BaseException("巡店不可修改！");
+                }
                 TFrontPlan tFrontPlan = new TFrontPlan();
                 tFrontPlan.setId(planArrangeEditIn.getPatrolShopArrangeID());
                 tFrontPlan.setShopId(shop.getShopID());
@@ -184,6 +189,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
             }
         } catch (Exception e) {
             logger.error("編輯巡店计划失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
             throw new ApiException("编辑巡店计划失败");
         }
     }
@@ -191,6 +199,10 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
     @Override
     public void delete(PlanArrangeDeleteIn planArrangeDeleteIn, SysUser user) {
         try {
+            TFrontPlan plan = tFrontPlanMapper.selectByPrimaryKey(planArrangeDeleteIn.getPatrolShopArrangeID());
+            if (plan != null && plan.getIsDel().equals(false) && plan.getStatus() >= ShopArrangeStatus.CHECKING.getCode()) {
+                throw new BaseException("巡店不可删除！");
+            }
             List<Long> ids = new ArrayList<>();
             ids.add(planArrangeDeleteIn.getPatrolShopArrangeID());
             // 删除计划
@@ -202,6 +214,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
             tFrontPlanFormMapper.updateById(tFrontPlanForm);
         } catch (Exception e) {
             logger.error("删除巡店安排失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
             throw new ApiException("删除巡店安排失败");
         }
     }

@@ -39,10 +39,16 @@ public class TFormSubPbmVal extends BaseEntity {
     private Long subFormId;
 
     @Column(name = "is_pass")
-    private Long isPass;
+    private Boolean isPass;
+
+    @Column(name = "is_score")
+    private Boolean isScore;
 
     @Column(name = "problem_description")
     private String problemDescription;
+
+    @Column(name = "check_method")
+    private String checkMethod;
 
     private String notes;
 
@@ -156,12 +162,20 @@ public class TFormSubPbmVal extends BaseEntity {
         this.formResultId = formResultId;
     }
 
-    public Long getIsPass() {
+    public Boolean getIsPass() {
         return isPass;
     }
 
-    public void setIsPass(Long isPass) {
+    public void setIsPass(Boolean isPass) {
         this.isPass = isPass;
+    }
+
+    public Boolean getIsScore() {
+        return isScore;
+    }
+
+    public void setIsScore(Boolean isScore) {
+        this.isScore = isScore;
     }
 
     public String getProblemDescription() {
@@ -186,5 +200,13 @@ public class TFormSubPbmVal extends BaseEntity {
 
     public void setSubFormId(Long subFormId) {
         this.subFormId = subFormId;
+    }
+
+    public String getCheckMethod() {
+        return checkMethod;
+    }
+
+    public void setCheckMethod(String checkMethod) {
+        this.checkMethod = checkMethod;
     }
 }
