@@ -10,6 +10,7 @@ import com.emucoo.mapper.SysUserShopMapper;
 import com.emucoo.mapper.TFormMainMapper;
 import com.emucoo.mapper.TFrontPlanFormMapper;
 import com.emucoo.mapper.TFrontPlanMapper;
+import com.emucoo.mapper.TLoopSubPlanMapper;
 import com.emucoo.mapper.TRemindMapper;
 import com.emucoo.mapper.TShopInfoMapper;
 import com.emucoo.model.SysUser;
@@ -17,6 +18,7 @@ import com.emucoo.model.SysUserShop;
 import com.emucoo.model.TFormMain;
 import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TFrontPlanForm;
+import com.emucoo.model.TLoopSubPlan;
 import com.emucoo.model.TRemind;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.shop.PlanArrangeService;
@@ -58,6 +60,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
 
     @Autowired
     private TRemindMapper tRemindMapper;
+
+    @Autowired
+    private TLoopSubPlanMapper tLoopSubPlanMapper;
 
     @Override
     public List<TRemind> listRemind() {
@@ -102,13 +107,15 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 tFrontPlan.setModifyUserId(user.getId());
                 tFrontPlan.setArrangerId(user.getId());
                 // 根据店铺id查询负责人
+                TLoopSubPlan tLoopSubPlan = tLoopSubPlanMapper.selectByPrimaryKey(planArrangeAddIn.getPlanID());
+                List<SysUserShop> sysUserShops = sysUserShopMapper.findResponsiblePersonOfShop(shop.getShopID(), tLoopSubPlan.getDptId());
+                if(sysUserShops != null && sysUserShops.size() > 1) {
+                    throw new BaseException("一个店铺不能被同一个部门内的多个用户管理！");
+                } else if(sysUserShops != null && sysUserShops.size() > 0) {
+                    tFrontPlan.setArrangeeId(sysUserShops.get(0).getUserId());
+                }
                 Example example = new Example(SysUserShop.class);
-                example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel",false);
-              /*  SysUserShop sysUserShopExp = new SysUserShop();
-                sysUserShopExp.setIsDel(false);
-                sysUserShopExp.setShopId(shop.getShopID());
-                tFrontPlan.setArrangeeId(userShop.getUserId());*/
-
+                example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel", false);
                 List<SysUserShop> userShops = sysUserShopMapper.selectByExample(example);
                 String userIds = "";
                 for (SysUserShop userShop : userShops) {
@@ -172,11 +179,26 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 tFrontPlan.setModifyUserId(user.getId());
                 tFrontPlan.setArrangerId(user.getId());
                 // 根据店铺id查询负责人
-                SysUserShop sysUserShopExp = new SysUserShop();
-                sysUserShopExp.setIsDel(false);
-                sysUserShopExp.setShopId(shop.getShopID());
-                SysUserShop userShop = sysUserShopMapper.selectOne(sysUserShopExp);
-                tFrontPlan.setArrangeeId(userShop.getUserId());
+                TLoopSubPlan tLoopSubPlan = tLoopSubPlanMapper.selectByPrimaryKey(plan.getSubPlanId());
+                List<SysUserShop> sysUserShops = sysUserShopMapper.findResponsiblePersonOfShop(shop.getShopID(), tLoopSubPlan.getDptId());
+                if (sysUserShops != null && sysUserShops.size() > 1) {
+                    throw new BaseException("一个店铺不能被同一个部门内的多个用户管理！");
+                } else if (sysUserShops != null && sysUserShops.size() > 0) {
+                    tFrontPlan.setArrangeeId(sysUserShops.get(0).getUserId());
+                }
+
+                Example example = new Example(SysUserShop.class);
+                example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel", false);
+                List<SysUserShop> userShops = sysUserShopMapper.selectByExample(example);
+                String userIds = "";
+                for (SysUserShop userShop : userShops) {
+                    userIds += userShop.getUserId() + ",";
+                }
+                if (StringUtils.isNotBlank(userIds)) {
+                    userIds = userIds.substring(0, userIds.length() - 1);
+                }
+                tFrontPlan.setNoticeUserId(userIds);
+
                 // 更新巡店安排
                 tFrontPlanMapper.updateFrontPlan(tFrontPlan);
                 // 删除旧的关系
