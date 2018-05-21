@@ -25,5 +25,5 @@ public interface FormService {
 
     TBrandInfo findShopBrand(Long brandId);
 
-    boolean saveAbilityFormResult(AbilityFormMain formIn, SysUser user);
+    Long saveAbilityFormResult(AbilityFormMain formIn, SysUser user);
 }

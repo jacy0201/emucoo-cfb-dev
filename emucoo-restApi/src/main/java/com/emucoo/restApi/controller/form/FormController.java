@@ -1,5 +1,6 @@
 package com.emucoo.restApi.controller.form;
 
+import com.emucoo.service.report.ReportService;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.emucoo.common.Constant;
@@ -21,6 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by sj on 2018/4/24.
  */
@@ -30,6 +34,9 @@ public class FormController extends AppBaseController {
 
     @Autowired
     private FormService formService;
+
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     private RedisClusterClient redisClusterClient;
@@ -79,15 +86,16 @@ public class FormController extends AppBaseController {
     }
 
     @PostMapping(value = "saveAbilityFormResult")
-    public AppResult<String> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
+    public AppResult<Map> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
         AbilityFormMain formIn = params.getData();
         checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(formIn.getFormID(), "表单id不能为空！");
         checkParam(formIn.getShopID(), "店铺id不能为空！");
-        formService.saveAbilityFormResult(formIn, user);
-
-        return success("ok");
+        Long reportId = formService.saveAbilityFormResult(formIn, user);
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("reportID", reportId);
+        return success(map);
     }
 
 

@@ -18,4 +18,5 @@ public interface ReportService {
     ReportVo findReportInfoById(SysUser user, GetReportIn reportIn);
 
     GetOpptOut findOpptInfoById(SysUser user, GetOpptIn opptId);
+
 }

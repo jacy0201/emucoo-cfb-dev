@@ -14,8 +14,8 @@ import lombok.Data;
 @Data
 public class PlanArrangeAddIn {
 
-	private Integer precinctID;
-	private Integer planID;
+	private Long precinctID;
+	private Long planID;
 	private String exPatrloShopArrangeDate;
 	private String postscript;
 	private List<Shop> shopArr = new ArrayList<Shop>();
