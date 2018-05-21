@@ -76,7 +76,9 @@ public class CalendarServiceImpl implements CalendarService {
         }
         calendarListMonthOut.setWorkArr(workArr);
         //设置最近联系人顺序
-        setUserOrder(calendarListIn.getUserId(), currentUserId);
+        if(!calendarListIn.getUserId().equals(currentUserId))
+            setUserOrder(calendarListIn.getUserId(), currentUserId);
+
         return calendarListMonthOut;
     }
 
