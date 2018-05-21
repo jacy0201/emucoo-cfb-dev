@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisCluster;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.text.Collator;
@@ -86,18 +87,19 @@ public class CalendarServiceImpl implements CalendarService {
      */
     private void setUserOrder(Long queryUserId, Long currentUserId) {
         String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
-        String[] userIdArr = userStr.split(",");
-        if (ArrayUtils.isNotEmpty(userIdArr)) {
+        if(StringUtil.isNotEmpty(userStr)) {
+            String[] userIdArr = userStr.split(",");
             //元素后移
             for (int i = userIdArr.length - 1; i > 0; i--) {
                 userIdArr[i] = userIdArr[i - 1];
             }
             //先删除被查看人员
             userIdArr = (String[]) ArrayUtils.removeElement(userIdArr, queryUserId.toString());
+            //将被查看人员重新设置到第一位
+            userIdArr[0] = queryUserId.toString();
+            jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userIdArr));
         }
-        //将被查看人员重新设置到第一位
-        userIdArr[0] = queryUserId.toString();
-        jedisCluster.set(ISystem.IUSER.USER_RECENT + currentUserId, ArrayUtils.toString(userIdArr));
+
     }
 
 
@@ -105,7 +107,7 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarListDateOut calendarListDateOut = new CalendarListDateOut();
         WorkVo_O.Work work = null;
         List<WorkVo_O.Work> workArr = new ArrayList<>();
-        calendarListDateOut.setDate(calendarListIn.getExecuteDate());
+        calendarListDateOut.setExecuteDate(calendarListIn.getExecuteDate());
         calendarListDateOut.setUserId(calendarListIn.getUserId());
         Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
