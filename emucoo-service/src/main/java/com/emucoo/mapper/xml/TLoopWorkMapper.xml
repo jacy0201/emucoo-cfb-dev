@@ -270,7 +270,9 @@
             c.name as taskItemTitle,
             c.feedback_img_example_id as itemImgUrls,
             case when c.feedback_need_text = 0 then 1 else 2 end as feedbackText,
-            case when c.feedback_img_type = 0 then 1 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2 else 3 end as feedbackImg,
+            case when c.feedback_img_type = 0 then 1
+                 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2
+                 else 3 end as feedbackImg,
             c.feedback_num_name as digitalItemName,
             c.feedback_num_type as digitalItemType,
             b.id as taskSubID,
@@ -295,5 +297,9 @@
 
         where a.id=#{loopWorkId}
     </select>
-
+    <select id="filterExecuteRemindWorks" resultType="com.emucoo.model.TLoopWork">
+        select * from t_loop_work where work_status = 1
+            and ( (execute_remind_time is null and execute_deadline between #{exeDeadTimeLeft} and #{exeDeadTimeRight})
+                or (execute_remind_time between #{exeRemindTimeLeft} and #{exeRemindTimeRight}) )
+    </select>
 </mapper>

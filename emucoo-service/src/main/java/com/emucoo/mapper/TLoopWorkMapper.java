@@ -50,4 +50,6 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     TaskCommonStatement fetchCommonTaskStatement(Long loopWorkId);
 
     List<TaskCommonItemVo> fetchTaskCommonItem(Long loopWorkId);
+
+    List<TLoopWork> filterExecuteRemindWorks(@Param("exeDeadTimeLeft") Date exeDeadTimeLeft, @Param("exeDeadTimeRight") Date exeDeadTimeRight, @Param("exeRemindTimeLeft") Date exeRemindTimeLeft, @Param("exeRemindTimeRight") Date exeRemindTimeRight);
 }

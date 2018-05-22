@@ -341,7 +341,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             vo.setLabels(new ArrayList<TaskParameterVo.IdNamePair>());
             List<TLabel> labels = labelMapper.listLabelByTaskId(task.getId());
             for(TLabel label : labels){
-                TaskParameterVo.IdNamePair lbl = vo.new IdNamePair();
+                TaskParameterVo.IdNamePair lbl = new TaskParameterVo.IdNamePair();
                 lbl.setId(label.getId());
                 lbl.setName(label.getName());
                 vo.getLabels().add(lbl);
@@ -425,15 +425,21 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 vo.setImgUrls(imgurls);
             }
         }
-        String[] exeTm = task.getExecuteDeadline().split(":");
-        vo.setExeCloseHour(Integer.parseInt(exeTm[0]));
-        vo.setExeCloseMinute(Integer.parseInt(exeTm[1]));
-        String[] remTm = task.getExecuteRemindTime().split(":");
-        vo.setAuditCloseHour(Integer.parseInt(remTm[0]));
-        vo.setAuditCloseMinute(Integer.parseInt(remTm[1]));
-        String[] audTm = task.getAuditDeadline().split(":");
-        vo.setExeRemindHour(Integer.parseInt(audTm[0]));
-        vo.setExeRemindMinute(Integer.parseInt(audTm[1]));
+        if(task.getExecuteDeadline() != null) {
+            String[] exeTm = task.getExecuteDeadline().split(":");
+            vo.setExeCloseHour(Integer.parseInt(exeTm[0]));
+            vo.setExeCloseMinute(Integer.parseInt(exeTm[1]));
+        }
+        if(task.getExecuteRemindTime() != null) {
+            String[] remTm = task.getExecuteRemindTime().split(":");
+            vo.setAuditCloseHour(Integer.parseInt(remTm[0]));
+            vo.setAuditCloseMinute(Integer.parseInt(remTm[1]));
+        }
+        if(task.getAuditDeadline() != null) {
+            String[] audTm = task.getAuditDeadline().split(":");
+            vo.setExeRemindHour(Integer.parseInt(audTm[0]));
+            vo.setExeRemindMinute(Integer.parseInt(audTm[1]));
+        }
 
         vo.setExeUserType(task.getExecuteUserType());
         List<TTaskPerson> taskPersons = taskPersonMapper.fetchByTaskId(task.getId());
@@ -447,68 +453,69 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 dept = ccDpt.getDept().getId() == taskPerson.getDptId() ? ccDpt : null;
             }
             if(dept == null){
-                dept = vo.new DeptPosition();
+                dept = new TaskParameterVo.DeptPosition();
                 dept.setPositions(new ArrayList<>());
 
-                TaskParameterVo.IdNamePair dept0 = vo.new IdNamePair();
+                TaskParameterVo.IdNamePair dept0 = new TaskParameterVo.IdNamePair();
                 dept0.setId(taskPerson.getDptId());
                 dept0.setName(taskPerson.getDptName());
                 dept.setDept(dept0);
 
-                TaskParameterVo.IdNamePair dept1 = vo.new IdNamePair();
+                TaskParameterVo.IdNamePair dept1 = new TaskParameterVo.IdNamePair();
                 dept1.setId(taskPerson.getDptId());
                 dept1.setName(taskPerson.getDptName());
                 dept.getPositions().add(dept1);
 
             } else {
-                TaskParameterVo.IdNamePair dept1 = vo.new IdNamePair();
+                TaskParameterVo.IdNamePair dept1 = new TaskParameterVo.IdNamePair();
                 dept1.setId(taskPerson.getDptId());
                 dept1.setName(taskPerson.getDptName());
                 dept.getPositions().add(dept1);
             }
         }
         vo.setCcUserPositions(ccDpts);
+        if(vo.getExeUserType() != null) {
+            if (vo.getExeUserType() == 1) { // 1: 按部门
+                List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
+                for (TTaskPerson taskPerson : exePersons) {
+                    TaskParameterVo.DeptPosition dpt = null;
+                    for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
+                        dpt = exeDpt.getDept().getId() == taskPerson.getDptId() ? exeDpt : null;
+                    }
+                    if (dpt == null) {
+                        dpt = new TaskParameterVo.DeptPosition();
+                        dpt.setPositions(new ArrayList<>());
 
-        if(vo.getExeUserType() == 1) { // 1: 按部门
-            List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
-            for (TTaskPerson taskPerson : exePersons) {
-                TaskParameterVo.DeptPosition dpt = null;
-                for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
-                    dpt = exeDpt.getDept().getId() == taskPerson.getDptId() ? exeDpt : null;
+                        TaskParameterVo.IdNamePair dpt0 = new TaskParameterVo.IdNamePair();
+                        dpt0.setId(taskPerson.getDptId());
+                        dpt0.setName(taskPerson.getDptName());
+                        dpt.setDept(dpt0);
+
+                        TaskParameterVo.IdNamePair dpt1 = new TaskParameterVo.IdNamePair();
+                        dpt1.setId(taskPerson.getPositionId());
+                        dpt1.setName(taskPerson.getPositionName());
+                        dpt.getPositions().add(dpt1);
+
+                    } else {
+                        TaskParameterVo.IdNamePair dpt1 = new TaskParameterVo.IdNamePair();
+                        dpt1.setId(taskPerson.getPositionId());
+                        dpt1.setName(taskPerson.getPositionName());
+                        dpt.getPositions().add(dpt1);
+                    }
                 }
-                if (dpt == null) {
-                    dpt = vo.new DeptPosition();
-                    dpt.setPositions(new ArrayList<>());
+                vo.setExeDeptPositions(exeDpts);
 
-                    TaskParameterVo.IdNamePair dpt0 = vo.new IdNamePair();
-                    dpt0.setId(taskPerson.getDptId());
-                    dpt0.setName(taskPerson.getDptName());
-                    dpt.setDept(dpt0);
-
-                    TaskParameterVo.IdNamePair dpt1 = vo.new IdNamePair();
-                    dpt1.setId(taskPerson.getPositionId());
-                    dpt1.setName(taskPerson.getPositionName());
-                    dpt.getPositions().add(dpt1);
-
-                } else {
-                    TaskParameterVo.IdNamePair dpt1 = vo.new IdNamePair();
-                    dpt1.setId(taskPerson.getPositionId());
-                    dpt1.setName(taskPerson.getPositionName());
-                    dpt.getPositions().add(dpt1);
+            } else { // 2: 按店铺
+                List<TaskParameterVo.IdNamePair> exeShps = new ArrayList<>();
+                for (TTaskPerson taskPerson : exePersons) {
+                    TaskParameterVo.IdNamePair exeShp = new TaskParameterVo.IdNamePair();
+                    exeShp.setId(taskPerson.getShopId());
+                    exeShp.setName(taskPerson.getShopName());
                 }
+                vo.setExeUserShops(exeShps);
+                vo.setAuditDeptId(task.getAuditDptId());
+                vo.setAuditDeptName(task.getAuditDptName());
             }
-            vo.setExeDeptPositions(exeDpts);
-
-        } else { // 2: 按店铺
-            List<TaskParameterVo.IdNamePair> exeShps = new ArrayList<>();
-            for (TTaskPerson taskPerson : exePersons) {
-                TaskParameterVo.IdNamePair exeShp = vo.new IdNamePair();
-                exeShp.setId(taskPerson.getShopId());
-                exeShp.setName(taskPerson.getShopName());
-            }
-            vo.setExeUserShops(exeShps);
-            vo.setAuditDeptId(task.getAuditDptId());
-            vo.setAuditDeptName(task.getAuditDptName());
         }
 
         vo.setDurationType(task.getDurationTimeType());
@@ -520,32 +527,36 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             vo.setDays(Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(str -> Integer.parseInt(str)).collect(Collectors.toList()));
         }
 
-        vo.setScoreType(task.getScoreType().intValue());
-        vo.setScoreValue(task.getPreinstallScore());
-        vo.setScoreWeight(task.getPreinstallWeight());
+        if(task.getScoreType() != null) {
+            vo.setScoreType(task.getScoreType().intValue());
+            vo.setScoreValue(task.getPreinstallScore());
+            vo.setScoreWeight(task.getPreinstallWeight());
+        }
 
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(task.getId());
         List<TaskParameterVo.TaskOption> taskOptions = new ArrayList<>();
-        for(TOperateOption option : options){
-            TaskParameterVo.TaskOption taskOption = vo.new TaskOption();
-            taskOption.setId(option.getId());
-            taskOption.setName(option.getName());
-            taskOption.setNeedFeedbackText(option.getFeedbackNeedText());
-            taskOption.setFeedbackTextName(option.getFeedbackTextName());
-            taskOption.setFeedbackTextDescription(option.getFeedbackTextDescription());
-            taskOption.setNeedFeedbackImg(option.getFeedbackNeedNum());
-            taskOption.setFeedbackNumName(option.getFeedbackNumName());
-            taskOption.setFeedbackNumType(option.getFeedbackNumType());
-            taskOption.setNeedFeedbackImg(option.getFeedbackImgType()==0?false:true);
-            taskOption.setFeedbackImgType(option.getFeedbackImgFromAlbum()?1:0);
-            taskOption.setFeedbackImgCount(option.getFeedbackImgMaxCount());
-            if(option.getFeedbackImgExampleId() != null) {
-                TFile imgsample = fileMapper.selectByPrimaryKey(option.getFeedbackImgExampleId());
-                taskOption.setFeedbackImgSampleUrl(imgsample==null?"":imgsample.getImgUrl());
+        if(options != null) {
+            for (TOperateOption option : options) {
+                TaskParameterVo.TaskOption taskOption = new TaskParameterVo.TaskOption();
+                taskOption.setId(option.getId());
+                taskOption.setName(option.getName());
+                taskOption.setNeedFeedbackText(option.getFeedbackNeedText());
+                taskOption.setFeedbackTextName(option.getFeedbackTextName());
+                taskOption.setFeedbackTextDescription(option.getFeedbackTextDescription());
+                taskOption.setNeedFeedbackImg(option.getFeedbackNeedNum());
+                taskOption.setFeedbackNumName(option.getFeedbackNumName());
+                taskOption.setFeedbackNumType(option.getFeedbackNumType());
+                taskOption.setNeedFeedbackImg(option.getFeedbackImgType() == 0 ? false : true);
+                taskOption.setFeedbackImgType(option.getFeedbackImgFromAlbum() ? 1 : 0);
+                taskOption.setFeedbackImgCount(option.getFeedbackImgMaxCount());
+                if (option.getFeedbackImgExampleId() != null) {
+                    TFile imgsample = fileMapper.selectByPrimaryKey(option.getFeedbackImgExampleId());
+                    taskOption.setFeedbackImgSampleUrl(imgsample == null ? "" : imgsample.getImgUrl());
+                }
+                taskOption.setScore(option.getPreinstallScore());
+                taskOption.setWeight(option.getPreinstallWeight());
+                taskOptions.add(taskOption);
             }
-            taskOption.setScore(option.getPreinstallScore());
-            taskOption.setWeight(option.getPreinstallWeight());
-            taskOptions.add(taskOption);
         }
         vo.setTaskOptions(taskOptions);
 
@@ -601,6 +612,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             data.getExeDeptPositions().forEach(deptPosition -> {
                 deptPosition.getPositions().forEach(position -> {
                     TTaskPerson taskPerson = new TTaskPerson();
+                    taskPerson.setTaskId(data.getId());
                     taskPerson.setDptId(deptPosition.getDept().getId());
                     taskPerson.setDptName(deptPosition.getDept().getName());
                     taskPerson.setPositionId(position.getId());
@@ -612,6 +624,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         } else { // 2:按店铺
             data.getExeUserShops().forEach(shop -> {
                 TTaskPerson taskPerson = new TTaskPerson();
+                taskPerson.setTaskId(data.getId());
                 taskPerson.setPersonType(1);
                 taskPerson.setShopId(shop.getId());
                 taskPerson.setShopName(shop.getName());
@@ -624,6 +637,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         data.getCcUserPositions().forEach(ccDept -> {
             ccDept.getPositions().forEach(ccPos -> {
                 TTaskPerson taskPerson = new TTaskPerson();
+                taskPerson.setTaskId(data.getId());
                 taskPerson.setDptId(ccDept.getDept().getId());
                 taskPerson.setDptName(ccDept.getDept().getName());
                 taskPerson.setPositionId(ccPos.getId());
@@ -675,6 +689,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 operateOptionMapper.insert(option);
             });
         }
+        taskMapper.updateByPrimaryKeySelective(task);
 
     }
 
