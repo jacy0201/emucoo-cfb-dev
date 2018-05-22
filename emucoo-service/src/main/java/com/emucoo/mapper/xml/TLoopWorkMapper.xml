@@ -64,9 +64,10 @@
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
         WHERE  (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
-        AND    (year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
+        AND (   (year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
                 OR
                (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr})
+             )
         GROUP BY t1.id
         ORDER BY t1.execute_end_date DESC
     </select>
@@ -77,7 +78,8 @@
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
         WHERE (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
-        AND   #{executeDate} between t1.execute_begin_date and t1.execute_end_date
+        AND
+        #{executeDate} between t1.execute_begin_date and t1.execute_end_date
         GROUP BY t1.id
         ORDER BY t1.execute_end_date DESC
     </select>
