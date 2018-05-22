@@ -19,6 +19,7 @@ public class CalendarVO {
         @ApiModel(value="任务数据集")
         public static class Task{
             private Long id;
+            private String workID;
             private String subID;
             private String taskTitle;
             private Integer taskStatus;
