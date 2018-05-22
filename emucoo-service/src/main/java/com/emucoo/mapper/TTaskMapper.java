@@ -10,11 +10,11 @@ import java.util.List;
 public interface TTaskMapper extends MyMapper<TTask> {
     List<TTask> findImproveTaskList(@Param("opptId")Long opptId, @Param("reportId")Long reportId);
 
-    int countCommonTaskByName(String keyword);
+    int countCommonTaskByName(@Param("keyword") String keyword);
 
     List<TTask> listCommonTaskByName(@Param("keyword") String keyword, @Param("pageStart") int pageSt, @Param("pageSize") int pageSz);
 
-    int judgeExistCommonTask(String taskName);
+    int judgeExistCommonTask(@Param("taskName") String taskName);
 
     void removeCommonTaskByIds(List<Long> ids);
 

@@ -346,6 +346,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 lbl.setName(label.getName());
                 vo.getLabels().add(lbl);
             }
+            taskList.add(vo);
         }
         return taskList;
     }
