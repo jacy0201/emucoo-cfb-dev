@@ -519,10 +519,19 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
      */
     @Override
     public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
-        Date exeDeadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
-        Date exeDeadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
-        Date exeRemindTimeLeft = currentDate;
-        Date exeRemindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
-        return loopWorkMapper.filterExecuteRemindWorks(exeDeadTimeLeft, exeDeadTimeRight, exeRemindTimeLeft, exeRemindTimeRight);
+        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
+        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
+        Date remindTimeLeft = currentDate;
+        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        return loopWorkMapper.filterExecuteRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
+    }
+
+    @Override
+    public List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
+        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
+        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
+        Date remindTimeLeft = currentDate;
+        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
     }
 }

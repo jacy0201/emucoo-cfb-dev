@@ -297,9 +297,15 @@
 
         where a.id=#{loopWorkId}
     </select>
+
     <select id="filterExecuteRemindWorks" resultType="com.emucoo.model.TLoopWork">
         select * from t_loop_work where work_status = 1
-            and ( (execute_remind_time is null and execute_deadline between #{exeDeadTimeLeft} and #{exeDeadTimeRight})
-                or (execute_remind_time between #{exeRemindTimeLeft} and #{exeRemindTimeRight}) )
+            and ( (execute_remind_time is null and execute_deadline between #{deadTimeLeft} and #{deadTimeRight})
+                or (execute_remind_time between #{remindTimeLeft} and #{remindTimeRight}) )
+    </select>
+
+    <select id="filterAuditRemindWorks" resultType="com.emucoo.model.TLoopWork">
+        select * from t_loop_work where work_status = 2 and work_result is null
+            and audit_deadline between #{deadTimeLeft} and #{deadTimeRight}
     </select>
 </mapper>

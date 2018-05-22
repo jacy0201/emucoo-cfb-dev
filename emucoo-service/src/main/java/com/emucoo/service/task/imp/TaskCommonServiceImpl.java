@@ -382,16 +382,21 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     public void saveCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setId(data.getId());
+        task.setName(data.getName());
         task.setDescription(data.getDescription());
         taskMapper.updateByPrimaryKeySelective(task);
 
-        taskLabelMapper.dropByTaskId(task.getId());
         List<TaskParameterVo.IdNamePair> lbls = data.getLabels();
-        for(TaskParameterVo.IdNamePair lbl : lbls) {
-            TTaskLabel tl = new TTaskLabel();
-            tl.setTaskId(task.getId());
-            tl.setLabelId(lbl.getId());
-            taskLabelMapper.insert(tl);
+        if(lbls != null) {
+            taskLabelMapper.dropByTaskId(task.getId());
+            for (TaskParameterVo.IdNamePair lbl : lbls) {
+                TTaskLabel tl = new TTaskLabel();
+                tl.setTaskId(task.getId());
+                tl.setLabelId(lbl.getId());
+                tl.setCreateTime(DateUtil.currentDate());
+                tl.setModifyTime(DateUtil.currentDate());
+                taskLabelMapper.insert(tl);
+            }
         }
     }
 

@@ -46,4 +46,6 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     void markExpiredWorks();
 
     List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
+
+    List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
 }
