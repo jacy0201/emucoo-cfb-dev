@@ -1,12 +1,8 @@
 package com.emucoo.dto.modules.calendar;
 
-import com.emucoo.dto.modules.task.WorkVo_O;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by jacy .
@@ -22,5 +18,5 @@ public class CalendarListDateOut {
     @ApiModelProperty(value="用户ID",name="userId",required = true)
     private Long userId;
     //行事历任务
-    private List<WorkVo_O.Work> workArr;
+    private CalendarVO calendarVO;
 }
