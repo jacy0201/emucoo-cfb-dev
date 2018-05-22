@@ -354,6 +354,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     public void createCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setName(data.getName());
+        task.setType(1);
         task.setDescription(data.getDescription());
         task.setCreateTime(DateUtil.currentDate());
         task.setModifyTime(DateUtil.currentDate());

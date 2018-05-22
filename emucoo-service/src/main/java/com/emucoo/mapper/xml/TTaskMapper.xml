@@ -69,8 +69,8 @@
         limit #{pageStart}, #{pageSize}
     </select>
 
-    <select id="judgeExistCommonTask" resultMap="BaseResultMap">
-        select count(1) from t_task is_del != 1 and type = 1 and name = #{taskName}
+    <select id="judgeExistCommonTask" resultType="java.lang.Integer">
+        select count(1) from t_task where is_del != 1 and type = 1 and name = #{taskName}
     </select>
 
     <update id="removeCommonTaskByIds">
