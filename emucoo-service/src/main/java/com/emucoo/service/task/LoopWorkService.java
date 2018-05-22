@@ -44,4 +44,6 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId);
 
     void markExpiredWorks();
+
+    List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
 }

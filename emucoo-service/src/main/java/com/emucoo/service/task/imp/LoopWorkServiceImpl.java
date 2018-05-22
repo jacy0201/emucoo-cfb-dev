@@ -509,4 +509,20 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.markExpiredExecutionWorks(dt);
         loopWorkMapper.markExpiredAuditWorks(dt);
     }
+
+    /**
+     * 该方法是给定时任务使用的。
+     * @param currentDate
+     * @param aheadMinutes
+     * @param cycleMinutes
+     * @return
+     */
+    @Override
+    public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
+        Date exeDeadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
+        Date exeDeadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
+        Date exeRemindTimeLeft = currentDate;
+        Date exeRemindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        return loopWorkMapper.filterExecuteRemindWorks(exeDeadTimeLeft, exeDeadTimeRight, exeRemindTimeLeft, exeRemindTimeRight);
+    }
 }

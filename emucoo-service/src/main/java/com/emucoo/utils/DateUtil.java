@@ -149,6 +149,11 @@ public class DateUtil {
 		return new Date(ctm);
     }
 
+    public static Date timeForward(Date dt, int hr, int mi) {
+        long ctm = dt.getTime() + hr * 1000 * 60 * 60 + mi * 1000 * 60;
+        return new Date(ctm);
+    }
+
     /**
      * 得到当前时间距2013-11-01 00:00:00的小时数
      *
