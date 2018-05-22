@@ -62,6 +62,7 @@ public class CalendarServiceImpl implements CalendarService {
         String dt="";
         for (int i=1;i<=dayOfMonth;i++){
             if(i<10) dt="0"+i;
+            else dt=i+"";
             calendarVO =new CalendarVO();
             calendarVO.setDate(yearStr+"-"+monthStr+"-"+dt);
             List<CalendarVO.Inspection> inspectionList=null;
