@@ -6,7 +6,6 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
-import com.emucoo.utils.DateUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -102,6 +101,9 @@ public class CalendarServiceImpl implements CalendarService {
         if(StringUtil.isNotEmpty(userStr)) {
             String[] idArr = userStr.split(",");
             String[] userIdArr=new String[idArr.length+1];
+            for (int n = 0; n < idArr.length; n++) {
+                userIdArr[n]=idArr[n];
+            }
             //元素后移
            for (int i = userIdArr.length - 1; i > 0; i--) {
                 userIdArr[i] = userIdArr[i - 1];
@@ -223,7 +225,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private  CalendarVO.Inspection getFrontPlanWork(TFrontPlan frontPlan) {
         CalendarVO.Inspection inspection= new CalendarVO.Inspection();
-        inspection.setId(frontPlan.getId());
+        inspection.setInspectionId(frontPlan.getId());
         inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单

@@ -34,7 +34,7 @@ public class CalendarVO {
         @Data
         @ApiModel(value="巡店数据集")
         public static class Inspection{
-            private Long id;
+            private Long inspectionId;
             private String inspTitle;
             private Date inspStartTime;
             private Date inspEndTime;
@@ -43,7 +43,7 @@ public class CalendarVO {
         @Data
         @ApiModel(value="备忘数据集")
         public static class Memo{
-            private Long id;
+            private Long memoId;
             private String memoContent;
             private Date memoStartTime;
             private Date memoEndTime;
