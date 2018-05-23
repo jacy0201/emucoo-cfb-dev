@@ -1,5 +1,6 @@
 package com.emucoo.service.report;
 
+import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
 import com.emucoo.dto.modules.report.GetOpptIn;
 import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
@@ -19,4 +20,5 @@ public interface ReportService {
 
     GetOpptOut findOpptInfoById(SysUser user, GetOpptIn opptId);
 
+    AbilityReportVo findAbilityReportInfo(SysUser user, GetReportIn reportIn);
 }

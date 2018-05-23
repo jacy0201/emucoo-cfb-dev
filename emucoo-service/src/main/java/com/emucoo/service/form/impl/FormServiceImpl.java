@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -502,7 +501,7 @@ public class FormServiceImpl implements FormService {
             List<SysPost> positions = sysPostMapper.findPositionByUserId(user.getId());
             List<String> pstns = positions.stream().map(p -> p.getPostName()).collect(Collectors.toList());
             String opptDescription = "前端创建-" + formIn.getFormName() + "-" + user.getDptName() + "-" + StringUtils.join(pstns, "|") + "-" + user.getRealName();
-
+            List<Long> subResultIds = new ArrayList<>();
             for (AbilitySubForm subForm : formIn.getSubFormArray()) {
                 TFormCheckResult subFormResult = new TFormCheckResult();
                 subFormResult.setIsPass(subForm.getIsPass());
@@ -515,8 +514,10 @@ public class FormServiceImpl implements FormService {
                 subFormResult.setModifyTime(now);
                 subFormResult.setCreateUserId(user.getId());
                 subFormResult.setOrgId(Constant.orgId);
+                subFormResult.setParentResultId(formResult.getId());
                 // 保存子表打表结果
                 formCheckResultMapper.insert(subFormResult);
+                subResultIds.add(subFormResult.getId());
 
                 if(CollectionUtils.isNotEmpty(subForm.getSubFormKindArray())) {
                     for(AbilitySubFormKind formKind : subForm.getSubFormKindArray()) {
@@ -630,7 +631,7 @@ public class FormServiceImpl implements FormService {
                                 }
                                 // 保存子表
                                 if(problemVo.getIsSubList().equals(true)) {
-                                    checkinWithAppCreatedOppts |= saveSubAbilityForm(problemVo.getSubListObject(), subFormResult.getId(), user, opptDescription);
+                                    checkinWithAppCreatedOppts |= saveSubAbilityForm(problemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 1);
                                 }
                                 List<SubProblemVo> subProblemVos = problemVo.getSubProblemArray();
                                 if (CollectionUtils.isNotEmpty(subProblemVos)) {
@@ -721,7 +722,7 @@ public class FormServiceImpl implements FormService {
                                         }
                                         // 保存子表
                                         if (subProblemVo.getIsSubList().equals(true)) {
-                                            checkinWithAppCreatedOppts |= saveSubAbilityForm(subProblemVo.getSubListObject(), subFormResult.getId(), user, opptDescription);
+                                            checkinWithAppCreatedOppts |= saveSubAbilityForm(subProblemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 2);
                                         }
                                     }
                                 }
@@ -732,7 +733,7 @@ public class FormServiceImpl implements FormService {
                 }
             }
             // 保存报告
-            Long reportId = saveAbilityReport(user, now, formResult.getId(), formIn.getShopID(), formIn.getFormID(), formIn.getPatrolShopArrangeID());
+            Long reportId = saveAbilityReport(user, now, formResult.getId(), subResultIds, formIn.getShopID(), formIn.getFormID(), formIn.getPatrolShopArrangeID());
             return reportId;
         } catch (Exception e) {
             logger.error("保存能力模型打表结果失败！", e);
@@ -743,7 +744,8 @@ public class FormServiceImpl implements FormService {
         }
     }
 
-    private boolean saveSubAbilityForm(AbilitySubForm subForm, Long resultFormId, SysUser user, String opptDescription) {
+    private boolean saveSubAbilityForm(AbilitySubForm subForm, Long parentFormId, Long resultFormId, SysUser user,
+                                       String opptDescription, int subjectType) {
         Date now = new Date();
         boolean checkinWithAppCreatedOppts = false;
         TFormCheckResult subFormResult = new TFormCheckResult();
@@ -751,12 +753,14 @@ public class FormServiceImpl implements FormService {
         subFormResult.setIsDone(subForm.getIsDone());
         subFormResult.setFormMainId(subForm.getSubFormID());
         subFormResult.setFormMainName(subForm.getSubFormName());
+        subFormResult.setSubjectType(subjectType);
         subFormResult.setResultCanUse(subForm.getIsUsable());
-        subFormResult.setParentFormId(resultFormId);
+        subFormResult.setParentFormId(parentFormId);
         subFormResult.setCreateTime(now);
         subFormResult.setModifyTime(now);
         subFormResult.setCreateUserId(user.getId());
         subFormResult.setOrgId(Constant.orgId);
+        subFormResult.setParentResultId(resultFormId);
         // 保存子表打表结果
         formCheckResultMapper.insert(subFormResult);
 
@@ -968,7 +972,7 @@ public class FormServiceImpl implements FormService {
         return checkinWithAppCreatedOppts;
     }
 
-    private Long saveAbilityReport(SysUser user, Date now, Long resultId, Long shopId, Long formId, Long frontPlanId) {
+    private Long saveAbilityReport(SysUser user, Date now, Long resultId, List<Long> subResultIds, Long shopId, Long formId, Long frontPlanId) {
         // 保存报告
         TReport report = new TReport();
 
@@ -1021,7 +1025,9 @@ public class FormServiceImpl implements FormService {
         }
 
         // 整理关联的机会点，并存入报告与机会点关联表
-        List<TFormOpptValue> tFormOpptValues = formOpptValueMapper.findOpptsByResultId(resultId);
+        Example opptValueExp = new Example(TFormOpptValue.class);
+        opptValueExp.createCriteria().andIn("formResultId", subResultIds).andEqualTo("isPick", true);
+        List<TFormOpptValue> tFormOpptValues = formOpptValueMapper.selectByExample(opptValueExp);
         List<TReportOppt> tReportOppts = new ArrayList<>();
         for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
             TReportOppt tReportOppt = new TReportOppt();

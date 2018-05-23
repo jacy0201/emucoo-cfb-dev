@@ -4,6 +4,7 @@ import com.emucoo.common.base.model.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "t_form_value")
 public class TFormValue extends BaseEntity {
@@ -61,6 +62,9 @@ public class TFormValue extends BaseEntity {
 
     @Column(name = "is_pass")
     private Boolean isPass;
+
+    @Transient
+    private List<TFormPbmVal> formPbmValList;
 
     /**
      * @return id
@@ -248,5 +252,13 @@ public class TFormValue extends BaseEntity {
 
     public void setIsPass(Boolean isPass) {
         this.isPass = isPass;
+    }
+
+    public List<TFormPbmVal> getFormPbmValList() {
+        return formPbmValList;
+    }
+
+    public void setFormPbmValList(List<TFormPbmVal> formPbmValList) {
+        this.formPbmValList = formPbmValList;
     }
 }
