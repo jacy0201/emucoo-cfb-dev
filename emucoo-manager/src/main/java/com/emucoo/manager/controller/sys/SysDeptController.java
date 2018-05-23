@@ -9,7 +9,6 @@ import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.manager.shiro.ShiroUtils;
-import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.*;
 import io.swagger.annotations.Api;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.JedisCluster;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 
@@ -125,7 +123,6 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="获取用户关系")
 	@PostMapping("/listUserRelation")
 	//@RequiresPermissions("sys:dept:listUserRelation")
-	//@ApiImplicitParam(name="dptId",value="机构id",dataType="long",required=true,paramType="query")
 	public ApiResult<List<SysUserRelation>> listUserRelation(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getDptId()==null){return fail(ApiExecStatus.INVALID_PARAM,"dptId 不能为空!");}
 		List<SysUserRelation> list=sysUserRelationService.listUserRelation(sysUserRelation.getDptId());
@@ -196,10 +193,6 @@ public class SysDeptController extends BaseResource {
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
         //检查该用户是否有下级，如果有下级需先删除下级用户
-		/*Example example =new Example(SysUserRelation.class);
-		example.createCriteria().andEqualTo("parentUserId",sysUserRelation.getUserId());
-		List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
-		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}*/
         SysUserRelation sysUserRelation1=sysUserRelationService.findById(sysUserRelation.getId());
         Long userId=sysUserRelation1.getUserId();
         Long parentUserId=sysUserRelation1.getParentUserId();
@@ -230,11 +223,6 @@ public class SysDeptController extends BaseResource {
 	@ApiOperation(value="选择人员")
 	@PostMapping("/listUser")
 	//@RequiresPermissions("sys:user:listUser")
-	/*@ApiImplicitParams({
-			@ApiImplicitParam(name="dptId",value="部门id",dataType="long",required=true,paramType="query"),
-			@ApiImplicitParam(name="realName",value="姓名",dataType="string",required=false,paramType="query"),
-			@ApiImplicitParam(name="postId",value="岗位id",dataType="long",required=false,paramType="query")
-	})*/
 	public ApiResult<List<SysUser>> listUser(@RequestBody ParamVo<UserQuery> param) {
 		UserQuery userQuery=param.getData();
 		Long deptId=userQuery.getDptId();
