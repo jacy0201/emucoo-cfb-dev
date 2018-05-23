@@ -4,22 +4,24 @@ import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.sys.DeptQuery;
 import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.manager.shiro.ShiroUtils;
+import com.emucoo.manager.utils.RedisClusterClient;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.JedisCluster;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
 
 
 /**
@@ -43,6 +45,9 @@ public class SysDeptController extends BaseResource {
 
 	@Autowired
 	private SysPostService sysPostService;
+
+	@Autowired
+	private JedisCluster jedisCluster;
 
 	/**
 	 * 查询机构列表
@@ -147,6 +152,17 @@ public class SysDeptController extends BaseResource {
 		sysUserRelation.setCreateTime(new Date());
 		sysUserRelation.setCreateUserId(ShiroUtils.getUserId());
 		sysUserRelationService.saveSelective(sysUserRelation);
+        String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId());
+        if(StringUtil.isNotEmpty(userIdStr)){
+            String[] idArr = userIdStr.split(",");
+            //判断是否存在该下级
+            List<String> userIdList= Arrays.asList(idArr);
+            if(!userIdList.contains(sysUserRelation.getUserId().toString())){
+                userIdList.add(sysUserRelation.getUserId().toString());
+                jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
+            }
+
+        }
 		return success("success");
 	}
 
@@ -179,12 +195,28 @@ public class SysDeptController extends BaseResource {
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
 		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-		//检查该用户是否有下级，如果有下级需先删除下级用户
+        //检查该用户是否有下级，如果有下级需先删除下级用户
 		/*Example example =new Example(SysUserRelation.class);
 		example.createCriteria().andEqualTo("parentUserId",sysUserRelation.getUserId());
 		List<SysUserRelation> list=sysUserRelationService.selectByExample(example);
 		if(null!=list && list.size()>0){return fail(ApiExecStatus.FAIL,"请先删除下级用户!");}*/
+        SysUserRelation sysUserRelation1=sysUserRelationService.findById(sysUserRelation.getId());
+        Long userId=sysUserRelation1.getUserId();
+        Long parentUserId=sysUserRelation1.getParentUserId();
 		sysUserRelationService.deleteById(sysUserRelation.getId());
+        String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + parentUserId);
+        if(StringUtil.isNotEmpty(userIdStr)){
+            String[] idArr = userIdStr.split(",");
+			List<String> userIdList= Arrays.asList(idArr);
+            //缓存中删除该下级
+			for(int i=0 ;i<userIdList.size();i++){
+				if(userId.equals(userIdList.get(i))) {
+					userIdList.remove(i);
+					break;
+				}
+			}
+			jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
+        }
 		return success("success");
 	}
 
