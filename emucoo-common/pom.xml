@@ -43,6 +43,7 @@
 			<artifactId>xmpush-server-api</artifactId>
 			<version>0.0.9</version>
 		</dependency>
+
 	</dependencies>
 
 </project>
