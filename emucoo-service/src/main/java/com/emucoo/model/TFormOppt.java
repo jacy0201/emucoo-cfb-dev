@@ -25,6 +25,9 @@ public class TFormOppt extends BaseEntity {
     @Column(name = "oppt_id")
     private Long opptId;
 
+    @Transient
+    private String opptIdStr;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -88,6 +91,14 @@ public class TFormOppt extends BaseEntity {
      */
     public void setOpptId(Long opptId) {
         this.opptId = opptId;
+    }
+
+    public String getOpptIdStr() {
+        return opptIdStr;
+    }
+
+    public void setOpptIdStr(String opptIdStr) {
+        this.opptIdStr = opptIdStr;
     }
 
     public String getOpptName() {
