@@ -64,9 +64,10 @@
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
         WHERE  (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
-        AND    (year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
+        AND (   (year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
                 OR
                (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr})
+             )
         GROUP BY t1.id
         ORDER BY t1.execute_end_date DESC
     </select>
@@ -77,7 +78,8 @@
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
         WHERE (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
-        AND   #{executeDate} between t1.execute_begin_date and t1.execute_end_date
+        AND
+        #{executeDate} between t1.execute_begin_date and t1.execute_end_date
         GROUP BY t1.id
         ORDER BY t1.execute_end_date DESC
     </select>
@@ -268,7 +270,9 @@
             c.name as taskItemTitle,
             c.feedback_img_example_id as itemImgUrls,
             case when c.feedback_need_text = 0 then 1 else 2 end as feedbackText,
-            case when c.feedback_img_type = 0 then 1 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2 else 3 end as feedbackImg,
+            case when c.feedback_img_type = 0 then 1
+                 when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2
+                 else 3 end as feedbackImg,
             c.feedback_num_name as digitalItemName,
             c.feedback_num_type as digitalItemType,
             b.id as taskSubID,
@@ -294,4 +298,14 @@
         where a.id=#{loopWorkId}
     </select>
 
+    <select id="filterExecuteRemindWorks" resultType="com.emucoo.model.TLoopWork">
+        select * from t_loop_work where work_status = 1
+            and ( (execute_remind_time is null and execute_deadline between #{deadTimeLeft} and #{deadTimeRight})
+                or (execute_remind_time between #{remindTimeLeft} and #{remindTimeRight}) )
+    </select>
+
+    <select id="filterAuditRemindWorks" resultType="com.emucoo.model.TLoopWork">
+        select * from t_loop_work where work_status = 2 and work_result is null
+            and audit_deadline between #{deadTimeLeft} and #{deadTimeRight}
+    </select>
 </mapper>

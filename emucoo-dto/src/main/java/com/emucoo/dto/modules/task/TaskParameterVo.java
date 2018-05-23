@@ -8,19 +8,21 @@ import java.util.List;
 public class TaskParameterVo {
 
     @Data
-    public class IdNamePair {
+    public static class IdNamePair {
         private Long id;
         private String name;
+
     }
 
     @Data
-    public class DeptPosition {
+    public static class DeptPosition {
         private IdNamePair dept;
         private List<IdNamePair> positions;
+
     }
 
     @Data
-    public class TaskOption {
+    public static class TaskOption {
         private Long id;
         private String name;
         private String score;
@@ -36,6 +38,7 @@ public class TaskParameterVo {
         private Integer feedbackImgCount;
         private Integer feedbackImgType;
         private String feedbackImgSampleUrl;
+
     }
 
     private Long id;
@@ -74,7 +77,6 @@ public class TaskParameterVo {
     private Integer repeatType;
     private Integer intervalDays;
     private List<Integer> days;
-
 
 
 }

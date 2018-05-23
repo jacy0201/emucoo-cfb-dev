@@ -13,7 +13,6 @@
         <result column="position_name" property="positionName" jdbcType="VARCHAR"/>
         <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
         <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
-        <result column="exec_type" property="execType" jdbcType="BIT"/>
         <result column="person_type" property="personType" jdbcType="BIT"/>
     </resultMap>
 

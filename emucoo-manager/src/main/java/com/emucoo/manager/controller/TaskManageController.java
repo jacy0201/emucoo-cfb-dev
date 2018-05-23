@@ -28,7 +28,7 @@ public class TaskManageController extends BaseResource {
 
     @ApiOperation(value="常规任务列表", httpMethod = "POST")
     @PostMapping("/list")
-    public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<TaskParameterVo> param) {
+    public ApiResult<PageInfo> listTasks(@RequestBody ParamVo<TaskParameterVo> param) {
 
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();

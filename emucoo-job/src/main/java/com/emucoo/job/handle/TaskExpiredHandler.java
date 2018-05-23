@@ -7,7 +7,7 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@JobHandler("TaskExpiredHandler")
+@JobHandler("自动提交或审核超过截止时间的任务")
 @Component
 public class TaskExpiredHandler extends IJobHandler {
 

@@ -22,5 +22,5 @@ public class CalendarListMonthOut {
     @ApiModelProperty(value="用户ID",name="userId",required = true)
     private Long userId;
     //行事历任务
-    private List<WorkVo_O.Work> workArr;
+    private List<CalendarVO> workArr;
 }

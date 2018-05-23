@@ -31,12 +31,6 @@ public class TTaskPerson extends BaseEntity {
     private String shopName;
 
     /**
-     * 1：选择部门 2：选择店铺
-     */
-    @Column(name = "exec_type")
-    private Boolean execType;
-
-    /**
      * 1:执行人 2：抄送人
      */
     @Column(name = "person_type")
@@ -110,24 +104,6 @@ public class TTaskPerson extends BaseEntity {
      */
     public void setShopId(Long shopId) {
         this.shopId = shopId;
-    }
-
-    /**
-     * 获取1：选择部门 2：选择店铺
-     *
-     * @return exec_type - 1：选择部门 2：选择店铺
-     */
-    public Boolean getExecType() {
-        return execType;
-    }
-
-    /**
-     * 设置1：选择部门 2：选择店铺
-     *
-     * @param execType 1：选择部门 2：选择店铺
-     */
-    public void setExecType(Boolean execType) {
-        this.execType = execType;
     }
 
     /**

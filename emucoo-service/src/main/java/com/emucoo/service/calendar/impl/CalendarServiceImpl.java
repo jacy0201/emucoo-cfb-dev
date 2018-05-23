@@ -2,11 +2,11 @@ package com.emucoo.service.calendar.impl;
 
 import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.modules.calendar.*;
-import com.emucoo.dto.modules.task.WorkVo_O;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
+import com.emucoo.utils.DateUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,33 +47,42 @@ public class CalendarServiceImpl implements CalendarService {
 
     public CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListIn, Long currentUserId) {
         CalendarListMonthOut calendarListMonthOut = new CalendarListMonthOut();
-        WorkVo_O.Work work = null;
-        List<WorkVo_O.Work> workArr = new ArrayList<>();
+        CalendarVO calendarVO = null;
+        List<CalendarVO> workArr = new ArrayList<>();
         calendarListMonthOut.setMonth(calendarListIn.getMonth());
         calendarListMonthOut.setUserId(calendarListIn.getUserId());
         String yearStr = calendarListIn.getMonth().substring(0, 4);
         String monthStr = calendarListIn.getMonth().substring(4, 6);
         Example example = new Example(TFrontPlan.class);
-        example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
-                .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
-                .andEqualTo("isDel", 0);
-        example.setOrderByClause("plan_precise_time desc");
-        List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
-        //设置巡店安排
-        if (null != list && list.size() > 0) {
-            for (TFrontPlan frontPlan : list) {
-                work = getFrontPlanWork(frontPlan);
-                workArr.add(work);
-            }
-            //设置 常规任务,指派任务，改善任务
-            List<TLoopWork> loopWorkList = tLoopWorkMapper.calendarMonthList(calendarListIn.getUserId(), yearStr, monthStr);
-            if (null != loopWorkList && loopWorkList.size() > 0) {
-                for (TLoopWork tLoopWork : loopWorkList) {
-                    work = getLoopWork(tLoopWork);
-                    workArr.add(work);
+        //设置每月的天数
+        int dayOfMonth=31;
+        if("02".equals(monthStr)) dayOfMonth=28;
+        else if("04".equals(monthStr)||"06".equals(monthStr)||"09".equals(monthStr)||"11".equals(monthStr)) dayOfMonth=30;
+        //循环获取每一天的 工作任务；
+        String dt="";
+        for (int i=1;i<=dayOfMonth;i++){
+            if(i<10) dt="0"+i;
+            else dt=i+"";
+            calendarVO =new CalendarVO();
+            calendarVO.setDate(yearStr+"-"+monthStr+"-"+dt);
+            List<CalendarVO.Inspection> inspectionList=null;
+            example.clear();
+            example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
+                    .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
+                    .andEqualTo("isDel", 0).andEqualTo("planDate",calendarVO.getDate());
+            example.setOrderByClause("plan_precise_time desc");
+            List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
+            //设置巡店安排
+            if (null != list && list.size() > 0) {
+                inspectionList= calendarVO.getInspectionList();
+                for (TFrontPlan frontPlan : list) {
+                    inspectionList.add(getFrontPlanWork(frontPlan));
                 }
+                calendarVO.setInspectionList(inspectionList);
             }
+            workArr.add(calendarVO);
         }
+
         calendarListMonthOut.setWorkArr(workArr);
         //设置最近联系人顺序
         if(!calendarListIn.getUserId().equals(currentUserId))
@@ -108,8 +117,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     public CalendarListDateOut listCalendarDate(CalendarListDateIn calendarListIn) {
         CalendarListDateOut calendarListDateOut = new CalendarListDateOut();
-        WorkVo_O.Work work = null;
-        List<WorkVo_O.Work> workArr = new ArrayList<>();
+        CalendarVO calendarVO = new CalendarVO();
         calendarListDateOut.setExecuteDate(calendarListIn.getExecuteDate());
         calendarListDateOut.setUserId(calendarListIn.getUserId());
         Example example = new Example(TFrontPlan.class);
@@ -118,23 +126,27 @@ public class CalendarServiceImpl implements CalendarService {
                 .andEqualTo("isDel", false);
         example.setOrderByClause("plan_precise_time desc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
+        List<CalendarVO.Inspection> inspectionList=null;
+        calendarVO.setDate(calendarListIn.getExecuteDate());
         //设置巡店安排
         if (null != list && list.size() > 0) {
+            inspectionList = calendarVO.getInspectionList();
             for (TFrontPlan frontPlan : list) {
-                work = getFrontPlanWork(frontPlan);
-                workArr.add(work);
+                inspectionList.add(getFrontPlanWork(frontPlan));
             }
-            //设置 常规任务,指派任务，改善任务
-            List<TLoopWork> loopWorkList = tLoopWorkMapper.calendarDateList(calendarListIn.getUserId(), calendarListIn.getExecuteDate());
-            if (null != loopWorkList && loopWorkList.size() > 0) {
-                for (TLoopWork tLoopWork : loopWorkList) {
-                    work = getLoopWork(tLoopWork);
-                    workArr.add(work);
-                }
-            }
-
+            calendarVO.setInspectionList(inspectionList);
         }
-        calendarListDateOut.setWorkArr(workArr);
+        //设置 常规任务,指派任务，改善任务
+        List<TLoopWork> loopWorkList = tLoopWorkMapper.calendarDateList(calendarListIn.getUserId(), calendarListIn.getExecuteDate());
+        List<CalendarVO.Task> taskList=null;
+        if (null != loopWorkList && loopWorkList.size() > 0) {
+            taskList= calendarVO.getTaskList();
+            for (TLoopWork tLoopWork : loopWorkList) {
+                taskList.add(getLoopWork(tLoopWork));
+            }
+            calendarVO.setTaskList(taskList);
+        }
+        calendarListDateOut.setCalendarVO(calendarVO);
         return calendarListDateOut;
     }
 
@@ -208,13 +220,9 @@ public class CalendarServiceImpl implements CalendarService {
         return list;
     }
 
-    private WorkVo_O.Work getFrontPlanWork(TFrontPlan frontPlan) {
-        WorkVo_O.Work work = new WorkVo_O.Work();
-        work.setId(frontPlan.getId());
-        work.setSubID(frontPlan.getSubPlanId().toString());
-        work.setWorkID(frontPlan.getId().toString());
-        work.setWorkType(ConstantsUtil.LoopWork.TYPE_FOUR);
-        WorkVo_O.Work.Inspection inspection = work.getInspection();
+    private  CalendarVO.Inspection getFrontPlanWork(TFrontPlan frontPlan) {
+        CalendarVO.Inspection inspection= new CalendarVO.Inspection();
+        inspection.setId(frontPlan.getId());
         inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单
@@ -226,27 +234,24 @@ public class CalendarServiceImpl implements CalendarService {
             TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(formList.get(0).getFormMainId());
             inspection.setInspTitle(shopInfo.getShopName() + tFormMain.getName() + "检查");
         }
-        work.setInspection(inspection);
-        return work;
+        return inspection;
     }
 
-    private WorkVo_O.Work getLoopWork(TLoopWork tLoopWork) {
-        WorkVo_O.Work work = new WorkVo_O.Work();
-        work.setId(tLoopWork.getId());
-        work.setWorkID(tLoopWork.getWorkId());
-        work.setWorkType(tLoopWork.getType());
-        work.setSubID(tLoopWork.getSubWorkId());
+    private CalendarVO.Task getLoopWork(TLoopWork tLoopWork) {
+        CalendarVO.Task task=new CalendarVO.Task();
+        task.setId(tLoopWork.getId());
+        task.setWorkID(tLoopWork.getWorkId());
+        task.setWorkType(tLoopWork.getType());
+        task.setSubID(tLoopWork.getSubWorkId());
         TTask tt = taskMapper.selectByPrimaryKey(tLoopWork.getTaskId());
-        work.getTask().setTaskTitle(tt.getName());
-        work.getTask().setTaskStatus(tLoopWork.getWorkStatus());
-        work.getTask().setTaskResult(tLoopWork.getWorkResult());
-        work.getTask().setTaskSourceType(0);
-        work.getTask().setTaskSourceName("");
-        work.getTask().setTaskDeadline(tLoopWork.getExecuteDeadline());
+        task.setTaskTitle(tt.getName());
+        task.setTaskStatus(tLoopWork.getWorkStatus());
+        task.setTaskResult(tLoopWork.getWorkResult());
+        task.setTaskDeadline(tLoopWork.getExecuteDeadline());
         SysUser u = sysUserMapper.selectByPrimaryKey(tLoopWork.getExcuteUserId());
-        work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
-        work.getTask().setTaskSubName(u.getRealName());
-        return work;
+        task.setTaskSubHeadUrl(u.getHeadImgUrl());
+        task.setTaskSubName(u.getRealName());
+        return task;
     }
 
 }

@@ -50,8 +50,8 @@
     <select id="countCommonTaskByName" resultType="java.lang.Integer">
         select count(1) from t_task
         <where>
-            is_del !=1 and type = 1
-            <if test="keyword != null">
+            (is_del = 0 or is_del is null) and type = 1
+            <if test="keyword != null and keyword != ''">
                 and name like concat('%', #{keyword}, '%')
             </if>
         </where>
@@ -60,8 +60,8 @@
     <select id="listCommonTaskByName" resultMap="BaseResultMap">
         select * from t_task
         <where>
-            is_del != 1 and type = 1
-            <if test="keyword != null">
+            (is_del = 0 or is_del is null) and type = 1
+            <if test="keyword != null and keyword != ''">
                 and name like concat('%', #{keyword}, '%')
             </if>
         </where>
@@ -69,8 +69,8 @@
         limit #{pageStart}, #{pageSize}
     </select>
 
-    <select id="judgeExistCommonTask" resultMap="BaseResultMap">
-        select count(1) from t_task is_del != 1 and type = 1 and name = #{taskName}
+    <select id="judgeExistCommonTask" resultType="java.lang.Integer">
+        select count(1) from t_task where (is_del = 0 or is_del is null) and type = 1 and name = #{taskName}
     </select>
 
     <update id="removeCommonTaskByIds">
@@ -94,7 +94,7 @@
     </update>
 
     <select id="filterAvailableCommonTask" resultType="com.emucoo.model.TTask">
-        select * from t_task where is_del != 1 and #{tomorrow} between task_begin_date and task_end_date
+        select * from t_task where (is_del = 0 or is_del is null) and #{tomorrow} between task_begin_date and task_end_date
     </select>
 
 </mapper>
