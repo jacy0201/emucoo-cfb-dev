@@ -215,9 +215,11 @@ public class CalendarServiceImpl implements CalendarService {
         } else {
             String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
             String[] userIdArr = userStr.split(",");
-            for (int n = 0; n < userIdArr.length; n++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
-                list.add(sysUser);
+            if(null!=userIdArr && userIdArr.length>0) {
+                for (int n = 0; n < userIdArr.length; n++) {
+                    SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
+                    list.add(sysUser);
+                }
             }
         }
         return list;
