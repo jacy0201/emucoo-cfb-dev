@@ -436,7 +436,7 @@ public class FormManageServiceImpl implements FormManageService {
      * 保存子表数据
      * @param formMain
      * @param parentFormId
-     * @param i
+     * @param
      * @return
      */
     private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId, int subjectType) {
@@ -787,6 +787,10 @@ public class FormManageServiceImpl implements FormManageService {
     @Transactional(rollbackFor = Exception.class)
     public void addFormOppt(List<TFormOppt> tFormOpptList){
         for (TFormOppt tFormOppt : tFormOpptList){
+            if(null!=tFormOppt.getSubProblemId())
+                tFormOppt.setProblemType(2);
+            else
+                tFormOppt.setProblemType(1);
             tFormOppt.setCreateTime(new Date());
             insertListOpt(tFormOppt);
         }
@@ -799,14 +803,27 @@ public class FormManageServiceImpl implements FormManageService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editFormOppt(List<TFormOppt> tFormOpptList){
+        //先删除之前关联的机会点
+        Example example =new Example(TFormOppt.class);
         for (TFormOppt tFormOppt : tFormOpptList){
-            //先删除之前关联的机会点
-            Example example =new Example(TFormOppt.class);
-            example.createCriteria().andEqualTo("problemId",tFormOppt.getProblemId())
-            .andEqualTo("subProblemId",tFormOppt.getSubProblemId());
-            //添加机会点
+            example.clear();
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+            if(null!=tFormOppt.getSubProblemId()){
+                criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
+            }
+            formOpptMapper.deleteByExample(criteria);
+        }
+        //关联机会点
+        for (TFormOppt tFormOppt : tFormOpptList){
+            if(null!=tFormOppt.getSubProblemId())
+                tFormOppt.setProblemType(2);
+            else
+                tFormOppt.setProblemType(1);
+            tFormOppt.setModifyTime(new Date());
             insertListOpt(tFormOppt);
         }
+
     }
 
     private void insertListOpt(TFormOppt tFormOppt) {
