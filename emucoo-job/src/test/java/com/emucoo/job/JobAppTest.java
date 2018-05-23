@@ -23,7 +23,7 @@ import java.util.Map;
 @SpringBootTest
 public class JobAppTest {
 
-    @Autowired
+   /*@Autowired
     private MsgPushTool msgPushTool;
 
     @Autowired
@@ -37,6 +37,6 @@ public class JobAppTest {
         Map<String, String> extra = new HashMap<>();
         int count = msgPushTool.pushMessage("test", "test", extra, tokens);
         Assert.assertTrue(count > 0);
-    }
+    }*/
 
 }
