@@ -1,5 +1,6 @@
 package com.emucoo.job;
 
+import com.emucoo.common.util.MsgPushing;
 import com.emucoo.mapper.SysUserMapper;
 import com.emucoo.model.SysUser;
 import org.junit.Assert;
@@ -23,8 +24,8 @@ import java.util.Map;
 @SpringBootTest
 public class JobAppTest {
 
-   /*@Autowired
-    private MsgPushTool msgPushTool;
+    @Autowired
+    private MsgPushing msgPushing;
 
     @Autowired
     private SysUserMapper userMapper;
@@ -35,8 +36,8 @@ public class JobAppTest {
         List<String> tokens = new ArrayList<>();
         tokens.add(user.getPushToken());
         Map<String, String> extra = new HashMap<>();
-        int count = msgPushTool.pushMessage("test", "test", extra, tokens);
+        int count = msgPushing.pushMessage("test", "test", extra, tokens);
         Assert.assertTrue(count > 0);
-    }*/
+    }
 
 }
