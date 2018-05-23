@@ -242,7 +242,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private CalendarVO.Task getLoopWork(TLoopWork tLoopWork) {
         CalendarVO.Task task=new CalendarVO.Task();
-        task.setId(tLoopWork.getId());
+        task.setTaskId(tLoopWork.getId());
         task.setWorkID(tLoopWork.getWorkId());
         task.setWorkType(tLoopWork.getType());
         task.setSubID(tLoopWork.getSubWorkId());
