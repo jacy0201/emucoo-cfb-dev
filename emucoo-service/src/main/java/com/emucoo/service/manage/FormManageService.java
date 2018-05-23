@@ -3,6 +3,7 @@ package com.emucoo.service.manage;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.model.TFormMain;
+import com.emucoo.model.TFormOppt;
 
 import java.util.List;
 
@@ -37,4 +38,16 @@ public interface FormManageService {
     void saveAbilityForm(AbilityFormMain formMain);
 
     AbilityFormMain getAbilityForm(GetFormInfoIn formIn);
+
+    /**
+     * 关联机会点
+     * @param tFormOpptList
+     */
+    void addFormOppt(List<TFormOppt> tFormOpptList);
+
+    /**
+     * 编辑机会点
+     * @param tFormOppt
+     */
+    void editFormOppt(List<TFormOppt> tFormOpptList);
 }

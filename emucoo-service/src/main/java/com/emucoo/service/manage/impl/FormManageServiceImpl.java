@@ -777,4 +777,49 @@ public class FormManageServiceImpl implements FormManageService {
         }
         return abilitySubForm;
     }
+
+
+    /**
+     * 关联机会点
+     * @param tFormOpptList
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addFormOppt(List<TFormOppt> tFormOpptList){
+        for (TFormOppt tFormOppt : tFormOpptList){
+            tFormOppt.setCreateTime(new Date());
+            insertListOpt(tFormOppt);
+        }
+    }
+
+    /**
+     * 编辑机会点
+     * @param tFormOpptList
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void editFormOppt(List<TFormOppt> tFormOpptList){
+        for (TFormOppt tFormOppt : tFormOpptList){
+            //先删除之前关联的机会点
+            Example example =new Example(TFormOppt.class);
+            example.createCriteria().andEqualTo("problemId",tFormOppt.getProblemId())
+            .andEqualTo("subProblemId",tFormOppt.getSubProblemId());
+            //添加机会点
+            insertListOpt(tFormOppt);
+        }
+    }
+
+    private void insertListOpt(TFormOppt tFormOppt) {
+        String opptIdStr=tFormOppt.getOpptIdStr();
+        String [] optArr =opptIdStr.split(",");
+        List<TFormOppt> list=null;
+        if( null!=optArr && optArr.length>0 ){
+            list=new ArrayList<>();
+            for(String opt:optArr){
+                tFormOppt.setOpptId(Long.parseLong(opt));
+                list.add(tFormOppt);
+            }
+            formOpptMapper.insertList(list);
+        }
+    }
 }

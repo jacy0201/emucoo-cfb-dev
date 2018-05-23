@@ -9,6 +9,7 @@ import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.manager.config.QiNiuConfig;
 import com.emucoo.model.TFormMain;
+import com.emucoo.model.TFormOppt;
 import com.emucoo.service.manage.FormManageService;
 import com.github.pagehelper.PageInfo;
 import com.qiniu.util.Auth;
@@ -192,5 +193,28 @@ public class FormManageController extends BaseResource {
         }
         AbilityFormMain form = formManageService.getAbilityForm(formIn);
         return success(form);
+    }
+
+    @ApiOperation(value = "添加能力模型机会点")
+    @PostMapping(value = "/addFormOppt")
+    public ApiResult addFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
+        List<TFormOppt> tFormOpptList = paramVo.getData();
+        if(null!=tFormOpptList && tFormOpptList.size()>0)
+            formManageService.addFormOppt(tFormOpptList);
+        else
+            return fail(ApiExecStatus.INVALID_PARAM, "集合不能为空!");
+
+        return success("success");
+    }
+
+    @ApiOperation(value = "编辑能力模型机会点")
+    @PostMapping(value = "/editFormOppt")
+    public ApiResult editFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
+        List<TFormOppt> tFormOpptList = paramVo.getData();
+        if(null==tFormOpptList || tFormOpptList.size()<=0){
+            return fail(ApiExecStatus.INVALID_PARAM, "集合不能为空!");
+        }
+        formManageService.editFormOppt(tFormOpptList);
+        return success("success");
     }
 }
