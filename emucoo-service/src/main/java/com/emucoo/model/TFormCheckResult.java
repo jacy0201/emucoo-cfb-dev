@@ -105,6 +105,11 @@ public class TFormCheckResult extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    @Column(name = "parent_result_id")
+    private Long parentResultId;
+
+    @Column(name = "subject_type")
+    private Integer subjectType;
 
     /**
      * @return id
@@ -371,5 +376,21 @@ public class TFormCheckResult extends BaseEntity {
 
     public void setParentFormId(Long parentFormId) {
         this.parentFormId = parentFormId;
+    }
+
+    public Long getParentResultId() {
+        return parentResultId;
+    }
+
+    public void setParentResultId(Long parentResultId) {
+        this.parentResultId = parentResultId;
+    }
+
+    public Integer getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(Integer subjectType) {
+        this.subjectType = subjectType;
     }
 }

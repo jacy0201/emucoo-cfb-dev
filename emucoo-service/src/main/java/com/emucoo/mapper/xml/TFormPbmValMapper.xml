@@ -19,6 +19,7 @@
         <result column="problem_description" property="problemDescription" jdbcType="LONGVARCHAR"/>
         <result column="notes" jdbcType="VARCHAR" property="notes"/>
         <result column="sub_form_id" jdbcType="BIGINT" property="subFormId"/>
+        <result column="is_pass" property="isPass" jdbcType="BIT"/>
     </resultMap>
 
     <select id="findImportPbmValsByFormAndArrange" resultType="com.emucoo.model.TFormPbmVal">

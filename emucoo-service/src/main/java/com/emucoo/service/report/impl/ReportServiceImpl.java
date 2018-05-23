@@ -2,7 +2,11 @@ package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
-import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
+import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
+import com.emucoo.dto.modules.abilityForm.ProblemVo;
+import com.emucoo.dto.modules.abilityForm.SubProblemVo;
+import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
 import com.emucoo.dto.modules.report.AdditionItemVo;
 import com.emucoo.dto.modules.report.ChancePointVo;
 import com.emucoo.dto.modules.report.ChecklistKindScoreVo;
@@ -596,7 +600,7 @@ public class ReportServiceImpl implements ReportService {
         Long reportId = reportIn.getReportID();
         TReport report = tReportMapper.selectByPrimaryKey(reportId);
         if(report == null) {
-            return null;
+            throw new BaseException("报告不存在！");
         }
         reportVo.setReportID(reportId);
         reportVo.setShopID(report.getShopId());
@@ -756,6 +760,169 @@ public class ReportServiceImpl implements ReportService {
         List<ReportWorkVo> workArr = findImproveByOppt(getOpptIn.getChanceID(), getOpptIn.getReportID());
         getOpptOut.setWorkArr(workArr);
         return getOpptOut;
+    }
+
+    public AbilityReportVo findAbilityReportInfo(SysUser user, GetReportIn reportIn) {
+        try {
+            AbilityReportVo reportVo = new AbilityReportVo();
+
+            Long reportId = reportIn.getReportID();
+            TReport report = tReportMapper.selectByPrimaryKey(reportId);
+            if (report == null) {
+                throw new BaseException("报告不存在！");
+            }
+            reportVo.setShopName(report.getShopName());
+            reportVo.setShopownerName(report.getShopkeeperName());
+            reportVo.setInspectorName(report.getReporterName());
+            reportVo.setInspectorPosition(report.getReporterPosition());
+            reportVo.setCheckDepartmentName(report.getReporterDptName());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            reportVo.setCheckDate(sdf.format(report.getCheckFormTime()));
+            TFormCheckResult result = tFormCheckResultMapper.selectByPrimaryKey(report.getFormResultId());
+            reportVo.setResultName(result.getSummary());
+
+            Example subResultExp = new Example(TFormCheckResult.class);
+            subResultExp.createCriteria().andEqualTo("parentResultId", result.getId());
+            List<TFormCheckResult> topSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
+            List<AbilitySubForm> resultSubForm = new ArrayList<>();
+            List<Long> subResultIds = new ArrayList<>();
+            for(TFormCheckResult subResult : topSubFormResults) {
+                // 只筛选经过打分且结果可用的子表结果
+                if(subResult.getIsDone().equals(true) && subResult.getResultCanUse().equals(true)) {
+                    subResultIds.add(subResult.getId());
+                    AbilitySubForm subForm = new AbilitySubForm();
+                    subForm.setSubFormID(subResult.getFormMainId());
+                    subForm.setSubFormName(subResult.getFormMainName());
+                    subForm.setIsPass(subResult.getIsPass());
+                    subForm.setIsUsable(subResult.getResultCanUse());
+                    subForm.setIsDone(subResult.getIsDone());
+                    List<TFormValue> formTypeValues = tFormValueMapper.findTypeTreeValueListUntilSubPbm(subResult.getId());
+                    if(CollectionUtils.isNotEmpty(formTypeValues)) {
+                        List<AbilitySubFormKind> subFormKinds = new ArrayList<>();
+                        for(TFormValue formtypeVal : formTypeValues) {
+                            AbilitySubFormKind subFormKind = new AbilitySubFormKind();
+                            subFormKind.setKindName(formtypeVal.getFormTypeName());
+                            subFormKind.setKindID(formtypeVal.getFromTypeId());
+                            subFormKind.setIsDone(formtypeVal.getIsDone());
+                            subFormKind.setIsPass(formtypeVal.getIsPass());
+                            List<TFormPbmVal> formPbmVals = formtypeVal.getFormPbmValList();
+                            if(CollectionUtils.isNotEmpty(formPbmVals)) {
+                                List<ProblemVo> problemArray = new ArrayList<>();
+                                for(TFormPbmVal pbmVal : formPbmVals) {
+                                    ProblemVo problemVo = new ProblemVo();
+                                    problemVo.setProblemID(pbmVal.getFormProblemId());
+                                    problemVo.setProblemName(pbmVal.getProblemName());
+                                    problemVo.setIsPass(pbmVal.getIsPass());
+                                    problemVo.setIsDone(pbmVal.getIsScore());
+                                    problemVo.setCheckMode(pbmVal.getCheckMethod());
+                                    problemVo.setNotes(pbmVal.getNotes());
+                                    problemVo.setDescription(pbmVal.getProblemDescription());
+                                    List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
+                                    if(CollectionUtils.isNotEmpty(subPbmVals)) {
+                                        problemVo.setIsSubProblem(true);
+                                        List<SubProblemVo> subProblemVos = new ArrayList<>();
+                                        for(TFormSubPbmVal subPbmVal : subPbmVals) {
+                                            SubProblemVo subProblemVo = new SubProblemVo();
+                                            subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
+                                            subProblemVo.setDescription(subPbmVal.getProblemDescription());
+                                            subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
+                                            subProblemVo.setIsPass(subPbmVal.getIsPass());
+                                            subProblemVo.setIsDone(subPbmVal.getIsScore());
+                                            subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
+                                            subProblemVo.setNotes(subPbmVal.getNotes());
+                                            if(subPbmVal.getSubFormId() != null) {
+                                                subProblemVo.setIsSubList(true);
+                                            } else {
+                                                subProblemVo.setIsSubList(false);
+                                            }
+                                            subProblemVos.add(subProblemVo);
+                                        }
+                                    } else {
+                                        problemVo.setIsSubProblem(false);
+                                    }
+                                    if(pbmVal.getSubFormId() != null) {
+                                        problemVo.setIsSubList(true);
+                                    } else {
+                                        problemVo.setIsSubList(false);
+                                    }
+                                    problemArray.add(problemVo);
+                                }
+                            }
+                            subFormKinds.add(subFormKind);
+                        }
+                    }
+                    resultSubForm.add(subForm);
+                }
+            }
+            // 查询关联的机会点信息
+            Example reportOpptExp = new Example(TReportOppt.class);
+            reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
+            List<TReportOppt> tReportOppts = tReportOpptMapper.selectByExample(reportOpptExp);
+            List<ChancePointVo> chancePointVos = new ArrayList<>();
+            for (TReportOppt tReportOppt : tReportOppts) {
+                ChancePointVo chancePointVo = new ChancePointVo();
+                chancePointVo.setChancePointID(tReportOppt.getOpptId());
+                chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
+                // 计算该机会点使用情况
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
+                chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
+                // 查询该机会点关联的题项信息
+                TFormPbmVal pbmValForThisOppt = null;
+                TFormSubPbmVal subPbmValForThisOppt = null;
+                Example formOpptValExp = new Example(TFormOpptValue.class);
+                formOpptValExp.createCriteria().andEqualTo("opptId", tReportOppt.getOpptId()).andEqualTo("isPick", true)
+                        .andIn("formResultId", subResultIds);
+                List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);
+                TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
+                if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
+                    pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
+                    subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
+                    pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
+                }
+                // 查询所属题项类型
+                TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                StringBuilder pbmCascadingRelation = new StringBuilder();
+                if (subPbmValForThisOppt == null) {
+                    pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
+                } else {
+                    pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName())
+                            .append("#").append(subPbmValForThisOppt.getSubProblemName());
+                }
+                TFormCheckResult subCheckResult = tFormCheckResultMapper.selectByPrimaryKey(formValue.getFormResultId());
+                if(subCheckResult.getParentResultId() != null) {
+                    pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#");
+                    Example subPbmValExp = new Example(TFormSubPbmVal.class);
+                    Example pbmValExp = new Example(TFormPbmVal.class);
+                    if(subCheckResult.getSubjectType().equals(2)) {
+                        subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
+                        subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
+                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
+                        pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
+                    } else {
+                        pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
+                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
+                        pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
+                    }
+                    formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                    subCheckResult = tFormCheckResultMapper.selectByPrimaryKey(formValue.getFormResultId());
+                    pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#" + formValue.getFormTypeName() + "#");
+                }
+                chancePointVo.setChanceContent(pbmCascadingRelation.toString());
+                chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());
+                List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
+                chancePointVo.setWorkArr(workArr);
+                chancePointVos.add(chancePointVo);
+            }
+            reportVo.setChancePointArr(chancePointVos);
+            return reportVo;
+        } catch (Exception e) {
+            logger.error("读取能力模型报告错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("读取能力模型报告错误！");
+        }
     }
 
 }

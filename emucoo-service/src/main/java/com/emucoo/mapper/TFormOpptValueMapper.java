@@ -24,4 +24,5 @@ public interface TFormOpptValueMapper extends MyMapper<TFormOpptValue> {
     void cleanByResultId(Long id);
 
     List<TFormOpptValue> findOpptValuesByOpptIdAndResult(@Param("resultIds")List<Long> resultIds, @Param("opptId")Long opptId);
+
 }

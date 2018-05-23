@@ -1,13 +1,10 @@
 package com.emucoo.restApi.controller.form;
 
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.form.FormIn;
-import com.emucoo.dto.modules.form.FormOut;
+import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
 import com.emucoo.dto.modules.report.GetOpptIn;
 import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
-import com.emucoo.dto.modules.report.GetReportListOut;
-import com.emucoo.dto.modules.report.GetReportOut;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
@@ -95,11 +92,13 @@ public class ReportController extends AppBaseController {
         return success(getOpptOut);
     }
 
-    /*@PostMapping("/getReportList")
-    public AppResult<List<GetReportListOut>> getReportList(@RequestBody ParamVo<GetReportIn> base) {
-        GetReportIn vo = base.getData();
-        List<GetReportListOut> reportList = tFrontPlanService.getReportList();
-        return success(reportList);
-    }*/
+    @PostMapping(value = "findAbilityReportInfo")
+    public AppResult<AbilityReportVo> findAbilityReportInfo(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
+        GetReportIn reportIn = params.getData();
+        checkParam(reportIn.getReportID(), "表单id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        AbilityReportVo report = reportService.findAbilityReportInfo(user, reportIn);
+        return success(report);
+    }
 
 }

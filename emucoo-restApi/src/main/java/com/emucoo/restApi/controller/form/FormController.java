@@ -1,6 +1,11 @@
 package com.emucoo.restApi.controller.form;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
+import com.emucoo.common.base.rest.ApiResult;
+import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
+import com.emucoo.service.manage.FormManageService;
 import com.emucoo.service.report.ReportService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.emucoo.common.Constant;
@@ -37,6 +42,9 @@ public class FormController extends AppBaseController {
 
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private FormManageService formManageService;
 
     @Autowired
     private RedisClusterClient redisClusterClient;
@@ -85,6 +93,21 @@ public class FormController extends AppBaseController {
         return success("ok");
     }
 
+    @ApiOperation(value = "获取能力模型表单配置")
+    @PostMapping(value = "/getAbilityForm")
+    public AppResult<AbilityFormMain> getAbilityForm(@RequestBody ParamVo<GetFormInfoIn> paramVo) {
+        GetFormInfoIn formIn = paramVo.getData();
+        checkParam(formIn.getFormID(), "表单id不能为空！");
+        AbilityFormMain form = formManageService.getAbilityForm(formIn);
+        return success(form);
+    }
+
+    /**
+     * 保存能力模型打表结果
+     * @param userToken
+     * @param params
+     * @return
+     */
     @PostMapping(value = "saveAbilityFormResult")
     public AppResult<Map> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
