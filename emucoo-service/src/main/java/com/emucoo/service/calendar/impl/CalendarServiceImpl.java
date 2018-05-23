@@ -100,9 +100,10 @@ public class CalendarServiceImpl implements CalendarService {
     private void setUserOrder(Long queryUserId, Long currentUserId) {
         String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
         if(StringUtil.isNotEmpty(userStr)) {
-            String[] userIdArr = userStr.split(",");
+            String[] idArr = userStr.split(",");
+            String[] userIdArr=new String[idArr.length+1];
             //元素后移
-            for (int i = userIdArr.length - 1; i > 0; i--) {
+           for (int i = userIdArr.length - 1; i > 0; i--) {
                 userIdArr[i] = userIdArr[i - 1];
             }
             //先删除被查看人员
