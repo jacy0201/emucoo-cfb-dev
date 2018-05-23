@@ -826,6 +826,17 @@ public class FormManageServiceImpl implements FormManageService {
 
     }
 
+    @Override
+    public  List<TFormOppt> getTFormOpptList(TFormOppt tFormOppt){
+        Example example=new Example(TFormOppt.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+        if(null!=tFormOppt.getSubProblemId()){
+            criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
+        }
+        return formOpptMapper.selectByExample(example);
+    }
+
     private void insertListOpt(TFormOppt tFormOppt) {
         String opptIdStr=tFormOppt.getOpptIdStr();
         String [] optArr =opptIdStr.split(",");
