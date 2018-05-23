@@ -57,7 +57,7 @@
         delete from t_form_value where form_result_id=#{resultId}
     </delete>
 
-    <select id="findTypeTreeValueListUntilSubPbm" parameterType="Long" resultType="BaseResultMap">
+    <select id="findTypeTreeValueListUntilSubPbm" parameterType="Long" resultMap="BaseResultMap">
       SELECT
       formValue.id,
       formValue.form_type_name,
