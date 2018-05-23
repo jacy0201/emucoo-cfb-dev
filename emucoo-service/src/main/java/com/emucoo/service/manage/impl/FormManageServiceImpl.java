@@ -8,7 +8,6 @@ import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
 import com.emucoo.dto.modules.abilityForm.ProblemVo;
-import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
@@ -393,7 +392,7 @@ public class FormManageServiceImpl implements FormManageService {
                                 formPbm.setCreateTime(now);
                                 formPbm.setModifyTime(now);
                                 if (problem.getIsSubList()) {
-                                    TFormMain savedformMain = saveSubForm(problem.getSubListObject(), subFormMain.getId());
+                                    TFormMain savedformMain = saveSubForm(problem.getSubListObject(), subFormMain.getId(), 1);
                                     if (savedformMain != null) {
                                         formPbm.setSubFormId(savedformMain.getId());
                                     }
@@ -410,7 +409,7 @@ public class FormManageServiceImpl implements FormManageService {
                                         formSubPbm.setFormProblemId(formPbm.getId());
                                         formSubPbm.setOrgId(Constant.orgId);
                                         if (subProblemVo.getIsSubList()) {
-                                            TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), subFormMain.getId());
+                                            TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), subFormMain.getId(), 2);
                                             if (savedformMain != null) {
                                                 formSubPbm.setSubFormId(savedformMain.getId());
                                             }
@@ -437,14 +436,16 @@ public class FormManageServiceImpl implements FormManageService {
      * 保存子表数据
      * @param formMain
      * @param parentFormId
+     * @param i
      * @return
      */
-    private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId) {
+    private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId, int subjectType) {
         Date now = new Date();
         TFormMain newFormMain = new TFormMain();
         newFormMain.setName(formMain.getSubFormName());
         newFormMain.setIsDel(DeleteStatus.COMMON.getCode());
         newFormMain.setCreateTime(now);
+        newFormMain.setSubjectType(subjectType);
         newFormMain.setModifyTime(now);
         newFormMain.setParentFormId(parentFormId);
         newFormMain.setOrgId(Constant.orgId);
@@ -479,7 +480,7 @@ public class FormManageServiceImpl implements FormManageService {
                                 formSubPbm.setFormProblemId(formPbm.getId());
                                 formSubPbm.setOrgId(Constant.orgId);
                                 if (subProblemVo.getIsSubList()) {
-                                    TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), formMain.getSubFormID());
+                                    TFormMain savedformMain = saveSubForm(subProblemVo.getSubListObject(), formMain.getSubFormID(), 2);
                                     if (savedformMain != null) {
                                         formSubPbm.setSubFormId(savedformMain.getId());
                                     }

@@ -4,6 +4,7 @@ import com.emucoo.common.base.model.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "t_form_sub_pbm_val")
 public class TFormSubPbmVal extends BaseEntity {

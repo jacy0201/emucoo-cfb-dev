@@ -70,6 +70,9 @@ public class TFormMain extends BaseEntity {
     @Column(name = "parent_form_id")
     private Long parentFormId;
 
+    @Column(name = "subject_type")
+    private Integer subjectType;
+
     @Transient
     private List<SysDept> ccDepts;
 
@@ -337,5 +340,13 @@ public class TFormMain extends BaseEntity {
 
     public void setParentFormId(Long parentFormId) {
         this.parentFormId = parentFormId;
+    }
+
+    public Integer getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(Integer subjectType) {
+        this.subjectType = subjectType;
     }
 }
