@@ -12,10 +12,12 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @JobHandler("任务审核提醒")
+@Component
 public class TaskAuditRemindHandler extends IJobHandler {
 
     @Autowired

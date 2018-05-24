@@ -4,14 +4,12 @@ import com.emucoo.model.TFormMain;
 import com.emucoo.model.TOpportunity;
 import com.emucoo.service.manage.ChancePointService;
 import com.emucoo.service.manage.FormManageService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.System;
 import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;

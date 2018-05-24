@@ -130,3 +130,24 @@ pagehelper:
 token:
   expire: 12
 
+
+jiguangPush:
+  appKey: b248954a569bdce27832e88b
+  masterSecret: a769f455149fcfa03e665b29
+  apnsProduction: false
+
+rongcloud:
+  appKey: vnroth0kvdlho
+  appSecret: 2XF06Z5BzIYN
+
+xiaomiPush:
+  appId: 2882303761517592004
+  appkey: 5671759280004
+  appSecret: VbIm64vFDiBF8rNzhWoyzw==
+  packageName: com.emucoo.app
+  isDebug: true
+
+huaweiPush:
+  appId: 100035409
+  appSecret: ae956eb5b43f5285d1f86df2a9a4d566
+  packageName: com.emucoo.app

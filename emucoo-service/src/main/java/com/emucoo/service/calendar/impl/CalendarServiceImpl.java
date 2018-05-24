@@ -6,9 +6,9 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
-import com.emucoo.utils.DateUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisCluster;
@@ -42,7 +42,7 @@ public class CalendarServiceImpl implements CalendarService {
     private TTaskMapper taskMapper;
     @Resource
     private SysUserMapper sysUserMapper;
-    @Resource
+    @Autowired
     private JedisCluster jedisCluster;
 
     public CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListIn, Long currentUserId) {
