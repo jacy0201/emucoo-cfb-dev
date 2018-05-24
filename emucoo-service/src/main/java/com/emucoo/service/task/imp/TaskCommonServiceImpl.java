@@ -462,6 +462,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
             if(dept == null){
                 dept = new TaskParameterVo.DeptPosition();
+                ccDpts.add(dept);
                 dept.setPositions(new ArrayList<>());
 
                 TaskParameterVo.IdNamePair dept0 = new TaskParameterVo.IdNamePair();
@@ -480,7 +481,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 dept1.setName(taskPerson.getPositionName());
                 dept.getPositions().add(dept1);
             }
-            ccDpts.add(dept);
         }
         vo.setCcUserPositions(ccDpts);
         if(vo.getExeUserType() != null) {
@@ -497,6 +497,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                     }
                     if (dpt == null) {
                         dpt = new TaskParameterVo.DeptPosition();
+                        exeDpts.add(dpt);
                         dpt.setPositions(new ArrayList<>());
 
                         TaskParameterVo.IdNamePair dpt0 = new TaskParameterVo.IdNamePair();
@@ -515,7 +516,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                         dpt1.setName(taskPerson.getPositionName());
                         dpt.getPositions().add(dpt1);
                     }
-                    exeDpts.add(dpt);
                 }
                 vo.setExeDeptPositions(exeDpts);
 
