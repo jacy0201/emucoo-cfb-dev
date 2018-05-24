@@ -477,12 +477,14 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 dept1.setName(taskPerson.getDptName());
                 dept.getPositions().add(dept1);
             }
+            ccDpts.add(dept);
         }
         vo.setCcUserPositions(ccDpts);
         if(vo.getExeUserType() != null) {
             if (vo.getExeUserType() == 1) { // 1: 按部门
                 List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
                 for (TTaskPerson taskPerson : exePersons) {
+                    // 这段代码是把list里的，按照dept id分组了。
                     TaskParameterVo.DeptPosition dpt = null;
                     for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
                         dpt = exeDpt.getDept().getId() == taskPerson.getDptId() ? exeDpt : null;
@@ -507,6 +509,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                         dpt1.setName(taskPerson.getPositionName());
                         dpt.getPositions().add(dpt1);
                     }
+                    exeDpts.add(dpt);
                 }
                 vo.setExeDeptPositions(exeDpts);
 
@@ -516,6 +519,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                     TaskParameterVo.IdNamePair exeShp = new TaskParameterVo.IdNamePair();
                     exeShp.setId(taskPerson.getShopId());
                     exeShp.setName(taskPerson.getShopName());
+                    exeShps.add(exeShp);
                 }
                 vo.setExeUserShops(exeShps);
                 vo.setAuditDeptId(task.getAuditDptId());

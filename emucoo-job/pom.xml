@@ -16,6 +16,16 @@
     <dependencies>
         <dependency>
             <groupId>emucoo</groupId>
+            <artifactId>emucoo-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>emucoo</groupId>
+            <artifactId>emucoo-dto</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>emucoo</groupId>
             <artifactId>emucoo-service</artifactId>
             <version>${project.version}</version>
         </dependency>

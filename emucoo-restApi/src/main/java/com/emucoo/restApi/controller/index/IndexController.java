@@ -159,10 +159,9 @@ public class IndexController extends AppBaseController {
             work.setWorkID(Long.toString(frontPlan.getId()));
             work.setWorkType(ITask.INSPECTION);
             work.setSubID("");
-//            work.getInspection().setInspEndTime(frontPlan);
-//            work.getInspection().setInspStartTime(frontPlan.getPlanTime());
+            work.getInspection().setInspEndTime(frontPlan.getPlanDate());
             work.getInspection().setInspStartTime(frontPlan.getPlanDate());
-            work.getInspection().setInspStatus(frontPlan.getStatus().intValue() == 1 ? 1 : 0);
+            work.getInspection().setInspStatus(frontPlan.getStatus() == 1 ? 1 : 0);
             TLoopPlan loopPlan = loopPlanService.findById(frontPlan.getLoopPlanId());
             if (loopPlan != null) {
                 SysDept dept = deptService.findById(loopPlan.getDptId());
@@ -184,7 +183,7 @@ public class IndexController extends AppBaseController {
             work.getTask().setTaskResult(t.getWorkResult());
             work.getTask().setTaskSourceType(0);
             work.getTask().setTaskSourceName("");
-            work.getTask().setTaskDeadline(t.getExecuteDeadline());
+            work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
             SysUser u = userService.findById(t.getExcuteUserId());
             work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
             work.getTask().setTaskSubName(u.getRealName());
@@ -222,7 +221,7 @@ public class IndexController extends AppBaseController {
                 work.getTask().setTaskResult(t.getWorkResult());
 //				work.getTask().setTaskSourceType(t.getTaskSourceType());
 //				work.getTask().setTaskSourceName(t.getTaskSourceName());
-                work.getTask().setTaskDeadline(t.getAuditDeadline());
+                work.getTask().setTaskDeadline(t.getAuditDeadline().getTime());
                 SysUser u = userService.findById(t.getAuditUserId());
                 work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
                 work.getTask().setTaskSubName(u.getRealName());
