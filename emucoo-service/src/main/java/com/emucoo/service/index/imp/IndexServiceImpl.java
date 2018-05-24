@@ -134,6 +134,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
                 reportItemVo.setIsRead(report.getReportUser().getIsRead());
                 reportItemVo.setReportTitle(report.getShopName() + "评估表");
                 reportItemVo.setReporterName(report.getReporterName());
+                reportItemVo.setReportType(report.getFormType().intValue());
                 reportItemVo.setReportID(report.getId());
                 reportItemVo.setReporterHeadUrl(report.getReporterHeadImgUrl());
                 reportItemVo.setReportSourceName(report.getReporterDptName());

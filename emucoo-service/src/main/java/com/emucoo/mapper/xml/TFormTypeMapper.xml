@@ -54,5 +54,6 @@
       RIGHT JOIN t_form_type formType ON formPbm.form_type_id = formType.id
       LEFT JOIN t_form_sub_pbm formSubPbm ON formSubPbm.form_problem_id = formPbm.id
       WHERE formType.form_main_id = #{id}
+      ORDER BY formType.id ASC, formPbm.id ASC, formSubPbm.id ASC
     </select>
 </mapper>

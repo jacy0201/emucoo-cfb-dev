@@ -53,6 +53,9 @@ public class TFormSubPbmVal extends BaseEntity {
 
     private String notes;
 
+    @Column(name = "desc_img_ids")
+    private String descImgIds;
+
     /**
      * @return id
      */
@@ -209,5 +212,13 @@ public class TFormSubPbmVal extends BaseEntity {
 
     public void setCheckMethod(String checkMethod) {
         this.checkMethod = checkMethod;
+    }
+
+    public String getDescImgIds() {
+        return descImgIds;
+    }
+
+    public void setDescImgIds(String descImgIds) {
+        this.descImgIds = descImgIds;
     }
 }

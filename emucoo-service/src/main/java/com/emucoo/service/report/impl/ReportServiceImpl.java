@@ -2,8 +2,10 @@ package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
+import com.emucoo.dto.modules.abilityForm.ProblemImg;
 import com.emucoo.dto.modules.abilityForm.ProblemVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
@@ -121,6 +123,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private TLoopWorkMapper tLoopWorkMapper;
+
+    @Autowired
+    private TFileMapper tFileMapper;
 
     public ReportVo getReport(SysUser user, GetReportIn reportIn) {
         ReportVo reportOut = new ReportVo();
@@ -816,7 +821,18 @@ public class ReportServiceImpl implements ReportService {
                                     problemVo.setIsDone(pbmVal.getIsScore());
                                     problemVo.setCheckMode(pbmVal.getCheckMethod());
                                     problemVo.setNotes(pbmVal.getNotes());
-                                    problemVo.setDescription(pbmVal.getProblemDescription());
+                                    problemVo.setProblemDescription(pbmVal.getProblemDescription());
+                                    if(StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
+                                        List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
+                                        List<ProblemImg> problemImgs = new ArrayList<>();
+                                        for(TFile file : descImgs) {
+                                            ProblemImg problemImg = new ProblemImg();
+                                            problemImg.setImgUrl(file.getImgUrl());
+                                            problemImgs.add(problemImg);
+                                        }
+                                        problemVo.setDescImgArr(problemImgs);
+                                    }
+
                                     List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
                                     if(CollectionUtils.isNotEmpty(subPbmVals)) {
                                         problemVo.setIsSubProblem(true);
@@ -824,7 +840,7 @@ public class ReportServiceImpl implements ReportService {
                                         for(TFormSubPbmVal subPbmVal : subPbmVals) {
                                             SubProblemVo subProblemVo = new SubProblemVo();
                                             subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
-                                            subProblemVo.setDescription(subPbmVal.getProblemDescription());
+                                            subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
                                             subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
                                             subProblemVo.setIsPass(subPbmVal.getIsPass());
                                             subProblemVo.setIsDone(subPbmVal.getIsScore());
@@ -835,8 +851,19 @@ public class ReportServiceImpl implements ReportService {
                                             } else {
                                                 subProblemVo.setIsSubList(false);
                                             }
+                                            if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
+                                                List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
+                                                List<ProblemImg> problemImgs = new ArrayList<>();
+                                                for (TFile file : descImgs) {
+                                                    ProblemImg problemImg = new ProblemImg();
+                                                    problemImg.setImgUrl(file.getImgUrl());
+                                                    problemImgs.add(problemImg);
+                                                }
+                                                subProblemVo.setDescImgArr(problemImgs);
+                                            }
                                             subProblemVos.add(subProblemVo);
                                         }
+                                        problemVo.setSubProblemArray(subProblemVos);
                                     } else {
                                         problemVo.setIsSubProblem(false);
                                     }
@@ -847,13 +874,16 @@ public class ReportServiceImpl implements ReportService {
                                     }
                                     problemArray.add(problemVo);
                                 }
+                                subFormKind.setProblemArray(problemArray);
                             }
                             subFormKinds.add(subFormKind);
                         }
+                        subForm.setSubFormKindArray(subFormKinds);
                     }
                     resultSubForm.add(subForm);
                 }
             }
+            reportVo.setResultSubForm(resultSubForm);
             // 查询关联的机会点信息
             Example reportOpptExp = new Example(TReportOppt.class);
             reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
@@ -876,8 +906,28 @@ public class ReportServiceImpl implements ReportService {
                 TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
                 if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                    if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
+                        List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
+                        List<ProblemImg> problemImgs = new ArrayList<>();
+                        for (TFile file : descImgs) {
+                            ProblemImg problemImg = new ProblemImg();
+                            problemImg.setImgUrl(file.getImgUrl());
+                            problemImgs.add(problemImg);
+                        }
+                        chancePointVo.setDescImgArr(problemImgs);
+                    }
                 } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
+                    if (StringUtils.isNotBlank(subPbmValForThisOppt.getDescImgIds())) {
+                        List<TFile> descImgs = tFileMapper.selectByIds(subPbmValForThisOppt.getDescImgIds());
+                        List<ProblemImg> problemImgs = new ArrayList<>();
+                        for (TFile file : descImgs) {
+                            ProblemImg problemImg = new ProblemImg();
+                            problemImg.setImgUrl(file.getImgUrl());
+                            problemImgs.add(problemImg);
+                        }
+                        chancePointVo.setDescImgArr(problemImgs);
+                    }
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                 }
                 // 查询所属题项类型
@@ -894,19 +944,21 @@ public class ReportServiceImpl implements ReportService {
                     pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#");
                     Example subPbmValExp = new Example(TFormSubPbmVal.class);
                     Example pbmValExp = new Example(TFormPbmVal.class);
-                    if(subCheckResult.getSubjectType().equals(2)) {
-                        subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
-                        subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
-                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
-                        pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
-                    } else {
-                        pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
-                        pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
-                        pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
+                    if(subCheckResult.getSubjectType() != null) {
+                        if (subCheckResult.getSubjectType().equals(2)) {
+                            subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
+                            subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
+                            pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
+                            pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
+                        } else {
+                            pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
+                            pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
+                            pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
+                        }
+                        formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                        subCheckResult = tFormCheckResultMapper.selectByPrimaryKey(formValue.getFormResultId());
+                        pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#" + formValue.getFormTypeName() + "#");
                     }
-                    formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
-                    subCheckResult = tFormCheckResultMapper.selectByPrimaryKey(formValue.getFormResultId());
-                    pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#" + formValue.getFormTypeName() + "#");
                 }
                 chancePointVo.setChanceContent(pbmCascadingRelation.toString());
                 chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());

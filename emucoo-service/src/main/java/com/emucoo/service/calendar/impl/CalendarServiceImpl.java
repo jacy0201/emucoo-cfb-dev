@@ -100,9 +100,13 @@ public class CalendarServiceImpl implements CalendarService {
     private void setUserOrder(Long queryUserId, Long currentUserId) {
         String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
         if(StringUtil.isNotEmpty(userStr)) {
-            String[] userIdArr = userStr.split(",");
+            String[] idArr = userStr.split(",");
+            String[] userIdArr=new String[idArr.length+1];
+            for (int n = 0; n < idArr.length; n++) {
+                userIdArr[n]=idArr[n];
+            }
             //元素后移
-            for (int i = userIdArr.length - 1; i > 0; i--) {
+           for (int i = userIdArr.length - 1; i > 0; i--) {
                 userIdArr[i] = userIdArr[i - 1];
             }
             //先删除被查看人员
@@ -212,9 +216,11 @@ public class CalendarServiceImpl implements CalendarService {
         } else {
             String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
             String[] userIdArr = userStr.split(",");
-            for (int n = 0; n < userIdArr.length; n++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
-                list.add(sysUser);
+            if(null!=userIdArr && userIdArr.length>0) {
+                for (int n = 0; n < userIdArr.length; n++) {
+                    SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
+                    list.add(sysUser);
+                }
             }
         }
         return list;
@@ -222,8 +228,9 @@ public class CalendarServiceImpl implements CalendarService {
 
     private  CalendarVO.Inspection getFrontPlanWork(TFrontPlan frontPlan) {
         CalendarVO.Inspection inspection= new CalendarVO.Inspection();
-        inspection.setId(frontPlan.getId());
-        inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
+        inspection.setWorkID(frontPlan.getId().toString());
+        inspection.setWorkType(4);
+        inspection.setInspStartTime(frontPlan.getPlanPreciseTime().getTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单
         Example exampleForm = new Example(TFrontPlanForm.class);
@@ -239,7 +246,6 @@ public class CalendarServiceImpl implements CalendarService {
 
     private CalendarVO.Task getLoopWork(TLoopWork tLoopWork) {
         CalendarVO.Task task=new CalendarVO.Task();
-        task.setId(tLoopWork.getId());
         task.setWorkID(tLoopWork.getWorkId());
         task.setWorkType(tLoopWork.getType());
         task.setSubID(tLoopWork.getSubWorkId());
@@ -247,7 +253,7 @@ public class CalendarServiceImpl implements CalendarService {
         task.setTaskTitle(tt.getName());
         task.setTaskStatus(tLoopWork.getWorkStatus());
         task.setTaskResult(tLoopWork.getWorkResult());
-        task.setTaskDeadline(tLoopWork.getExecuteDeadline());
+        task.setTaskDeadline(tLoopWork.getExecuteDeadline().getTime());
         SysUser u = sysUserMapper.selectByPrimaryKey(tLoopWork.getExcuteUserId());
         task.setTaskSubHeadUrl(u.getHeadImgUrl());
         task.setTaskSubName(u.getRealName());

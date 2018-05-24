@@ -289,6 +289,7 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                     if (form != null) {
                         ChecklistArrVO checklistArrVO = new ChecklistArrVO();
                         checklistArrVO.setChecklistID(form.getId());
+                        checklistArrVO.setChecklistType(form.getFormType());
                         checklistArrVO.setChecklistName(form.getName());
                         checklistArrVO.setChecklistStatus(tFrontPlanForm.getReportStatus().longValue());
                         checklistArrVO.setReportID(tFrontPlanForm.getReportId());

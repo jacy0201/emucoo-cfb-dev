@@ -56,7 +56,6 @@ public class TFormSubPbm extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
-
     @Transient
     private TOpportunity opportunity;
 

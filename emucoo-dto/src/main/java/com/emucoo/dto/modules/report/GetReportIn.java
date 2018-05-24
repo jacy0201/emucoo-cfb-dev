@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class GetReportIn {
     private Long reportID;
-
+    private Integer formType;
     private Long patrolShopArrangeID;
     private Long shopID;
     private Long checklistID;

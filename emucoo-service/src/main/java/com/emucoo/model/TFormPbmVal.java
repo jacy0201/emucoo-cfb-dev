@@ -82,6 +82,9 @@ public class TFormPbmVal extends BaseEntity {
     @Column(name = "sub_form_id")
     private Long subFormId;
 
+    @Column(name = "desc_img_ids")
+    private String descImgIds;
+
     @Transient
     private List<TFormSubPbmVal> formSubPbmValList;
 
@@ -336,5 +339,13 @@ public class TFormPbmVal extends BaseEntity {
 
     public void setFormSubPbmValList(List<TFormSubPbmVal> formSubPbmValList) {
         this.formSubPbmValList = formSubPbmValList;
+    }
+
+    public String getDescImgIds() {
+        return descImgIds;
+    }
+
+    public void setDescImgIds(String descImgIds) {
+        this.descImgIds = descImgIds;
     }
 }

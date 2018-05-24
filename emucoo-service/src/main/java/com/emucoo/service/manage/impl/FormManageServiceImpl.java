@@ -11,6 +11,7 @@ import com.emucoo.dto.modules.abilityForm.ProblemVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
+import com.emucoo.enums.FormType;
 import com.emucoo.enums.WorkStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -82,6 +83,7 @@ public class FormManageServiceImpl implements FormManageService {
     public void createForm(TFormMain form, Long userId) {
         form.setCreateTime(DateUtil.currentDate());
         form.setModifyTime(DateUtil.currentDate());
+        form.setFormType(FormType.RVR_TYPE.getCode());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
         form.setIsDel(false);
@@ -358,6 +360,7 @@ public class FormManageServiceImpl implements FormManageService {
             TFormMain newFormMain = new TFormMain();
             newFormMain.setName(formMain.getFormName());
             newFormMain.setIsDel(DeleteStatus.COMMON.getCode());
+            newFormMain.setFormType(FormType.ABILITY_TYPE.getCode());
             newFormMain.setCreateTime(now);
             newFormMain.setModifyTime(now);
             newFormMain.setUse(WorkStatus.STOP_USE.getCode());
@@ -436,7 +439,7 @@ public class FormManageServiceImpl implements FormManageService {
      * 保存子表数据
      * @param formMain
      * @param parentFormId
-     * @param i
+     * @param
      * @return
      */
     private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId, int subjectType) {
@@ -498,10 +501,17 @@ public class FormManageServiceImpl implements FormManageService {
         return newFormMain;
     }
 
-    public AbilityFormMain getAbilityForm(GetFormInfoIn formIn) {
+    public AbilityFormMain getAbilityForm(GetFormInfoIn formIn, SysUser user) {
         try {
             AbilityFormMain formVo = new AbilityFormMain();
-            TFormMain form = formMainMapper.selectByPrimaryKey(formIn.getFormID());
+            TFormMain main = new TFormMain();
+            main.setId(formIn.getFormID());
+            main.setFormType(formIn.getFormType());
+            TFormMain form = formMainMapper.selectOne(main);
+            Long userId = null;
+            if(user != null) {
+                userId = user.getId();
+            }
             if(form != null) {
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
@@ -562,7 +572,7 @@ public class FormManageServiceImpl implements FormManageService {
                                                 if (formSubPbm.getSubFormId() != null) {
                                                     subProblemVo.setIsSubList(true);
                                                     // 查询子表信息
-                                                    AbilitySubForm subForm = findSubForm(formSubPbm.getSubFormId());
+                                                    AbilitySubForm subForm = findSubForm(formSubPbm.getSubFormId(), userId);
                                                     subProblemVo.setSubListObject(subForm);
                                                 } else {
                                                     subProblemVo.setIsSubList(false);
@@ -572,7 +582,8 @@ public class FormManageServiceImpl implements FormManageService {
                                             }
 
                                             // 查询机会点
-                                            List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2);
+                                            List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2, userId);
+                                            //List<TOpportunity> opportunities = opportunityMapper.findOpptListByPbmIdAndUserId(subPbmIds, user==null?null:user.getId());
                                             if (CollectionUtils.isNotEmpty(formOppts)) {
                                                 for(SubProblemVo subProblemVo : subProblemArray) {
                                                     for (TFormOppt formOppt : formOppts) {
@@ -601,7 +612,7 @@ public class FormManageServiceImpl implements FormManageService {
                                         if(formPbm.getSubFormId() != null) {
                                             problemVo.setIsSubList(true);
                                             // 查询子表信息
-                                            AbilitySubForm subForm = findSubForm(formPbm.getSubFormId());
+                                            AbilitySubForm subForm = findSubForm(formPbm.getSubFormId(), userId);
                                             problemVo.setSubListObject(subForm);
                                         } else {
                                             problemVo.setIsSubList(false);
@@ -610,7 +621,7 @@ public class FormManageServiceImpl implements FormManageService {
                                         problemArray.add(problemVo);
                                     }
                                     // 查询机会点
-                                    List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1);
+                                    List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1, userId);
                                     if (CollectionUtils.isNotEmpty(formOppts)) {
                                         for (ProblemVo problemVo : problemArray) {
                                             for (TFormOppt formOppt : formOppts) {
@@ -630,8 +641,8 @@ public class FormManageServiceImpl implements FormManageService {
                                                 }
                                             }
                                         }
-
                                     }
+
                                     formKind.setProblemArray(problemArray);
                                 }
                                 subFormKindArray.add(formKind);
@@ -656,9 +667,10 @@ public class FormManageServiceImpl implements FormManageService {
     /**
      * 根据id查询子表
      * @param subFormId
+     * @param userId
      * @return
      */
-    private AbilitySubForm findSubForm(Long subFormId) {
+    private AbilitySubForm findSubForm(Long subFormId, Long userId) {
         AbilitySubForm abilitySubForm = null;
         TFormMain formMain = formMainMapper.selectByPrimaryKey(subFormId);
         if(formMain != null) {
@@ -712,7 +724,7 @@ public class FormManageServiceImpl implements FormManageService {
                                     subProblemArray.add(subProblemVo);
                                 }
                                 // 查询机会点
-                                List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2);
+                                List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2, userId);
                                 if (CollectionUtils.isNotEmpty(formOppts)) {
                                     for (SubProblemVo subProblemVo : subProblemArray) {
                                         for (TFormOppt formOppt : formOppts) {
@@ -746,7 +758,7 @@ public class FormManageServiceImpl implements FormManageService {
                             problemArray.add(problemVo);
                         }
                         // 查询机会点
-                        List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1);
+                        List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1, userId);
                         if (CollectionUtils.isNotEmpty(formOppts)) {
                             for (ProblemVo problemVo : problemArray) {
                                 for (TFormOppt formOppt : formOppts) {
@@ -776,5 +788,78 @@ public class FormManageServiceImpl implements FormManageService {
             }
         }
         return abilitySubForm;
+    }
+
+
+    /**
+     * 关联机会点
+     * @param tFormOpptList
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addFormOppt(List<TFormOppt> tFormOpptList){
+        for (TFormOppt tFormOppt : tFormOpptList){
+            if(null!=tFormOppt.getSubProblemId())
+                tFormOppt.setProblemType(2);
+            else
+                tFormOppt.setProblemType(1);
+            tFormOppt.setCreateTime(new Date());
+            insertListOpt(tFormOppt);
+        }
+    }
+
+    /**
+     * 编辑机会点
+     * @param tFormOpptList
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void editFormOppt(List<TFormOppt> tFormOpptList){
+        //先删除之前关联的机会点
+        Example example =new Example(TFormOppt.class);
+        for (TFormOppt tFormOppt : tFormOpptList){
+            example.clear();
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+            if(null!=tFormOppt.getSubProblemId()){
+                criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
+            }
+            formOpptMapper.deleteByExample(criteria);
+        }
+        //关联机会点
+        for (TFormOppt tFormOppt : tFormOpptList){
+            if(null!=tFormOppt.getSubProblemId())
+                tFormOppt.setProblemType(2);
+            else
+                tFormOppt.setProblemType(1);
+            tFormOppt.setModifyTime(new Date());
+            insertListOpt(tFormOppt);
+        }
+
+    }
+
+    @Override
+    public  List<TFormOppt> getTFormOpptList(TFormOppt tFormOppt){
+        Example example=new Example(TFormOppt.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+        if(null!=tFormOppt.getSubProblemId()){
+            criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
+        }
+        return formOpptMapper.selectByExample(example);
+    }
+
+    private void insertListOpt(TFormOppt tFormOppt) {
+        String opptIdStr=tFormOppt.getOpptIdStr();
+        String [] optArr =opptIdStr.split(",");
+        List<TFormOppt> list=null;
+        if( null!=optArr && optArr.length>0 ){
+            list=new ArrayList<>();
+            for(String opt:optArr){
+                tFormOppt.setOpptId(Long.parseLong(opt));
+                list.add(tFormOppt);
+            }
+            formOpptMapper.insertList(list);
+        }
     }
 }

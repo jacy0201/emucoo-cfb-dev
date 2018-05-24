@@ -12,6 +12,7 @@ public class ReportItemVo {
     private String reportTitle;
     private String reporterHeadUrl;
     private String reporterName;
+    private Integer reportType;
     private Integer reportSourceType;
     private String reportSourceName;
     private Long reportTime;
