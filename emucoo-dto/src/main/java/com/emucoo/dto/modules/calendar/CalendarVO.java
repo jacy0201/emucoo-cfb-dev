@@ -23,7 +23,7 @@ public class CalendarVO {
             private String taskTitle;
             private Integer taskStatus;
             private Integer taskResult;
-            private Date taskDeadline;
+            private Long taskDeadline;
             //任务类型：1-常规任务 2-指派任务 3-改善任务  4-巡店安排；5-工作备忘
             private Integer workType;
             private String taskSubHeadUrl;
@@ -36,8 +36,8 @@ public class CalendarVO {
             private String workID;
             private Integer workType=4;
             private String inspTitle;
-            private Date inspStartTime;
-            private Date inspEndTime;
+            private Long inspStartTime;
+            private Long inspEndTime;
             private Integer inspStatus;
         }
         @Data
@@ -46,8 +46,8 @@ public class CalendarVO {
             private String workID;
             private Integer workType=5;
             private String memoContent;
-            private Date memoStartTime;
-            private Date memoEndTime;
+            private Long memoStartTime;
+            private Long memoEndTime;
             private Integer importStatus;
         }
 }
