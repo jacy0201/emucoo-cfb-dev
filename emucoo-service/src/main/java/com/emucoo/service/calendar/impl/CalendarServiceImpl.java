@@ -229,7 +229,7 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarVO.Inspection inspection= new CalendarVO.Inspection();
         inspection.setWorkID(frontPlan.getId().toString());
         inspection.setWorkType(4);
-        inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
+        inspection.setInspStartTime(frontPlan.getPlanPreciseTime().getTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单
         Example exampleForm = new Example(TFrontPlanForm.class);
@@ -252,7 +252,7 @@ public class CalendarServiceImpl implements CalendarService {
         task.setTaskTitle(tt.getName());
         task.setTaskStatus(tLoopWork.getWorkStatus());
         task.setTaskResult(tLoopWork.getWorkResult());
-        task.setTaskDeadline(tLoopWork.getExecuteDeadline());
+        task.setTaskDeadline(tLoopWork.getExecuteDeadline().getTime());
         SysUser u = sysUserMapper.selectByPrimaryKey(tLoopWork.getExcuteUserId());
         task.setTaskSubHeadUrl(u.getHeadImgUrl());
         task.setTaskSubName(u.getRealName());
