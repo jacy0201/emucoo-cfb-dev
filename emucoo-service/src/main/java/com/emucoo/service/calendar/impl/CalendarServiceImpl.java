@@ -69,7 +69,7 @@ public class CalendarServiceImpl implements CalendarService {
             example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                     .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
                     .andEqualTo("isDel", 0).andEqualTo("planDate",calendarVO.getDate());
-            example.setOrderByClause("plan_precise_time desc");
+            example.setOrderByClause("plan_precise_time asc");
             List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
             //设置巡店安排
             if (null != list && list.size() > 0) {
@@ -127,7 +127,7 @@ public class CalendarServiceImpl implements CalendarService {
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                 .andEqualTo("planDate", calendarListIn.getExecuteDate())
                 .andEqualTo("isDel", false);
-        example.setOrderByClause("plan_precise_time desc");
+        example.setOrderByClause("plan_precise_time asc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
         List<CalendarVO.Inspection> inspectionList=null;
         calendarVO.setDate(calendarListIn.getExecuteDate());

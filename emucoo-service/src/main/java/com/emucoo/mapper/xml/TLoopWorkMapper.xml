@@ -69,7 +69,7 @@
                (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr})
              )
         GROUP BY t1.id
-        ORDER BY t1.execute_end_date DESC
+        ORDER BY t1.execute_end_date asc
     </select>
 
     <select id="calendarDateList" resultType="com.emucoo.model.TLoopWork">
@@ -81,7 +81,7 @@
         AND
         #{executeDate} between t1.execute_begin_date and t1.execute_end_date
         GROUP BY t1.id
-        ORDER BY t1.execute_end_date DESC
+        ORDER BY t1.execute_end_date asc
     </select>
 
     <select id="countPendingExecuteWorkNum" resultType="java.lang.Integer">
