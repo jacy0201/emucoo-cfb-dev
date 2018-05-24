@@ -455,7 +455,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         for (TTaskPerson taskPerson : ccPersons) {
             TaskParameterVo.DeptPosition dept = null;
             for(TaskParameterVo.DeptPosition ccDpt : ccDpts) {
-                dept = ccDpt.getDept().getId() == taskPerson.getDptId() ? ccDpt : null;
+                if(ccDpt.getDept().getId() == taskPerson.getDptId()) {
+                    dept = ccDpt;
+                    break;
+                }
             }
             if(dept == null){
                 dept = new TaskParameterVo.DeptPosition();
@@ -473,8 +476,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
             } else {
                 TaskParameterVo.IdNamePair dept1 = new TaskParameterVo.IdNamePair();
-                dept1.setId(taskPerson.getDptId());
-                dept1.setName(taskPerson.getDptName());
+                dept1.setId(taskPerson.getPositionId());
+                dept1.setName(taskPerson.getPositionName());
                 dept.getPositions().add(dept1);
             }
             ccDpts.add(dept);
@@ -487,7 +490,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                     // 这段代码是把list里的，按照dept id分组了。
                     TaskParameterVo.DeptPosition dpt = null;
                     for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
-                        dpt = exeDpt.getDept().getId() == taskPerson.getDptId() ? exeDpt : null;
+                        if(exeDpt.getDept().getId() == taskPerson.getDptId()){
+                            dpt = exeDpt;
+                            break;
+                        }
                     }
                     if (dpt == null) {
                         dpt = new TaskParameterVo.DeptPosition();
@@ -498,10 +504,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                         dpt0.setName(taskPerson.getDptName());
                         dpt.setDept(dpt0);
 
-                        TaskParameterVo.IdNamePair dpt1 = new TaskParameterVo.IdNamePair();
-                        dpt1.setId(taskPerson.getPositionId());
-                        dpt1.setName(taskPerson.getPositionName());
-                        dpt.getPositions().add(dpt1);
+                        TaskParameterVo.IdNamePair pos1 = new TaskParameterVo.IdNamePair();
+                        pos1.setId(taskPerson.getPositionId());
+                        pos1.setName(taskPerson.getPositionName());
+                        dpt.getPositions().add(pos1);
 
                     } else {
                         TaskParameterVo.IdNamePair dpt1 = new TaskParameterVo.IdNamePair();
