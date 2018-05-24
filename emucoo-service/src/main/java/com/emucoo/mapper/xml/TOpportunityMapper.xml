@@ -93,24 +93,4 @@
     <select id="judgeExistsByName" resultType="java.lang.Integer">
         select count(*) from t_opportunity where create_type=1 and name=#{name} and is_del != 1
     </select>
-
-    <select id="findOpptListByPbmIdAndUserId" resultType="com.emucoo.model.TOpportunity">
-        SELECT
-        oppt.id,
-        oppt.name AS oppt_name,
-        oppt.create_type,
-        formOppt.problem_id,
-        formOppt.sub_problem_id
-        FROM t_opportunity oppt
-        LEFT JOIN t_form_oppt formOppt ON oppt.id = formOppt.oppt_id
-        AND formOppt.problem_id IN
-        <foreach collection="pbmIds" item="item" open="(" close=")" separator=",">
-            #{item}
-        </foreach>
-        <where>
-            <if test="userId != null">
-                (create_user_id = #{userId} AND is_del = FALSE AND is_use = TRUE )
-            </if>
-        </where>
-    </select>
 </mapper>

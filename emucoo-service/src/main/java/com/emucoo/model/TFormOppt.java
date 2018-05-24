@@ -43,6 +43,9 @@ public class TFormOppt extends BaseEntity {
     @Column(name = "sub_problem_id")
     private Long subProblemId;
 
+    @Transient
+    private TOpportunity opportunity;
+
     /**
      * @return id
      */
@@ -167,5 +170,13 @@ public class TFormOppt extends BaseEntity {
      */
     public void setSubProblemId(Long subProblemId) {
         this.subProblemId = subProblemId;
+    }
+
+    public TOpportunity getOpportunity() {
+        return opportunity;
+    }
+
+    public void setOpportunity(TOpportunity opportunity) {
+        this.opportunity = opportunity;
     }
 }

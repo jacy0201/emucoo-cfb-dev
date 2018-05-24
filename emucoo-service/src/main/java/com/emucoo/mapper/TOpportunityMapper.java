@@ -25,6 +25,4 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
     void cleanOpptsByResultId(Long id);
 
     Integer judgeExistsByName(String name);
-
-    List<TOpportunity> findOpptListByPbmIdAndUserId(@Param("pbmIds")List<Long> pbmIds, @Param("userId")Long userId);
 }
