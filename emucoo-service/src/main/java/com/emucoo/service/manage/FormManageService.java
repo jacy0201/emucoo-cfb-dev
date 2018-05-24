@@ -48,7 +48,14 @@ public interface FormManageService {
 
     /**
      * 编辑机会点
-     * @param tFormOppt
+     * @param tFormOpptList
      */
     void editFormOppt(List<TFormOppt> tFormOpptList);
+
+    /**
+     * 获取机会点列表
+     * @param tFormOppt
+     * @return
+     */
+    List<TFormOppt> getTFormOpptList(TFormOppt tFormOppt);
 }

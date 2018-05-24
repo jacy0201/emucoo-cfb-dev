@@ -220,4 +220,12 @@ public class FormManageController extends BaseResource {
         formManageService.editFormOppt(tFormOpptList);
         return success("success");
     }
+
+    @ApiOperation(value = "获取能力模型机会点")
+    @PostMapping(value = "/getFormOpptList")
+    public ApiResult<List<TFormOppt>> getFormOpptList(@RequestBody ParamVo<TFormOppt> paramVo) {
+        TFormOppt tFormOppt = paramVo.getData();
+        List<TFormOppt> list=formManageService.getTFormOpptList(tFormOppt);
+        return success(list);
+    }
 }

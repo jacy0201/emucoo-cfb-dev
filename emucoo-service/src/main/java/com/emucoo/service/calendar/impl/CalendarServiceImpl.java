@@ -6,7 +6,6 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
-import com.emucoo.utils.DateUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -100,9 +99,13 @@ public class CalendarServiceImpl implements CalendarService {
     private void setUserOrder(Long queryUserId, Long currentUserId) {
         String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
         if(StringUtil.isNotEmpty(userStr)) {
-            String[] userIdArr = userStr.split(",");
+            String[] idArr = userStr.split(",");
+            String[] userIdArr=new String[idArr.length+1];
+            for (int n = 0; n < idArr.length; n++) {
+                userIdArr[n]=idArr[n];
+            }
             //元素后移
-            for (int i = userIdArr.length - 1; i > 0; i--) {
+           for (int i = userIdArr.length - 1; i > 0; i--) {
                 userIdArr[i] = userIdArr[i - 1];
             }
             //先删除被查看人员
@@ -212,9 +215,11 @@ public class CalendarServiceImpl implements CalendarService {
         } else {
             String userStr = jedisCluster.get(ISystem.IUSER.USER_RECENT + currentUserId);
             String[] userIdArr = userStr.split(",");
-            for (int n = 0; n < userIdArr.length; n++) {
-                SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
-                list.add(sysUser);
+            if(null!=userIdArr && userIdArr.length>0) {
+                for (int n = 0; n < userIdArr.length; n++) {
+                    SysUser sysUser = sysUserMapper.selectByPrimaryKey(Long.parseLong(userIdArr[n]));
+                    list.add(sysUser);
+                }
             }
         }
         return list;
@@ -222,7 +227,8 @@ public class CalendarServiceImpl implements CalendarService {
 
     private  CalendarVO.Inspection getFrontPlanWork(TFrontPlan frontPlan) {
         CalendarVO.Inspection inspection= new CalendarVO.Inspection();
-        inspection.setId(frontPlan.getId());
+        inspection.setWorkID(frontPlan.getId().toString());
+        inspection.setWorkType(4);
         inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单
@@ -239,7 +245,6 @@ public class CalendarServiceImpl implements CalendarService {
 
     private CalendarVO.Task getLoopWork(TLoopWork tLoopWork) {
         CalendarVO.Task task=new CalendarVO.Task();
-        task.setId(tLoopWork.getId());
         task.setWorkID(tLoopWork.getWorkId());
         task.setWorkType(tLoopWork.getType());
         task.setSubID(tLoopWork.getSubWorkId());

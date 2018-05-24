@@ -18,7 +18,6 @@ public class CalendarVO {
         @Data
         @ApiModel(value="任务数据集")
         public static class Task{
-            private Long id;
             private String workID;
             private String subID;
             private String taskTitle;
@@ -34,7 +33,8 @@ public class CalendarVO {
         @Data
         @ApiModel(value="巡店数据集")
         public static class Inspection{
-            private Long id;
+            private String workID;
+            private Integer workType=4;
             private String inspTitle;
             private Date inspStartTime;
             private Date inspEndTime;
@@ -43,7 +43,8 @@ public class CalendarVO {
         @Data
         @ApiModel(value="备忘数据集")
         public static class Memo{
-            private Long id;
+            private String workID;
+            private Integer workType=5;
             private String memoContent;
             private Date memoStartTime;
             private Date memoEndTime;
