@@ -467,8 +467,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 dept.setDept(dept0);
 
                 TaskParameterVo.IdNamePair dept1 = new TaskParameterVo.IdNamePair();
-                dept1.setId(taskPerson.getDptId());
-                dept1.setName(taskPerson.getDptName());
+                dept1.setId(taskPerson.getPositionId());
+                dept1.setName(taskPerson.getPositionName());
                 dept.getPositions().add(dept1);
 
             } else {
