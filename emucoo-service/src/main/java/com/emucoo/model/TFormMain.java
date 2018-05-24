@@ -73,6 +73,9 @@ public class TFormMain extends BaseEntity {
     @Column(name = "subject_type")
     private Integer subjectType;
 
+    @Column(name = "form_type")
+    private Integer formType;
+
     @Transient
     private List<SysDept> ccDepts;
 
@@ -348,5 +351,13 @@ public class TFormMain extends BaseEntity {
 
     public void setSubjectType(Integer subjectType) {
         this.subjectType = subjectType;
+    }
+
+    public Integer getFormType() {
+        return formType;
+    }
+
+    public void setFormType(Integer formType) {
+        this.formType = formType;
     }
 }

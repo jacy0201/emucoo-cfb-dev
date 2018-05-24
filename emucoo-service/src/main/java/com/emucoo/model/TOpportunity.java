@@ -77,6 +77,9 @@ public class TOpportunity extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    @Transient
+    private TFormOppt formOppt;
+
     /**
      * @return id
      */
@@ -282,5 +285,13 @@ public class TOpportunity extends BaseEntity {
 
     public void setCreateType(Integer createType) {
         this.createType = createType;
+    }
+
+    public TFormOppt getFormOppt() {
+        return formOppt;
+    }
+
+    public void setFormOppt(TFormOppt formOppt) {
+        this.formOppt = formOppt;
     }
 }

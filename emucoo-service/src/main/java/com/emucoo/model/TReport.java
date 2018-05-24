@@ -97,6 +97,9 @@ public class TReport extends BaseEntity {
     @Transient
     private TReportUser reportUser;
 
+    @Column(name = "form_type")
+    private Byte formType;
+
     /**
      * @return id
      */
@@ -357,5 +360,13 @@ public class TReport extends BaseEntity {
 
     public void setReportUser(TReportUser reportUser) {
         this.reportUser = reportUser;
+    }
+
+    public Byte getFormType() {
+        return formType;
+    }
+
+    public void setFormType(Byte formType) {
+        this.formType = formType;
     }
 }

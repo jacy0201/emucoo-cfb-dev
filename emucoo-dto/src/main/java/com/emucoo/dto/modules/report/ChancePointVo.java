@@ -1,5 +1,6 @@
 package com.emucoo.dto.modules.report;
 
+import com.emucoo.dto.modules.abilityForm.ProblemImg;
 import lombok.Data;
 
 import java.util.List;
@@ -14,5 +15,6 @@ public class ChancePointVo {
     private String chancePointTitle;
     private String chanceContent;
     private List<ReportWorkVo> workArr;
+    private List<ProblemImg> descImgArr;
     private String chanceDescription;
 }

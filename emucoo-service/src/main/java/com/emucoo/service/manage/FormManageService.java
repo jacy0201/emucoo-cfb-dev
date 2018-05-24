@@ -2,6 +2,7 @@ package com.emucoo.service.manage;
 
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
+import com.emucoo.model.SysUser;
 import com.emucoo.model.TFormMain;
 import com.emucoo.model.TFormOppt;
 
@@ -37,7 +38,7 @@ public interface FormManageService {
 
     void saveAbilityForm(AbilityFormMain formMain);
 
-    AbilityFormMain getAbilityForm(GetFormInfoIn formIn);
+    AbilityFormMain getAbilityForm(GetFormInfoIn formIn, SysUser user);
 
     /**
      * 关联机会点

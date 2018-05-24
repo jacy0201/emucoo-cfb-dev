@@ -11,6 +11,7 @@ import com.emucoo.dto.modules.abilityForm.ProblemVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
+import com.emucoo.enums.FormType;
 import com.emucoo.enums.WorkStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -82,6 +83,7 @@ public class FormManageServiceImpl implements FormManageService {
     public void createForm(TFormMain form, Long userId) {
         form.setCreateTime(DateUtil.currentDate());
         form.setModifyTime(DateUtil.currentDate());
+        form.setFormType(FormType.RVR_TYPE.getCode());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
         form.setIsDel(false);
@@ -358,6 +360,7 @@ public class FormManageServiceImpl implements FormManageService {
             TFormMain newFormMain = new TFormMain();
             newFormMain.setName(formMain.getFormName());
             newFormMain.setIsDel(DeleteStatus.COMMON.getCode());
+            newFormMain.setFormType(FormType.ABILITY_TYPE.getCode());
             newFormMain.setCreateTime(now);
             newFormMain.setModifyTime(now);
             newFormMain.setUse(WorkStatus.STOP_USE.getCode());
@@ -436,7 +439,7 @@ public class FormManageServiceImpl implements FormManageService {
      * 保存子表数据
      * @param formMain
      * @param parentFormId
-     * @param i
+     * @param
      * @return
      */
     private TFormMain saveSubForm(AbilitySubForm formMain, Long parentFormId, int subjectType) {
@@ -498,10 +501,13 @@ public class FormManageServiceImpl implements FormManageService {
         return newFormMain;
     }
 
-    public AbilityFormMain getAbilityForm(GetFormInfoIn formIn) {
+    public AbilityFormMain getAbilityForm(GetFormInfoIn formIn, SysUser user) {
         try {
             AbilityFormMain formVo = new AbilityFormMain();
-            TFormMain form = formMainMapper.selectByPrimaryKey(formIn.getFormID());
+            TFormMain main = new TFormMain();
+            main.setId(formIn.getFormID());
+            main.setFormType(formIn.getFormType());
+            TFormMain form = formMainMapper.selectOne(main);
             if(form != null) {
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
@@ -573,6 +579,7 @@ public class FormManageServiceImpl implements FormManageService {
 
                                             // 查询机会点
                                             List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2);
+                                            //List<TOpportunity> opportunities = opportunityMapper.findOpptListByPbmIdAndUserId(subPbmIds, user==null?null:user.getId());
                                             if (CollectionUtils.isNotEmpty(formOppts)) {
                                                 for(SubProblemVo subProblemVo : subProblemArray) {
                                                     for (TFormOppt formOppt : formOppts) {
@@ -632,6 +639,32 @@ public class FormManageServiceImpl implements FormManageService {
                                         }
 
                                     }
+                                    /*List<TOpportunity> opportunities = opportunityMapper.findOpptListByPbmIdAndUserId(pbmIds, user == null ? null : user.getId());
+                                    if (CollectionUtils.isNotEmpty(opportunities)) {
+                                        for (ProblemVo problemVo : problemArray) {
+                                            for (TOpportunity formOppt : opportunities) {
+                                                if(formOppt.getFormOppt() != null) {
+                                                    if (formOppt.getFormOppt().getId().equals(problemVo.getProblemID())) {
+                                                        ProblemChanceVo problemChanceVo = new ProblemChanceVo();
+                                                        problemChanceVo.setChanceID(formOppt.getId());
+                                                        problemChanceVo.setChanceName(formOppt.getName());
+                                                        problemChanceVo.setIsPick(false);
+                                                        List<ProblemChanceVo> problemChanceVos = problemVo.getChanceArray();
+                                                        if (problemChanceVos != null) {
+                                                            problemChanceVos.add(problemChanceVo);
+                                                        } else {
+                                                            problemChanceVos = new ArrayList<>();
+                                                            problemChanceVos.add(problemChanceVo);
+                                                        }
+                                                        problemVo.setChanceArray(problemChanceVos);
+                                                    }
+                                                } else {
+
+                                                }
+
+                                            }
+                                        }
+                                    }*/
                                     formKind.setProblemArray(problemArray);
                                 }
                                 subFormKindArray.add(formKind);

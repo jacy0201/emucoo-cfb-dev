@@ -191,7 +191,10 @@ public class FormManageController extends BaseResource {
         if (formIn.getFormID() == null) {
             return fail(ApiExecStatus.INVALID_PARAM, "表单id不能为空！");
         }
-        AbilityFormMain form = formManageService.getAbilityForm(formIn);
+        if (formIn.getFormType() == null) {
+            return fail(ApiExecStatus.INVALID_PARAM, "表单类型不能为空！");
+        }
+        AbilityFormMain form = formManageService.getAbilityForm(formIn, null);
         return success(form);
     }
 

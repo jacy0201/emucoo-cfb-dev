@@ -10,12 +10,13 @@ public class SubProblemVo {
     private Long subProblemID;
     private String checkMode;
     private String notes;
-    private String description;
+    private String problemDescription;
     private Boolean isDone;
     private Boolean isPass;
     private Boolean isSubList;
     private List<ProblemChanceVo> subProblemChanceArray;
     private List<ProblemChanceVo> subOtherChanceArray;
+    private List<ProblemImg> descImgArr;
     private AbilitySubForm subListObject;
 
     public void setSubProblemName(String subProblemName) {
@@ -50,12 +51,12 @@ public class SubProblemVo {
         return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getProblemDescription() {
+        return problemDescription;
     }
 
-    public String getDescription() {
-        return description;
+    public void setProblemDescription(String problemDescription) {
+        this.problemDescription = problemDescription;
     }
 
     public void setIsDone(Boolean isDone) {
@@ -104,5 +105,13 @@ public class SubProblemVo {
 
     public void setSubOtherChanceArray(List<ProblemChanceVo> subOtherChanceArray) {
         this.subOtherChanceArray = subOtherChanceArray;
+    }
+
+    public List<ProblemImg> getDescImgArr() {
+        return descImgArr;
+    }
+
+    public void setDescImgArr(List<ProblemImg> descImgArr) {
+        this.descImgArr = descImgArr;
     }
 }

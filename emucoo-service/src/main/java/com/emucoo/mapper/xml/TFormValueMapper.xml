@@ -70,9 +70,9 @@
       formPbmVal.form_problem_id,
       formPbmVal.is_score,
       formPbmVal.problem_name,
-      formPbmVal.pbm_is_pass,
+      formPbmVal.is_pass AS pbm_is_pass,
       formPbmVal.check_method,
-      formPbmVal.problem_notes,
+      formPbmVal.notes AS problem_notes,
       formPbmVal.problem_description,
       formPbmVal.problem_schema_type,
       formPbmVal.sub_form_id AS sub_form_id_in_pbm,
@@ -80,7 +80,7 @@
       formSubPbmVal.sub_problem_name,
       formSubPbmVal.sub_problem_id,
       formSubPbmVal.check_method AS sub_check_method,
-      formSubPbmVal.sub_form_id AS sub_form_id_in_subpbm
+      formSubPbmVal.sub_form_id AS sub_form_id_in_subpbm,
       formSubPbmVal.is_pass AS sub_is_pass,
       formSubPbmVal.is_score AS sub_is_score,
       formSubPbmVal.notes AS sub_problem_notes,
@@ -89,5 +89,6 @@
       RIGHT JOIN t_form_value formValue ON formPbmVal.form_value_id = formValue.id
       LEFT JOIN t_form_sub_pbm_val formSubPbmVal ON formSubPbmVal.problem_value_id = formPbmVal.id
       WHERE formValue.form_result_id = #{id}
+      ORDER BY formPbmVal.id ASC
     </select>
 </mapper>

@@ -1,19 +1,24 @@
 package com.emucoo.dto.modules.abilityForm;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.List;
 
 /**
  * Created by sj on 2018/5/17.
  */
+@ApiModel
 public class AbilityFormMain {
     private Long patrolShopArrangeID;
     private Long shopID;
     private Long formID;
+    private Integer formType;
     private String formName;
     private String shopName;
     private String gradeDate;
     private String brandName;
     private List<AbilitySubForm> subFormArray;
+
 
     public Long getPatrolShopArrangeID() {
         return patrolShopArrangeID;
@@ -33,6 +38,14 @@ public class AbilityFormMain {
 
     public Long getFormID() {
         return formID;
+    }
+
+    public Integer getFormType() {
+        return formType;
+    }
+
+    public void setFormType(Integer formType) {
+        this.formType = formType;
     }
 
     public void setFormID(Long formID) {

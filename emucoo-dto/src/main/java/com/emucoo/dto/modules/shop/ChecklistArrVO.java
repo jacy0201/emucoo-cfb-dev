@@ -14,4 +14,5 @@ public class ChecklistArrVO {
 	private Long reportID;
 	private String checklistName;
 	private Long checklistStatus;
+	private Integer checklistType;
 }

@@ -95,10 +95,12 @@ public class FormController extends AppBaseController {
 
     @ApiOperation(value = "获取能力模型表单配置")
     @PostMapping(value = "/getAbilityForm")
-    public AppResult<AbilityFormMain> getAbilityForm(@RequestBody ParamVo<GetFormInfoIn> paramVo) {
+    public AppResult<AbilityFormMain> getAbilityForm(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<GetFormInfoIn> paramVo) {
         GetFormInfoIn formIn = paramVo.getData();
         checkParam(formIn.getFormID(), "表单id不能为空！");
-        AbilityFormMain form = formManageService.getAbilityForm(formIn);
+        checkParam(formIn.getFormType(), "表单类型不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+        AbilityFormMain form = formManageService.getAbilityForm(formIn, user);
         return success(form);
     }
 
@@ -108,13 +110,14 @@ public class FormController extends AppBaseController {
      * @param params
      * @return
      */
+    @ApiOperation(value = "保存能力模型打表结果并生成报告")
     @PostMapping(value = "saveAbilityFormResult")
     public AppResult<Map> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
-        SysUser user = UserTokenManager.getInstance().currUser(userToken);
         AbilityFormMain formIn = params.getData();
         checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(formIn.getFormID(), "表单id不能为空！");
         checkParam(formIn.getShopID(), "店铺id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
         Long reportId = formService.saveAbilityFormResult(formIn, user);
         HashMap<String, Long> map = new HashMap<>();
         map.put("reportID", reportId);

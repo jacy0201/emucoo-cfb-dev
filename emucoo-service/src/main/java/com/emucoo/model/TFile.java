@@ -16,7 +16,7 @@ public class TFile extends BaseEntity {
     /**
      * 图片来源 1：后台上传，2：前台上传
      */
-    private Boolean source;
+    private Byte source;
 
     /**
      * 图片原名称
@@ -96,21 +96,11 @@ public class TFile extends BaseEntity {
         this.id = id;
     }
 
-    /**
-     * 获取图片来源 1：后台上传，2：前台上传
-     *
-     * @return source - 图片来源 1：后台上传，2：前台上传
-     */
-    public Boolean getSource() {
+    public Byte getSource() {
         return source;
     }
 
-    /**
-     * 设置图片来源 1：后台上传，2：前台上传
-     *
-     * @param source 图片来源 1：后台上传，2：前台上传
-     */
-    public void setSource(Boolean source) {
+    public void setSource(Byte source) {
         this.source = source;
     }
 

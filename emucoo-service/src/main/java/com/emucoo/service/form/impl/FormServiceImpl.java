@@ -2,14 +2,19 @@ package com.emucoo.service.form.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
 import com.emucoo.dto.modules.abilityForm.ProblemChanceVo;
+import com.emucoo.dto.modules.abilityForm.ProblemImg;
 import com.emucoo.dto.modules.abilityForm.ProblemVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.dto.modules.form.*;
 import com.emucoo.enums.Constant;
+import com.emucoo.enums.DeleteStatus;
+import com.emucoo.enums.FormType;
+import com.emucoo.enums.ImgSourceType;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -102,6 +107,9 @@ public class FormServiceImpl implements FormService {
 
     @Autowired
     private TFrontPlanMapper frontPlanMapper;
+
+    @Autowired
+    private TFileMapper fileMapper;
 
     public List<TFormMain> listForm() {
         Example example = new Example(TFormMain.class);
@@ -542,7 +550,7 @@ public class FormServiceImpl implements FormService {
                                 formPbmVal.setIsScore(problemVo.getIsDone());
                                 formPbmVal.setFormResultId(subFormResult.getId());
                                 formPbmVal.setFormValueId(formValue.getId());
-                                formPbmVal.setProblemDescription(problemVo.getDescription());
+                                formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                                 formPbmVal.setProblemName(problemVo.getProblemName());
                                 Integer problemType = 0;
                                 if(CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
@@ -552,6 +560,30 @@ public class FormServiceImpl implements FormService {
                                     problemType = 1;
                                     formPbmVal.setProblemSchemaType(problemType);
                                 }
+                                String imgIds = "";
+                                List<ProblemImg> descImgArr = problemVo.getDescImgArr();
+                                if(CollectionUtils.isNotEmpty(descImgArr)) {
+                                    List<TFile> imgs = new ArrayList<>();
+                                    for(ProblemImg problemImg : descImgArr) {
+                                        TFile descImg = new TFile();
+                                        descImg.setImgUrl(problemImg.getImgUrl());
+                                        descImg.setCreateTime(now);
+                                        descImg.setModifyTime(now);
+                                        descImg.setIsDel(DeleteStatus.COMMON.getCode());
+                                        descImg.setCreateUserId(user.getId());
+                                        descImg.setSource(ImgSourceType.FROM_FRONT.getCode().byteValue());
+                                        imgs.add(descImg);
+                                    }
+                                    fileMapper.insertList(imgs);
+
+                                    for(TFile file : imgs) {
+                                        imgIds += file.getId() + ",";
+                                    }
+                                    if(StringUtil.isNotBlank(imgIds)) {
+                                        imgIds = imgIds.substring(0, imgIds.length() - 1);
+                                    }
+                                }
+                                formPbmVal.setDescImgIds(imgIds);
                                 formPbmVal.setOrgId(Constant.orgId);
                                 formPbmVal.setNotes(problemVo.getNotes());
                                 formPbmVal.setCheckMethod(problemVo.getCheckMode());
@@ -623,8 +655,8 @@ public class FormServiceImpl implements FormService {
                                         formOpptValue.setOpptId(opportunity.getId());
                                         formOpptValue.setIsPick(fcv.getIsPick());
                                         formOpptValue.setFormResultId(subFormResult.getId());
-                                        formOpptValue.setCreateTime(DateUtil.currentDate());
-                                        formOpptValue.setModifyTime(DateUtil.currentDate());
+                                        formOpptValue.setCreateTime(now);
+                                        formOpptValue.setModifyTime(now);
 
                                         formOpptValueMapper.insert(formOpptValue);
                                     }
@@ -650,7 +682,30 @@ public class FormServiceImpl implements FormService {
                                         if (subProblemVo.getIsSubList()) {
                                             subPbmVal.setSubFormId(subProblemVo.getSubListObject().getSubFormID());
                                         }
-                                        subPbmVal.setProblemDescription(subProblemVo.getDescription());
+                                        subPbmVal.setProblemDescription(subProblemVo.getProblemDescription());
+                                        descImgArr = subProblemVo.getDescImgArr();
+                                        if (CollectionUtils.isNotEmpty(descImgArr)) {
+                                            List<TFile> imgs = new ArrayList<>();
+                                            for (ProblemImg problemImg : descImgArr) {
+                                                TFile descImg = new TFile();
+                                                descImg.setImgUrl(problemImg.getImgUrl());
+                                                descImg.setIsDel(DeleteStatus.COMMON.getCode());
+                                                descImg.setCreateTime(now);
+                                                descImg.setModifyTime(now);
+                                                descImg.setCreateUserId(user.getId());
+                                                descImg.setSource(ImgSourceType.FROM_FRONT.getCode().byteValue());
+                                                imgs.add(descImg);
+                                            }
+                                            fileMapper.insertList(imgs);
+
+                                            for (TFile file : imgs) {
+                                                imgIds += file.getId() + ",";
+                                            }
+                                            if (StringUtil.isNotBlank(imgIds)) {
+                                                imgIds = imgIds.substring(0, imgIds.length() - 1);
+                                            }
+                                        }
+                                        subPbmVal.setDescImgIds(imgIds);
                                         formSubPbmValMapper.insert(subPbmVal);
 
                                         List<ProblemChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
@@ -669,9 +724,9 @@ public class FormServiceImpl implements FormService {
                                                     formOpptValue.setOpptDesc(tOpportunity.getDescription());
                                                 }
 
-                                                formOpptValue.setProblemId(problemVo.getProblemID());
+                                                formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                                 formOpptValue.setProblemType(problemType.byteValue());
-                                                formOpptValue.setProblemValueId(formPbmVal.getId());
+                                                formOpptValue.setSubProblemValueId(subPbmVal.getId());
 
                                                 opptVals.add(formOpptValue);
                                             }
@@ -787,7 +842,7 @@ public class FormServiceImpl implements FormService {
                         formPbmVal.setIsScore(problemVo.getIsDone());
                         formPbmVal.setFormResultId(subFormResult.getId());
                         formPbmVal.setFormValueId(formValue.getId());
-                        formPbmVal.setProblemDescription(problemVo.getDescription());
+                        formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                         formPbmVal.setProblemName(problemVo.getProblemName());
                         Integer problemType = 0;
                         if (CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
@@ -797,6 +852,30 @@ public class FormServiceImpl implements FormService {
                             problemType = 1;
                             formPbmVal.setProblemSchemaType(problemType);
                         }
+                        String imgIds = "";
+                        List<ProblemImg> descImgArr = problemVo.getDescImgArr();
+                        if (CollectionUtils.isNotEmpty(descImgArr)) {
+                            List<TFile> imgs = new ArrayList<>();
+                            for (ProblemImg problemImg : descImgArr) {
+                                TFile descImg = new TFile();
+                                descImg.setImgUrl(problemImg.getImgUrl());
+                                descImg.setIsDel(DeleteStatus.COMMON.getCode());
+                                descImg.setCreateTime(now);
+                                descImg.setModifyTime(now);
+                                descImg.setCreateUserId(user.getId());
+                                descImg.setSource(ImgSourceType.FROM_FRONT.getCode().byteValue());
+                                imgs.add(descImg);
+                            }
+                            fileMapper.insertList(imgs);
+
+                            for (TFile file : imgs) {
+                                imgIds += file.getId() + ",";
+                            }
+                            if (StringUtil.isNotBlank(imgIds)) {
+                                imgIds = imgIds.substring(0, imgIds.length() - 1);
+                            }
+                        }
+                        formPbmVal.setDescImgIds(imgIds);
                         formPbmVal.setOrgId(Constant.orgId);
                         formPbmVal.setNotes(problemVo.getNotes());
                         formPbmVal.setCheckMethod(problemVo.getCheckMode());
@@ -891,7 +970,30 @@ public class FormServiceImpl implements FormService {
                                 if (subProblemVo.getIsSubList()) {
                                     subPbmVal.setSubFormId(subProblemVo.getSubListObject().getSubFormID());
                                 }
-                                subPbmVal.setProblemDescription(subProblemVo.getDescription());
+                                subPbmVal.setProblemDescription(subProblemVo.getProblemDescription());
+                                descImgArr = subProblemVo.getDescImgArr();
+                                if (CollectionUtils.isNotEmpty(descImgArr)) {
+                                    List<TFile> imgs = new ArrayList<>();
+                                    for (ProblemImg problemImg : descImgArr) {
+                                        TFile descImg = new TFile();
+                                        descImg.setImgUrl(problemImg.getImgUrl());
+                                        descImg.setIsDel(DeleteStatus.COMMON.getCode());
+                                        descImg.setCreateTime(now);
+                                        descImg.setModifyTime(now);
+                                        descImg.setCreateUserId(user.getId());
+                                        descImg.setSource(ImgSourceType.FROM_FRONT.getCode().byteValue());
+                                        imgs.add(descImg);
+                                    }
+                                    fileMapper.insertList(imgs);
+
+                                    for (TFile file : imgs) {
+                                        imgIds += file.getId() + ",";
+                                    }
+                                    if (StringUtil.isNotBlank(imgIds)) {
+                                        imgIds = imgIds.substring(0, imgIds.length() - 1);
+                                    }
+                                }
+                                subPbmVal.setDescImgIds(imgIds);
                                 formSubPbmValMapper.insert(subPbmVal);
 
                                 List<ProblemChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
@@ -910,9 +1012,9 @@ public class FormServiceImpl implements FormService {
                                             formOpptValue.setOpptDesc(tOpportunity.getDescription());
                                         }
 
-                                        formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                         formOpptValue.setProblemType(problemType.byteValue());
-                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+                                        formOpptValue.setSubProblemValueId(subPbmVal.getId());
 
                                         opptVals.add(formOpptValue);
                                     }
@@ -988,6 +1090,7 @@ public class FormServiceImpl implements FormService {
         SysUser shopOwer = sysUserMapper.selectByPrimaryKey(shop.getShopManagerId());
         report.setShopkeeperId(shopOwer.getId());
         report.setShopkeeperName(shopOwer.getRealName());
+        report.setFormType(FormType.ABILITY_TYPE.getCode().byteValue());
          // 查询打表人所属部门
         SysDept department = sysDeptMapper.selectByPrimaryKey(user.getDptId());
         report.setReporterDptId(department.getId());
