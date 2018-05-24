@@ -154,8 +154,7 @@ public class SysDeptController extends BaseResource {
 			String[] idArr = userIdStr.split(",");
 			if(null!=idArr && idArr.length>0) {
 				//判断是否存在该下级
-				List<String> idList = Arrays.asList(idArr);
-				List userIdList = new ArrayList(idList);
+				List userIdList = new ArrayList(Arrays.asList(idArr));
 				if (!userIdList.contains(sysUserRelation.getUserId().toString())) {
 					userIdList.add(sysUserRelation.getUserId().toString());
 					jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
@@ -203,8 +202,7 @@ public class SysDeptController extends BaseResource {
 			String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + parentUserId);
             String[] idArr = userIdStr.split(",");
             if(null!=idArr && idArr.length>0) {
-				List<String> idList = Arrays.asList(idArr);
-				List userIdList = new ArrayList(idList);
+				List userIdList = new ArrayList(Arrays.asList(idArr));
 				//缓存中删除该下级
 				for (int i = 0; i < userIdList.size(); i++) {
 					if (userId.equals(userIdList.get(i))) {
