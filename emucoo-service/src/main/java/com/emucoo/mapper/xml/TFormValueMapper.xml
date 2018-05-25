@@ -6,13 +6,10 @@
           WARNING - @mbg.generated
         -->
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="form_main_id" property="formMainId" jdbcType="BIGINT"/>
         <result column="from_type_id" property="fromTypeId" jdbcType="BIGINT"/>
         <result column="is_done" property="isDone" jdbcType="BIT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
-        <result column="front_plan_id" property="frontPlanId" jdbcType="BIGINT"/>
-        <result column="form_main_name" property="formMainName" jdbcType="VARCHAR"/>
         <result column="form_type_name" property="formTypeName" jdbcType="VARCHAR"/>
         <result column="score_rate" property="scoreRate" jdbcType="REAL"/>
         <result column="score" property="score" jdbcType="INTEGER"/>
@@ -47,12 +44,6 @@
         </collection>
     </resultMap>
 
-    <select id="fetchOneFormValue" resultMap="BaseResultMap">
-        select * from t_form_value
-        where form_main_id=#{formId} and from_type_id=#{moduleId} and front_plan_id=#{arrangeId}
-
-    </select>
-
     <delete id="cleanByResultId">
         delete from t_form_value where form_result_id=#{resultId}
     </delete>
@@ -61,7 +52,6 @@
       SELECT
       formValue.id,
       formValue.form_type_name,
-      formValue.form_main_id,
       formValue.from_type_id,
       formValue.is_done,
       formValue.is_pass,
@@ -90,5 +80,18 @@
       LEFT JOIN t_form_sub_pbm_val formSubPbmVal ON formSubPbmVal.problem_value_id = formPbmVal.id
       WHERE formValue.form_result_id = #{id}
       ORDER BY formPbmVal.id ASC
+    </select>
+
+    <select id="findTypeValueListByFormAndArrange" resultType="com.emucoo.model.TFormValue">
+        SELECT
+        formValue.id,
+        formValue.form_type_name,
+        formValue.from_type_id,
+        formValue.score,
+        formValue.score_rate,
+        formValue.total
+        FROM t_form_value formValue
+        INNER JOIN t_form_check_result formResult ON formResult.id = formValue.form_result_id
+        AND formResult.front_plan_id = #{arrangeId} AND formResult.form_main_id = #{formId}
     </select>
 </mapper>

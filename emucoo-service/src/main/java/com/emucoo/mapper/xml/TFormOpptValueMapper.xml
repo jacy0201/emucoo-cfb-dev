@@ -140,4 +140,31 @@
     <delete id="cleanByResultId">
         delete from t_form_oppt_value where form_result_id=#{resultId}
     </delete>
+
+    <select id="findImportOpptValList" parameterType="com.emucoo.model.TFormPbmVal" resultType="com.emucoo.model.TFormOpptValue">
+        SELECT
+        id,
+        is_pick,
+        problem_id,
+        sub_problem_id,
+        problem_value_id,
+        sub_problem_value_id,
+        form_result_id
+        FROM t_form_oppt_value
+        WHERE is_pick = TRUE AND (problem_value_id IN
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item.id}
+        </foreach>
+        OR sub_problem_value_id IN
+        (
+          SELECT
+          id
+          FROM
+          t_form_sub_pbm_val
+          WHERE problem_value_id IN
+          <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item.id}
+          </foreach>
+        ))
+    </select>
 </mapper>
