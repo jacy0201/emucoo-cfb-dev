@@ -11,6 +11,7 @@ import com.emucoo.dto.modules.abilityForm.ProblemImg;
 import com.emucoo.dto.modules.abilityForm.ProblemVo;
 import com.emucoo.dto.modules.abilityForm.SubProblemVo;
 import com.emucoo.dto.modules.form.*;
+import com.emucoo.dto.modules.shop.PlanArrangeGetFormIn;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.FormType;
@@ -111,11 +112,31 @@ public class FormServiceImpl implements FormService {
     @Autowired
     private TFileMapper fileMapper;
 
-    public List<TFormMain> listForm() {
-        Example example = new Example(TFormMain.class);
+    @Autowired
+    private TPlanFormRelationMapper planFormRelationMapper;
+
+    @Autowired
+    private TLoopSubPlanMapper loopSubPlanMapper;
+
+    public List<TFormMain> listForm(PlanArrangeGetFormIn getFormIn) {
+        /*Example example = new Example(TFormMain.class);
         example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
-        List<TFormMain> tFormMains = formMainMapper.selectByExample(example);
-        return tFormMains;
+        List<TFormMain> tFormMains = formMainMapper.selectByExample(example);*/
+        try {
+            TLoopSubPlan subPlan = loopSubPlanMapper.findSubPlanByArrangeId(getFormIn.getPatrolShopArrangeID());
+            if (subPlan == null) {
+                throw new BaseException("计划数据异常！");
+            }
+            List<TFormMain> tFormMains = formMainMapper.findAvailableFormsUseForPlan(subPlan.getPlanId());
+            return tFormMains;
+        } catch (Exception e) {
+            logger.error("读取检查表列表失败！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("读取检查表列表失败！");
+        }
+
     }
 
     @Override
@@ -463,6 +484,12 @@ public class FormServiceImpl implements FormService {
         return checkinWithAppCreatedOppts;
     }
 
+    /**
+     * 保存能力模型打表结果
+     * @param formIn
+     * @param user
+     * @return
+     */
     @Override
     @Transactional
     public Long saveAbilityFormResult(AbilityFormMain formIn, SysUser user) {
@@ -560,6 +587,7 @@ public class FormServiceImpl implements FormService {
                                     problemType = 1;
                                     formPbmVal.setProblemSchemaType(problemType);
                                 }
+                                // 保存题项照片数据
                                 String imgIds = "";
                                 List<ProblemImg> descImgArr = problemVo.getDescImgArr();
                                 if(CollectionUtils.isNotEmpty(descImgArr)) {
@@ -787,7 +815,7 @@ public class FormServiceImpl implements FormService {
                     }
                 }
             }
-            // 保存报告
+            // 生成并保存报告
             Long reportId = saveAbilityReport(user, now, formResult.getId(), subResultIds, formIn.getShopID(), formIn.getFormID(), formIn.getPatrolShopArrangeID());
             return reportId;
         } catch (Exception e) {

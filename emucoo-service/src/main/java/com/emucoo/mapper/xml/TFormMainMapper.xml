@@ -72,4 +72,17 @@
     <select id="fetchOneById" resultMap="BaseResultMap">
         select * from t_form_main where id=#{id}
     </select>
+
+    <select id="findAvailableFormsUseForPlan" parameterType="Long" resultType="com.emucoo.model.TFormMain">
+       SELECT
+       formMain.name,
+       formMain.description,
+       formMain.parent_form_id,
+       formMain.subject_type,
+       formMain.form_type
+       FROM t_form_main formMain
+       INNER JOIN t_plan_form_relation planForm ON planForm.form_main_id = formMain.id
+       AND planForm.plan_id = #{planId} AND planForm.is_del = FALSE AND planForm.is_use = TRUE
+
+    </select>
 </mapper>
