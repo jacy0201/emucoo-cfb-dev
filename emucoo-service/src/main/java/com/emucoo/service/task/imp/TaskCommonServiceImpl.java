@@ -619,6 +619,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             task.setIllustrationImgIds(StringUtils.join(imgids, ","));
         }
 
+        data.setExeCloseHour(data.getExeCloseHour() == null ? 0 : data.getExeCloseHour());
+        data.setExeCloseMinute(data.getExeCloseMinute() == null ? 0 : data.getExeCloseMinute());
+        data.setExeRemindHour(data.getExeRemindHour() == null ? 0 : data.getExeRemindHour());
+        data.setExeRemindMinute(data.getExeRemindMinute() == null ? 0 : data.getExeRemindMinute());
+        data.setAuditCloseHour(data.getAuditCloseHour() == null ? 0 : data.getAuditCloseHour());
+        data.setAuditCloseMinute(data.getAuditCloseMinute() == null ? 0 : data.getAuditCloseMinute());
         // 截止时间
         task.setExecuteDeadline(String.format("%d:%d", data.getExeCloseHour(), data.getExeCloseMinute()));
         task.setExecuteRemindTime(String.format("%d:%d", data.getExeRemindHour(), data.getExeRemindMinute()));
@@ -667,8 +673,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         // 持续周期
         task.setDurationTimeType(data.getDurationType());
-        task.setTaskStartDate(DateUtil.strToYYMMDDDate(data.getDurationBegin()));
-        task.setTaskEndDate(DateUtil.strToYYMMDDDate(data.getDurationEnd()));
+        task.setTaskStartDate(DateUtil.strToYYMMDDDate(StringUtils.isBlank(data.getDurationBegin()) ? DateUtil.simple(DateUtil.currentDate()) : data.getDurationBegin()));
+        task.setTaskEndDate(DateUtil.strToYYMMDDDate(StringUtils.isBlank(data.getDurationEnd()) ? DateUtil.simple(DateUtil.currentDate()) : data.getDurationEnd()));
 
         // 循环周期 1: 每隔多少天一次,  2，3：每周（1-7），每月（1-31)
         task.setLoopCycleType(data.getRepeatType());

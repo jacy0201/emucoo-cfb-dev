@@ -42,7 +42,7 @@
         select count(1) from t_loop_work
         where excute_user_id=#{submitUserId}
         and type is not null
-        and #{today} between t1.execute_begin_date and t1.execute_end_date
+        and #{today} between execute_begin_date and execute_end_date
     </select>
 
     <select id="countPendingReviewWorkNum" resultType="java.lang.Integer">
