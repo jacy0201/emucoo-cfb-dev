@@ -57,8 +57,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     private SysUserShopMapper userShopMapper;
 
 
-    private List<ImageUrl> convertImgIds2Urls(String ids){
-        if(ids == null)
+    private List<ImageUrl> convertImgIds2Urls(String ids) {
+        if (ids == null)
             return new ArrayList<>();
         return Arrays.asList(ids.split(",")).stream().map(iid -> {
             TFile img = fileMapper.selectByPrimaryKey(iid);
@@ -133,7 +133,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         review.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
         if (loopWork.getAuditUserId() != null) {
             SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
-            if(auditUser != null) {
+            if (auditUser != null) {
                 review.setAuditorName(auditUser.getRealName());
                 review.setAuditorHeadUrl(auditUser.getHeadImgUrl());
             }
@@ -144,18 +144,18 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         List<TTaskComment> comments = commentMapper.fetchByLoopWorkId(loopWork.getId());
         List<Answer> answerList = new ArrayList<Answer>();
-        if (comments != null && comments.size() > 0){
-            for(TTaskComment comment : comments) {
+        if (comments != null && comments.size() > 0) {
+            for (TTaskComment comment : comments) {
                 Answer answer = new Answer();
                 answer.setReplyID(comment.getId().intValue());
                 answer.setReplyContent(comment.getContent());
                 answer.setReplyTime(comment.getCreateTime().getTime());
                 answer.setAnswerID(comment.getCreateUserId().intValue());
-                if(comment.getCreateUserId() != null) {
+                if (comment.getCreateUserId() != null) {
                     SysUser commentUser = userMapper.selectByPrimaryKey(comment.getCreateUserId());
-                    if(commentUser != null)
+                    if (commentUser != null)
                         answer.setAnswerName(commentUser.getRealName());
-                        answer.setAnswerHeadUrl(commentUser.getHeadImgUrl());
+                    answer.setAnswerHeadUrl(commentUser.getHeadImgUrl());
                 }
                 answer.setReplyAction(1);
                 answer.setReplyImgArr(new ArrayList<>());
@@ -225,7 +225,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             });
 
             TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
-            if(odfw == null){
+            if (odfw == null) {
                 odfw = new TOperateDataForWork();
                 odfws1.add(odfw);
             } else {
@@ -246,7 +246,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
 
         operateDataForWorkMapper.insertList(odfws1);
-        for(TOperateDataForWork odfw : odfws2) {
+        for (TOperateDataForWork odfw : odfws2) {
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
         }
 
@@ -268,7 +268,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         List<TaskCommonAuditIn.AuditTaskItem> taskItemArr = taskCommonAuditIn.getReviewArr();
         for (TaskCommonAuditIn.AuditTaskItem taskItem : taskItemArr) {
             // 任务审核
-            TOperateDataForWork odfw  = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
+            TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
             odfw.setTaskItemId(taskItem.getTaskItemID());
             odfw.setLoopWorkId(loopWork.getId());
             odfw.setAuditResult(taskItem.getReviewResult());
@@ -276,7 +276,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setAuditUserId(user.getId());
             List<ImageUrl> imgarr = taskItem.getReviewImgArr();
             List<String> imgids = new ArrayList<>();
-            if(imgarr != null) {
+            if (imgarr != null) {
                 imgarr.forEach(imga -> {
                     TFile img = new TFile();
                     img.setImgUrl(imga.getImgUrl());
@@ -330,9 +330,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Override
     public List<TaskParameterVo> listCommonTaskByName(String keyword, int pageNm, int pageSz) {
-        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, (pageNm-1) * pageSz, pageSz);
+        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, (pageNm - 1) * pageSz, pageSz);
         List<TaskParameterVo> taskList = new ArrayList<>();
-        for(TTask task : tasks) {
+        for (TTask task : tasks) {
             TaskParameterVo vo = new TaskParameterVo();
             vo.setId(task.getId());
             vo.setName(task.getName());
@@ -340,7 +340,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             vo.setIsUse(task.getIsUse());
             vo.setLabels(new ArrayList<TaskParameterVo.IdNamePair>());
             List<TLabel> labels = labelMapper.listLabelByTaskId(task.getId());
-            for(TLabel label : labels){
+            for (TLabel label : labels) {
                 TaskParameterVo.IdNamePair lbl = new TaskParameterVo.IdNamePair();
                 lbl.setId(label.getId());
                 lbl.setName(label.getName());
@@ -361,8 +361,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         task.setModifyTime(DateUtil.currentDate());
         taskMapper.insert(task);
         List<TaskParameterVo.IdNamePair> lbls = data.getLabels();
-        if(lbls != null){
-            for(TaskParameterVo.IdNamePair lbl : lbls) {
+        if (lbls != null) {
+            for (TaskParameterVo.IdNamePair lbl : lbls) {
                 TTaskLabel tl = new TTaskLabel();
                 tl.setLabelId(lbl.getId());
                 tl.setTaskId(task.getId());
@@ -373,7 +373,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Override
     public boolean judgeExistCommonTask(TaskParameterVo taskParameterVo) {
-        if(taskMapper.judgeExistCommonTask(taskParameterVo.getName()) > 0)
+        if (taskMapper.judgeExistCommonTask(taskParameterVo.getName()) > 0)
             return true;
         return false;
     }
@@ -387,7 +387,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         taskMapper.updateByPrimaryKeySelective(task);
 
         List<TaskParameterVo.IdNamePair> lbls = data.getLabels();
-        if(lbls != null) {
+        if (lbls != null) {
             taskLabelMapper.dropByTaskId(task.getId());
             for (TaskParameterVo.IdNamePair lbl : lbls) {
                 TTaskLabel tl = new TTaskLabel();
@@ -418,9 +418,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         vo.setName(task.getName());
         vo.setIsUse(task.getIsUse());
         vo.setDescription(task.getDescription());
-        if(task.getIllustrationImgIds() != null) {
+        if (task.getIllustrationImgIds() != null) {
             List<TFile> imgs = fileMapper.fetchFilesByIds(Arrays.asList(task.getIllustrationImgIds().split(",")));
-            if(imgs != null && imgs.size() > 0) {
+            if (imgs != null && imgs.size() > 0) {
                 List<ImageUrl> imgurls = new ArrayList<>();
                 imgs.forEach(img -> {
                     ImageUrl imageUrl = new ImageUrl();
@@ -430,20 +430,23 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 vo.setImgUrls(imgurls);
             }
         }
-        if(task.getExecuteDeadline() != null) {
+        if (StringUtils.isNotBlank(task.getExecuteDeadline())) {
             String[] exeTm = task.getExecuteDeadline().split(":");
-            vo.setExeCloseHour(Integer.parseInt(exeTm[0]));
-            vo.setExeCloseMinute(Integer.parseInt(exeTm[1]));
+            vo.setExeCloseHour(Integer.parseInt(exeTm[0] == null ? "0" : exeTm[0]));
+            if (exeTm.length == 2)
+                vo.setExeCloseMinute(Integer.parseInt(exeTm[1] == null ? "0" : exeTm[1]));
         }
-        if(task.getExecuteRemindTime() != null) {
+        if (StringUtils.isNotBlank(task.getExecuteRemindTime())) {
             String[] remTm = task.getExecuteRemindTime().split(":");
-            vo.setAuditCloseHour(Integer.parseInt(remTm[0]));
-            vo.setAuditCloseMinute(Integer.parseInt(remTm[1]));
+            vo.setAuditCloseHour(Integer.parseInt(remTm[0] == null ? "0" : remTm[0]));
+            if (remTm.length == 2)
+                vo.setAuditCloseMinute(Integer.parseInt(remTm[1] == null ? "0" : remTm[1]));
         }
-        if(task.getAuditDeadline() != null) {
+        if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] audTm = task.getAuditDeadline().split(":");
-            vo.setExeRemindHour(Integer.parseInt(audTm[0]));
-            vo.setExeRemindMinute(Integer.parseInt(audTm[1]));
+            vo.setExeRemindHour(Integer.parseInt(audTm[0] == null ? "0" : audTm[0]));
+            if (audTm.length == 2)
+                vo.setExeRemindMinute(Integer.parseInt(audTm[1] == null ? "0" : audTm[1]));
         }
 
         vo.setExeUserType(task.getExecuteUserType());
@@ -454,13 +457,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         List<TaskParameterVo.DeptPosition> ccDpts = new ArrayList<>();
         for (TTaskPerson taskPerson : ccPersons) {
             TaskParameterVo.DeptPosition dept = null;
-            for(TaskParameterVo.DeptPosition ccDpt : ccDpts) {
-                if(ccDpt.getDept().getId() == taskPerson.getDptId()) {
+            for (TaskParameterVo.DeptPosition ccDpt : ccDpts) {
+                if (ccDpt.getDept().getId() == taskPerson.getDptId()) {
                     dept = ccDpt;
                     break;
                 }
             }
-            if(dept == null){
+            if (dept == null) {
                 dept = new TaskParameterVo.DeptPosition();
                 ccDpts.add(dept);
                 dept.setPositions(new ArrayList<>());
@@ -483,14 +486,14 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
         }
         vo.setCcUserPositions(ccDpts);
-        if(vo.getExeUserType() != null) {
+        if (vo.getExeUserType() != null) {
             if (vo.getExeUserType() == 1) { // 1: 按部门
                 List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
                 for (TTaskPerson taskPerson : exePersons) {
                     // 这段代码是把list里的，按照dept id分组了。
                     TaskParameterVo.DeptPosition dpt = null;
                     for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
-                        if(exeDpt.getDept().getId() == taskPerson.getDptId()){
+                        if (exeDpt.getDept().getId() == taskPerson.getDptId()) {
                             dpt = exeDpt;
                             break;
                         }
@@ -538,11 +541,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         vo.setDurationEnd(DateUtil.dateToString1(task.getTaskEndDate()));
 
         vo.setRepeatType(task.getLoopCycleType());
-        if(StringUtils.isNotBlank(task.getLoopCycleValue())) {
+        if (StringUtils.isNotBlank(task.getLoopCycleValue())) {
             vo.setDays(Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(str -> Integer.parseInt(str)).collect(Collectors.toList()));
         }
 
-        if(task.getScoreType() != null) {
+        if (task.getScoreType() != null) {
             vo.setScoreType(task.getScoreType().intValue());
             vo.setScoreValue(task.getPreinstallScore());
             vo.setScoreWeight(task.getPreinstallWeight());
@@ -550,7 +553,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(task.getId());
         List<TaskParameterVo.TaskOption> taskOptions = new ArrayList<>();
-        if(options != null) {
+        if (options != null) {
             for (TOperateOption option : options) {
                 TaskParameterVo.TaskOption taskOption = new TaskParameterVo.TaskOption();
                 taskOption.setId(option.getId());
@@ -579,9 +582,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private void cleanOldConfigForCommonTask(TTask task) {
-        if(task.getIllustrationImgIds() != null){
+        if (task.getIllustrationImgIds() != null) {
             List<String> ids = Arrays.asList(task.getIllustrationImgIds().split(","));
-            if(ids.size() > 0)
+            if (ids.size() > 0)
                 fileMapper.dropByIds(ids);
         }
         operateOptionMapper.dropSampleImagesByTaskId(task.getId());
@@ -593,7 +596,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Override
     public void configCommonTask(TaskParameterVo data) {
         TTask task = taskMapper.selectByPrimaryKey(data.getId());
-        if(task == null){
+        if (task == null) {
             task = new TTask();
             task.setId(data.getId());
             task.setCreateTime(DateUtil.currentDate());
@@ -604,10 +607,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         // task基本信息
         task.setName(data.getName());
         task.setDescription(data.getDescription());
-        if(data.getImgUrls() != null){
+        if (data.getImgUrls() != null) {
             Iterator<ImageUrl> it = data.getImgUrls().iterator();
             List<String> imgids = new ArrayList<>();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 TFile imgfile = new TFile();
                 imgfile.setImgUrl(it.next().getImgUrl());
                 fileMapper.insert(imgfile);
@@ -616,6 +619,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             task.setIllustrationImgIds(StringUtils.join(imgids, ","));
         }
 
+        data.setExeCloseHour(data.getExeCloseHour() == null ? 0 : data.getExeCloseHour());
+        data.setExeCloseMinute(data.getExeCloseMinute() == null ? 0 : data.getExeCloseMinute());
+        data.setExeRemindHour(data.getExeRemindHour() == null ? 0 : data.getExeRemindHour());
+        data.setExeRemindMinute(data.getExeRemindMinute() == null ? 0 : data.getExeRemindMinute());
+        data.setAuditCloseHour(data.getAuditCloseHour() == null ? 0 : data.getAuditCloseHour());
+        data.setAuditCloseMinute(data.getAuditCloseMinute() == null ? 0 : data.getAuditCloseMinute());
         // 截止时间
         task.setExecuteDeadline(String.format("%d:%d", data.getExeCloseHour(), data.getExeCloseMinute()));
         task.setExecuteRemindTime(String.format("%d:%d", data.getExeRemindHour(), data.getExeRemindMinute()));
@@ -623,7 +632,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         // 执行人信息
         task.setExecuteUserType(data.getExeUserType());
-        if(data.getExeUserType() == 1) { // 1: 按部门
+        if (data.getExeUserType() == 1) { // 1: 按部门
             data.getExeDeptPositions().forEach(deptPosition -> {
                 deptPosition.getPositions().forEach(position -> {
                     TTaskPerson taskPerson = new TTaskPerson();
@@ -664,8 +673,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         // 持续周期
         task.setDurationTimeType(data.getDurationType());
-        task.setTaskStartDate(DateUtil.strToYYMMDDDate(data.getDurationBegin()));
-        task.setTaskEndDate(DateUtil.strToYYMMDDDate(data.getDurationEnd()));
+        task.setTaskStartDate(DateUtil.strToYYMMDDDate(StringUtils.isBlank(data.getDurationBegin()) ? DateUtil.simple(DateUtil.currentDate()) : data.getDurationBegin()));
+        task.setTaskEndDate(DateUtil.strToYYMMDDDate(StringUtils.isBlank(data.getDurationEnd()) ? DateUtil.simple(DateUtil.currentDate()) : data.getDurationEnd()));
 
         // 循环周期 1: 每隔多少天一次,  2，3：每周（1-7），每月（1-31)
         task.setLoopCycleType(data.getRepeatType());
@@ -676,7 +685,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         task.setPreinstallScore(data.getScoreValue());
         task.setPreinstallWeight(data.getScoreWeight());
 
-        if(data.getTaskOptions() != null){
+        if (data.getTaskOptions() != null) {
             data.getTaskOptions().forEach(taskOption -> {
                 TOperateOption option = new TOperateOption();
                 option.setCreateTime(DateUtil.currentDate());
@@ -691,11 +700,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 option.setFeedbackNeedNum(taskOption.getNeedFeedbackNum());
                 option.setFeedbackNumName(taskOption.getFeedbackNumName());
                 option.setFeedbackNumType(taskOption.getFeedbackNumType());
-                option.setFeedbackImgType(taskOption.getNeedFeedbackImg()?1:0);
-                option.setFeedbackImgFromAlbum(taskOption.getFeedbackImgType()==1?true:false);
+                option.setFeedbackImgType(taskOption.getNeedFeedbackImg() ? 1 : 0);
+                option.setFeedbackImgFromAlbum(taskOption.getFeedbackImgType() == 1 ? true : false);
                 option.setFeedbackImgName(taskOption.getFeedbackImgName());
                 option.setFeedbackImgMaxCount(taskOption.getFeedbackImgCount());
-                if(StringUtils.isNotBlank(taskOption.getFeedbackImgSampleUrl())) {
+                if (StringUtils.isNotBlank(taskOption.getFeedbackImgSampleUrl())) {
                     TFile img = new TFile();
                     img.setImgUrl(taskOption.getFeedbackImgSampleUrl());
                     fileMapper.insert(img);
@@ -710,25 +719,23 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
 
     /**
-     *
      * 根据定时任务的定义，为定时任务创建每天要执行的实例，规则是：
      * 1：根据执行人的定义，每个执行人创建一个任务实例
      * 2：根据执行时间和执行周期定义，每次执行创建一个执行实例
      * 3：根据执行截止时间定义，计算出提醒截止时间，审核截止时间
-     *
      */
     @Override
     public void buildCommonTaskInstance() {
         // list all common task: filter by the duration time
         Date tomorrow = DateUtil.dateAddDay(DateUtil.currentDate(), 1);
         List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(tomorrow);
-        for(TTask commonTask : commonTasks) {
+        for (TTask commonTask : commonTasks) {
             createCommonLoopWork(commonTask, tomorrow);
         }
     }
 
     private void createCommonLoopWork(TTask commonTask, Date tomorrow) {
-        if(!tomorrowIsExecuteDate(commonTask, tomorrow))
+        if (!tomorrowIsExecuteDate(commonTask, tomorrow))
             return;
         List<SysUser> executors = determinExecutors(commonTask);
 
@@ -738,7 +745,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         Date exeDeadLine = DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(exeBeginDt) + commonTask.getExecuteDeadline().replace(":", "") + "00");
         Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30);
 
-        if(commonTask.getExecuteRemindTime() != null) {
+        if (commonTask.getExecuteRemindTime() != null) {
             String[] remindStr = commonTask.getExecuteRemindTime().split(":");
             if (remindStr.length == 1) {
                 exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, Integer.parseInt(remindStr[0].trim()));
@@ -751,12 +758,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(commonTask.getId());
 
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
-        for(SysUser executor : executors) {
+        for (SysUser executor : executors) {
             TLoopWork loopWork = new TLoopWork();
 //            loopWork.setAuditDeadline();
 //            loopWork.setAuditTime();
             SysUser auditor = determinAuditorByExecutorType(executor, commonTask);
-            if(auditor != null) {
+            if (auditor != null) {
                 loopWork.setAuditUserId(auditor.getId());
                 loopWork.setAuditUserName(auditor.getRealName());
             }
@@ -774,7 +781,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             loopWork.setModifyTime(DateUtil.currentDate());
 //            loopWork.setScore();
             List<SysUser> ccPersons = determineSendersByExecutorType(executor, commonTask);
-            if(ccPersons != null && ccPersons.size() > 0) {
+            if (ccPersons != null && ccPersons.size() > 0) {
                 loopWork.setSendUserIds(StringUtils.join(ccPersons.stream().map(person -> Long.toString(person.getId())).collect(Collectors.toList()), ","));
             }
             loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
@@ -795,7 +802,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     private List<SysUser> determineSendersByExecutorType(SysUser executor, TTask commonTask) {
         // 任务执行者选择店铺时，抄送人选择部门及岗位，只有符合条件且品牌和分区同时包含任务执行者所在店铺的品牌及分区的人员才可收到任务的抄送信息
-        if(commonTask.getExecuteUserType() == 2) {
+        if (commonTask.getExecuteUserType() == 2) {
             return taskPersonMapper.filterSendersByExecutorShop(executor.getId(), commonTask.getId());
         } else { // 任务执行者选择部门及岗位时，抄送人选择部门及岗位，符合条件的所有人员均可收到任务的抄送信息；
             return taskPersonMapper.filterSendersByExecutorDpt(commonTask.getId());
@@ -803,7 +810,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private List<SysUser> determinExecutors(TTask commonTask) {
-        if(commonTask.getExecuteUserType() == 1) {
+        if (commonTask.getExecuteUserType() == 1) {
             return taskPersonMapper.filterTaskExecutorsByDpt(commonTask.getId());
         } else {
             return taskPersonMapper.filterTaskExecutorsByShop(commonTask.getId());
@@ -813,12 +820,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     private boolean tomorrowIsExecuteDate(TTask commonTask, Date tomorrow) {
         boolean flag = false;
         int cycleType = commonTask.getLoopCycleType() == null ? 0 : commonTask.getLoopCycleType();
-        switch(cycleType) {
+        switch (cycleType) {
             case 1:
                 int interval = commonTask.getLoopCycleValue() == null ? 0 : Integer.parseInt(commonTask.getLoopCycleValue());
                 Date dt = commonTask.getTaskStartDate();
-                while(DateUtil.compare(dt, commonTask.getTaskEndDate()) < 0){
-                    if(DateUtil.compare(dt, tomorrow) == 0) {
+                while (DateUtil.compare(dt, commonTask.getTaskEndDate()) < 0) {
+                    if (DateUtil.compare(dt, tomorrow) == 0) {
                         flag = true;
                         break;
                     }
@@ -829,7 +836,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 int dayOfWeek = DateUtil.getDayOfWeek(tomorrow);
                 String weekDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
                 Set<Integer> daysWeek = new HashSet<Integer>(Arrays.asList(weekDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
-                if(daysWeek.contains(dayOfWeek)) {
+                if (daysWeek.contains(dayOfWeek)) {
                     flag = true;
                 }
                 break;
@@ -837,7 +844,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 int dayOfMonth = DateUtil.getDay(tomorrow);
                 String monthDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
                 Set<Integer> daysMonth = new HashSet<Integer>(Arrays.asList(monthDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
-                if(daysMonth.contains(dayOfMonth)){
+                if (daysMonth.contains(dayOfMonth)) {
                     flag = true;
                 }
                 break;
@@ -846,10 +853,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private SysUser determinAuditorByExecutorType(SysUser executor, TTask commonTask) {
-        if(commonTask.getExecuteUserType() == 2){ // 执行人按店铺：审核人是指定审核部门里对执行人店铺有数据权限的人。
+        if (commonTask.getExecuteUserType() == 2) { // 执行人按店铺：审核人是指定审核部门里对执行人店铺有数据权限的人。
             Long auditDeptId = commonTask.getAuditDptId();
             List<SysUser> supervisors = taskPersonMapper.fetchSupervisorsOfShop(auditDeptId, executor.getCurrentShopId());
-            if(supervisors != null && supervisors.size() > 0) {
+            if (supervisors != null && supervisors.size() > 0) {
                 int index = Long.valueOf(Math.round(Math.random() * (supervisors.size() - 1))).intValue();
                 return supervisors.get(index);
             } else {
@@ -861,13 +868,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private void createCommonLoopWorkOperateOptions(TTask commonTask, TLoopWork loopWork, List<TOperateOption> options) {
-        if(commonTask.getScoreType() == 1) { // 任务整体评分
+        if (commonTask.getScoreType() == 1) { // 任务整体评分
             return;
         }
         // 任务按操作项评分时，要报操作项也实例化
-        if(options != null && options.size() > 0) {
+        if (options != null && options.size() > 0) {
             List<TOperateDataForWork> opOpts = new ArrayList<>();
-            for(TOperateOption option : options) {
+            for (TOperateOption option : options) {
                 TOperateDataForWork opOpt = new TOperateDataForWork();
                 opOpt.setCreateTime(DateUtil.currentDate());
                 opOpt.setImgOptionName(option.getFeedbackImgName());
