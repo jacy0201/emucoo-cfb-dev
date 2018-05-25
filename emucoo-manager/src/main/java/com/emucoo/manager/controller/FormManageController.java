@@ -198,7 +198,7 @@ public class FormManageController extends BaseResource {
         return success(form);
     }
 
-    @ApiOperation(value = "添加能力模型机会点")
+ /*   @ApiOperation(value = "添加能力模型机会点")
     @PostMapping(value = "/addFormOppt")
     public ApiResult addFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
         List<TFormOppt> tFormOpptList = paramVo.getData();
@@ -209,7 +209,7 @@ public class FormManageController extends BaseResource {
 
         return success("success");
     }
-
+*/
     @ApiOperation(value = "编辑能力模型机会点")
     @PostMapping(value = "/editFormOppt")
     public ApiResult editFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
@@ -221,11 +221,11 @@ public class FormManageController extends BaseResource {
         return success("success");
     }
 
-    @ApiOperation(value = "获取能力模型机会点")
+   /* @ApiOperation(value = "获取能力模型机会点")
     @PostMapping(value = "/getFormOpptList")
     public ApiResult<List<TFormOppt>> getFormOpptList(@RequestBody ParamVo<TFormOppt> paramVo) {
         TFormOppt tFormOppt = paramVo.getData();
         List<TFormOppt> list=formManageService.getTFormOpptList(tFormOppt);
         return success(list);
-    }
+    }*/
 }
