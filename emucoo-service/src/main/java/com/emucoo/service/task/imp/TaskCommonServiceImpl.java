@@ -337,7 +337,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             vo.setId(task.getId());
             vo.setName(task.getName());
             vo.setDescription(task.getDescription());
-            vo.setUse(task.getIsUse());
+            vo.setIsUse(task.getIsUse());
             vo.setLabels(new ArrayList<TaskParameterVo.IdNamePair>());
             List<TLabel> labels = labelMapper.listLabelByTaskId(task.getId());
             for(TLabel label : labels){
@@ -416,7 +416,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         TTask task = taskMapper.selectByPrimaryKey(taskId);
         vo.setId(task.getId());
         vo.setName(task.getName());
-        vo.setUse(task.getIsUse());
+        vo.setIsUse(task.getIsUse());
         vo.setDescription(task.getDescription());
         if(task.getIllustrationImgIds() != null) {
             List<TFile> imgs = fileMapper.fetchFilesByIds(Arrays.asList(task.getIllustrationImgIds().split(",")));

@@ -44,7 +44,7 @@ public class TaskParameterVo {
     private Long id;
     private String name;
     private String description;
-    private Boolean use;
+    private Boolean isUse;
     private List<IdNamePair> labels;
     private List<ImageUrl> imgUrls;
 
