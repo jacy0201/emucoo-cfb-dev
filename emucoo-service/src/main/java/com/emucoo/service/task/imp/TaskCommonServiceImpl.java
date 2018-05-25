@@ -727,7 +727,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Override
     public void buildCommonTaskInstance() {
         // list all common task: filter by the duration time
-        Date tomorrow = DateUtil.dateAddDay(DateUtil.currentDate(), 1);
+        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
         List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(tomorrow);
         for (TTask commonTask : commonTasks) {
             createCommonLoopWork(commonTask, tomorrow);
@@ -742,9 +742,19 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         // 因为拆分的具体的loop work没有跨天执行的，所以可以直接计算出明天就是该任务实例的执行日期
         Date exeBeginDt = tomorrow;
         Date exeEndDt = tomorrow;
-        Date exeDeadLine = DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(exeBeginDt) + commonTask.getExecuteDeadline().replace(":", "") + "00");
-        Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30);
 
+        Date exeDeadLine = exeEndDt;
+        if(StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
+            String[] exeStr = commonTask.getExecuteDeadline().split(":");
+            if(exeStr.length == 1){
+                exeDeadLine = DateUtil.timeForward(exeBeginDt, 0, Integer.parseInt(exeStr[0].trim()));
+            }
+            if(exeStr.length == 2){
+                exeDeadLine = DateUtil.timeForward(exeBeginDt, Integer.parseInt(exeStr[0].trim()), Integer.parseInt(exeStr[1].trim()));
+            }
+        }
+
+        Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30);
         if (commonTask.getExecuteRemindTime() != null) {
             String[] remindStr = commonTask.getExecuteRemindTime().split(":");
             if (remindStr.length == 1) {
@@ -759,6 +769,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         for (SysUser executor : executors) {
+            // 判断数据库里是否已经有这条数据了
+            int count = loopWorkMapper.isLoopWorkExist(commonTask.getId(), tomorrow, executor.getId());
+            if (count > 0)
+                continue;
+
             TLoopWork loopWork = new TLoopWork();
 //            loopWork.setAuditDeadline();
 //            loopWork.setAuditTime();

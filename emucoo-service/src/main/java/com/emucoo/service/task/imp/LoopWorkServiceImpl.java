@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements LoopWorkService {
 
     @Autowired
+    private TTaskMapper taskMapper;
+
+    @Autowired
     private TLoopWorkMapper loopWorkMapper;
 
     @Autowired
@@ -366,11 +369,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         too.setTaskId(taskId);
         operateOptionMapper.insert(too);
 
-        // 根据具体执行时间生产任务实例
-        List<Date> dts = genDatesByRepeatType(task);
-        for (Date dt : dts) {
-            buildLoopWorkInstance(task, dt);
-        }
+//         根据具体执行时间生产任务实例
+//        List<Date> dts = genDatesByRepeatType(task);
+//        for (Date dt : dts) {
+//            buildLoopWorkInstance(task, dt);
+//        }
 
     }
 
@@ -385,7 +388,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             return;
         }
 
-        exeids.forEach(executorId -> {
+        for (Long executorId : exeids) {
+            // 判断数据库里是否已经有这条数据了。
+            int count = loopWorkMapper.isLoopWorkExist(task.getId(), dt, executorId);
+            if (count > 0)
+                continue;
+
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(task.getId());
             lw.setWorkStatus(1);
@@ -431,7 +439,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
             loopWorkMapper.insert(lw);
 
-        });
+        }
 
     }
 
@@ -488,8 +496,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return voo;
     }
 
-    @Autowired
-    private TTaskMapper taskMapper;
 
     @Override
     public TTask fetchTaskById(long id) {
@@ -547,5 +553,25 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Date remindTimeLeft = currentDate;
         Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
         return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
+    }
+
+    private boolean isContainsDate(List<Date> dates, Date dt) {
+        for (Date date : dates) {
+            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void buildAssingTaskInstance() {
+        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
+        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
+        for (TTask task : assignTasks) {
+            List<Date> dts = genDatesByRepeatType(task);
+            if (isContainsDate(dts, tomorrow)) {
+                buildLoopWorkInstance(task, tomorrow);
+            }
+        }
     }
 }
