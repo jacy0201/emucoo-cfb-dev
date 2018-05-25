@@ -151,11 +151,11 @@ public class SysDeptController extends BaseResource {
 		sysUserRelationService.saveSelective(sysUserRelation);
 		if(jedisCluster.exists(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId())){
 			String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId());
-			if(StringUtil.isNotEmpty(userIdStr)){
-				String[] idArr = userIdStr.split(",");
+			String[] idArr = userIdStr.split(",");
+			if(null!=idArr && idArr.length>0) {
 				//判断是否存在该下级
-				List<String> userIdList= Arrays.asList(idArr);
-				if(!userIdList.contains(sysUserRelation.getUserId().toString())){
+				List userIdList = new ArrayList(Arrays.asList(idArr));
+				if (!userIdList.contains(sysUserRelation.getUserId().toString())) {
 					userIdList.add(sysUserRelation.getUserId().toString());
 					jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
 				}
@@ -202,7 +202,7 @@ public class SysDeptController extends BaseResource {
 			String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + parentUserId);
             String[] idArr = userIdStr.split(",");
             if(null!=idArr && idArr.length>0) {
-				List<String> userIdList = Arrays.asList(idArr);
+				List userIdList = new ArrayList(Arrays.asList(idArr));
 				//缓存中删除该下级
 				for (int i = 0; i < userIdList.size(); i++) {
 					if (userId.equals(userIdList.get(i))) {

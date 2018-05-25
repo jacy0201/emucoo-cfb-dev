@@ -8,6 +8,7 @@ import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisCluster;
@@ -41,7 +42,7 @@ public class CalendarServiceImpl implements CalendarService {
     private TTaskMapper taskMapper;
     @Resource
     private SysUserMapper sysUserMapper;
-    @Resource
+    @Autowired
     private JedisCluster jedisCluster;
 
     public CalendarListMonthOut listCalendarMonth(CalendarListMonthIn calendarListIn, Long currentUserId) {
@@ -69,7 +70,7 @@ public class CalendarServiceImpl implements CalendarService {
             example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                     .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
                     .andEqualTo("isDel", 0).andEqualTo("planDate",calendarVO.getDate());
-            example.setOrderByClause("plan_precise_time desc");
+            example.setOrderByClause("plan_precise_time asc");
             List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
             //设置巡店安排
             if (null != list && list.size() > 0) {
@@ -127,7 +128,7 @@ public class CalendarServiceImpl implements CalendarService {
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                 .andEqualTo("planDate", calendarListIn.getExecuteDate())
                 .andEqualTo("isDel", false);
-        example.setOrderByClause("plan_precise_time desc");
+        example.setOrderByClause("plan_precise_time asc");
         List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
         List<CalendarVO.Inspection> inspectionList=null;
         calendarVO.setDate(calendarListIn.getExecuteDate());
@@ -229,7 +230,7 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarVO.Inspection inspection= new CalendarVO.Inspection();
         inspection.setWorkID(frontPlan.getId().toString());
         inspection.setWorkType(4);
-        inspection.setInspStartTime(frontPlan.getPlanPreciseTime());
+        inspection.setInspStartTime(frontPlan.getPlanPreciseTime().getTime());
         inspection.setInspStatus(frontPlan.getStatus().intValue());
         //查询表单
         Example exampleForm = new Example(TFrontPlanForm.class);
@@ -252,7 +253,7 @@ public class CalendarServiceImpl implements CalendarService {
         task.setTaskTitle(tt.getName());
         task.setTaskStatus(tLoopWork.getWorkStatus());
         task.setTaskResult(tLoopWork.getWorkResult());
-        task.setTaskDeadline(tLoopWork.getExecuteDeadline());
+        task.setTaskDeadline(tLoopWork.getExecuteDeadline().getTime());
         SysUser u = sysUserMapper.selectByPrimaryKey(tLoopWork.getExcuteUserId());
         task.setTaskSubHeadUrl(u.getHeadImgUrl());
         task.setTaskSubName(u.getRealName());

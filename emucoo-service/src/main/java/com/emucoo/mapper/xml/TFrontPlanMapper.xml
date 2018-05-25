@@ -33,12 +33,12 @@
   <select id="countTodayPlanOfUser" resultType="java.lang.Integer" >
     select count(id)
     from t_front_plan
-    where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+    where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
   </select>
 
   <select id="listTodayPlanOfUser" resultMap="BaseResultMap">
     select * from t_front_plan
-    where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+    where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
   </select>
 
   <select id="listCalendar"  resultMap="BaseResultMap">

@@ -1,11 +1,11 @@
 package com.emucoo.dto.modules.task;
 
-import java.util.Date;
-import java.util.List;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author river
@@ -42,7 +42,7 @@ public class WorkVo_O {
             private Integer taskResult;
             private Integer taskSourceType;
             private String taskSourceName;
-            private Date taskDeadline;
+            private Long taskDeadline;
             private String taskSubHeadUrl;
             private String taskSubName;
         }
