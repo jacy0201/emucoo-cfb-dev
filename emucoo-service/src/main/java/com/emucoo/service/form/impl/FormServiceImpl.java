@@ -119,15 +119,16 @@ public class FormServiceImpl implements FormService {
     private TLoopSubPlanMapper loopSubPlanMapper;
 
     public List<TFormMain> listForm(PlanArrangeGetFormIn getFormIn) {
-        /*Example example = new Example(TFormMain.class);
-        example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
-        List<TFormMain> tFormMains = formMainMapper.selectByExample(example);*/
+
         try {
-            TLoopSubPlan subPlan = loopSubPlanMapper.findSubPlanByArrangeId(getFormIn.getPatrolShopArrangeID());
+            /*TLoopSubPlan subPlan = loopSubPlanMapper.findSubPlanByArrangeId(getFormIn.getPatrolShopArrangeID());
             if (subPlan == null) {
                 throw new BaseException("计划数据异常！");
             }
-            List<TFormMain> tFormMains = formMainMapper.findAvailableFormsUseForPlan(subPlan.getPlanId());
+            List<TFormMain> tFormMains = formMainMapper.findAvailableFormsUseForPlan(subPlan.getPlanId());*/
+            Example example = new Example(TFormMain.class);
+            example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
+            List<TFormMain> tFormMains = formMainMapper.selectByExample(example);
             return tFormMains;
         } catch (Exception e) {
             logger.error("读取检查表列表失败！", e);
@@ -169,7 +170,6 @@ public class FormServiceImpl implements FormService {
         // 循环里面查数据库是比较弱智的方法，现在先这样吧，有时间再改。
         List<TFormType> modules = formTypeMapper.findFormTypesByFormMainId(formMain.getId());
         for(TFormType module : modules) {
-//            TFormValue fv = formValueMapper.fetchOneFormValue(formMain.getId(), module.getId(), arrangeId);
             FormKindVo formKindVo = new FormKindVo();
             formKindVo.setIsDone(false);
             formKindVo.setKindID(module.getId());
@@ -328,12 +328,9 @@ public class FormServiceImpl implements FormService {
 
             TFormValue formValue = new TFormValue();
             formValue.setCreateTime(DateUtil.currentDate());
-            formValue.setFormMainId(formMainId);
-            formValue.setFormMainName(formMain.getName());
             formValue.setFormResultId(formCheckResult.getId());
             formValue.setFormTypeName(module.getKindName());
             formValue.setFromTypeId(module.getKindID());
-            formValue.setFrontPlanId(frontPlanId);
             formValue.setIsDone(module.getIsDone());
             formValue.setModifyTime(DateUtil.currentDate());
             score += module.getRealScore();

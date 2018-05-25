@@ -127,7 +127,7 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private TFileMapper tFileMapper;
 
-    public ReportVo getReport(SysUser user, GetReportIn reportIn) {
+    public ReportVo getReportPreview(SysUser user, GetReportIn reportIn) {
         ReportVo reportOut = new ReportVo();
         // 查询店铺名
         TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(reportIn.getShopID());
@@ -172,7 +172,7 @@ public class ReportServiceImpl implements ReportService {
 
         //获取规则
         // 重点项失分统计
-        List<TFormPbm> tFormPbms = tFormPbmMapper.findFormPbmsByFormMainId(reportIn.getChecklistID());
+        /*List<TFormPbm> tFormPbms = tFormPbmMapper.findFormPbmsByFormMainId(reportIn.getChecklistID());
         List<Long> formImportPbmIds = new ArrayList<>();
         for(TFormPbm tFormPbm : tFormPbms) {
             // 重点项归类
@@ -180,12 +180,13 @@ public class ReportServiceImpl implements ReportService {
                 formImportPbmIds.add(tFormPbm.getId());
             }
 
-        }
+        }*/
         int importNum = 0;
-        if(formImportPbmIds.size() > 0) {
+        /*if(formImportPbmIds.size() > 0) {
             // 查询重要项结果值列表
             List<TFormPbmVal> tFormImportPbmVals = tFormPbmValMapper.findImportPbmValsByFormAndArrange(reportIn.getChecklistID(),
                     reportIn.getPatrolShopArrangeID(), formImportPbmIds);
+            List<TFormOpptValue> tFormImportOpptValues = tFormOpptValueMapper.findImportOpptValList(tFormImportPbmVals);
             for (TFormPbmVal tFormPbmVal : tFormImportPbmVals) {
                 for (TFormPbm tFormPbm : tFormPbms) {
                     if(tFormPbm.getId().equals(tFormPbmVal.getFormProblemId())) {
@@ -196,6 +197,16 @@ public class ReportServiceImpl implements ReportService {
                         break;
                     }
                 }
+            }
+        }*/
+        // 查询重点题列表
+        List<TFormPbmVal> tFormImportPbmVals = tFormPbmValMapper.findImportPbmValsByFormAndArrange(reportIn.getChecklistID(),
+                reportIn.getPatrolShopArrangeID());
+        if(CollectionUtils.isNotEmpty(tFormImportPbmVals)) {
+            // 查询重点项失分的机会点情况
+            List<TFormOpptValue> tFormImportOpptValues = tFormOpptValueMapper.findImportOpptValList(tFormImportPbmVals);
+            if (CollectionUtils.isNotEmpty(tFormImportOpptValues)) {
+                importNum = tFormImportOpptValues.size();
             }
         }
 
@@ -330,9 +341,10 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 统计模块情况
-        Example formTypeValueExp = new Example(TFormValue.class);
+        /*Example formTypeValueExp = new Example(TFormValue.class);
         formTypeValueExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("formMainId", reportIn.getChecklistID());
-        List<TFormValue> formTypeValues = tFormValueMapper.selectByExample(formTypeValueExp);
+        List<TFormValue> formTypeValues = tFormValueMapper.(formTypeValueExp);*/
+        List<TFormValue> formTypeValues = tFormValueMapper.findTypeValueListByFormAndArrange(reportIn.getChecklistID(), reportIn.getPatrolShopArrangeID());
         List<ChecklistKindScoreVo> checklistKindScoreVos = new ArrayList<>();
         for(TFormValue tFormValue : formTypeValues) {
             ChecklistKindScoreVo checklistKindScoreVo = new ChecklistKindScoreVo();
@@ -428,19 +440,19 @@ public class ReportServiceImpl implements ReportService {
             }
             //获取规则
             // 重点项失分统计
-            List<TFormPbm> tFormPbms = tFormPbmMapper.findFormPbmsByFormMainId(reportIn.getChecklistID());
+            /*List<TFormPbm> tFormPbms = tFormPbmMapper.findFormPbmsByFormMainId(reportIn.getChecklistID());
             List<Long> formImportPbmIds = new ArrayList<>();
             for (TFormPbm tFormPbm : tFormPbms) {
                 // 重点项归类
                 if (tFormPbm.getImportant()) {
                     formImportPbmIds.add(tFormPbm.getId());
                 }
-            }
+            }*/
             int importNum = 0;
-            if (formImportPbmIds.size() > 0) {
+            /*if (formImportPbmIds.size() > 0) {
                 // 查询重要项结果值列表
                 List<TFormPbmVal> tFormImportPbmVals = tFormPbmValMapper.findImportPbmValsByFormAndArrange(reportIn.getChecklistID(),
-                        reportIn.getPatrolShopArrangeID(), formImportPbmIds);
+                        reportIn.getPatrolShopArrangeID());
                 for (TFormPbmVal tFormPbmVal : tFormImportPbmVals) {
                     for (TFormPbm tFormPbm : tFormPbms) {
                         if (tFormPbm.getId().equals(tFormPbmVal.getFormProblemId())) {
@@ -452,6 +464,16 @@ public class ReportServiceImpl implements ReportService {
                         }
                     }
 
+                }
+            }*/
+            // 查询重点题列表
+            List<TFormPbmVal> tFormImportPbmVals = tFormPbmValMapper.findImportPbmValsByFormAndArrange(reportIn.getChecklistID(),
+                    reportIn.getPatrolShopArrangeID());
+            if (CollectionUtils.isNotEmpty(tFormImportPbmVals)) {
+                // 查询重点项失分的机会点情况
+                List<TFormOpptValue> tFormImportOpptValues = tFormOpptValueMapper.findImportOpptValList(tFormImportPbmVals);
+                if (CollectionUtils.isNotEmpty(tFormImportOpptValues)) {
+                    importNum = tFormImportOpptValues.size();
                 }
             }
             List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),

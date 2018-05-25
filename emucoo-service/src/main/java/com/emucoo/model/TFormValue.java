@@ -13,12 +13,6 @@ public class TFormValue extends BaseEntity {
     private Long id;
 
     /**
-     * 关联表单主表
-     */
-    @Column(name = "form_main_id")
-    private Long formMainId;
-
-    /**
      * 表单分类id
      */
     @Column(name = "from_type_id")
@@ -35,12 +29,6 @@ public class TFormValue extends BaseEntity {
 
     @Column(name = "modify_time")
     private Date modifyTime;
-
-    @Column(name = "front_plan_id")
-    private Long frontPlanId;
-
-    @Column(name = "form_main_name")
-    private String formMainName;
 
     @Column(name = "form_type_name")
     private String formTypeName;
@@ -78,24 +66,6 @@ public class TFormValue extends BaseEntity {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * 获取关联表单主表
-     *
-     * @return form_main_id - 关联表单主表
-     */
-    public Long getFormMainId() {
-        return formMainId;
-    }
-
-    /**
-     * 设置关联表单主表
-     *
-     * @param formMainId 关联表单主表
-     */
-    public void setFormMainId(Long formMainId) {
-        this.formMainId = formMainId;
     }
 
     /**
@@ -160,34 +130,6 @@ public class TFormValue extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
-    }
-
-    /**
-     * @return front_plan_id
-     */
-    public Long getFrontPlanId() {
-        return frontPlanId;
-    }
-
-    /**
-     * @param frontPlanId
-     */
-    public void setFrontPlanId(Long frontPlanId) {
-        this.frontPlanId = frontPlanId;
-    }
-
-    /**
-     * @return form_main_name
-     */
-    public String getFormMainName() {
-        return formMainName;
-    }
-
-    /**
-     * @param formMainName
-     */
-    public void setFormMainName(String formMainName) {
-        this.formMainName = formMainName;
     }
 
     /**

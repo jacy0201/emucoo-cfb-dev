@@ -2,6 +2,7 @@ package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.TFormOpptValue;
+import com.emucoo.model.TFormPbmVal;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -25,4 +26,5 @@ public interface TFormOpptValueMapper extends MyMapper<TFormOpptValue> {
 
     List<TFormOpptValue> findOpptValuesByOpptIdAndResult(@Param("resultIds")List<Long> resultIds, @Param("opptId")Long opptId);
 
+    List<TFormOpptValue> findImportOpptValList(List<TFormPbmVal> tFormImportPbmVals);
 }

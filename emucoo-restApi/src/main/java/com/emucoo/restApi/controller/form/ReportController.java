@@ -44,7 +44,7 @@ public class ReportController extends AppBaseController {
         checkParam(reportIn.getChecklistID(), "表单id不能为空！");
         checkParam(reportIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        ReportVo reportOut = reportService.getReport(user, reportIn);
+        ReportVo reportOut = reportService.getReportPreview(user, reportIn);
         return success(reportOut);
     }
 
