@@ -16,7 +16,7 @@ import java.util.List;
 public class WorkVo_O {
     private String date;
     private List<Work> workArr;
-    private Long backTime;
+    private long backTime;
 
     @Data
     @ApiModel(value="Work子对象")
