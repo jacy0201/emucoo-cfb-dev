@@ -53,7 +53,7 @@
     <select id="filterSendersByExecutorDpt" resultType="com.emucoo.model.SysUser">
         select distinct a.* from sys_user a
             inner join sys_user_post b on a.id = b.post_id
-            inner join t_task_person c on b.position_id = b.post_id and a.dpt_id = c.dpt_id
+            inner join t_task_person c on c.position_id = b.post_id and a.dpt_id = c.dpt_id
         where c.task_id = #{taskId} and c.person_type = 2 and a.is_del != 1
     </select>
 
