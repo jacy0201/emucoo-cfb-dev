@@ -129,7 +129,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         review.setReviewID(loopWork.getId());
         review.setReviewResult(loopWork.getWorkResult());
-        review.setReviewTime(loopWork.getAuditTime().getTime());
+        review.setReviewTime(loopWork.getAuditTime() == null ? 0 : loopWork.getAuditTime().getTime());
         review.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
         if (loopWork.getAuditUserId() != null) {
             SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
@@ -744,12 +744,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         Date exeEndDt = tomorrow;
 
         Date exeDeadLine = exeEndDt;
-        if(StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
+        if (StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
             String[] exeStr = commonTask.getExecuteDeadline().split(":");
-            if(exeStr.length == 1){
+            if (exeStr.length == 1) {
                 exeDeadLine = DateUtil.timeForward(exeBeginDt, 0, Integer.parseInt(exeStr[0].trim()));
             }
-            if(exeStr.length == 2){
+            if (exeStr.length == 2) {
                 exeDeadLine = DateUtil.timeForward(exeBeginDt, Integer.parseInt(exeStr[0].trim()), Integer.parseInt(exeStr[1].trim()));
             }
         }
