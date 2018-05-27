@@ -191,7 +191,7 @@ public class IndexController extends AppBaseController {
         }).collect(Collectors.toList());
         works.addAll(inspections);
         WorkVo_O workVo_o = new WorkVo_O();
-        workVo_o.setBackTime(DateUtil.currentDate());
+        workVo_o.setBackTime(DateUtil.currentDate().getTime());
         workVo_o.setDate(DateUtil.YYYYMMDD.format(needDate));
         workVo_o.setWorkArr(works);
         return success(workVo_o);
@@ -241,7 +241,7 @@ public class IndexController extends AppBaseController {
             return work;
         }).collect(Collectors.toList());
         WorkVo_O workVo_o = new WorkVo_O();
-        workVo_o.setBackTime(DateUtil.currentDate());
+        workVo_o.setBackTime(DateUtil.currentDate().getTime());
         workVo_o.setWorkArr(works);
         workVo_o.setDate(DateUtil.YYYYMMDD.format(new Date()));
         return success(workVo_o);
