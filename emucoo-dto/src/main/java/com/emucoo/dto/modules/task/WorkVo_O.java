@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,16 +49,16 @@ public class WorkVo_O {
         @ApiModel(value="巡店数据集")
         public class Inspection{
             private String inspTitle;
-            private Date inspStartTime;
-            private Date inspEndTime;
+            private Long inspStartTime;
+            private Long inspEndTime;
             private Integer inspStatus;
         }
         @Data
         @ApiModel(value="备忘数据集")
         public class Memo{
             private String memoContent;
-            private Date memoStartTime;
-            private Date memoEndTime;
+            private Long memoStartTime;
+            private Long memoEndTime;
             private Integer importStatus;
         }
     }
