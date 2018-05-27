@@ -1,6 +1,8 @@
 package com.emucoo.restApi.config;
 
 
+import com.emucoo.restApi.config.interceptor.ApiInterceptor;
+import com.emucoo.restApi.config.interceptor.FormTokenInterceptor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -8,16 +10,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import com.emucoo.restApi.config.interceptor.ApiInterceptor;
-import com.emucoo.restApi.config.interceptor.FormTokenInterceptor;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -63,7 +61,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
         //生成json时，将所有Long转换成String
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
 //        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         simpleModule.addSerializer(Date.class, new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
 
