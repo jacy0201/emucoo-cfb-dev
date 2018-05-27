@@ -75,17 +75,19 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn voi) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(voi.getWorkID(), voi.getSubID(), voi.getWorkType());
-
         TaskCommonDetailOut out = new TaskCommonDetailOut();
         // taskStatement
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
-                taskStatement.setTaskImgArr(convertImgIds2Urls(imgUrls));
+                taskStatement.setTaskImgArr(Arrays.asList(imgUrls).stream().map(s -> {
+                    ImageUrl imageUrl = new ImageUrl();
+                    imageUrl.setImgUrl(s);
+                    return imageUrl;
+                }).collect(Collectors.toList()));
             });
         }
 
-        // TODO:
 
         List<TaskCommonItemVo> list = loopWorkMapper.fetchTaskCommonItem(loopWork.getId());
         List<TaskCommonItem> itemList = new ArrayList<TaskCommonItem>();
