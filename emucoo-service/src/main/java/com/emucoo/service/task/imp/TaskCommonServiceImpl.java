@@ -79,6 +79,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         // taskStatement
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
+            taskStatement.setStartDate(taskStatement.getStartDate().replace("-", ""));
+            taskStatement.setEndDate(taskStatement.getEndDate().replace("-", ""));
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
                 taskStatement.setTaskImgArr(Arrays.asList(imgUrls).stream().map(s -> {
                     ImageUrl imageUrl = new ImageUrl();
@@ -258,7 +260,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setModifyTime(DateUtil.currentDate());
         }
 
-        operateDataForWorkMapper.insertList(odfws1);
+        if(odfws1.size() > 0)
+            operateDataForWorkMapper.insertList(odfws1);
         for (TOperateDataForWork odfw : odfws2) {
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
         }
