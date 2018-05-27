@@ -60,8 +60,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     private List<ImageUrl> convertImgIds2Urls(String ids) {
         if (ids == null)
             return new ArrayList<>();
-        return Arrays.asList(ids.split(",")).stream().map(iid -> {
-            TFile img = fileMapper.selectByPrimaryKey(iid);
+        return Arrays.asList(ids.split(",")).stream().filter(iid -> StringUtils.isNotBlank(iid)).map(iid -> {
+            TFile img = fileMapper.selectByPrimaryKey(Long.parseLong(iid));
             if (img == null) {
                 return null;
             } else {
@@ -129,7 +129,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         review.setReviewID(loopWork.getId());
         review.setReviewResult(loopWork.getWorkResult());
-        review.setReviewTime(loopWork.getAuditTime().getTime());
+        review.setReviewTime(loopWork.getAuditTime() == null ? 0 : loopWork.getAuditTime().getTime());
         review.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
         if (loopWork.getAuditUserId() != null) {
             SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
@@ -196,7 +196,18 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setExcuteUserId(user.getId());
         loopWork.setExcuteUserName(user.getUsername());
         loopWork.setModifyTime(DateUtil.currentDate());
-//        task.getAuditDeadline()
+        if (StringUtils.isNotBlank(task.getAuditDeadline())) {
+            String[] tms = task.getAuditDeadline().split(":");
+            if(tms.length  == 1){
+                int mi = Integer.parseInt(tms[0]);
+                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
+            }
+            if(tms.length == 2) {
+                int hr = Integer.parseInt(tms[0]);
+                int mi = Integer.parseInt(tms[1]);
+                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
+            }
+        }
         loopWork.setWorkStatus(2);
 
         loopWorkMapper.updateWorkStatus(loopWork);
@@ -744,12 +755,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         Date exeEndDt = tomorrow;
 
         Date exeDeadLine = exeEndDt;
-        if(StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
+        if (StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
             String[] exeStr = commonTask.getExecuteDeadline().split(":");
-            if(exeStr.length == 1){
+            if (exeStr.length == 1) {
                 exeDeadLine = DateUtil.timeForward(exeBeginDt, 0, Integer.parseInt(exeStr[0].trim()));
             }
-            if(exeStr.length == 2){
+            if (exeStr.length == 2) {
                 exeDeadLine = DateUtil.timeForward(exeBeginDt, Integer.parseInt(exeStr[0].trim()), Integer.parseInt(exeStr[1].trim()));
             }
         }
