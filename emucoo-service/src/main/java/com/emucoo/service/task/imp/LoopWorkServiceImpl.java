@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements LoopWorkService {
 
     @Autowired
+    private TTaskMapper taskMapper;
+
+    @Autowired
     private TLoopWorkMapper loopWorkMapper;
 
     @Autowired
@@ -45,22 +48,18 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Autowired
     private TOperateDataForWorkMapper operateDataForWorkMapper;
 
-    @Autowired
-    private TTaskMapper taskMapper;
-
     /**
-     *
      * @param submitUserId
      * @param date
      * @return
      */
     @Override
-    public List<TLoopWork> listPendingExecute(Long submitUserId, Date date){
+    public List<TLoopWork> listPendingExecute(Long submitUserId, Date date) {
         return loopWorkMapper.listPendingExecute(submitUserId, date);
     }
 
     @Override
-    public List<TLoopWork> listPendingReview(Long auditUserId){
+    public List<TLoopWork> listPendingReview(Long auditUserId) {
         Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
         Date rdt = DateUtil.dateAddDay(ldt, 1);
         return loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
@@ -75,16 +74,16 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return loopWorkMapper.countPendingReviewWorkNum(submitUserId);
     }
 
-	@Override
-	public void add(TLoopWork loopWork) {
-		loopWorkMapper.insert(loopWork);
-	}
+    @Override
+    public void add(TLoopWork loopWork) {
+        loopWorkMapper.insert(loopWork);
+    }
 
-	@Override
-	public void modify(TLoopWork loopWork) {
-		loopWorkMapper.updateByPrimaryKey(loopWork);
-	}
-	
+    @Override
+    public void modify(TLoopWork loopWork) {
+        loopWorkMapper.updateByPrimaryKey(loopWork);
+    }
+
     @Override
     public TLoopWork fetchByWorkId(String workId, String subWorkId, int workType) {
         return loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
@@ -103,7 +102,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateWorkStatus(lw);
 
         List<String> imgids = new ArrayList<>();
-        if(voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
+        if (voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
             voi.getExecuteImgArr().forEach(assignTaskSubmitImgVo -> {
                 com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
                 Date dt = new Date(assignTaskSubmitImgVo.getDate());
@@ -136,7 +135,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
-        if(loopWork == null)
+        if (loopWork == null)
             return;
         loopWork.setType(atai.getWorkType());
         loopWork.setWorkResult(atai.getReviewResult());
@@ -146,7 +145,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.auditLoopWork(loopWork);
 
         List<String> aimgs = new ArrayList<>();
-        if(atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
+        if (atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
             atai.getReviewImgArr().forEach(imageUrlVo -> {
                 com.emucoo.model.TFile aimg = new com.emucoo.model.TFile();
                 aimg.setImgUrl(imageUrlVo.getImgUrl());
@@ -173,41 +172,41 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     public AssignTaskDetailVo_O viewAssignTaskDetail(String workId, String subWorkId, int workType, SysUser loginUser) {
         AssignTaskDetailVo_O result = new AssignTaskDetailVo_O();
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
-        if(loopWork == null)
+        if (loopWork == null)
             return null;
 
         AssignTaskStateVo stateVo = new AssignTaskStateVo();
         stateVo.setBackTime(new Date().getTime());
-        stateVo.setTaskStatus(loopWork.getWorkStatus()==null?0:loopWork.getWorkStatus());
+        stateVo.setTaskStatus(loopWork.getWorkStatus() == null ? 0 : loopWork.getWorkStatus());
         TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
-        stateVo.setTaskTitle(task.getName()==null?"":task.getName());
-        stateVo.setTaskExplain(task.getDescription()==null?"":task.getDescription());
+        stateVo.setTaskTitle(task.getName() == null ? "" : task.getName());
+        stateVo.setTaskExplain(task.getDescription() == null ? "" : task.getDescription());
         stateVo.setStartDate(DateUtil.simple(task.getTaskStartDate()));
         stateVo.setEndDate(DateUtil.simple(task.getTaskEndDate()));
-        if(loopWork.getExecuteDeadline() != null) stateVo.setSubmitDeadline(loopWork.getExecuteDeadline().getTime());
-        if(loopWork.getAuditDeadline() != null) stateVo.setReviewDeadline(loopWork.getAuditDeadline().getTime());
-        stateVo.setAuditorID(loopWork.getAuditUserId()==null?0:loopWork.getAuditUserId());
-        stateVo.setAuditorName(loopWork.getAuditUserName()==null?"":loopWork.getAuditUserName());
-        List<String> ccps = loopWork.getSendUserIds()==null?Arrays.asList(""):Arrays.asList(loopWork.getSendUserIds().split(",")).stream().map(id -> {
+        if (loopWork.getExecuteDeadline() != null) stateVo.setSubmitDeadline(loopWork.getExecuteDeadline().getTime());
+        if (loopWork.getAuditDeadline() != null) stateVo.setReviewDeadline(loopWork.getAuditDeadline().getTime());
+        stateVo.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
+        stateVo.setAuditorName(loopWork.getAuditUserName() == null ? "" : loopWork.getAuditUserName());
+        List<String> ccps = loopWork.getSendUserIds() == null ? Arrays.asList("") : Arrays.asList(loopWork.getSendUserIds().split(",")).stream().map(id -> {
             SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(id));
             return u.getRealName();
         }).collect(Collectors.toList());
         stateVo.setCcPersonNames(StringUtils.join(ccps, ","));
 
         TOperateOption too = operateOptionMapper.fetchOneByTaskId(loopWork.getTaskId());
-        stateVo.setDigitalItemName(too.getFeedbackNumName()==null?"":too.getFeedbackNumName());
+        stateVo.setDigitalItemName(too.getFeedbackNumName() == null ? "" : too.getFeedbackNumName());
         stateVo.setDigitalItemType(too.getFeedbackNumType());
-        stateVo.setExecutorID(loopWork.getExcuteUserId()==null?0:loopWork.getExcuteUserId());
-        stateVo.setExecutorName(loopWork.getExcuteUserName()==null?"":loopWork.getExcuteUserName());
-        stateVo.setTaskRank(task.getPreinstallScore()==null?5:Integer.parseInt(task.getPreinstallScore()));
+        stateVo.setExecutorID(loopWork.getExcuteUserId() == null ? 0 : loopWork.getExcuteUserId());
+        stateVo.setExecutorName(loopWork.getExcuteUserName() == null ? "" : loopWork.getExcuteUserName());
+        stateVo.setTaskRank(task.getPreinstallScore() == null ? 5 : Integer.parseInt(task.getPreinstallScore()));
         stateVo.setTaskRepeatType(task.getLoopCycleType());
-        stateVo.setTaskRepeatValue(task.getLoopCycleValue()==null?"":task.getLoopCycleValue());
+        stateVo.setTaskRepeatValue(task.getLoopCycleValue() == null ? "" : task.getLoopCycleValue());
         stateVo.setFeedbackImg(too.getFeedbackImgType());
-        stateVo.setFeedbackText(too.getFeedbackNeedText()?2:1);
+        stateVo.setFeedbackText(too.getFeedbackNeedText() ? 2 : 1);
 
         List<ImageUrlVo> ivs = new ArrayList<ImageUrlVo>();
         String timgIds = task.getIllustrationImgIds();
-        if(StringUtils.isNotBlank(timgIds)) {
+        if (StringUtils.isNotBlank(timgIds)) {
             List<TFile> timgs = fileMapper.selectByIds(timgIds);
             timgs.forEach(tFile -> {
                 ImageUrlVo iv = new ImageUrlVo();
@@ -223,14 +222,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
         AssignTaskSubmitDetailVo executorVo = new AssignTaskSubmitDetailVo();
         executorVo.setTaskSubPerID(loopWork.getExcuteUserId());
-        executorVo.setTaskSubPerHeadUrl(executeUser==null?"":executeUser.getHeadImgUrl());
+        executorVo.setTaskSubPerHeadUrl(executeUser == null ? "" : executeUser.getHeadImgUrl());
         executorVo.setTaskSubTime(loopWork.getModifyTime().getTime());
-        executorVo.setWorkText(todw==null?"":todw.getWorkTxt());
-        executorVo.setDigitalItemValue(Double.parseDouble(todw==null?"0.0":todw.getNumOptionValue()));
+        executorVo.setWorkText(todw == null ? "" : todw.getWorkTxt());
+        executorVo.setDigitalItemValue(Double.parseDouble(todw == null ? "0.0" : todw.getNumOptionValue()));
 
         List<ImageUrlVo> svs = new ArrayList<ImageUrlVo>();
-        String eimgIds = todw==null?"":todw.getImgIds();
-        if(StringUtils.isNotBlank(eimgIds)) {
+        String eimgIds = todw == null ? "" : todw.getImgIds();
+        if (StringUtils.isNotBlank(eimgIds)) {
             List<TFile> eimgs = fileMapper.selectByIds(eimgIds);
             eimgs.forEach(tFile -> {
                 ImageUrlVo sv = new ImageUrlVo();
@@ -242,19 +241,19 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         result.setTaskSubmit(executorVo);
 
         AssignTaskReviewVo reviewVo = new AssignTaskReviewVo();
-        if(todw != null) {
-            reviewVo.setReviewResult(todw.getAuditResult()==null?0:todw.getAuditResult());
+        if (todw != null) {
+            reviewVo.setReviewResult(todw.getAuditResult() == null ? 0 : todw.getAuditResult());
             reviewVo.setReviewID(todw.getId());
             reviewVo.setReviewOpinion(todw.getAuditContent());
             reviewVo.setReviewTime(todw.getModifyTime().getTime());
-            reviewVo.setAuditorID(todw.getAuditUserId()==null?0:todw.getAuditUserId());
+            reviewVo.setAuditorID(todw.getAuditUserId() == null ? 0 : todw.getAuditUserId());
             SysUser u = userMapper.selectByPrimaryKey(reviewVo.getAuditorID());
-            if(u!=null) {
+            if (u != null) {
                 reviewVo.setAuditorName(u.getRealName());
                 reviewVo.setAuditorHeadUrl(u.getHeadImgUrl());
             }
             List<ImageUrlVo> xvs = new ArrayList<ImageUrlVo>();
-            if(StringUtils.isNotBlank(todw.getAuditImgIds())){
+            if (StringUtils.isNotBlank(todw.getAuditImgIds())) {
                 List<TFile> rimgs = fileMapper.selectByIds(todw.getAuditImgIds());
                 rimgs.forEach(tFile -> {
                     ImageUrlVo xv = new ImageUrlVo();
@@ -269,20 +268,20 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
         List<AssignTaskReplyVo> replyVos = new ArrayList<AssignTaskReplyVo>();
         List<TTaskComment> wns = commentMapper.fetchByLoopWorkId(loopWork.getId());
-        if(wns != null) {
+        if (wns != null) {
             for (TTaskComment wn : wns) {
                 AssignTaskReplyVo rv = new AssignTaskReplyVo();
                 rv.setReplyID(wn.getId());
                 rv.setReplyContent(wn.getContent());
-                if(wn.getCreateTime()!=null) rv.setReplyTime(wn.getCreateTime().getTime());
-                if(wn.getUserId()!=null) {
+                if (wn.getCreateTime() != null) rv.setReplyTime(wn.getCreateTime().getTime());
+                if (wn.getUserId() != null) {
                     rv.setAnswerID(wn.getUserId());
                     rv.setAnswerName(wn.getUserName());
                     SysUser user = userMapper.selectByPrimaryKey(rv.getAnswerID());
-                    if (user != null){
+                    if (user != null) {
                         rv.setAnswerHeadUrl(user.getHeadImgUrl());
                     }
-                    if (loginUser.getId() == wn.getUserId()){
+                    if (loginUser.getId() == wn.getUserId()) {
                         rv.setReplyAction(2);
                     } else {
                         rv.setReplyAction(1);
@@ -367,10 +366,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void createAssignTask(AssignTaskCreationVo_I voi, long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
-
-        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
         TTask task = new TTask();
-
         task.setName(voi.getTaskTitle());
         task.setCreateTime(DateUtil.currentDate());
         task.setModifyTime(DateUtil.currentDate());
@@ -399,11 +395,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 //        task.setExecuteRemindTime();
 //        task.setExecutorDptIds();
 //        task.setExecutorPositionIds();
-        task.setExecuteUserIds(StringUtils.join(voi.getExecutorArray().stream().map(executorIdVo -> Long.toString(executorIdVo.getExecutorID())).collect(Collectors.toList()),","));
+        task.setExecuteUserIds(StringUtils.join(voi.getExecutorArray().stream().map(executorIdVo -> Long.toString(executorIdVo.getExecutorID())).collect(Collectors.toList()), ","));
 //        task.setExecutorShopIds();
 
 //        task.setCcPositionIds();
-        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+        if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
 
         List<String> timgids = new ArrayList<String>();
@@ -423,66 +419,84 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         long taskId = task.getId();
 
         TOperateOption too = new TOperateOption();
-        too.setFeedbackNeedText(voi.getFeedbackText()==0?false:true);
+        too.setFeedbackNeedText(voi.getFeedbackText() == 0 ? false : true);
         too.setFeedbackImgType(voi.getFeedbackImg());
-        too.setFeedbackNeedNum(StringUtils.isNotBlank(voi.getDigitalItemName())?true:false);
+        too.setFeedbackNeedNum(StringUtils.isNotBlank(voi.getDigitalItemName()) ? true : false);
         too.setFeedbackNumName(voi.getDigitalItemName());
         too.setFeedbackNumType(voi.getDigitalItemType());
         too.setTaskId(taskId);
         operateOptionMapper.insert(too);
 
-        // 根据具体执行时间生产任务实例
-        for(Date dt : dts) {
-            // 根据执行人产生任务实例
-            List<ExecutorIdVo> exeids = voi.getExecutorArray();
-            if (exeids != null && exeids.size() > 0) {
-                exeids.forEach(executorIdVo -> {
-                    TLoopWork lw = new TLoopWork();
-                    lw.setTaskId(taskId);
-                    lw.setWorkStatus(1);
+//         根据具体执行时间生产任务实例
+        List<Date> dts = genDatesByRepeatType(task);
+        for (Date dt : dts) {
+            buildLoopWorkInstance(task, dt);
+        }
 
-                    lw.setWorkId(uniWorkId);
-                    lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
-                    lw.setType(2);
+    }
 
-                    lw.setExecuteBeginDate(dt);
-                    lw.setExecuteEndDate(dt);
-                    lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + voi.getSubmitDeadlineRule()));
+    private void buildLoopWorkInstance(TTask task, Date dt) {
+        // 根据执行人产生任务实例
+        if (StringUtils.isBlank(task.getExecuteUserIds())) {
+            return;
+        }
 
-                    lw.setCreateTime(new Date());
-                    lw.setModifyTime(new Date());
+        List<Long> exeids = Arrays.asList(task.getExecuteUserIds().split(",")).stream().map(id -> Long.parseLong(id)).collect(Collectors.toList());
+        if (exeids != null && exeids.size() > 0) {
+            return;
+        }
 
-                    // 存储关联的Executor Ids
-                    lw.setExcuteUserId(executorIdVo.getExecutorID());
-                    SysUser eUser = userMapper.selectByPrimaryKey(executorIdVo.getExecutorID());
-                    if (eUser != null) {
-                        lw.setExcuteUserName(eUser.getRealName());
-                    }
+        for (Long executorId : exeids) {
+            // 判断数据库里是否已经有这条数据了。
+            int count = loopWorkMapper.isLoopWorkExist(task.getId(), dt, executorId);
+            if (count > 0)
+                continue;
 
-                    // 存储关联的Auditor
-                    lw.setAuditUserId(voi.getAuditorID());
-                    SysUser aUser = userMapper.selectByPrimaryKey(lw.getAuditUserId());
-                    if (aUser != null) {
-                        lw.setAuditUserName(aUser.getRealName());
-                    }
+            TLoopWork lw = new TLoopWork();
+            lw.setTaskId(task.getId());
+            lw.setWorkStatus(1);
 
-                    // 存储关联的ccPerson Ids
-                    List<CCPersonIdVo> ccpids = voi.getCcPersonArray();
-                    if (ccpids != null && ccpids.size() > 0) {
-                        List<String> ccps = ccpids.stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList());
-                        List<String> ccpnms = ccpids.stream().map(ccPersonIdVo -> {
-                            SysUser u = userMapper.selectByPrimaryKey(ccPersonIdVo.getCcPersonID());
-                            return u == null ? null : u.getRealName();
-                        }).filter(s -> {
-                            return s == null ? false : true;
-                        }).collect(Collectors.toList());
-                        lw.setSendUserIds(StringUtils.join(ccps, ","));
-//                    lw.setSendUserName(StringUtils.join(ccpnms, ","));
-                    }
-                    loopWorkMapper.insert(lw);
+            lw.setWorkId(task.getWorkId());
+            lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
+            lw.setType(2);
 
-                });
+            lw.setExecuteBeginDate(dt);
+            lw.setExecuteEndDate(dt);
+            lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + task.getExecuteDeadline()));
+
+            lw.setCreateTime(new Date());
+            lw.setModifyTime(new Date());
+
+            // 存储关联的Executor Ids
+            lw.setExcuteUserId(executorId);
+            SysUser eUser = userMapper.selectByPrimaryKey(executorId);
+            if (eUser != null) {
+                lw.setExcuteUserName(eUser.getRealName());
             }
+
+            // 存储关联的Auditor
+            lw.setAuditUserId(task.getAuditUserId());
+            SysUser aUser = userMapper.selectByPrimaryKey(lw.getAuditUserId());
+            if (aUser != null) {
+                lw.setAuditUserName(aUser.getRealName());
+            }
+
+            // 存储关联的ccPerson Ids
+            if (StringUtils.isNotBlank(task.getCcUserIds())) {
+                lw.setSendUserIds(task.getCcUserIds());
+//                        List<String> ccpids = Arrays.asList(task.getCcUserIds().split(","));
+//                        if (ccpids != null && ccpids.size() > 0) {
+//                            List<String> ccpnms = ccpids.stream().map(ccPersonId -> {
+//                                SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(ccPersonId));
+//                                return u == null ? null : u.getRealName();
+//                            }).filter(s -> {
+//                                return s == null ? false : true;
+//                            }).collect(Collectors.toList());
+//                            lw.setSenderUserNames(task.getCcUserIds());
+//                        }
+            }
+            loopWorkMapper.insert(lw);
+
         }
     }
 
@@ -695,13 +709,46 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return dts;
     }
 
+    private List<Date> genDatesByRepeatType(TTask task) {
+        List<Date> dts = new ArrayList<>();
+        int repeatType = task.getLoopCycleType();
+        switch (repeatType) {
+            case 0:
+                dts.add(task.getTaskStartDate());
+                break;
+
+            case 1:
+                Date sdt = task.getTaskStartDate();
+                Date edt = task.getTaskEndDate();
+                while (DateUtil.compare(sdt, edt) <= 0) {
+                    dts.add(sdt);
+                    sdt = DateUtil.dateAddDay(sdt, 1);
+                }
+                break;
+
+            case 2:
+                List<Integer> wkdays = Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
+                Date sdt1 = task.getTaskStartDate();
+                Date edt1 = task.getTaskEndDate();
+                while (DateUtil.compare(sdt1, edt1) <= 0) {
+                    if (wkdays.contains(DateUtil.getDayOfWeek(sdt1))) {
+                        dts.add(sdt1);
+                    }
+                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
+                }
+                break;
+
+        }
+        return dts;
+    }
+
     @Override
     public ExeHistoryVo_O viewTaskExeHistory(String workType, String workId) {
         List<TLoopWork> loopWorks = loopWorkMapper.fetchTaskExeHistory(workType, workId);
 
         ExeHistoryVo_O voo = new ExeHistoryVo_O();
         List<ExeHistoryItemVo> items = new ArrayList<ExeHistoryItemVo>();
-        for(TLoopWork lw : loopWorks) {
+        for (TLoopWork lw : loopWorks) {
             ExeHistoryItemVo vo = new ExeHistoryItemVo();
             vo.setWorkId(lw.getWorkId());
             vo.setSubWorkId(lw.getSubWorkId());
@@ -714,6 +761,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
         return voo;
     }
+
 
     @Override
     public TTask fetchTaskById(long id) {
@@ -739,6 +787,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return result;
     }
 
+    // begin：以下方法是给定时任务使用的
+
     @Override
     @Transactional
     public void markExpiredWorks() {
@@ -747,13 +797,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.markExpiredAuditWorks(dt);
     }
 
-    /**
-     * 该方法是给定时任务使用的。
-     * @param currentDate
-     * @param aheadMinutes
-     * @param cycleMinutes
-     * @return
-     */
     @Override
     public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
         Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
@@ -771,4 +814,26 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
         return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
     }
+
+    private boolean isContainsDate(List<Date> dates, Date dt) {
+        for (Date date : dates) {
+            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void buildAssingTaskInstance() {
+        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
+        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
+        for (TTask task : assignTasks) {
+            List<Date> dts = genDatesByRepeatType(task);
+            if (isContainsDate(dts, tomorrow)) {
+                buildLoopWorkInstance(task, tomorrow);
+            }
+        }
+    }
+    // end：定时任务方法完
 }
