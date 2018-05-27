@@ -583,7 +583,6 @@ public class FormManageServiceImpl implements FormManageService {
 
                                             // 查询机会点
                                             List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2, userId);
-                                            //List<TOpportunity> opportunities = opportunityMapper.findOpptListByPbmIdAndUserId(subPbmIds, user==null?null:user.getId());
                                             if (CollectionUtils.isNotEmpty(formOppts)) {
                                                 for(SubProblemVo subProblemVo : subProblemArray) {
                                                     for (TFormOppt formOppt : formOppts) {
