@@ -60,8 +60,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     private List<ImageUrl> convertImgIds2Urls(String ids) {
         if (ids == null)
             return new ArrayList<>();
-        return Arrays.asList(ids.split(",")).stream().map(iid -> {
-            TFile img = fileMapper.selectByPrimaryKey(iid);
+        return Arrays.asList(ids.split(",")).stream().filter(iid -> StringUtils.isNotBlank(iid)).map(iid -> {
+            TFile img = fileMapper.selectByPrimaryKey(Long.parseLong(iid));
             if (img == null) {
                 return null;
             } else {

@@ -370,10 +370,10 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         operateOptionMapper.insert(too);
 
 //         根据具体执行时间生产任务实例
-//        List<Date> dts = genDatesByRepeatType(task);
-//        for (Date dt : dts) {
-//            buildLoopWorkInstance(task, dt);
-//        }
+        List<Date> dts = genDatesByRepeatType(task);
+        for (Date dt : dts) {
+            buildLoopWorkInstance(task, dt);
+        }
 
     }
 
@@ -521,6 +521,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return result;
     }
 
+    // begin：以下方法是给定时任务使用的
+
     @Override
     @Transactional
     public void markExpiredWorks() {
@@ -529,14 +531,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.markExpiredAuditWorks(dt);
     }
 
-    /**
-     * 该方法是给定时任务使用的。
-     *
-     * @param currentDate
-     * @param aheadMinutes
-     * @param cycleMinutes
-     * @return
-     */
     @Override
     public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
         Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
@@ -564,6 +558,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
+    @Transactional
     public void buildAssingTaskInstance() {
         Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
         List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
@@ -574,4 +569,5 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
         }
     }
+    // end：定时任务方法完
 }
