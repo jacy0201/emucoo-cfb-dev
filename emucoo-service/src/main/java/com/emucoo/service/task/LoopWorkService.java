@@ -34,8 +34,41 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai);
 
     AssignTaskDetailVo_O viewAssignTaskDetail(String workId, String subWorkId, int workType, SysUser loginUser);
-    
+
+    /**
+     * 工作备忘详情查询
+     * @param workId
+     * @param subWorkId
+     * @param workType
+     * @param loginUser
+     * @return
+     */
+    MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser);
+
+
     void createAssignTask(AssignTaskCreationVo_I assignTaskCreationVo_i, long userId);
+
+    /**
+     * 创建工作备忘
+     * @param memoCreationVo_I
+     * @param userId
+     */
+    void createMemo(MemoCreationVo_I  memoCreationVo_I, Long userId);
+
+    /**
+     * 编辑工作备忘
+     * @param memoEditVo_I
+     * @param userId
+     */
+    void editMemo(MemoEditVo_I  memoEditVo_I, Long userId);
+
+    /**
+     * 删除工作备忘
+     * @param memoDeleteVo_I
+     * @param userId
+     */
+    void deleteMemo(MemoDeleteVo_I  memoDeleteVo_I, Long userId);
+
 
     ExeHistoryVo_O viewTaskExeHistory(String workType, String workId);
 

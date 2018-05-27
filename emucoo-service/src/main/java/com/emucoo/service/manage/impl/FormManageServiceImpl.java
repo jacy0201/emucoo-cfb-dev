@@ -819,7 +819,10 @@ public class FormManageServiceImpl implements FormManageService {
         for (TFormOppt tFormOppt : tFormOpptList){
             example.clear();
             Example.Criteria criteria=example.createCriteria();
-            criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+            if(null!=tFormOppt.getProblemId()){
+                criteria.andEqualTo("problemId",tFormOppt.getProblemId());
+
+            }
             if(null!=tFormOppt.getSubProblemId()){
                 criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
             }

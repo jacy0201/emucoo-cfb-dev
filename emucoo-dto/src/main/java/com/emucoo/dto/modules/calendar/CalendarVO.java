@@ -44,10 +44,12 @@ public class CalendarVO {
         @ApiModel(value="备忘数据集")
         public static class Memo{
             private String workID;
+            private String subID;
             private Integer workType=5;
+            private String memoTitle;
             private String memoContent;
             private Long memoStartTime;
             private Long memoEndTime;
-            private Integer importStatus;
+            private Boolean isSign;
         }
 }
