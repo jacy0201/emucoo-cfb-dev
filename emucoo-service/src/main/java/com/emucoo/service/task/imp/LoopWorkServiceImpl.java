@@ -303,70 +303,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return result;
     }
 
-    /**
-     * 工作备忘详情查询
-     * @param workId
-     * @param subWorkId
-     * @param workType
-     * @param loginUser
-     * @return
-     */
-    @Override
-    public MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser){
-
-        MemoDetailVo_O memoDetailVo=null;
-        TLoopWork loopWork=loopWorkMapper.fetchByWorkIdAndType(workId,subWorkId,workType);
-        if(null!=loopWork){
-            memoDetailVo=new MemoDetailVo_O();
-            memoDetailVo.setWorkID(workId);
-            memoDetailVo.setSubID(subWorkId);
-            memoDetailVo.setWorkType(workType);
-            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate());
-            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate());
-            memoDetailVo.setIsSign(loopWork.getIsSign());
-            memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
-
-            List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
-            String [] userIds=loopWork.getSendUserIds().split(",");
-            if(null!=userIds && userIds.length>0){
-                MemoDetailVo_O.CCPerson ccPerson=null;
-                for (String id:userIds) {
-                    ccPerson=new  MemoDetailVo_O.CCPerson();
-                    SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(id));
-                    if(u!=null) {
-                        ccPerson.setCcPersonID(u.getId());
-                        ccPerson.setCcPersonName(u.getRealName());
-                        ccPerson.setHeadImgUrl(u.getHeadImgUrl());
-                    }
-                    ccList.add(ccPerson);
-                }
-                memoDetailVo.setCcPersonList(ccList);
-            }
-            TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
-            memoDetailVo.setTaskTitle(task.getName());
-            memoDetailVo.setTaskExplain(task.getDescription());
-            memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
-            memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
-            List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
-            List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
-            cimgs.forEach(tFile -> {
-                ImageUrlVo im = new ImageUrlVo();
-                im.setImgUrl(tFile.getImgUrl());
-                ims.add(im);
-            });
-            memoDetailVo.setTaskImgArr(ims);
-
-        }
-        return  memoDetailVo;
-
-    }
-
-
     @Override
     @Transactional
     public void createAssignTask(AssignTaskCreationVo_I voi, long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
+
         TTask task = new TTask();
+
         task.setName(voi.getTaskTitle());
         task.setCreateTime(DateUtil.currentDate());
         task.setModifyTime(DateUtil.currentDate());
@@ -498,7 +441,138 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             loopWorkMapper.insert(lw);
 
         }
+
     }
+
+    private List<Date> genDatesByRepeatType(TTask task) {
+        List<Date> dts = new ArrayList<>();
+        int repeatType = task.getLoopCycleType();
+        switch (repeatType) {
+            case 0:
+                dts.add(task.getTaskStartDate());
+                break;
+
+            case 1:
+                Date sdt = task.getTaskStartDate();
+                Date edt = task.getTaskEndDate();
+                while (DateUtil.compare(sdt, edt) <= 0) {
+                    dts.add(sdt);
+                    sdt = DateUtil.dateAddDay(sdt, 1);
+                }
+                break;
+
+            case 2:
+                List<Integer> wkdays = Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
+                Date sdt1 = task.getTaskStartDate();
+                Date edt1 = task.getTaskEndDate();
+                while (DateUtil.compare(sdt1, edt1) <= 0) {
+                    if (wkdays.contains(DateUtil.getDayOfWeek(sdt1))) {
+                        dts.add(sdt1);
+                    }
+                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
+                }
+                break;
+
+        }
+        return dts;
+    }
+
+    @Override
+    public ExeHistoryVo_O viewTaskExeHistory(String workType, String workId) {
+        List<TLoopWork> loopWorks = loopWorkMapper.fetchTaskExeHistory(workType, workId);
+
+        ExeHistoryVo_O voo = new ExeHistoryVo_O();
+        List<ExeHistoryItemVo> items = new ArrayList<ExeHistoryItemVo>();
+        for (TLoopWork lw : loopWorks) {
+            ExeHistoryItemVo vo = new ExeHistoryItemVo();
+            vo.setWorkId(lw.getWorkId());
+            vo.setSubWorkId(lw.getSubWorkId());
+            vo.setDate(lw.getExecuteDeadline().getTime());
+            vo.setStatus(lw.getWorkResult());
+            items.add(vo);
+        }
+        voo.setTotalImplementNum(loopWorks.size());
+        voo.setHistoryTaskArr(items);
+
+        return voo;
+    }
+
+
+    @Override
+    public TTask fetchTaskById(long id) {
+        return taskMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId) {
+        TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
+        TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
+
+        List<AssignTaskHistoryItemVo> its = new ArrayList<AssignTaskHistoryItemVo>();
+        AssignTaskHistoryItemVo hio = new AssignTaskHistoryItemVo();
+        hio.setDate(odfw.getCreateTime().getTime());
+        hio.setDigitalItemType(odfw.getNumOptionType());
+        hio.setValue(Double.parseDouble(odfw.getNumOptionValue()));
+        its.add(hio);
+
+        AssignTaskHistoryVo_O result = new AssignTaskHistoryVo_O();
+        result.setDigitalItemName(odfw.getNumOptionName());
+
+        result.setHistoryDataArr(its);
+        return result;
+    }
+
+    // begin：以下方法是给定时任务使用的
+
+    @Override
+    @Transactional
+    public void markExpiredWorks() {
+        Date dt = DateUtil.currentDate();
+        loopWorkMapper.markExpiredExecutionWorks(dt);
+        loopWorkMapper.markExpiredAuditWorks(dt);
+    }
+
+    @Override
+    public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
+        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
+        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
+        Date remindTimeLeft = currentDate;
+        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        return loopWorkMapper.filterExecuteRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
+    }
+
+    @Override
+    public List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
+        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
+        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
+        Date remindTimeLeft = currentDate;
+        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
+    }
+
+    private boolean isContainsDate(List<Date> dates, Date dt) {
+        for (Date date : dates) {
+            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void buildAssingTaskInstance() {
+        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
+        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
+        for (TTask task : assignTasks) {
+            List<Date> dts = genDatesByRepeatType(task);
+            if (isContainsDate(dts, tomorrow)) {
+                buildLoopWorkInstance(task, tomorrow);
+            }
+        }
+    }
+    // end：定时任务方法完
+
+
 
     /**
      * 创建工作备忘
@@ -677,6 +751,64 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.deleteByExample(exampleTLoopWork);
     }
 
+    /**
+     * 工作备忘详情查询
+     * @param workId
+     * @param subWorkId
+     * @param workType
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser){
+
+        MemoDetailVo_O memoDetailVo=null;
+        TLoopWork loopWork=loopWorkMapper.fetchByWorkIdAndType(workId,subWorkId,workType);
+        if(null!=loopWork){
+            memoDetailVo=new MemoDetailVo_O();
+            memoDetailVo.setWorkID(workId);
+            memoDetailVo.setSubID(subWorkId);
+            memoDetailVo.setWorkType(workType);
+            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate());
+            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate());
+            memoDetailVo.setIsSign(loopWork.getIsSign());
+            memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
+
+            List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
+            String [] userIds=loopWork.getSendUserIds().split(",");
+            if(null!=userIds && userIds.length>0){
+                MemoDetailVo_O.CCPerson ccPerson=null;
+                for (String id:userIds) {
+                    ccPerson=new  MemoDetailVo_O.CCPerson();
+                    SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(id));
+                    if(u!=null) {
+                        ccPerson.setCcPersonID(u.getId());
+                        ccPerson.setCcPersonName(u.getRealName());
+                        ccPerson.setHeadImgUrl(u.getHeadImgUrl());
+                    }
+                    ccList.add(ccPerson);
+                }
+                memoDetailVo.setCcPersonList(ccList);
+            }
+            TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+            memoDetailVo.setTaskTitle(task.getName());
+            memoDetailVo.setTaskExplain(task.getDescription());
+            memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
+            memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
+            List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
+            List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
+            cimgs.forEach(tFile -> {
+                ImageUrlVo im = new ImageUrlVo();
+                im.setImgUrl(tFile.getImgUrl());
+                ims.add(im);
+            });
+            memoDetailVo.setTaskImgArr(ims);
+
+        }
+        return  memoDetailVo;
+
+    }
+
     private List<Date> genDatesByRepeatType(Integer repeatType,String startDate,String endDate,String repeatValue) {
         List<Date> dts = new ArrayList<>();
         switch (repeatType){
@@ -709,131 +841,5 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return dts;
     }
 
-    private List<Date> genDatesByRepeatType(TTask task) {
-        List<Date> dts = new ArrayList<>();
-        int repeatType = task.getLoopCycleType();
-        switch (repeatType) {
-            case 0:
-                dts.add(task.getTaskStartDate());
-                break;
 
-            case 1:
-                Date sdt = task.getTaskStartDate();
-                Date edt = task.getTaskEndDate();
-                while (DateUtil.compare(sdt, edt) <= 0) {
-                    dts.add(sdt);
-                    sdt = DateUtil.dateAddDay(sdt, 1);
-                }
-                break;
-
-            case 2:
-                List<Integer> wkdays = Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
-                Date sdt1 = task.getTaskStartDate();
-                Date edt1 = task.getTaskEndDate();
-                while (DateUtil.compare(sdt1, edt1) <= 0) {
-                    if (wkdays.contains(DateUtil.getDayOfWeek(sdt1))) {
-                        dts.add(sdt1);
-                    }
-                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
-                }
-                break;
-
-        }
-        return dts;
-    }
-
-    @Override
-    public ExeHistoryVo_O viewTaskExeHistory(String workType, String workId) {
-        List<TLoopWork> loopWorks = loopWorkMapper.fetchTaskExeHistory(workType, workId);
-
-        ExeHistoryVo_O voo = new ExeHistoryVo_O();
-        List<ExeHistoryItemVo> items = new ArrayList<ExeHistoryItemVo>();
-        for (TLoopWork lw : loopWorks) {
-            ExeHistoryItemVo vo = new ExeHistoryItemVo();
-            vo.setWorkId(lw.getWorkId());
-            vo.setSubWorkId(lw.getSubWorkId());
-            vo.setDate(lw.getExecuteDeadline().getTime());
-            vo.setStatus(lw.getWorkResult());
-            items.add(vo);
-        }
-        voo.setTotalImplementNum(loopWorks.size());
-        voo.setHistoryTaskArr(items);
-
-        return voo;
-    }
-
-
-    @Override
-    public TTask fetchTaskById(long id) {
-        return taskMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId) {
-        TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
-        TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
-
-        List<AssignTaskHistoryItemVo> its = new ArrayList<AssignTaskHistoryItemVo>();
-        AssignTaskHistoryItemVo hio = new AssignTaskHistoryItemVo();
-        hio.setDate(odfw.getCreateTime().getTime());
-        hio.setDigitalItemType(odfw.getNumOptionType());
-        hio.setValue(Double.parseDouble(odfw.getNumOptionValue()));
-        its.add(hio);
-
-        AssignTaskHistoryVo_O result = new AssignTaskHistoryVo_O();
-        result.setDigitalItemName(odfw.getNumOptionName());
-
-        result.setHistoryDataArr(its);
-        return result;
-    }
-
-    // begin：以下方法是给定时任务使用的
-
-    @Override
-    @Transactional
-    public void markExpiredWorks() {
-        Date dt = DateUtil.currentDate();
-        loopWorkMapper.markExpiredExecutionWorks(dt);
-        loopWorkMapper.markExpiredAuditWorks(dt);
-    }
-
-    @Override
-    public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
-        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
-        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
-        Date remindTimeLeft = currentDate;
-        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
-        return loopWorkMapper.filterExecuteRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
-    }
-
-    @Override
-    public List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
-        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes);
-        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes);
-        Date remindTimeLeft = currentDate;
-        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
-        return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
-    }
-
-    private boolean isContainsDate(List<Date> dates, Date dt) {
-        for (Date date : dates) {
-            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    @Transactional
-    public void buildAssingTaskInstance() {
-        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
-        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
-        for (TTask task : assignTasks) {
-            List<Date> dts = genDatesByRepeatType(task);
-            if (isContainsDate(dts, tomorrow)) {
-                buildLoopWorkInstance(task, tomorrow);
-            }
-        }
-    }
-    // end：定时任务方法完
 }
