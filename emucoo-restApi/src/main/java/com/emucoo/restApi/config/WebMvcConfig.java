@@ -64,7 +64,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         //生成json时，将所有Long转换成String
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+//        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         simpleModule.addSerializer(Date.class, new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
 
         objectMapper.registerModule(simpleModule);
