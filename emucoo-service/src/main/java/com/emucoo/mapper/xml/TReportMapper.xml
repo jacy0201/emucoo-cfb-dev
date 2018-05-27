@@ -49,6 +49,7 @@
         report.id,
         report.shop_name,
         report.reporter_name,
+        report.form_type,
         report.reporter_dpt_name,
         report.create_time,
         reportUser.id AS report_user_id,

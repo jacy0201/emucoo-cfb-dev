@@ -12,7 +12,7 @@ import com.emucoo.model.SysUser;
  * Created by sj on 2018/4/24.
  */
 public interface ReportService {
-    ReportVo getReport(SysUser user, GetReportIn reportIn);
+    ReportVo getReportPreview(SysUser user, GetReportIn reportIn);
 
     Long saveReport(SysUser user, ReportVo reportIn);
 

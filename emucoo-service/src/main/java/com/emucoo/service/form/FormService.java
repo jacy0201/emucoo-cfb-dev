@@ -3,6 +3,7 @@ package com.emucoo.service.form;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
+import com.emucoo.dto.modules.shop.PlanArrangeGetFormIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TBrandInfo;
 import com.emucoo.model.TFormMain;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface FormService {
 
-    List<TFormMain> listForm();
+    List<TFormMain> listForm(PlanArrangeGetFormIn getFormIn);
 
     FormOut checkoutFormInfo(SysUser user, Long formId);
 

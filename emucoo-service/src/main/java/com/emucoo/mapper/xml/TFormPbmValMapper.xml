@@ -32,17 +32,11 @@
         pbmVal.form_value_id,
         pbmVal.problem_schema_type,
         pbmVal.problem_name
-        FROM t_form_pbm_val pbmVal
-        INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
-        AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
-        <where>
-            <if test="formPbmIds != null">
-                pbmVal.form_problem_id IN
-                <foreach collection="formPbmIds" item="item" separator="," open="(" close=")">
-                    #{item}
-                </foreach>
-            </if>
-        </where>
+        FROM t_form_value formVal
+        INNER JOIN t_form_check_result formResult ON formResult.id = formVal.form_result_id
+        AND formResult.front_plan_id = #{arrangeId} AND formResult.form_main_id = #{formId}
+        INNER JOIN t_form_pbm_val pbmVal ON pbmVal.form_value_id = formVal.id AND pbmVal.is_important = true
+
     </select>
 
     <select id="findFormPbmValsByFormAndArrange" resultType="com.emucoo.model.TFormPbmVal">
@@ -55,9 +49,10 @@
         pbmVal.form_value_id,
         pbmVal.problem_schema_type,
         pbmVal.problem_name
-        FROM t_form_pbm_val pbmVal
-        INNER JOIN t_form_value formVal ON formVal.form_main_id = #{formId}
-        AND formVal.front_plan_id = #{arrangeId} AND pbmVal.form_value_id = formVal.id
+        FROM t_form_value formVal
+        INNER JOIN t_form_check_result formResult ON formResult.id = formVal.form_result_id
+        AND formResult.front_plan_id = #{arrangeId} AND formResult.form_main_id = #{formId}
+        INNER JOIN t_form_pbm_val pbmVal ON pbmVal.form_value_id = formVal.id
     </select>
 
     <select id="findFormPbmValsByFormAndArrangeList" resultType="com.emucoo.model.TFormPbmVal">

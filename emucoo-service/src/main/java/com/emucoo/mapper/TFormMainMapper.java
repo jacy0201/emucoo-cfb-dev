@@ -19,4 +19,6 @@ public interface TFormMainMapper extends MyMapper<TFormMain> {
     TFormMain fetchOneById(Long id);
 
     void upsert(TFormMain formMain);
+
+    List<TFormMain> findAvailableFormsUseForPlan(Long planId);
 }

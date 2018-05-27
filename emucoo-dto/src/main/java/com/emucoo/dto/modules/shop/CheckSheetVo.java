@@ -9,6 +9,7 @@ import lombok.Data;
 public class CheckSheetVo {
     private Long checklistID;
     private String checklistName;
+    private Integer checklistType;
     private Integer sourceType;
     private String sourceName;
 }

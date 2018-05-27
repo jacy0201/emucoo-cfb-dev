@@ -37,4 +37,22 @@
       #{modifyTime}
     )
   </insert>
+
+  <select id="findSubPlanByArrangeId" parameterType="Long" resultType="com.emucoo.model.TLoopSubPlan">
+     SELECT
+     id,
+     cycle_begin,
+     cycle_end,
+     plan_id,
+     dpt_id,
+     cur_cycle_count
+     FROM t_loop_sub_plan
+     WHERE id =
+     (
+       SELECT
+       sub_plan_id
+       FROM t_front_plan
+       WHERE id=#{frontPlanId}
+     )
+  </select>
 </mapper>

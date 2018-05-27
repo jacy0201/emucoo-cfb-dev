@@ -44,7 +44,7 @@
         select count(1) from t_loop_work
         where excute_user_id=#{submitUserId}
         and type is not null
-        and #{today} between t1.execute_begin_date and t1.execute_end_date
+        and #{today} between execute_begin_date and execute_end_date
     </select>
 
     <select id="countPendingReviewWorkNum" resultType="java.lang.Integer">
@@ -319,5 +319,9 @@
     <select id="filterAuditRemindWorks" resultType="com.emucoo.model.TLoopWork">
         select * from t_loop_work where work_status = 2 and work_result is null
             and audit_deadline between #{deadTimeLeft} and #{deadTimeRight}
+    </select>
+
+    <select id="isLoopWorkExist" resultType="java.lang.Integer">
+        select count(1) from t_loop_work where task_id=#{taskId} and execute_begin_date = #{dt} and excute_user_id=#{executorId}
     </select>
 </mapper>

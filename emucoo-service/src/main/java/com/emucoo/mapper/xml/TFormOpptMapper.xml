@@ -44,9 +44,12 @@
       oppt.name AS oppt_name,
       oppt.create_user_id
       FROM t_form_oppt formOppt
-      INNER JOIN t_opportunity oppt ON oppt.id = formOppt.oppt_id AND oppt.create_type = 1
+      INNER JOIN t_opportunity oppt ON oppt.id = formOppt.oppt_id
       <if test="userId != null">
-          OR (oppt.create_type = 2 AND oppt.create_user_id = #{userId})
+          AND (oppt.create_type = 1 OR (oppt.create_type = 2 AND oppt.create_user_id = #{userId}))
+      </if>
+      <if test="userId == null">
+          AND oppt.create_type = 1
       </if>
       WHERE formOppt.problem_id IN
       <foreach collection="pbmIds" item="item" open="(" close=")" separator=",">

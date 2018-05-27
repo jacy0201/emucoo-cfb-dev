@@ -5,6 +5,6 @@ package com.emucoo.utils;
  */
 public class TaskUniqueIdUtils {
     public static String genUniqueId() {
-         return Long.toString(System.currentTimeMillis() * 1000 + Math.round(Math.floor(Math.random() * 1000)));
+         return Long.toString(System.currentTimeMillis() * 10000 + Math.round(Math.floor(Math.random() * 10000)));
     }
 }
