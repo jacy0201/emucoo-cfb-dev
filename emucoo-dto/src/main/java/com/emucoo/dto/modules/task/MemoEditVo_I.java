@@ -5,8 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class MemoCreationVo_I {
-
+public class MemoEditVo_I {
+    private String workID;
+    private String subWorkID;
     private String submitToken;
     //备忘标题
     private String taskTitle;

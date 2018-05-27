@@ -1,6 +1,7 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
+import io.swagger.models.auth.In;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -102,6 +103,21 @@ public class TLoopWork extends BaseEntity {
     private Date executeRemindTime;
 
     /**
+     * 提醒方式：null(不提醒)；1(开始时间)；2(提前5分钟)；3(提前15分钟)；4(提前30分钟)；
+     * 5(提前1小时)；6（提前2小时）；7（提前1天）;
+     */
+    @Column(name = "execute_remind_type")
+    private Integer executeRemindType;
+
+    public Integer getExecuteRemindType() {
+        return executeRemindType;
+    }
+
+    public void setExecuteRemindType(Integer executeRemindType) {
+        this.executeRemindType = executeRemindType;
+    }
+
+    /**
      * 执行截止时间
      */
     @Column(name = "execute_deadline")
@@ -135,6 +151,13 @@ public class TLoopWork extends BaseEntity {
      * 版本号
      */
     private Integer version;
+
+
+    /**
+     * 是否标记为重要工作
+     */
+    private Boolean isSign;
+
 
     /**
      * 实际得分
@@ -180,6 +203,14 @@ public class TLoopWork extends BaseEntity {
      */
     public void setWorkId(String workId) {
         this.workId = workId;
+    }
+
+    public Boolean getIsSign() {
+        return isSign;
+    }
+
+    public void setIsSign(Boolean isSign) {
+        this.isSign = isSign;
     }
 
     /**

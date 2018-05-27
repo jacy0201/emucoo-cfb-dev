@@ -23,9 +23,11 @@ public class DateUtil {
 
     public final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 
-    public final static DateFormat YYYYMMDDMMHHSSSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    public final static DateFormat YYYY_MM_DD_HH_MM= new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     public final static DateFormat YYYYMMDDHHMMSS = new SimpleDateFormat("yyyyMMddHHmmss");
+
+    public final static DateFormat YYYYMMDDHHMM = new SimpleDateFormat("yyyyMMddHHmm");
 
     public static final DateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
@@ -116,6 +118,26 @@ public class DateUtil {
         Date date = null;
         try {
             date = YYYYMMDD.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static Date toDateYYYYMMDDHHMM(String dateString) {
+        Date date = null;
+        try {
+            date = YYYY_MM_DD_HH_MM.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static Date strDateYYYYMMDDHHMM(String dateString) {
+        Date date = null;
+        try {
+            date = YYYYMMDDHHMM.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }

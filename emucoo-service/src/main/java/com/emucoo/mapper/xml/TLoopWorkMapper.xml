@@ -19,9 +19,10 @@
         <result column="send_user_ids" property="sendUserIds" jdbcType="BIGINT"/>
         <result column="work_status" property="workStatus" jdbcType="INTEGER"/>
         <result column="work_result" property="workResult" jdbcType="INTEGER"/>
-        <result column="execute_begin_date" property="executeBeginDate" jdbcType="DATE"/>
-        <result column="execute_end_date" property="executeEndDate" jdbcType="DATE"/>
+        <result column="execute_begin_date" property="executeBeginDate" jdbcType="TIMESTAMP"/>
+        <result column="execute_end_date" property="executeEndDate" jdbcType="TIMESTAMP"/>
         <result column="execute_remind_time" property="executeRemindTime" jdbcType="TIMESTAMP"/>
+        <result column="execute_remind_type" property="executeRemindType" jdbcType="INTEGER"/>
         <result column="execute_deadline" property="executeDeadline" jdbcType="TIMESTAMP"/>
         <result column="audit_deadline" property="auditDeadline" jdbcType="TIMESTAMP"/>
         <result column="audit_time" property="auditTime" jdbcType="DATE" />
@@ -30,6 +31,7 @@
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
         <result column="version" property="version" jdbcType="INTEGER"/>
         <result column="score" property="score" jdbcType="VARCHAR"/>
+        <result column="is_sign" property="isSign" jdbcType="BIT"/>
         <association property="task" javaType="com.emucoo.model.TTask">
             <id column="task_id" property="id" jdbcType="BIGINT"/>
             <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -93,9 +95,13 @@
         FROM t_loop_work t1
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
-        WHERE (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
+        WHERE
+        <if test="workType != null">
+            t1.type=#{workType}  AND
+        </if>
+        (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
         AND
-        #{executeDate} between t1.execute_begin_date and t1.execute_end_date
+        #{executeDate} between str_to_date(t1.execute_begin_date,'%Y-%m-%d') and t1.execute_end_date
         GROUP BY t1.id
         ORDER BY t1.execute_end_date asc
     </select>

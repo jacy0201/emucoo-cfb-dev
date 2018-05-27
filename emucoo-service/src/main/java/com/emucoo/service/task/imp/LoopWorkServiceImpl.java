@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Autowired
     private TOperateDataForWorkMapper operateDataForWorkMapper;
+
+    @Autowired
+    private TTaskMapper taskMapper;
 
     /**
      *
@@ -300,12 +304,71 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return result;
     }
 
+    /**
+     * 工作备忘详情查询
+     * @param workId
+     * @param subWorkId
+     * @param workType
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser){
+
+        MemoDetailVo_O memoDetailVo=null;
+        TLoopWork loopWork=loopWorkMapper.fetchByWorkIdAndType(workId,subWorkId,workType);
+        if(null!=loopWork){
+            memoDetailVo=new MemoDetailVo_O();
+            memoDetailVo.setWorkID(workId);
+            memoDetailVo.setSubID(subWorkId);
+            memoDetailVo.setWorkType(workType);
+            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate());
+            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate());
+            memoDetailVo.setIsSign(loopWork.getIsSign());
+            memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
+
+            List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
+            String [] userIds=loopWork.getSendUserIds().split(",");
+            if(null!=userIds && userIds.length>0){
+                MemoDetailVo_O.CCPerson ccPerson=null;
+                for (String id:userIds) {
+                    ccPerson=new  MemoDetailVo_O.CCPerson();
+                    SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(id));
+                    if(u!=null) {
+                        ccPerson.setCcPersonID(u.getId());
+                        ccPerson.setCcPersonName(u.getRealName());
+                        ccPerson.setHeadImgUrl(u.getHeadImgUrl());
+                    }
+                    ccList.add(ccPerson);
+                }
+                memoDetailVo.setCcPersonList(ccList);
+            }
+            TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+            memoDetailVo.setTaskTitle(task.getName());
+            memoDetailVo.setTaskExplain(task.getDescription());
+            memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
+            memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
+            List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
+            List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
+            cimgs.forEach(tFile -> {
+                ImageUrlVo im = new ImageUrlVo();
+                im.setImgUrl(tFile.getImgUrl());
+                ims.add(im);
+            });
+            memoDetailVo.setTaskImgArr(ims);
+
+        }
+        return  memoDetailVo;
+
+    }
+
+
     @Override
     @Transactional
     public void createAssignTask(AssignTaskCreationVo_I voi, long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
 
-        List<Date> dts = genDatesByRepeatType(voi);
+        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
         TTask task = new TTask();
 
         task.setName(voi.getTaskTitle());
@@ -423,17 +486,193 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
     }
 
-    private List<Date> genDatesByRepeatType(AssignTaskCreationVo_I voi) {
+    /**
+     * 创建工作备忘
+     * @param voi
+     * @param userId
+     */
+    @Override
+    @Transactional
+    public void createMemo(MemoCreationVo_I voi, Long userId) {
+        String uniWorkId = TaskUniqueIdUtils.genUniqueId();
+        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
+        TTask task = new TTask();
+        task.setName(voi.getTaskTitle());
+        task.setCreateTime(DateUtil.currentDate());
+        task.setModifyTime(DateUtil.currentDate());
+        task.setCreateUserId(userId);
+        task.setModifyUserId(userId);
+        task.setDescription(voi.getTaskExplain());
+        task.setType(5);
+        task.setWorkId(uniWorkId);
+        task.setVersion(1);
+        task.setIsDel(false);
+        task.setIsUse(true);
+        task.setTaskEndDate(DateUtil.strDateYYYYMMDDHHMM(voi.getEndDate()));
+        task.setTaskStartDate(DateUtil.strDateYYYYMMDDHHMM(voi.getStartDate()));
+        task.setLoopCycleType(voi.getTaskRepeatType());
+        task.setLoopCycleValue(voi.getTaskRepeatValue());
+        task.setExecuteUserIds(userId.toString());
+
+        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+            task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+
+        List<String> timgids = new ArrayList<String>();
+        voi.getTaskImgArr().forEach(imageUrlVo -> {
+            com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
+            timg.setImgUrl(imageUrlVo.getImgUrl());
+            timg.setCreateTime(DateUtil.currentDate());
+            timg.setModifyTime(DateUtil.currentDate());
+            timg.setCreateUserId(userId);
+            fileMapper.insert(timg);
+            timgids.add(Long.toString(timg.getId()));
+        });
+        task.setIllustrationImgIds(StringUtils.join(timgids, ","));
+        taskMapper.insertUseGeneratedKeys(task);
+        Long taskId = task.getId();
+        // 根据具体执行时间生产任务实例
+        for(Date dt : dts) {
+            // 根据执行人产生任务实例
+            TLoopWork lw = new TLoopWork();
+            lw.setTaskId(taskId);
+            lw.setWorkId(uniWorkId);
+            lw.setIsSign(voi.getIsSign());
+            lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
+            lw.setType(5);
+            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
+            lw.setExecuteRemindType(voi.getRemindType());
+            lw.setExecuteRemindTime(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getRemindTime()));
+            lw.setCreateTime(new Date());
+            lw.setModifyTime(new Date());
+            lw.setExcuteUserId(userId);
+            // 存储关联的Executor Ids
+            SysUser eUser = userMapper.selectByPrimaryKey(userId);
+            if (eUser != null) {
+                lw.setExcuteUserName(eUser.getRealName());
+            }
+            // 存储关联的ccPerson Ids
+            List<CCPersonIdVo> ccpids = voi.getCcPersonArray();
+            if (ccpids != null && ccpids.size() > 0) {
+                List<String> ccps = ccpids.stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList());
+                lw.setSendUserIds(StringUtils.join(ccps, ","));
+            }
+            loopWorkMapper.insertSelective(lw);
+        }
+
+    }
+
+    /**
+     * 编辑工作备忘
+     * @param voi
+     * @param userId
+     */
+    @Override
+    @Transactional
+    public void editMemo(MemoEditVo_I voi, Long userId) {
+        Example example=new Example(TTask.class);
+        example.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("isDel",false);
+        //更新工作备忘主表 t_task
+        TTask tTask =taskMapper.selectOneByExample(example);
+        Long taskId=tTask.getId();
+        TTask task=new TTask();
+        task.setId(taskId);
+        task.setName(voi.getTaskTitle());
+        task.setModifyTime(DateUtil.currentDate());
+        task.setModifyUserId(userId);
+        task.setDescription(voi.getTaskExplain());
+        task.setType(5);
+        task.setWorkId(voi.getWorkID());
+        task.setTaskEndDate(DateUtil.strDateYYYYMMDDHHMM(voi.getEndDate()));
+        task.setTaskStartDate(DateUtil.strDateYYYYMMDDHHMM(voi.getStartDate()));
+        task.setLoopCycleType(voi.getTaskRepeatType());
+        task.setLoopCycleValue(voi.getTaskRepeatValue());
+        task.setExecuteUserIds(userId.toString());
+        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+            task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+
+        List<ImageUrlVo> imgList=voi.getTaskImgArr();
+        List<String> timgids = new ArrayList<String>();
+        if(null!=imgList && imgList.size()>0){
+            imgList.forEach(imageUrlVo -> {
+                com.emucoo.model.TFile timg = new com.emucoo.model.TFile();
+                timg.setImgUrl(imageUrlVo.getImgUrl());
+                timg.setCreateTime(DateUtil.currentDate());
+                timg.setModifyTime(DateUtil.currentDate());
+                timg.setCreateUserId(userId);
+                fileMapper.insert(timg);
+                timgids.add(Long.toString(timg.getId()));
+            });
+        }
+        task.setIllustrationImgIds(StringUtils.join(timgids, ","));
+        taskMapper.updateByExampleSelective(task,example);
+
+        //先删除之前创建的备忘实例
+        Example exampleTLoopWork=new Example(TLoopWork.class);
+        exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
+        loopWorkMapper.deleteByExample(exampleTLoopWork);
+
+        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
+        //再重新创建备忘实例
+        for(Date dt : dts) {
+            // 根据执行人产生任务实例
+            TLoopWork lw = new TLoopWork();
+            lw.setTaskId(taskId);
+            lw.setWorkId(voi.getWorkID());
+            lw.setIsSign(voi.getIsSign());
+            lw.setSubWorkId(voi.getSubWorkID());
+            lw.setType(5);
+            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
+            lw.setExecuteRemindType(voi.getRemindType());
+            lw.setExecuteRemindTime(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getRemindTime()));
+            lw.setCreateTime(new Date());
+            lw.setModifyTime(new Date());
+            lw.setExcuteUserId(userId);
+            // 存储关联的Executor Ids
+            SysUser eUser = userMapper.selectByPrimaryKey(userId);
+            if (eUser != null) {
+                lw.setExcuteUserName(eUser.getRealName());
+            }
+            // 存储关联的ccPerson Ids
+            List<CCPersonIdVo> ccpids = voi.getCcPersonArray();
+            if (ccpids != null && ccpids.size() > 0) {
+                List<String> ccps = ccpids.stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList());
+                lw.setSendUserIds(StringUtils.join(ccps, ","));
+            }
+            loopWorkMapper.insertSelective(lw);
+        }
+
+    }
+
+    /**
+     * 删除工作备忘
+     * @param voi
+     * @param userId
+     */
+    @Override
+    @Transactional
+    public void deleteMemo(MemoDeleteVo_I voi, Long userId) {
+        //删除工作备忘主表 t_task
+        Example example=new Example(TTask.class);
+        example.createCriteria().andEqualTo("workId",voi.getWorkID());
+        taskMapper.deleteByExample(example);
+        //删除工作备忘实例
+        Example exampleTLoopWork=new Example(TLoopWork.class);
+        exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
+        loopWorkMapper.deleteByExample(exampleTLoopWork);
+    }
+
+    private List<Date> genDatesByRepeatType(Integer repeatType,String startDate,String endDate,String repeatValue) {
         List<Date> dts = new ArrayList<>();
-        int repeatType = voi.getTaskRepeatType();
         switch (repeatType){
             case 0:
-                dts.add(DateUtil.strToSimpleYYMMDDDate(voi.getStartDate()));
+                dts.add(DateUtil.strToSimpleYYMMDDDate(startDate));
                 break;
 
             case 1:
-                Date sdt = DateUtil.strToSimpleYYMMDDDate(voi.getStartDate());
-                Date edt = DateUtil.strToSimpleYYMMDDDate(voi.getEndDate());
+                Date sdt = DateUtil.strToSimpleYYMMDDDate(startDate);
+                Date edt = DateUtil.strToSimpleYYMMDDDate(endDate);
                 while(DateUtil.compare(sdt, edt) <= 0) {
                     dts.add(sdt);
                     sdt = DateUtil.dateAddDay(sdt, 1);
@@ -441,9 +680,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 break;
 
             case 2:
-                List<Integer> wkdays = Arrays.asList(voi.getTaskRepeatValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
-                Date sdt1 = DateUtil.strToSimpleYYMMDDDate(voi.getStartDate());
-                Date edt1 = DateUtil.strToSimpleYYMMDDDate(voi.getEndDate());
+                List<Integer> wkdays = Arrays.asList(repeatValue.split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
+                Date sdt1 = DateUtil.strToSimpleYYMMDDDate(startDate);
+                Date edt1 = DateUtil.strToSimpleYYMMDDDate(endDate);
                 while(DateUtil.compare(sdt1, edt1) <= 0) {
                     if(wkdays.contains(DateUtil.getDayOfWeek(sdt1))){
                         dts.add(sdt1);
@@ -476,8 +715,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return voo;
     }
 
-    @Autowired
-    private TTaskMapper taskMapper;
     @Override
     public TTask fetchTaskById(long id) {
         return taskMapper.selectByPrimaryKey(id);

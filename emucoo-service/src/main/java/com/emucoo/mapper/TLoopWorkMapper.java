@@ -27,7 +27,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     List<TLoopWork> calendarMonthList(@Param("userId") Long userId,@Param("yearStr") String yearStr,@Param("monthStr")  String monthStr);
 
-    List<TLoopWork> calendarDateList(@Param("userId") Long userId,@Param("executeDate") String executeDate);
+    List<TLoopWork> calendarDateList(@Param("userId") Long userId,@Param("executeDate") String executeDate,@Param("workType") Integer workType);
 
     int countPendingExecuteWorkNum(@Param("submitUserId") Long submitUserId, @Param("today") Date today);
 
