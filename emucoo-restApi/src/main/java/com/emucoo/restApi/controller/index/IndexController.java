@@ -159,8 +159,8 @@ public class IndexController extends AppBaseController {
             work.setWorkID(Long.toString(frontPlan.getId()));
             work.setWorkType(ITask.INSPECTION);
             work.setSubID("");
-            work.getInspection().setInspEndTime(frontPlan.getPlanDate());
-            work.getInspection().setInspStartTime(frontPlan.getPlanDate());
+            work.getInspection().setInspEndTime(frontPlan.getPlanDate().getTime());
+            work.getInspection().setInspStartTime(frontPlan.getPlanDate().getTime());
             work.getInspection().setInspStatus(frontPlan.getStatus() == 1 ? 1 : 0);
             TLoopPlan loopPlan = loopPlanService.findById(frontPlan.getLoopPlanId());
             if (loopPlan != null) {
@@ -228,16 +228,16 @@ public class IndexController extends AppBaseController {
                 return work;
             }
             if (ITask.INSPECTION == t.getType()) {
-                work.getInspection().setInspEndTime(t.getExecuteBeginDate());
-                work.getInspection().setInspStartTime(t.getExecuteEndDate());
+                work.getInspection().setInspEndTime(t.getExecuteBeginDate().getTime());
+                work.getInspection().setInspStartTime(t.getExecuteEndDate().getTime());
                 work.getInspection().setInspStatus(t.getWorkStatus());
                 work.getInspection().setInspTitle(tt.getName());
                 return work;
             }
             work.getMemo().setImportStatus(t.getWorkStatus());
             work.getMemo().setMemoContent("I don't konw where to get it");
-            work.getMemo().setMemoEndTime(t.getExecuteBeginDate());
-            work.getMemo().setMemoStartTime(t.getExecuteEndDate());
+            work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
+            work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
             return work;
         }).collect(Collectors.toList());
         WorkVo_O workVo_o = new WorkVo_O();
