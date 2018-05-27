@@ -31,8 +31,7 @@ public class TaskCommonController extends AppBaseController{
     @PostMapping("/submitTask")
     public AppResult<String> submitTask(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<TaskCommonSubmitIn> base) {
     	TaskCommonSubmitIn vo = base.getData();
-//    	long userId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
-        long userId = 61L;
+    	long userId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
     	SysUser user = userService.findById(userId);
     	taskCommonService.submitTask(vo, user);
     	return success("");
