@@ -2,6 +2,7 @@ package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.TOperateDataForWork;
+import org.apache.ibatis.annotations.Param;
 
 public interface TOperateDataForWorkMapper extends MyMapper<TOperateDataForWork> {
 
@@ -11,5 +12,5 @@ public interface TOperateDataForWorkMapper extends MyMapper<TOperateDataForWork>
 
     TOperateDataForWork fetchOneByWorkIds(String workId, String subWorkId);
 
-    TOperateDataForWork fetchOneByTaskItemIdAndLoopWorkId(Long loopWorkId, Long taskItemID);
+    TOperateDataForWork fetchOneByTaskItemIdAndLoopWorkId(@Param("loopWorkId") Long loopWorkId, @Param("taskItemId") Long taskItemId);
 }
