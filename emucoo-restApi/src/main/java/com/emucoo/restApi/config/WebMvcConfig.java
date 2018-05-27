@@ -3,11 +3,7 @@ package com.emucoo.restApi.config;
 
 import com.emucoo.restApi.config.interceptor.ApiInterceptor;
 import com.emucoo.restApi.config.interceptor.FormTokenInterceptor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -66,18 +61,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         simpleModule.addSerializer(Date.class, new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
 
         objectMapper.registerModule(simpleModule);
-        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
-            @Override
-            public void serialize(Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-                if(o instanceof Long) {
-                    jsonGenerator.writeNumber(0L);
-                } else if(o instanceof Integer) {
-                    jsonGenerator.writeNumber(0);
-                } else {
-                    jsonGenerator.writeString("");
-                };
-            }
-        });
+//        objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>() {
+//            @Override
+//            public void serialize(Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+//                jsonGenerator.writeString("");
+//            }
+//        });
 
         jackson2HttpMessageConverter.setObjectMapper(objectMapper);
         converters.add(0, jackson2HttpMessageConverter);
