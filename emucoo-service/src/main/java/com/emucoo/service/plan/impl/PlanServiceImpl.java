@@ -301,11 +301,11 @@ public class PlanServiceImpl implements PlanService {
             findPlanListOut.setPrecinctArr(precinctArr);
             return findPlanListOut;
         } catch (Exception e) {
-            logger.error("用户:{}，查询巡店计划失败", user.getId(), e);
+            logger.error("用户:{}，查询巡店计划失败！", user.getId(), e);
             if(e instanceof BaseException) {
                 throw new ApiException(((BaseException) e).getMsg());
             }
-            throw new ApiException("查询巡店计划列表失败");
+            throw new ApiException("查询巡店计划列表失败！");
         }
 
     }

@@ -1,5 +1,6 @@
 package com.emucoo.restApi.controller.calendar;
 
+import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.calendar.CalendarListDateIn;
 import com.emucoo.dto.modules.calendar.CalendarListDateOut;
@@ -9,19 +10,19 @@ import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.service.calendar.CalendarService;
-import com.emucoo.service.sys.SysUserService;
 import com.emucoo.utils.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.text.Collator;
+import java.util.*;
 
 
 /**
@@ -33,9 +34,11 @@ import java.util.List;
 @RequestMapping("/api/calendar")
 public class CalendarController extends AppBaseController {
 
-    @Resource
+    @Autowired
     private CalendarService calendarService;
 
+    @Autowired
+    private RedisClusterClient redisClient;
     /**
      * 获取指定用户,指定月份行事历
      * @param params
@@ -77,9 +80,31 @@ public class CalendarController extends AppBaseController {
     @PostMapping(value = "/listLowerUser")
     public AppResult listLowerUser() {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+
         List<SysUser> list= calendarService.listLowerUser(user.getId());
-        return success(list);
+        //redisClient.set(ISystem.IUSER.USER_RECENT+user.getId(),list,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
+        //返回按姓名首字母排序的集合;
+        return success(orderUserList(list));
     }
 
+
+    //根据姓名首字母排序
+    private List<SysUser> orderUserList(List<SysUser> list){
+        HashMap<String,SysUser> map =new HashMap<>();
+        String [] nameArr=new String[list.size()];
+        for(int i=0;i<list.size();i++){
+            nameArr[i]=list.get(i).getRealName();
+            map.put(nameArr[i],list.get(i));
+        }
+
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        Arrays.sort(nameArr,comparator);
+        list.clear();
+        for(int n=nameArr.length-1;n>=0;n--){
+            if(map.containsKey(nameArr[n]))
+                list.add(map.get(nameArr[n]));
+        }
+        return list;
+    }
 
 }

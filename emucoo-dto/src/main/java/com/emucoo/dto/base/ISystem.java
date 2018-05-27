@@ -41,7 +41,9 @@ public interface ISystem {
     {
     	 public static final String USER_TOKEN = "user:token:store:";
     	 public static final String USER = "user:user:store:";
-    	 public static final int USER_TOKEN_EXPIRATION_TIME             = 60*360000;
+    	 //最近联系人
+        public static final String USER_RECENT = "user:recent:store:";
+        public static final int USER_TOKEN_EXPIRATION_TIME             = 60*360000;
     }
     public static interface ISMSTemplateCode
     {

@@ -11,4 +11,8 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <delete id="dropByTaskId">
+    delete from t_task_label where task_id=#{id}
+  </delete>
 </mapper>

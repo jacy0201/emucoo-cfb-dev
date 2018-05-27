@@ -7,6 +7,8 @@ import com.emucoo.dto.modules.user.UserQuery;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.sys.SysUserService;
+import com.emucoo.common.Constant;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +73,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		Example example=new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("isDel",0);
-		criteria.andNotEqualTo("id",1);
+		SysUser su=(SysUser)SecurityUtils.getSubject().getPrincipal();
+        //如果不是 超级管理员登录，则不能查询 管理员级别的账号
+		if(!Constant.SUPER_ADMIN.equals(su.getId())) {
+			criteria.andNotEqualTo("isAdmin", true);
+		}
         if(null!=userQuery){
 			if(StringUtil.isNotEmpty(userQuery.getRealName())){
 			    realName=userQuery.getRealName();
@@ -191,7 +197,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			for(SysPost sysPost:listPost){
 				sysUserPost=new SysUserPost();
 				sysUserPost.setCreateTime(new Date());
-				sysUserPost.setCreateUserId(1L);
+				sysUserPost.setCreateUserId(sysUser.getCreateUserId());
 				sysUserPost.setIsDel(false);
 				sysUserPost.setUserId(id);
 				sysUserPost.setPostId(sysPost.getId());
@@ -202,7 +208,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop){
+	public void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop,Long createUserId){
 		//设置用户分区
 		List<Long> areaIdList=userBrandAreaShop.getListAreaId();
 		SysUserArea sysUserArea=null;
@@ -216,7 +222,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserArea.setAreaId(areaId);
 				sysUserArea.setUserId(userBrandAreaShop.getUserId());
 				sysUserArea.setCreateTime(new Date());
-				sysUserArea.setCreateUserId(1L);
+				sysUserArea.setCreateUserId(createUserId);
 				sysUserArea.setIsDel(false);
 				sysUserAreaMapper.insertSelective(sysUserArea);
 			}
@@ -234,7 +240,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserBrand.setBrandId(brandId);
 				sysUserBrand.setUserId(userBrandAreaShop.getUserId());
 				sysUserBrand.setCreateTime(new Date());
-				sysUserBrand.setCreateUserId(1L);
+				sysUserBrand.setCreateUserId(createUserId);
 				sysUserBrand.setIsDel(false);
 				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
@@ -253,7 +259,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserShop.setShopId(shopId);
 				sysUserShop.setUserId(userBrandAreaShop.getUserId());
 				sysUserShop.setCreateTime(new Date());
-				sysUserShop.setCreateUserId(1L);
+				sysUserShop.setCreateUserId(createUserId);
 				sysUserShop.setIsDel(false);
 				sysUserShopMapper.insertSelective(sysUserShop);
 			}
@@ -281,7 +287,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			for(SysPost sysPost:listPost){
 				sysUserPost=new SysUserPost();
 				sysUserPost.setCreateTime(new Date());
-				sysUserPost.setCreateUserId(1L);
+				sysUserPost.setCreateUserId(sysUser.getCreateUserId());
 				sysUserPost.setIsDel(false);
 				sysUserPost.setUserId(sysUser.getId());
 				sysUserPost.setPostId(sysPost.getId());

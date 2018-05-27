@@ -77,7 +77,8 @@ public class SysLoginController extends BaseResource {
 	@PostMapping(value = "/sys/logout")
 	@ApiOperation(value="用户退出")
 	public ApiResult logout(){
-		sysUserTokenService.expireToken(ShiroUtils.getUserId());
+		Long userId=ShiroUtils.getUserId();
+		sysUserTokenService.expireToken(userId);
 		ShiroUtils.logout();
 		return success("success");
 	}

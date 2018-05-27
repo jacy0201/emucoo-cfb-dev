@@ -281,7 +281,6 @@ public class IndexController extends AppBaseController {
         return success(map);
     }
 
-
     @PostMapping("/reportList")
     public AppResult<ReportListVo_O> reportList(@RequestHeader("userToken") String userToken) {
         Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);

@@ -273,6 +273,8 @@ public class FormManageServiceImpl implements FormManageService {
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
                 if(problem.getOppts() != null && problem.getOppts().size() > 0) {
                     problem.getOppts().forEach(oppt -> {
+                        if(oppt.getId() == null)
+                            return;
                         TFormOppt formOppt = new TFormOppt();
                         formOppt.setProblemId(problem.getId());
                         formOppt.setProblemType(problem.getProblemSchemaType());

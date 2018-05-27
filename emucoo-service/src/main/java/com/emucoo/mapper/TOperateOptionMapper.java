@@ -10,4 +10,8 @@ public interface TOperateOptionMapper extends MyMapper<TOperateOption> {
     TOperateOption fetchOneByTaskId(Long taskId);
 
     List<TOperateOption> fetchOptionsByTaskId(Long taskId);
+
+    void dropByTaskId(Long taskId);
+
+    void dropSampleImagesByTaskId(Long id);
 }
