@@ -121,14 +121,14 @@ public class FormServiceImpl implements FormService {
     public List<TFormMain> listForm(PlanArrangeGetFormIn getFormIn) {
 
         try {
-            /*TLoopSubPlan subPlan = loopSubPlanMapper.findSubPlanByArrangeId(getFormIn.getPatrolShopArrangeID());
+            TLoopSubPlan subPlan = loopSubPlanMapper.findSubPlanByArrangeId(getFormIn.getPatrolShopArrangeID());
             if (subPlan == null) {
                 throw new BaseException("计划数据异常！");
             }
-            List<TFormMain> tFormMains = formMainMapper.findAvailableFormsUseForPlan(subPlan.getPlanId());*/
-            Example example = new Example(TFormMain.class);
+            List<TFormMain> tFormMains = formMainMapper.findAvailableFormsUseForPlan(subPlan.getPlanId());
+            /*Example example = new Example(TFormMain.class);
             example.createCriteria().andEqualTo("isDel", false).andEqualTo("isUse", true);
-            List<TFormMain> tFormMains = formMainMapper.selectByExample(example);
+            List<TFormMain> tFormMains = formMainMapper.selectByExample(example);*/
             return tFormMains;
         } catch (Exception e) {
             logger.error("读取检查表列表失败！", e);
