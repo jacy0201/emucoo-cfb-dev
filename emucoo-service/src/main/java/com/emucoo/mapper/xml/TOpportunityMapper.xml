@@ -39,7 +39,7 @@
                 and create_type = #{ctype}
             </if>
             <if test="isUsed > 0">
-                and isUse = 1
+                and is_use = 1
             </if>
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%', #{keyword}, '%')
@@ -56,7 +56,7 @@
                 and create_type = #{ctype}
             </if>
             <if test="isUsed > 0">
-                and isUse = 1
+                and is_use = 1
             </if>
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%',#{keyword}, '%')
