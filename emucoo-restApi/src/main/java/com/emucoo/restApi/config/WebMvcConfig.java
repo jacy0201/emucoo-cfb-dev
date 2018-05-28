@@ -3,6 +3,7 @@ package com.emucoo.restApi.config;
 
 import com.emucoo.restApi.config.interceptor.ApiInterceptor;
 import com.emucoo.restApi.config.interceptor.FormTokenInterceptor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
@@ -50,10 +51,16 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     }
 
     @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        super.configureMessageConverters(converters);
+    }
+
+    @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = jackson2HttpMessageConverter.getObjectMapper();
 
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         //生成json时，将所有Long转换成String
         SimpleModule simpleModule = new SimpleModule();
 //        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@JobHandler("任务审核提醒")
+@JobHandler("TaskAuditReminder")
 @Component
 public class TaskAuditRemindHandler extends IJobHandler {
 

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@JobHandler(value = "任务执行提醒")
+@JobHandler(value = "TaskExecutionReminder")
 @Component
 public class TaskExecuteRemindHandler extends IJobHandler {
 
