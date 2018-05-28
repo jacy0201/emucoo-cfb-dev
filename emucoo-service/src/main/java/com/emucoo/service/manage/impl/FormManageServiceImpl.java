@@ -815,9 +815,9 @@ public class FormManageServiceImpl implements FormManageService {
     @Transactional(rollbackFor = Exception.class)
     public void editFormOppt(List<TFormOppt> tFormOpptList){
         //先删除之前关联的机会点
-        Example example =new Example(TFormOppt.class);
+
         for (TFormOppt tFormOppt : tFormOpptList){
-            example.clear();
+            Example example =new Example(TFormOppt.class);
             Example.Criteria criteria=example.createCriteria();
             if(null!=tFormOppt.getProblemId()){
                 criteria.andEqualTo("problemId",tFormOppt.getProblemId());
@@ -826,7 +826,7 @@ public class FormManageServiceImpl implements FormManageService {
             if(null!=tFormOppt.getSubProblemId()){
                 criteria.andEqualTo("subProblemId",tFormOppt.getSubProblemId());
             }
-            formOpptMapper.deleteByExample(criteria);
+            formOpptMapper.deleteByExample(example);
         }
         //关联机会点
         for (TFormOppt tFormOppt : tFormOpptList){
