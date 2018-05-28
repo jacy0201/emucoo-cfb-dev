@@ -835,6 +835,7 @@ public class FormManageServiceImpl implements FormManageService {
             else
                 tFormOppt.setProblemType(1);
             tFormOppt.setModifyTime(new Date());
+            tFormOppt.setCreateTime(new Date());
             insertListOpt(tFormOppt);
         }
 
