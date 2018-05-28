@@ -39,10 +39,10 @@ public class MemoCreationVo_I {
     private String remindTime;
 
     /**
-     * 提醒方式：null(不提醒)；1(开始时间)；2(提前5分钟)；3(提前15分钟)；4(提前30分钟)；
-     * 5(提前1小时)；6（提前2小时）；7（提前1天）;
+     * 提醒方式：1(开始时间)；2(提前15分钟)；3(提前30分钟)；
+     * 4(提前1小时)；5（提前2小时）；6（提前1天）;7 无
      */
-    @ApiModelProperty(value="提醒方式",name="remindType",notes = "null(不提醒)；1(开始时间)；2(提前5分钟)；3(提前15分钟)；4(提前30分钟)；5(提前1小时)；6（提前2小时）；7（提前1天）;")
+    @ApiModelProperty(value="提醒方式",name="remindType",notes = "提醒方式：1(开始时间)；2(提前15分钟)；3(提前30分钟)；4(提前1小时)；5（提前2小时）；6（提前1天）;7 无")
     private Integer remindType;
 
     //任务抄送人数组
