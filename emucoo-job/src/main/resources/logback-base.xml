@@ -5,6 +5,7 @@
 
     <!--设置系统日志目录-->
     <property name="APP_DIR" value="xxl-job" />
+    <property name="LOG_PATH" value="/data/logs/job/" />
 
     <!-- 彩色日志 -->
     <!-- 彩色日志依赖的渲染类 -->

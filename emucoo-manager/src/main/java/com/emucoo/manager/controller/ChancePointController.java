@@ -25,14 +25,16 @@ public class ChancePointController extends BaseResource {
     @Autowired
     private ChancePointService chancePointService;
 
-    @ApiOperation(value="机会点列表", httpMethod = "POST")
+    @ApiOperation(value = "机会点列表", httpMethod = "POST")
     @PostMapping("/list")
     public ApiResult<PageInfo> listChancePoint(@RequestBody ParamVo<TOpportunity> param) {
-        String keyword = param.getData()==null?"":param.getData().getName();
+        String keyword = param.getData() == null ? "" : param.getData().getName();
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
+        int ctype = param.getData() == null ? 0 : (param.getData().getCreateType() == null ? 0 : (param.getData().getCreateType()));
+        int isUsed = param.getData() == null ? 0 : (param.getData().getIsUse() == null ? 0 : (param.getData().getIsUse() ? 1 : 0));
         int total = chancePointService.countChancePointsByNameKeyword(keyword);
-        List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, pageNm, pageSz);
+        List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, ctype, isUsed, pageNm, pageSz);
         PageInfo pageInfo = new PageInfo<>(opptList);
         pageInfo.setPageSize(pageSz);
         pageInfo.setPageNum(pageNm);
@@ -44,7 +46,7 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/edit")
     public ApiResult<TOpportunity> editChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity oppt = param.getData();
-        if(oppt == null)
+        if (oppt == null)
             return fail("参数错误.");
         Long id = oppt.getId();
         TOpportunity opportunity = chancePointService.fetchChancePointById(id);
@@ -55,9 +57,9 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/create")
     public ApiResult<String> createChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
-        if(opportunity == null)
+        if (opportunity == null)
             return fail("参数错误.");
-        if(chancePointService.judgeExisted(opportunity))
+        if (chancePointService.judgeExisted(opportunity))
             return fail("同名机会点已经存在");
         chancePointService.createChancePoint(opportunity, 0L);
         return success("ok");
@@ -67,9 +69,9 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/update")
     public ApiResult<String> updateChancePoint(@RequestBody ParamVo<TOpportunity> param) {
         TOpportunity opportunity = param.getData();
-        if(opportunity == null)
+        if (opportunity == null)
             return fail("参数错误.");
-        if(chancePointService.judgeExisted(opportunity))
+        if (chancePointService.judgeExisted(opportunity))
             return fail("同名机会点已经存在");
         chancePointService.updateChancePoint(opportunity, 0L);
         return success("ok");
@@ -79,7 +81,7 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/delete")
     public ApiResult<String> deleteChancePoint(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
-        if(ids == null || ids.size() == 0)
+        if (ids == null || ids.size() == 0)
             return fail("参数错误.");
         chancePointService.deleteChancePoints(ids);
         return success("ok");
@@ -89,7 +91,7 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/enable")
     public ApiResult<String> enableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
-        if(ids == null || ids.size() == 0)
+        if (ids == null || ids.size() == 0)
             return fail("参数错误.");
         chancePointService.enableChancePoints(ids);
         return success("ok");
@@ -99,7 +101,7 @@ public class ChancePointController extends BaseResource {
     @PostMapping("/disable")
     public ApiResult<String> disableChancePoints(@RequestBody ParamVo<List<Long>> param) {
         List<Long> ids = param.getData();
-        if(ids == null || ids.size() == 0)
+        if (ids == null || ids.size() == 0)
             return fail("参数错误.");
         chancePointService.disableChancePoints(ids);
         return success("ok");

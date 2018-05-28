@@ -422,8 +422,15 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    public void switchCommonTask(List<Long> data, boolean b) {
-        taskMapper.switchCommonTaskByIds(data, b);
+    public void switchCommonTask(List<Long> data, boolean state) {
+        for(Long id : data) {
+            taskMapper.switchCommonTaskById(id, state);
+            if(state) {
+                TTask task = taskMapper.selectByPrimaryKey(id);
+                Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+                createCommonLoopWork(task, today);
+            }
+        }
     }
 
     @Override
@@ -750,14 +757,14 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
     }
 
-    private void createCommonLoopWork(TTask commonTask, Date tomorrow) {
-        if (!tomorrowIsExecuteDate(commonTask, tomorrow))
+    private void createCommonLoopWork(TTask commonTask, Date theDay) {
+        if (!isExecuteDate(commonTask, theDay))
             return;
         List<SysUser> executors = determinExecutors(commonTask);
 
         // 因为拆分的具体的loop work没有跨天执行的，所以可以直接计算出明天就是该任务实例的执行日期
-        Date exeBeginDt = tomorrow;
-        Date exeEndDt = tomorrow;
+        Date exeBeginDt = theDay;
+        Date exeEndDt = theDay;
 
         Date exeDeadLine = exeEndDt;
         if (StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
@@ -786,7 +793,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         for (SysUser executor : executors) {
             // 判断数据库里是否已经有这条数据了
-            int count = loopWorkMapper.isLoopWorkExist(commonTask.getId(), tomorrow, executor.getId());
+            int count = loopWorkMapper.isLoopWorkExist(commonTask.getId(), theDay, executor.getId());
             if (count > 0)
                 continue;
 
@@ -848,15 +855,15 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
     }
 
-    private boolean tomorrowIsExecuteDate(TTask commonTask, Date tomorrow) {
+    private boolean isExecuteDate(TTask commonTask, Date theDay) {
         boolean flag = false;
         int cycleType = commonTask.getLoopCycleType() == null ? 0 : commonTask.getLoopCycleType();
         switch (cycleType) {
             case 1:
-                int interval = commonTask.getLoopCycleValue() == null ? 0 : Integer.parseInt(commonTask.getLoopCycleValue());
+                int interval = commonTask.getLoopCycleValue() == null ? 1 : Integer.parseInt(commonTask.getLoopCycleValue());
                 Date dt = commonTask.getTaskStartDate();
-                while (DateUtil.compare(dt, commonTask.getTaskEndDate()) < 0) {
-                    if (DateUtil.compare(dt, tomorrow) == 0) {
+                while (DateUtil.compare(dt, commonTask.getTaskEndDate()) <= 0) {
+                    if (DateUtil.compare(dt, theDay) == 0) {
                         flag = true;
                         break;
                     }
@@ -864,7 +871,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 }
                 break;
             case 2:
-                int dayOfWeek = DateUtil.getDayOfWeek(tomorrow);
+                int dayOfWeek = DateUtil.getDayOfWeek(theDay);
                 String weekDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
                 Set<Integer> daysWeek = new HashSet<Integer>(Arrays.asList(weekDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
                 if (daysWeek.contains(dayOfWeek)) {
@@ -872,7 +879,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 }
                 break;
             case 3:
-                int dayOfMonth = DateUtil.getDay(tomorrow);
+                int dayOfMonth = DateUtil.getDay(theDay);
                 String monthDaysStr = commonTask.getLoopCycleValue() == null ? "" : commonTask.getLoopCycleValue();
                 Set<Integer> daysMonth = new HashSet<Integer>(Arrays.asList(monthDaysStr.split(",")).stream().filter(s -> StringUtils.isNotBlank(s)).map(s -> Integer.parseInt(s)).collect(Collectors.toList()));
                 if (daysMonth.contains(dayOfMonth)) {

@@ -83,14 +83,8 @@
         </where>
     </update>
 
-    <update id="switchCommonTaskByIds">
-        update t_task set is_use = #{sw}
-        <where>
-            type = 1 and id in
-            <foreach collection="ids" item="it" close=")" open="(" separator=",">
-                #{it}
-            </foreach>
-        </where>
+    <update id="switchCommonTaskById">
+        update t_task set is_use = #{sw} where id = #{taskId} and type = 1
     </update>
 
     <select id="filterAvailableCommonTask" resultType="com.emucoo.model.TTask">
