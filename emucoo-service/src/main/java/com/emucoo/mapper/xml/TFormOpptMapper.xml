@@ -40,6 +40,7 @@
       formOppt.oppt_id,
       formOppt.problem_id,
       formOppt.problem_type,
+      formOppt.sub_problem_id,
       oppt.id AS opportunity_id,
       oppt.name AS oppt_name,
       oppt.create_user_id
@@ -51,11 +52,21 @@
       <if test="userId == null">
           AND oppt.create_type = 1
       </if>
-      WHERE formOppt.problem_id IN
-      <foreach collection="pbmIds" item="item" open="(" close=")" separator=",">
-          #{item}
-      </foreach>
-      AND formOppt.problem_type = #{type}
+      WHERE
+      <if test="pbmIds != null">
+          formOppt.problem_id IN
+          <foreach collection="pbmIds" item="item" open="(" close=")" separator=",">
+              #{item}
+          </foreach>
+          AND formOppt.problem_type = #{type}
+      </if>
+      <if test="subPbmIds != null">
+          formOppt.sub_problem_id IN
+          <foreach collection="subPbmIds" item="item" open="(" close=")" separator=",">
+              #{item}
+          </foreach>
+          AND formOppt.problem_type = #{type}
+      </if>
 
     </select>
 

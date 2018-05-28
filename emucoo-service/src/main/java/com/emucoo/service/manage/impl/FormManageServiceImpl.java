@@ -582,11 +582,11 @@ public class FormManageServiceImpl implements FormManageService {
                                             }
 
                                             // 查询机会点
-                                            List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2, userId);
+                                            List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, null, 2, userId);
                                             if (CollectionUtils.isNotEmpty(formOppts)) {
                                                 for(SubProblemVo subProblemVo : subProblemArray) {
                                                     for (TFormOppt formOppt : formOppts) {
-                                                        if(formOppt.getProblemId().equals(subProblemVo.getSubProblemID())) {
+                                                        if(formOppt.getSubProblemId().equals(subProblemVo.getSubProblemID())) {
                                                             ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
                                                             subProblemChanceVo.setChanceID(formOppt.getOpptId());
                                                             subProblemChanceVo.setChanceName(formOppt.getOpptName());
@@ -620,7 +620,7 @@ public class FormManageServiceImpl implements FormManageService {
                                         problemArray.add(problemVo);
                                     }
                                     // 查询机会点
-                                    List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1, userId);
+                                    List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(null, pbmIds, 1, userId);
                                     if (CollectionUtils.isNotEmpty(formOppts)) {
                                         for (ProblemVo problemVo : problemArray) {
                                             for (TFormOppt formOppt : formOppts) {
@@ -723,11 +723,11 @@ public class FormManageServiceImpl implements FormManageService {
                                     subProblemArray.add(subProblemVo);
                                 }
                                 // 查询机会点
-                                List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, 2, userId);
+                                List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(subPbmIds, null, 2, userId);
                                 if (CollectionUtils.isNotEmpty(formOppts)) {
                                     for (SubProblemVo subProblemVo : subProblemArray) {
                                         for (TFormOppt formOppt : formOppts) {
-                                            if (formOppt.getProblemId().equals(subProblemVo.getSubProblemID())) {
+                                            if (formOppt.getSubProblemId().equals(subProblemVo.getSubProblemID())) {
                                                 ProblemChanceVo subProblemChanceVo = new ProblemChanceVo();
                                                 subProblemChanceVo.setChanceID(formOppt.getOpptId());
                                                 subProblemChanceVo.setChanceName(formOppt.getOpptName());
@@ -757,7 +757,7 @@ public class FormManageServiceImpl implements FormManageService {
                             problemArray.add(problemVo);
                         }
                         // 查询机会点
-                        List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(pbmIds, 1, userId);
+                        List<TFormOppt> formOppts = formOpptMapper.findFormOpptListByPbmId(null, pbmIds, 1, userId);
                         if (CollectionUtils.isNotEmpty(formOppts)) {
                             for (ProblemVo problemVo : problemArray) {
                                 for (TFormOppt formOppt : formOppts) {
