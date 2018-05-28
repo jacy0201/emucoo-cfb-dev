@@ -860,8 +860,9 @@ public class FormManageServiceImpl implements FormManageService {
                 list = new ArrayList<>();
                 TFormOppt tFormOppt=null;
                 for (int i=0;i<optArr.length;i++) {
-                    if(null!=problemId) tFormOppt.setProblemId(problemId);
-                    if(null!=subProblemId) tFormOppt.setSubProblemId(subProblemId);
+                    tFormOppt=new TFormOppt();
+                    tFormOppt.setProblemId(problemId);
+                    tFormOppt.setSubProblemId(subProblemId);
                     tFormOppt.setProblemType(problemType);
                     tFormOppt.setOpptId(Long.parseLong(optArr[i]));
                     tFormOppt.setCreateTime(new Date());
