@@ -34,7 +34,7 @@
     <select id="findChancePointsByName" resultMap="BaseResultMap">
         select * from t_opportunity
         <where>
-            is_del != 1
+            (is_del = 0 or is_del is null)
             <if test="ctype > 0">
                 and create_type = #{ctype}
             </if>
@@ -51,7 +51,7 @@
     <select id="countChancePointsByName" resultType="java.lang.Integer">
         select count(1) from t_opportunity
         <where>
-            is_del != 1
+            (is_del = 0 or is_del is null)
             <if test="ctype > 0">
                 and create_type = #{ctype}
             </if>

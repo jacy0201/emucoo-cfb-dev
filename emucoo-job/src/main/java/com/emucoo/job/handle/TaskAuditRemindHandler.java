@@ -40,7 +40,7 @@ public class TaskAuditRemindHandler extends IJobHandler {
         Date currentDate = DateUtil.currentDate();
 
         // 过滤规则：
-        // 如果没有提醒时间，根据：审核截止时间 在 [本次任务执行时间+提醒提前的时间量），（本次任务执行时间 + 提醒提前的时间量 + 任务调度周期] 来过滤
+        // 如果没有提醒时间，根据：审核截止时间 在 [本次调度任务执行时间+提醒提前的时间量），（本次调度任务执行时间 + 提醒提前的时间量 + 任务调度周期] 来过滤
         List<TLoopWork> auditWorks = loopWorkService.filterNeedAuditRemindWorks(currentDate, aheadMinutes, cycleMinutes);
         List<String> pushTokens = new ArrayList<>();
         for (TLoopWork work : auditWorks) {
