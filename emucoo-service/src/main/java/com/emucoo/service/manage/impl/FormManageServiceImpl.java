@@ -854,15 +854,17 @@ public class FormManageServiceImpl implements FormManageService {
 
     private void insertListOpt(TFormOppt tFormOppt) {
         String opptIdStr=tFormOppt.getOpptIdStr();
-        String [] optArr =opptIdStr.split(",");
-        List<TFormOppt> list=null;
-        if( null!=optArr && optArr.length>0 ){
-            list=new ArrayList<>();
-            for(String opt:optArr){
-                tFormOppt.setOpptId(Long.parseLong(opt));
-                list.add(tFormOppt);
+        if(StringUtils.isNotEmpty(opptIdStr)) {
+            String[] optArr = opptIdStr.split(",");
+            List<TFormOppt> list = null;
+            if (null != optArr && optArr.length > 0) {
+                list = new ArrayList<>();
+                for (String opt : optArr) {
+                    tFormOppt.setOpptId(Long.parseLong(opt));
+                    list.add(tFormOppt);
+                }
+                formOpptMapper.insertList(list);
             }
-            formOpptMapper.insertList(list);
         }
     }
 }
