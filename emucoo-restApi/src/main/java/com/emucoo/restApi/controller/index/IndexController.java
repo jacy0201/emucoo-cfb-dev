@@ -221,7 +221,7 @@ public class IndexController extends AppBaseController {
                 work.getTask().setTaskResult(t.getWorkResult());
 //				work.getTask().setTaskSourceType(t.getTaskSourceType());
 //				work.getTask().setTaskSourceName(t.getTaskSourceName());
-                work.getTask().setTaskDeadline(t.getAuditDeadline().getTime());
+                work.getTask().setTaskDeadline(t.getAuditDeadline() == null ? 0L : t.getAuditDeadline().getTime());
                 SysUser u = userService.findById(t.getAuditUserId());
                 work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
                 work.getTask().setTaskSubName(u.getRealName());
