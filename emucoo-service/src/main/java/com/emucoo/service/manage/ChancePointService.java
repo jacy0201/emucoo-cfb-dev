@@ -18,7 +18,7 @@ public interface ChancePointService {
 
     void disableChancePoints(List<Long> ids);
 
-    List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz);
+    List<TOpportunity> listChancePointsByNameKeyword(String keyword, int ctype, int isUsed, int pageNm, int pageSz);
 
     int countChancePointsByNameKeyword(String keyword);
 

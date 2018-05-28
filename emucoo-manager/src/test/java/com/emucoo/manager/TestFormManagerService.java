@@ -33,7 +33,7 @@ public class TestFormManagerService {
 
     @Test
     public void testListChancePoint() {
-        List<TOpportunity> oppts = chancePointService.listChancePointsByNameKeyword(null, 1, 50);
+        List<TOpportunity> oppts = chancePointService.listChancePointsByNameKeyword(null, 1,1,1, 50);
         assertThat(oppts).isNotEmpty();
         oppts.forEach(oppt -> System.out.println(oppt.getCreateTime()));
     }

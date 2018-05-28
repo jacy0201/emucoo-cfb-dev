@@ -36,8 +36,8 @@ public class ChancePointServiceImpl implements ChancePointService {
     private TFormPbmMapper formPbmMapper;
 
     @Override
-    public List<TOpportunity> listChancePointsByNameKeyword(String keyword, int pageNm, int pageSz) {
-       return opportunityMapper.findChancePointsByName(keyword, (pageNm - 1) * pageSz, pageSz);
+    public List<TOpportunity> listChancePointsByNameKeyword(String keyword, int ctype, int isUsed, int pageNm, int pageSz) {
+       return opportunityMapper.findChancePointsByName(keyword, ctype, isUsed, (pageNm - 1) * pageSz, pageSz);
     }
 
     @Override

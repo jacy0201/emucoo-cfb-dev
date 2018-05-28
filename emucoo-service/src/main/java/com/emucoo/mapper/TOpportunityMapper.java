@@ -12,7 +12,7 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
 
     void changeIsUse(@Param("ids") List<Long> ids, @Param("state") Boolean state);
 
-    List<TOpportunity> findChancePointsByName(@Param("keyword") String keyword, @Param("startRow") int startRow, @Param("size") int pageSz);
+    List<TOpportunity> findChancePointsByName(@Param("keyword") String keyword, @Param("ctype") int ctype, @Param("isUsed") int isUsed, @Param("startRow") int startRow, @Param("size") int pageSz);
 
     Integer countChancePointsByName(@Param("keyword") String keyword);
 
