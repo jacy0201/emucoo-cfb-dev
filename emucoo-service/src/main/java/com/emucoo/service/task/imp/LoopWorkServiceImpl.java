@@ -509,7 +509,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void createMemo(MemoCreationVo_I voi, Long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
-        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
         TTask task = new TTask();
         task.setName(voi.getTaskTitle());
         task.setCreateTime(DateUtil.currentDate());
@@ -543,6 +542,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         });
         task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         taskMapper.insertUseGeneratedKeys(task);
+        List<Date> dts = genDatesByRepeatType(task);
         Long taskId = task.getId();
         // 根据具体执行时间生产任务实例
         for(Date dt : dts) {
@@ -626,7 +626,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
         loopWorkMapper.deleteByExample(exampleTLoopWork);
 
-        List<Date> dts = genDatesByRepeatType(voi.getTaskRepeatType(),voi.getStartDate(),voi.getEndDate(),voi.getTaskRepeatValue());
+        List<Date> dts = genDatesByRepeatType(task);
         //再重新创建备忘实例
         for(Date dt : dts) {
             // 根据执行人产生任务实例
@@ -675,38 +675,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Example exampleTLoopWork=new Example(TLoopWork.class);
         exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
         loopWorkMapper.deleteByExample(exampleTLoopWork);
-    }
-
-    private List<Date> genDatesByRepeatType(Integer repeatType,String startDate,String endDate,String repeatValue) {
-        List<Date> dts = new ArrayList<>();
-        switch (repeatType){
-            case 0:
-                dts.add(DateUtil.strToSimpleYYMMDDDate(startDate));
-                break;
-
-            case 1:
-                Date sdt = DateUtil.strToSimpleYYMMDDDate(startDate);
-                Date edt = DateUtil.strToSimpleYYMMDDDate(endDate);
-                while(DateUtil.compare(sdt, edt) <= 0) {
-                    dts.add(sdt);
-                    sdt = DateUtil.dateAddDay(sdt, 1);
-                }
-                break;
-
-            case 2:
-                List<Integer> wkdays = Arrays.asList(repeatValue.split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
-                Date sdt1 = DateUtil.strToSimpleYYMMDDDate(startDate);
-                Date edt1 = DateUtil.strToSimpleYYMMDDDate(endDate);
-                while(DateUtil.compare(sdt1, edt1) <= 0) {
-                    if(wkdays.contains(DateUtil.getDayOfWeek(sdt1))){
-                        dts.add(sdt1);
-                    }
-                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
-                }
-                break;
-
-        }
-        return dts;
     }
 
     private List<Date> genDatesByRepeatType(TTask task) {
