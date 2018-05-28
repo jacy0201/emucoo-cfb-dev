@@ -42,10 +42,14 @@
         <javaClientGenerator targetPackage="com.emucoo.mapper" targetProject="D:\generator"
                              type="XMLMAPPER"/>
 
-        <table tableName="t_form_sub_pbm_val">
+        <table tableName="t_work_target">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
       </table>
+        <table tableName="t_sale_target">
+            <!--mysql 配置-->
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
 
   </context>
 </generatorConfiguration>
