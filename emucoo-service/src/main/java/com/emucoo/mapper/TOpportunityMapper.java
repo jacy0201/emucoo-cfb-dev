@@ -14,7 +14,7 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
 
     List<TOpportunity> findChancePointsByName(@Param("keyword") String keyword, @Param("ctype") int ctype, @Param("isUsed") int isUsed, @Param("startRow") int startRow, @Param("size") int pageSz);
 
-    Integer countChancePointsByName(@Param("keyword") String keyword);
+    Integer countChancePointsByName(@Param("keyword") String keyword, @Param("ctype") int ctype, @Param("isUsed") int isUsed);
 
     void upsert(TOpportunity opportunity);
 

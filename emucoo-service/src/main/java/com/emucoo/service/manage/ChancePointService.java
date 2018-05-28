@@ -20,7 +20,7 @@ public interface ChancePointService {
 
     List<TOpportunity> listChancePointsByNameKeyword(String keyword, int ctype, int isUsed, int pageNm, int pageSz);
 
-    int countChancePointsByNameKeyword(String keyword);
+    int countChancePointsByNameKeyword(String keyword, int ctype, int isUsed);
 
     TOpportunity fetchChancePointById(Long id);
 

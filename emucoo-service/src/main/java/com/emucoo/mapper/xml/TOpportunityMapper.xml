@@ -51,7 +51,13 @@
     <select id="countChancePointsByName" resultType="java.lang.Integer">
         select count(1) from t_opportunity
         <where>
-            is_del != 1 and create_type = 1
+            is_del != 1
+            <if test="ctype > 0">
+                and create_type = #{ctype}
+            </if>
+            <if test="isUsed > 0">
+                and isUse = 1
+            </if>
             <if test="keyword != null and  keyword != ''">
                 and name like concat('%',#{keyword}, '%')
             </if>

@@ -33,7 +33,7 @@ public class ChancePointController extends BaseResource {
         int pageSz = param.getPageSize();
         int ctype = param.getData() == null ? 0 : (param.getData().getCreateType() == null ? 0 : (param.getData().getCreateType()));
         int isUsed = param.getData() == null ? 0 : (param.getData().getIsUse() == null ? 0 : (param.getData().getIsUse() ? 1 : 0));
-        int total = chancePointService.countChancePointsByNameKeyword(keyword);
+        int total = chancePointService.countChancePointsByNameKeyword(keyword, ctype, isUsed);
         List<TOpportunity> opptList = chancePointService.listChancePointsByNameKeyword(keyword, ctype, isUsed, pageNm, pageSz);
         PageInfo pageInfo = new PageInfo<>(opptList);
         pageInfo.setPageSize(pageSz);

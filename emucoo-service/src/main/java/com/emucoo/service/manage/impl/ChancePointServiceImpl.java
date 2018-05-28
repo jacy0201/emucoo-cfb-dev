@@ -41,8 +41,8 @@ public class ChancePointServiceImpl implements ChancePointService {
     }
 
     @Override
-    public int countChancePointsByNameKeyword(String keyword) {
-        return opportunityMapper.countChancePointsByName(keyword);
+    public int countChancePointsByNameKeyword(String keyword, int ctype, int isUsed) {
+        return opportunityMapper.countChancePointsByName(keyword, ctype, isUsed);
     }
 
     @Override
