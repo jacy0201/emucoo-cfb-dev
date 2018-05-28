@@ -519,6 +519,27 @@ public class DateUtil {
     }
 
     /**
+     * 指定时间减去分钟数得到的时间
+     * @param dt
+     * @param minutes
+     * @return
+     * @throws ParseException
+     */
+    public static Date getDateMinusMinutes(Date dt ,int minutes){
+        Date date=null;
+        try{
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String datetest = formatter.format(dt);
+            date = formatter.parse(datetest);
+            long Time1 = (date.getTime() / 1000) - 60 * minutes;
+            date.setTime(Time1 * 1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    /**
      * 和当前时间比较是否在给定的时长内
      *
      * @param validTime 给定的时间

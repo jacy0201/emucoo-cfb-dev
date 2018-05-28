@@ -500,6 +500,30 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
     }
 
+    private Date getRemindTime(Integer type,Date dt){
+        Date date=null;
+        switch (type){
+            case 2:
+                date=DateUtil.getDateMinusMinutes(dt,15);
+                break;
+            case 3:
+                date= DateUtil.getDateMinusMinutes(dt,30);
+                break;
+            case 4:
+                date= DateUtil.getDateMinusMinutes(dt,60);
+                break;
+            case 5:
+                date= DateUtil.getDateMinusMinutes(dt,120);
+                break;
+            case 6:
+                date= DateUtil.getDateMinusMinutes(dt,60*24);
+                break;
+            case 7:
+                break;
+        }
+        return date;
+    }
+
     /**
      * 创建工作备忘
      * @param voi
@@ -530,20 +554,23 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
 
-        List<String> timgids = new ArrayList<String>();
-        voi.getTaskImgArr().forEach(imageUrlVo -> {
-            TFile timg = new TFile();
-            timg.setImgUrl(imageUrlVo.getImgUrl());
-            timg.setCreateTime(DateUtil.currentDate());
-            timg.setModifyTime(DateUtil.currentDate());
-            timg.setCreateUserId(userId);
-            fileMapper.insert(timg);
-            timgids.add(Long.toString(timg.getId()));
-        });
-        task.setIllustrationImgIds(StringUtils.join(timgids, ","));
+        if(null!=voi.getTaskImgArr()) {
+            List<String> timgids = new ArrayList<String>();
+            voi.getTaskImgArr().forEach(imageUrlVo -> {
+                TFile timg = new TFile();
+                timg.setImgUrl(imageUrlVo.getImgUrl());
+                timg.setCreateTime(DateUtil.currentDate());
+                timg.setModifyTime(DateUtil.currentDate());
+                timg.setCreateUserId(userId);
+                fileMapper.insert(timg);
+                timgids.add(Long.toString(timg.getId()));
+            });
+            task.setIllustrationImgIds(StringUtils.join(timgids, ","));
+        }
         taskMapper.insertUseGeneratedKeys(task);
         List<Date> dts = genDatesByRepeatType(task);
         Long taskId = task.getId();
+
         // 根据具体执行时间生产任务实例
         for(Date dt : dts) {
             // 根据执行人产生任务实例
@@ -556,7 +583,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
             lw.setExecuteRemindType(voi.getRemindType());
-            lw.setExecuteRemindTime(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getRemindTime()));
+            Date RemindTime=null;
+            //type=1 ，提醒时间为 日程开始时间
+            if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
+                RemindTime=lw.getExecuteBeginDate();
+            }else{
+                RemindTime=getRemindTime(voi.getRemindType(),DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            }
+            lw.setExecuteRemindTime(RemindTime);
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
             lw.setExcuteUserId(userId);
@@ -606,8 +640,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
 
         List<ImageUrlVo> imgList=voi.getTaskImgArr();
-        List<String> timgids = new ArrayList<String>();
         if(null!=imgList && imgList.size()>0){
+            List<String> timgids = new ArrayList<String>();
             imgList.forEach(imageUrlVo -> {
                 TFile timg = new TFile();
                 timg.setImgUrl(imageUrlVo.getImgUrl());
@@ -617,8 +651,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 fileMapper.insert(timg);
                 timgids.add(Long.toString(timg.getId()));
             });
+            task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         }
-        task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         taskMapper.updateByExampleSelective(task,example);
 
         //先删除之前创建的备忘实例
@@ -639,7 +673,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
             lw.setExecuteRemindType(voi.getRemindType());
-            lw.setExecuteRemindTime(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getRemindTime()));
+            Date RemindTime=null;
+            //type=1 ，提醒时间为 日程开始时间
+            if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
+                RemindTime=lw.getExecuteBeginDate();
+            }else{
+                RemindTime=getRemindTime(voi.getRemindType(),DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            }
+            lw.setExecuteRemindTime(RemindTime);
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
             lw.setExcuteUserId(userId);
