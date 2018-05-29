@@ -321,8 +321,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setWorkID(workId);
             memoDetailVo.setSubID(subWorkId);
             memoDetailVo.setWorkType(workType);
-            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate());
-            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate());
+            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate().getTime());
+            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate().getTime());
             memoDetailVo.setIsSign(loopWork.getIsSign());
             memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
             memoDetailVo.setMemoStatus(loopWork.getWorkStatus());
