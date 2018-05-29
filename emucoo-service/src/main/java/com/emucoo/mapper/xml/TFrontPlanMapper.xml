@@ -25,7 +25,7 @@
     <result column="is_del" property="isDel" jdbcType="BIT" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
     <association property="shop" javaType="com.emucoo.model.TShopInfo">
-      <id column="shop_id" property="id" jdbcType="BIGINT"/>
+      <id column="shop_id_in" property="id" jdbcType="BIGINT"/>
       <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
     </association>
   </resultMap>
@@ -113,7 +113,7 @@
     plan.shop_id,
     plan.sub_plan_id,
     shopinfo.shop_name
-    from t_front_plan plan
+    FROM t_front_plan plan
     INNER JOIN t_shop_info shopinfo
     ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
     AND shopinfo.is_use = TRUE
@@ -168,4 +168,20 @@
     SET status = #{status}
     WHERE id = #{arrangeId}
   </update>
+
+  <select id="filterExecuteRemindArrange" resultMap="BaseResultMap">
+    SELECT
+    plan.id,
+    plan.shop_id,
+    plan.plan_precise_time,
+    plan.actual_execute_time,
+    plan.remind_type,
+    plan.arrangee_id,
+    shopinfo.shop_name
+    FROM t_front_plan plan
+    INNER JOIN t_shop_info shopinfo
+    ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
+    WHERE plan.is_del = FALSE AND plan.status = 2 AND plan.plan_precise_time
+    BETWEEN #{remindTimeLeft} AND #{remindTimeRight}
+  </select>
 </mapper>
