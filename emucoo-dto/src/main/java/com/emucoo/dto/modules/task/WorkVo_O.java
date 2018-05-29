@@ -56,10 +56,11 @@ public class WorkVo_O {
         @Data
         @ApiModel(value="备忘数据集")
         public class Memo{
+            private String memoTitle;
             private String memoContent;
             private Long memoStartTime = 0L;
             private Long memoEndTime = 0L;
-            private Integer importStatus = 0;
+            private Boolean importStatus = false;
         }
     }
 
