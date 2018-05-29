@@ -803,7 +803,8 @@ public class FormManageServiceImpl implements FormManageService {
             else
                 tFormOppt.setProblemType(1);
             tFormOppt.setCreateTime(new Date());
-            insertListOpt(tFormOppt);
+
+            insertListOpt(tFormOppt.getOpptIdStr(),tFormOppt.getProblemType(),tFormOppt.getProblemId(),tFormOppt.getSubProblemId());
         }
     }
 
@@ -834,9 +835,8 @@ public class FormManageServiceImpl implements FormManageService {
                 tFormOppt.setProblemType(2);
             else
                 tFormOppt.setProblemType(1);
-            tFormOppt.setModifyTime(new Date());
-            tFormOppt.setCreateTime(new Date());
-            insertListOpt(tFormOppt);
+
+            insertListOpt(tFormOppt.getOpptIdStr(),tFormOppt.getProblemType(),tFormOppt.getProblemId(),tFormOppt.getSubProblemId());
         }
 
     }
@@ -852,15 +852,20 @@ public class FormManageServiceImpl implements FormManageService {
         return formOpptMapper.selectByExample(example);
     }
 
-    private void insertListOpt(TFormOppt tFormOppt) {
-        String opptIdStr=tFormOppt.getOpptIdStr();
+    private void insertListOpt(String  opptIdStr,Integer problemType,Long problemId,Long subProblemId) {
         if(StringUtils.isNotEmpty(opptIdStr)) {
             String[] optArr = opptIdStr.split(",");
             List<TFormOppt> list = null;
             if (null != optArr && optArr.length > 0) {
                 list = new ArrayList<>();
-                for (String opt : optArr) {
-                    tFormOppt.setOpptId(Long.parseLong(opt));
+                TFormOppt tFormOppt=null;
+                for (int i=0;i<optArr.length;i++) {
+                    tFormOppt=new TFormOppt();
+                    tFormOppt.setProblemId(problemId);
+                    tFormOppt.setSubProblemId(subProblemId);
+                    tFormOppt.setProblemType(problemType);
+                    tFormOppt.setOpptId(Long.parseLong(optArr[i]));
+                    tFormOppt.setCreateTime(new Date());
                     list.add(tFormOppt);
                 }
                 formOpptMapper.insertList(list);

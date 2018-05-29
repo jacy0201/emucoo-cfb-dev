@@ -213,8 +213,7 @@
 
     <!--生产环境:输出到文件-->
     <springProfile name="pro">
-        <root level="error">
-            <appender-ref ref="CONSOLE" />
+        <root level="info">
             <appender-ref ref="INFO_FILE" />
             <appender-ref ref="WARN_FILE" />
             <appender-ref ref="ERROR_FILE" />

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.emucoo.mapper.TBusinessMsgMapper" >
+  <resultMap id="BaseResultMap" type="com.emucoo.model.TBusinessMsg" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="union_id" property="unionId" jdbcType="BIGINT" />
+    <result column="union_type" property="unionType" jdbcType="BIT" />
+    <result column="function_type" property="functionType" jdbcType="BIT" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="is_read" property="isRead" jdbcType="BIT" />
+    <result column="is_send" property="isSend" jdbcType="BIT" />
+    <result column="send_status" property="sendStatus" jdbcType="BIT" />
+    <result column="receiver_id" property="receiverId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="send_fail_reason" property="sendFailReason" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+</mapper>
