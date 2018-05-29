@@ -56,6 +56,13 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     void createMemo(MemoCreationVo_I  memoCreationVo_I, Long userId);
 
     /**
+     * 修改工作备忘状态
+     * @param memoFinishVo_I
+     * @param userId
+     */
+    void finishMemo(MemoFinishVo_I  memoFinishVo_I, Long userId);
+
+    /**
      * 编辑工作备忘
      * @param memoEditVo_I
      * @param userId
