@@ -545,8 +545,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setVersion(1);
         task.setIsDel(false);
         task.setIsUse(true);
-        task.setTaskEndDate(DateUtil.strDateYYYYMMDDHHMM(voi.getEndDate()));
-        task.setTaskStartDate(DateUtil.strDateYYYYMMDDHHMM(voi.getStartDate()));
+        task.setTaskEndDate(DateUtil.strToYYMMDDDate(voi.getEndDate()));
+        task.setTaskStartDate(DateUtil.strToYYMMDDDate(voi.getStartDate()));
         task.setLoopCycleType(voi.getTaskRepeatType());
         task.setLoopCycleValue(voi.getTaskRepeatValue());
         task.setExecuteUserIds(userId.toString());
@@ -580,6 +580,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(5);
+            lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
@@ -631,8 +632,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setDescription(voi.getTaskExplain());
         task.setType(5);
         task.setWorkId(voi.getWorkID());
-        task.setTaskEndDate(DateUtil.strDateYYYYMMDDHHMM(voi.getEndDate()));
-        task.setTaskStartDate(DateUtil.strDateYYYYMMDDHHMM(voi.getStartDate()));
+        task.setTaskEndDate(DateUtil.strToYYMMDDDate(voi.getEndDate()));
+        task.setTaskStartDate(DateUtil.strToYYMMDDDate(voi.getStartDate()));
         task.setLoopCycleType(voi.getTaskRepeatType());
         task.setLoopCycleValue(voi.getTaskRepeatValue());
         task.setExecuteUserIds(userId.toString());
@@ -670,6 +671,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(voi.getSubWorkID());
             lw.setType(5);
+            lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
