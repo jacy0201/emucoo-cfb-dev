@@ -60,7 +60,7 @@ public class WorkVo_O {
             private String memoContent;
             private Long memoStartTime = 0L;
             private Long memoEndTime = 0L;
-            private Boolean importStatus = false;
+            private Boolean isSign = false;
         }
     }
 
