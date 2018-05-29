@@ -1,6 +1,7 @@
 package com.emucoo.service.task.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -348,7 +349,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setTaskExplain(task.getDescription());
             memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
             memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
-            if(null!=task.getIllustrationImgIds()) {
+            if(StringUtil.isNotEmpty(task.getIllustrationImgIds())) {
                 List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
                 List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
                 if(null!=cimgs && cimgs.size()>0) {
