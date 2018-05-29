@@ -2,7 +2,6 @@ package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
-import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
 import com.emucoo.dto.modules.abilityForm.ProblemImg;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -870,6 +868,8 @@ public class ReportServiceImpl implements ReportService {
                                             subProblemVo.setNotes(subPbmVal.getNotes());
                                             if(subPbmVal.getSubFormId() != null) {
                                                 subProblemVo.setIsSubList(true);
+                                                AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
+                                                subProblemVo.setSubListObject(subFormReport);
                                             } else {
                                                 subProblemVo.setIsSubList(false);
                                             }
@@ -891,6 +891,8 @@ public class ReportServiceImpl implements ReportService {
                                     }
                                     if(pbmVal.getSubFormId() != null) {
                                         problemVo.setIsSubList(true);
+                                        AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
+                                        problemVo.setSubListObject(subFormReport);
                                     } else {
                                         problemVo.setIsSubList(false);
                                     }
@@ -997,6 +999,110 @@ public class ReportServiceImpl implements ReportService {
             }
             throw new ApiException("读取能力模型报告错误！");
         }
+    }
+
+    /**
+     * 读取子表结果
+     * @param subFormId
+     * @param parentResultId
+     * @return
+     */
+    private AbilitySubForm findSubAbilityReportInfo(Long subFormId, Long parentResultId) {
+        TFormCheckResult param = new TFormCheckResult();
+        param.setFormMainId(subFormId);
+        param.setParentResultId(parentResultId);
+        TFormCheckResult subResult = tFormCheckResultMapper.selectOne(param);
+        AbilitySubForm subForm = null;
+        // 只筛选经过打分且结果可用的子表结果
+        if (subResult.getIsDone().equals(true)) {
+            subForm = new AbilitySubForm();
+            subForm.setSubFormID(subResult.getFormMainId());
+            subForm.setSubFormName(subResult.getFormMainName());
+            subForm.setIsPass(subResult.getIsPass());
+            subForm.setIsUsable(subResult.getResultCanUse());
+            subForm.setIsDone(subResult.getIsDone());
+            List<TFormValue> formTypeValues = tFormValueMapper.findTypeTreeValueListUntilSubPbm(subResult.getId());
+            if (CollectionUtils.isNotEmpty(formTypeValues)) {
+                List<AbilitySubFormKind> subFormKinds = new ArrayList<>();
+                for (TFormValue formtypeVal : formTypeValues) {
+                    AbilitySubFormKind subFormKind = new AbilitySubFormKind();
+                    subFormKind.setKindName(formtypeVal.getFormTypeName());
+                    subFormKind.setKindID(formtypeVal.getFromTypeId());
+                    subFormKind.setIsDone(formtypeVal.getIsDone());
+                    subFormKind.setIsPass(formtypeVal.getIsPass());
+                    List<TFormPbmVal> formPbmVals = formtypeVal.getFormPbmValList();
+                    if (CollectionUtils.isNotEmpty(formPbmVals)) {
+                        List<ProblemVo> problemArray = new ArrayList<>();
+                        for (TFormPbmVal pbmVal : formPbmVals) {
+                            ProblemVo problemVo = new ProblemVo();
+                            problemVo.setProblemID(pbmVal.getFormProblemId());
+                            problemVo.setProblemName(pbmVal.getProblemName());
+                            problemVo.setIsPass(pbmVal.getIsPass());
+                            problemVo.setIsDone(pbmVal.getIsScore());
+                            problemVo.setCheckMode(pbmVal.getCheckMethod());
+                            problemVo.setNotes(pbmVal.getNotes());
+                            problemVo.setProblemDescription(pbmVal.getProblemDescription());
+                            if (StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
+                                List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
+                                List<ProblemImg> problemImgs = new ArrayList<>();
+                                for (TFile file : descImgs) {
+                                    ProblemImg problemImg = new ProblemImg();
+                                    problemImg.setImgUrl(file.getImgUrl());
+                                    problemImgs.add(problemImg);
+                                }
+                                problemVo.setDescImgArr(problemImgs);
+                            }
+
+                            List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
+                            if (CollectionUtils.isNotEmpty(subPbmVals)) {
+                                problemVo.setIsSubProblem(true);
+                                List<SubProblemVo> subProblemVos = new ArrayList<>();
+                                for (TFormSubPbmVal subPbmVal : subPbmVals) {
+                                    SubProblemVo subProblemVo = new SubProblemVo();
+                                    subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
+                                    subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
+                                    subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
+                                    subProblemVo.setIsPass(subPbmVal.getIsPass());
+                                    subProblemVo.setIsDone(subPbmVal.getIsScore());
+                                    subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
+                                    subProblemVo.setNotes(subPbmVal.getNotes());
+                                    if (subPbmVal.getSubFormId() != null) {
+                                        subProblemVo.setIsSubList(true);
+                                    } else {
+                                        subProblemVo.setIsSubList(false);
+                                    }
+                                    if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
+                                        List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
+                                        List<ProblemImg> problemImgs = new ArrayList<>();
+                                        for (TFile file : descImgs) {
+                                            ProblemImg problemImg = new ProblemImg();
+                                            problemImg.setImgUrl(file.getImgUrl());
+                                            problemImgs.add(problemImg);
+                                        }
+                                        subProblemVo.setDescImgArr(problemImgs);
+                                    }
+                                    subProblemVos.add(subProblemVo);
+                                }
+                                problemVo.setSubProblemArray(subProblemVos);
+                            } else {
+                                problemVo.setIsSubProblem(false);
+                            }
+                            if (pbmVal.getSubFormId() != null) {
+                                problemVo.setIsSubList(true);
+                            } else {
+                                problemVo.setIsSubList(false);
+                            }
+                            problemArray.add(problemVo);
+                        }
+                        subFormKind.setProblemArray(problemArray);
+                    }
+                    subFormKinds.add(subFormKind);
+                }
+                subForm.setSubFormKindArray(subFormKinds);
+            }
+        }
+
+        return subForm;
     }
 
 }
