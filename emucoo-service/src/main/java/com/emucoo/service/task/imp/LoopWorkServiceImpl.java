@@ -581,7 +581,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(5);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
-            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
             Date RemindTime=null;
             //type=1 ，提醒时间为 日程开始时间
@@ -671,7 +671,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setSubWorkId(voi.getSubWorkID());
             lw.setType(5);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
-            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
             Date RemindTime=null;
             //type=1 ，提醒时间为 日程开始时间
