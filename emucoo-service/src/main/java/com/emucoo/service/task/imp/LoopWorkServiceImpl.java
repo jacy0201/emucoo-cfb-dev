@@ -348,14 +348,18 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setTaskExplain(task.getDescription());
             memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
             memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
-            List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
-            List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
-            cimgs.forEach(tFile -> {
-                ImageUrlVo im = new ImageUrlVo();
-                im.setImgUrl(tFile.getImgUrl());
-                ims.add(im);
-            });
-            memoDetailVo.setTaskImgArr(ims);
+            if(null!=task.getIllustrationImgIds()) {
+                List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
+                List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
+                if(null!=cimgs && cimgs.size()>0) {
+                    cimgs.forEach(tFile -> {
+                        ImageUrlVo im = new ImageUrlVo();
+                        im.setImgUrl(tFile.getImgUrl());
+                        ims.add(im);
+                    });
+                    memoDetailVo.setTaskImgArr(ims);
+                }
+            }
 
         }
         return  memoDetailVo;
