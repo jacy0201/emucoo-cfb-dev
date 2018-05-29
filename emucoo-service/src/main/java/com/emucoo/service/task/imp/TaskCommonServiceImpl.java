@@ -801,10 +801,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 //            loopWork.setAuditDeadline();
 //            loopWork.setAuditTime();
             SysUser auditor = determinAuditorByExecutorType(executor, commonTask);
-            if (auditor != null) {
-                loopWork.setAuditUserId(auditor.getId());
-                loopWork.setAuditUserName(auditor.getRealName());
+            if (auditor == null) {
+                auditor = executor;
             }
+            loopWork.setAuditUserId(auditor.getId());
+            loopWork.setAuditUserName(auditor.getRealName());
             loopWork.setCreateTime(DateUtil.currentDate());
 //            loopWork.setCreateUserId();
 //            loopWork.setCreateUserName();
@@ -906,10 +907,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private void createCommonLoopWorkOperateOptions(TTask commonTask, TLoopWork loopWork, List<TOperateOption> options) {
-        if (commonTask.getScoreType() == 1) { // 任务整体评分
-            return;
-        }
-        // 任务按操作项评分时，要报操作项也实例化
+        // 任务按操作项评分时，要把操作项也实例化
         if (options != null && options.size() > 0) {
             List<TOperateDataForWork> opOpts = new ArrayList<>();
             for (TOperateOption option : options) {

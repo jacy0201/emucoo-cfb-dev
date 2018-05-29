@@ -28,4 +28,5 @@ public class TestTaskCommonService {
         Assert.checkNonNull(out);
         System.out.println(out.getTaskStatement().getTaskTitle());
     }
+
 }

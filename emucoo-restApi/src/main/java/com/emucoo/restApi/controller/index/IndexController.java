@@ -183,7 +183,7 @@ public class IndexController extends AppBaseController {
                 work.getMemo().setMemoEndTime(t.getExecuteEndDate().getTime());
                 work.getMemo().setMemoTitle(tt.getName());
                 work.getMemo().setMemoContent(tt.getDescription());
-                work.getMemo().setImportStatus(t.getIsSign());
+                work.getMemo().setIsSign(t.getIsSign());
                 return work;
             } else {
                 work.getTask().setTaskTitle(tt.getName());
@@ -228,7 +228,7 @@ public class IndexController extends AppBaseController {
                 work.getMemo().setMemoContent(tt.getDescription());
                 work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
                 work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
-                work.getMemo().setImportStatus(t.getIsSign());
+                work.getMemo().setIsSign(t.getIsSign());
                 return work;
 
             } else {
