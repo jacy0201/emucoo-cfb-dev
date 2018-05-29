@@ -2,7 +2,6 @@ package com.emucoo.dto.modules.task;
 
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,9 +18,9 @@ public class MemoDetailVo_O {
     //备注图片
     private List<ImageUrlVo> taskImgArr;
     //开始时间
-    private Date startDateTime;
+    private Long startDateTime;
     //结束时间
-    private Date endDateTime;
+    private Long endDateTime;
 
     /**
      * 提醒方式：1(开始时间)；2(提前15分钟)；3(提前30分钟)；
