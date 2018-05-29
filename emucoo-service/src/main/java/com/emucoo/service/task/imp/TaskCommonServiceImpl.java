@@ -907,6 +907,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private void createCommonLoopWorkOperateOptions(TTask commonTask, TLoopWork loopWork, List<TOperateOption> options) {
+
         // 任务按操作项评分时，要把操作项也实例化
         if (options != null && options.size() > 0) {
             List<TOperateDataForWork> opOpts = new ArrayList<>();
