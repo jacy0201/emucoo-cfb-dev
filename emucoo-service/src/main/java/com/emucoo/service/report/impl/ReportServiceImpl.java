@@ -18,6 +18,7 @@ import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
 import com.emucoo.dto.modules.report.ReportWorkVo;
 import com.emucoo.enums.Constant;
+import com.emucoo.enums.FormType;
 import com.emucoo.enums.ProblemType;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
@@ -560,6 +561,7 @@ public class ReportServiceImpl implements ReportService {
             report.setReporterPositionId(postIdStr);
             report.setReporterPosition(postStr);
             report.setFormResultId(result.getId());
+            report.setFormType(FormType.RVR_TYPE.getCode().byteValue());
             tReportMapper.saveReport(report);
 
             // 查询报告抄送部门
