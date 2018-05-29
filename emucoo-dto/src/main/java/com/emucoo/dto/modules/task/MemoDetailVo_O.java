@@ -11,6 +11,7 @@ public class MemoDetailVo_O {
     private Integer workType=5;
     private String workID;
     private String subID;
+    private Integer memoStatus;
     //备忘标题
     private String taskTitle;
     //备注说明
