@@ -326,6 +326,19 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate().getTime());
             memoDetailVo.setIsSign(loopWork.getIsSign());
             memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
+            if(null!=loopWork.getExecuteRemindType()){
+                Integer remindType=loopWork.getExecuteRemindType();
+                String remindName="";
+                if(remindType.equals(1)) remindName="开始时间";
+                else if(remindType.equals(2)) remindName="提前15分钟";
+                else if(remindType.equals(3)) remindName="提前30分钟";
+                else if(remindType.equals(4)) remindName="提前1小时";
+                else if(remindType.equals(5)) remindName="提前2小时";
+                else if(remindType.equals(6)) remindName="提前1天";
+                else if(remindType.equals(7)) remindName="无";
+                memoDetailVo.setRemindName(remindName);
+            }
+
             memoDetailVo.setMemoStatus(loopWork.getWorkStatus());
 
             List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();

@@ -28,6 +28,8 @@ public class MemoDetailVo_O {
      */
     private Integer remindType;
 
+    private String remindName;
+
     //任务抄送人
     private List<CCPerson> ccPersonList;
     //任务重复方式 :0不重复 1每天 2每周
