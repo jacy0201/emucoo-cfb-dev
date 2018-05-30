@@ -449,7 +449,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
 
         List<Long> exeids = Arrays.asList(task.getExecuteUserIds().split(",")).stream().map(id -> Long.parseLong(id)).collect(Collectors.toList());
-        if (exeids != null && exeids.size() > 0) {
+        if (exeids == null || exeids.size() == 0) {
             return;
         }
 
