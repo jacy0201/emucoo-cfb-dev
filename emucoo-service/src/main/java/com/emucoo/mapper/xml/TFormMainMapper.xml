@@ -75,6 +75,7 @@
 
     <select id="findAvailableFormsUseForPlan" parameterType="Long" resultType="com.emucoo.model.TFormMain">
        SELECT
+       formMain.id,
        formMain.name,
        formMain.description,
        formMain.parent_form_id,
