@@ -276,7 +276,7 @@ public class CalendarServiceImpl implements CalendarService {
             TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(formList.get(0).getFormMainId());
             String formName=  tFormMain == null ? "" : tFormMain.getName();
             String shopName = shopInfo == null ? "" : shopInfo.getShopName();
-            inspection.setInspTitle(formName + shopName + "检查");
+            inspection.setInspTitle(shopName + formName + "检查");
         }
         return inspection;
     }
