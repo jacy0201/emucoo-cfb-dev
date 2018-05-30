@@ -433,10 +433,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         too.setTaskId(taskId);
         operateOptionMapper.insert(too);
 
-//         根据具体执行时间生产任务实例
+//         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
+        Date today = DateUtil.currentDate();
         List<Date> dts = genDatesByRepeatType(task);
-        for (Date dt : dts) {
-            buildLoopWorkInstance(task, dt);
+        if(isContainsDate(dts, today)) {
+            buildLoopWorkInstance(task, today);
         }
 
     }
@@ -855,12 +856,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Override
     @Transactional
     public void buildAssingTaskInstance() {
-        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
-        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(today);
         for (TTask task : assignTasks) {
             List<Date> dts = genDatesByRepeatType(task);
-            if (isContainsDate(dts, tomorrow)) {
-                buildLoopWorkInstance(task, tomorrow);
+            if (isContainsDate(dts, today)) {
+                buildLoopWorkInstance(task, today);
             }
         }
     }

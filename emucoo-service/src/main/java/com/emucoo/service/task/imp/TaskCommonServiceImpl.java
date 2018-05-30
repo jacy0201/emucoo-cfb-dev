@@ -10,6 +10,7 @@ import com.emucoo.utils.WaterMarkUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -748,12 +749,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
      * 3：根据执行截止时间定义，计算出提醒截止时间，审核截止时间
      */
     @Override
+    @Transactional
     public void buildCommonTaskInstance() {
         // list all common task: filter by the duration time
-        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
-        List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(tomorrow);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(today);
         for (TTask commonTask : commonTasks) {
-            createCommonLoopWork(commonTask, tomorrow);
+            createCommonLoopWork(commonTask, today);
         }
     }
 
