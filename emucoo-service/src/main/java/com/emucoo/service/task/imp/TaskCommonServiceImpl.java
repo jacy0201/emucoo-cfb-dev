@@ -10,6 +10,7 @@ import com.emucoo.utils.WaterMarkUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -202,11 +203,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setModifyTime(DateUtil.currentDate());
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] tms = task.getAuditDeadline().split(":");
-            if(tms.length  == 1){
+            if (tms.length == 1) {
                 int mi = Integer.parseInt(tms[0]);
                 loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
             }
-            if(tms.length == 2) {
+            if (tms.length == 2) {
                 int hr = Integer.parseInt(tms[0]);
                 int mi = Integer.parseInt(tms[1]);
                 loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
@@ -260,7 +261,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setModifyTime(DateUtil.currentDate());
         }
 
-        if(odfws1.size() > 0)
+        if (odfws1.size() > 0)
             operateDataForWorkMapper.insertList(odfws1);
         for (TOperateDataForWork odfw : odfws2) {
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
@@ -423,9 +424,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Override
     public void switchCommonTask(List<Long> data, boolean state) {
-        for(Long id : data) {
+        for (Long id : data) {
             taskMapper.switchCommonTaskById(id, state);
-            if(state) {
+            if (state) {
                 TTask task = taskMapper.selectByPrimaryKey(id);
                 Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
                 createCommonLoopWork(task, today);
@@ -748,12 +749,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
      * 3：根据执行截止时间定义，计算出提醒截止时间，审核截止时间
      */
     @Override
+    @Transactional
     public void buildCommonTaskInstance() {
         // list all common task: filter by the duration time
-        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
-        List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(tomorrow);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        List<TTask> commonTasks = taskMapper.filterAvailableCommonTask(today);
         for (TTask commonTask : commonTasks) {
-            createCommonLoopWork(commonTask, tomorrow);
+            createCommonLoopWork(commonTask, today);
         }
     }
 

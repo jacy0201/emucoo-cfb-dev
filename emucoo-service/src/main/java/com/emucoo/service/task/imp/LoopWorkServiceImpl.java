@@ -326,6 +326,19 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate().getTime());
             memoDetailVo.setIsSign(loopWork.getIsSign());
             memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
+            if(null!=loopWork.getExecuteRemindType()){
+                Integer remindType=loopWork.getExecuteRemindType();
+                String remindName="";
+                if(remindType.equals(1)) remindName="开始时间";
+                else if(remindType.equals(2)) remindName="提前15分钟";
+                else if(remindType.equals(3)) remindName="提前30分钟";
+                else if(remindType.equals(4)) remindName="提前1小时";
+                else if(remindType.equals(5)) remindName="提前2小时";
+                else if(remindType.equals(6)) remindName="提前1天";
+                else if(remindType.equals(7)) remindName="无";
+                memoDetailVo.setRemindName(remindName);
+            }
+
             memoDetailVo.setMemoStatus(loopWork.getWorkStatus());
 
             List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
@@ -433,10 +446,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         too.setTaskId(taskId);
         operateOptionMapper.insert(too);
 
-//         根据具体执行时间生产任务实例
+//         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
+        Date today = DateUtil.currentDate();
         List<Date> dts = genDatesByRepeatType(task);
-        for (Date dt : dts) {
-            buildLoopWorkInstance(task, dt);
+        if(isContainsDate(dts, today)) {
+            buildLoopWorkInstance(task, today);
         }
 
     }
@@ -448,7 +462,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
 
         List<Long> exeids = Arrays.asList(task.getExecuteUserIds().split(",")).stream().map(id -> Long.parseLong(id)).collect(Collectors.toList());
-        if (exeids != null && exeids.size() > 0) {
+        if (exeids == null || exeids.size() == 0) {
             return;
         }
 
@@ -855,12 +869,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Override
     @Transactional
     public void buildAssingTaskInstance() {
-        Date tomorrow = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.dateAddDay(DateUtil.currentDate(), 1)));
-        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(tomorrow);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(today);
         for (TTask task : assignTasks) {
             List<Date> dts = genDatesByRepeatType(task);
-            if (isContainsDate(dts, tomorrow)) {
-                buildLoopWorkInstance(task, tomorrow);
+            if (isContainsDate(dts, today)) {
+                buildLoopWorkInstance(task, today);
             }
         }
     }

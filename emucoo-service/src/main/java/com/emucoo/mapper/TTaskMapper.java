@@ -20,7 +20,7 @@ public interface TTaskMapper extends MyMapper<TTask> {
 
     void switchCommonTaskById(@Param("taskId") Long taskId, @Param("sw") boolean sw);
 
-    List<TTask> filterAvailableCommonTask(Date tomorrow);
+    List<TTask> filterAvailableCommonTask(Date theDay);
 
-    List<TTask> filterAvailableAssignTask(Date tomorrow);
+    List<TTask> filterAvailableAssignTask(Date theDay);
 }
