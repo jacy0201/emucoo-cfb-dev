@@ -70,6 +70,15 @@ public class TBusinessMsg extends BaseEntity {
     @Column(name = "org_id")
     private Long orgId;
 
+    @Column(name = "title")
+    private String title;
+
+    /**
+     * 备注
+     */
+    @Column(name = "msg")
+    private String msg;
+
     /**
      * 消息内容
      */
@@ -265,5 +274,21 @@ public class TBusinessMsg extends BaseEntity {
      */
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
