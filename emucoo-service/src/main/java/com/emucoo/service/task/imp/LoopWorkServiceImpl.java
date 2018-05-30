@@ -677,7 +677,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             });
             task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         }
-        taskMapper.updateByExampleSelective(task,example);
+        taskMapper.updateByPrimaryKeySelective(task);
 
         //先删除之前创建的备忘实例
         Example exampleTLoopWork=new Example(TLoopWork.class);
