@@ -70,6 +70,7 @@ public class ArrangementController extends AppBaseController {
 	@PostMapping("/sheets")
 	public AppResult<CheckSheetVo_O> sheets(@RequestBody ParamVo<PlanArrangeGetFormIn> base) {
 		PlanArrangeGetFormIn getFormIn = base.getData();
+		checkParam(getFormIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
 		List<TFormMain> sheets = formService.listForm(getFormIn);
 		CheckSheetVo_O voo = new CheckSheetVo_O();
 		List<CheckSheetVo> vos = new ArrayList<CheckSheetVo>();
