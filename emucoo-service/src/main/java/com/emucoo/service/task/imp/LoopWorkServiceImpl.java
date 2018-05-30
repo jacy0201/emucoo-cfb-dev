@@ -646,7 +646,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         t.setIsDel(false);
         t.setIsUse(true);
         TTask tTask =taskMapper.selectOne(t);
-        taskMapper.selectOneByExample()
         Long taskId=tTask.getId();
         TTask task=new TTask();
         task.setId(taskId);
