@@ -640,10 +640,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Override
     @Transactional
     public void editMemo(MemoEditVo_I voi, Long userId) {
-        Example example=new Example(TTask.class);
-        example.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("isDel",false);
         //更新工作备忘主表 t_task
-        TTask tTask =taskMapper.selectOneByExample(example);
+        TTask t=new TTask();
+        t.setWorkId(voi.getWorkID());
+        t.setIsDel(false);
+        t.setIsUse(true);
+        TTask tTask =taskMapper.selectOne(t);
+        taskMapper.selectOneByExample()
         Long taskId=tTask.getId();
         TTask task=new TTask();
         task.setId(taskId);
