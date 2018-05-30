@@ -80,8 +80,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         // taskStatement
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
-            taskStatement.setStartDate(taskStatement.getStartDate().replace("-", ""));
-            taskStatement.setEndDate(taskStatement.getEndDate().replace("-", ""));
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
                 taskStatement.setTaskImgArr(Arrays.asList(imgUrls).stream().map(s -> {
                     ImageUrl imageUrl = new ImageUrl();
