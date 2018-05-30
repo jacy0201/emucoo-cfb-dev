@@ -21,8 +21,8 @@ public class TestTaskCommonService {
     @Test
     public void testDetail() {
         TaskCommonDetailIn voi = new TaskCommonDetailIn();
-        voi.setWorkID("15275833826215083");
-        voi.setSubID("15275833826259170");
+        voi.setWorkID("15275831397374817");
+        voi.setSubID("15275831397685697");
         voi.setWorkType(1);
         TaskCommonDetailOut out = taskCommonService.detail(voi);
         Assert.checkNonNull(out);
