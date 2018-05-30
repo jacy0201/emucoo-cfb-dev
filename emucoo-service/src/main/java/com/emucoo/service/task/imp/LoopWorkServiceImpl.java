@@ -447,7 +447,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         operateOptionMapper.insert(too);
 
 //         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
-        Date today = DateUtil.currentDate();
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
         if(isContainsDate(dts, today)) {
             buildLoopWorkInstance(task, today);
