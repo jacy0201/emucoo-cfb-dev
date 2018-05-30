@@ -286,6 +286,7 @@ public class CalendarServiceImpl implements CalendarService {
         memo.setMemoEndTime(loopWork.getExecuteEndDate().getTime());
         memo.setMemoStartTime(loopWork.getExecuteBeginDate().getTime());
         memo.setWorkType(5);
+        memo.setMemoStatus(loopWork.getWorkStatus());
         memo.setIsSign(loopWork.getIsSign());
         TTask ttask=new TTask();
         ttask.setWorkId(loopWork.getWorkId());

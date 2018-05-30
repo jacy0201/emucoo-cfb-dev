@@ -57,7 +57,7 @@ public class ChancePointServiceImpl implements ChancePointService {
         opportunity.setCreateUserId(userId);
         opportunity.setModifyUserId(userId);
         opportunity.setCreateType(1);
-        opportunity.setIsUse(false);
+        opportunity.setIsUse(true);
         opportunity.setIsDel(false);
         opportunity.setType(0);
         opportunity.setFrontCanCreate(false);

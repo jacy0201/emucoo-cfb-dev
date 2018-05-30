@@ -1,6 +1,7 @@
 package com.emucoo.service.task.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -321,10 +322,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setWorkID(workId);
             memoDetailVo.setSubID(subWorkId);
             memoDetailVo.setWorkType(workType);
-            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate());
-            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate());
+            memoDetailVo.setStartDateTime(loopWork.getExecuteBeginDate().getTime());
+            memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate().getTime());
             memoDetailVo.setIsSign(loopWork.getIsSign());
             memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
+            memoDetailVo.setMemoStatus(loopWork.getWorkStatus());
 
             List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
             String [] userIds=loopWork.getSendUserIds().split(",");
@@ -347,14 +349,18 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setTaskExplain(task.getDescription());
             memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
             memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
-            List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
-            List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
-            cimgs.forEach(tFile -> {
-                ImageUrlVo im = new ImageUrlVo();
-                im.setImgUrl(tFile.getImgUrl());
-                ims.add(im);
-            });
-            memoDetailVo.setTaskImgArr(ims);
+            if(StringUtil.isNotEmpty(task.getIllustrationImgIds())) {
+                List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
+                List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
+                if(null!=cimgs && cimgs.size()>0) {
+                    cimgs.forEach(tFile -> {
+                        ImageUrlVo im = new ImageUrlVo();
+                        im.setImgUrl(tFile.getImgUrl());
+                        ims.add(im);
+                    });
+                    memoDetailVo.setTaskImgArr(ims);
+                }
+            }
 
         }
         return  memoDetailVo;
@@ -580,6 +586,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(5);
+            lw.setWorkStatus(1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
@@ -671,6 +678,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(voi.getSubWorkID());
             lw.setType(5);
+            lw.setWorkStatus(1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
@@ -771,6 +779,16 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         voo.setHistoryTaskArr(items);
 
         return voo;
+    }
+
+    @Override
+    public void finishMemo(MemoFinishVo_I  memoFinishVo_I, Long userId){
+        Example example=new Example(TLoopWork.class);
+        example.createCriteria().andEqualTo("workId",memoFinishVo_I.getWorkID()).andEqualTo("subWorkId",memoFinishVo_I.getSubWorkID());
+        TLoopWork tLoopWork=new TLoopWork();
+        tLoopWork.setWorkStatus(memoFinishVo_I.getMemoStatus());
+        tLoopWork.setModifyTime(new Date());
+        loopWorkMapper.updateByExampleSelective(tLoopWork,example);
     }
 
 

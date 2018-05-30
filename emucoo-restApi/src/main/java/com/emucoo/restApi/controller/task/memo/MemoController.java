@@ -108,6 +108,21 @@ public class MemoController extends AppBaseController {
         }
     }
 
+    /**
+     * 修改工作备忘状态
+     * @param params
+     * @return
+     */
+    @ApiOperation(value = "修改工作备忘状态")
+    @PostMapping("/finishMemo")
+    public AppResult finishMemo(@RequestBody ParamVo<MemoFinishVo_I> params) {
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        MemoFinishVo_I memoFinishVo_I = params.getData();
+        loopWorkService.finishMemo(memoFinishVo_I, user.getId());
+        return success("success");
+
+    }
+
 
     /**
      * 查看工作备忘详细信息

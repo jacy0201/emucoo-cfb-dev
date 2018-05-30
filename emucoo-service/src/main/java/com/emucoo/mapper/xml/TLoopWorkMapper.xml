@@ -302,7 +302,7 @@
             e.head_img_url as auditorHeadUrl,
             b.audit_img_ids as imgUrls
 
-        from t_loop_work a left join t_operate_data_for_work b on a.id = b.loop_work_id
+        from t_operate_data_for_work b left join t_loop_work a on a.id = b.loop_work_id
             left join t_operate_option c on c.id = b.task_item_id
             left join sys_user d on a.excute_user_id = d.id
             left join sys_user e on b.audit_user_id = e.id

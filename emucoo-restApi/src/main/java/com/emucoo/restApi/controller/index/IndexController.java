@@ -170,6 +170,7 @@ public class IndexController extends AppBaseController {
             return work;
         }).collect(Collectors.toList());
 
+
         List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
             WorkVo_O.Work work = new WorkVo_O.Work();
             work.setId(t.getId());
@@ -177,17 +178,25 @@ public class IndexController extends AppBaseController {
             work.setWorkType(t.getType());
             work.setSubID(t.getSubWorkId());
             TTask tt = loopWorkService.fetchTaskById(t.getTaskId());
-
-            work.getTask().setTaskTitle(tt.getName());
-            work.getTask().setTaskStatus(t.getWorkStatus());
-            work.getTask().setTaskResult(t.getWorkResult());
-            work.getTask().setTaskSourceType(0);
-            work.getTask().setTaskSourceName("");
-            work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
-            SysUser u = userService.findById(t.getExcuteUserId());
-            work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
-            work.getTask().setTaskSubName(u.getRealName());
-            return work;
+            if (t.getType() == ITask.MEMO) {
+                work.getMemo().setMemoStartTime(t.getExecuteBeginDate().getTime());
+                work.getMemo().setMemoEndTime(t.getExecuteEndDate().getTime());
+                work.getMemo().setMemoTitle(tt.getName());
+                work.getMemo().setMemoContent(tt.getDescription());
+                work.getMemo().setIsSign(t.getIsSign());
+                return work;
+            } else {
+                work.getTask().setTaskTitle(tt.getName());
+                work.getTask().setTaskStatus(t.getWorkStatus());
+                work.getTask().setTaskResult(t.getWorkResult());
+                work.getTask().setTaskSourceType(0);
+                work.getTask().setTaskSourceName("");
+                work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
+                SysUser u = userService.findById(t.getExcuteUserId());
+                work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
+                work.getTask().setTaskSubName(u.getRealName());
+                return work;
+            }
         }).collect(Collectors.toList());
         works.addAll(inspections);
         WorkVo_O workVo_o = new WorkVo_O();
@@ -214,31 +223,33 @@ public class IndexController extends AppBaseController {
             work.setSubID(t.getSubWorkId());
             work.setWorkType(t.getType());
             TTask tt = loopWorkService.fetchTaskById(t.getTaskId());
-            if (ITask.COMMON == t.getType() || ITask.ASSIGN == t.getType() || ITask.IMPROVE == t.getType()) {
+            if(t.getType() == ITask.MEMO) {
+                work.getMemo().setMemoTitle(tt.getName());
+                work.getMemo().setMemoContent(tt.getDescription());
+                work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
+                work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
+                work.getMemo().setIsSign(t.getIsSign());
+                return work;
 
+            } else {
                 work.getTask().setTaskTitle(tt.getName());
                 work.getTask().setTaskStatus(t.getWorkStatus());
                 work.getTask().setTaskResult(t.getWorkResult());
-//				work.getTask().setTaskSourceType(t.getTaskSourceType());
-//				work.getTask().setTaskSourceName(t.getTaskSourceName());
+				work.getTask().setTaskSourceType(0);
+				work.getTask().setTaskSourceName("");
                 work.getTask().setTaskDeadline(t.getAuditDeadline() == null ? 0L : t.getAuditDeadline().getTime());
                 SysUser u = userService.findById(t.getAuditUserId());
                 work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
                 work.getTask().setTaskSubName(u.getRealName());
                 return work;
             }
-            if (ITask.INSPECTION == t.getType()) {
-                work.getInspection().setInspEndTime(t.getExecuteBeginDate().getTime());
-                work.getInspection().setInspStartTime(t.getExecuteEndDate().getTime());
-                work.getInspection().setInspStatus(t.getWorkStatus());
-                work.getInspection().setInspTitle(tt.getName());
-                return work;
-            }
-            work.getMemo().setImportStatus(t.getWorkStatus());
-            work.getMemo().setMemoContent("I don't konw where to get it");
-            work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
-            work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
-            return work;
+//            if (ITask.INSPECTION == t.getType()) {
+//                work.getInspection().setInspEndTime(t.getExecuteBeginDate().getTime());
+//                work.getInspection().setInspStartTime(t.getExecuteEndDate().getTime());
+//                work.getInspection().setInspStatus(t.getWorkStatus());
+//                work.getInspection().setInspTitle(tt.getName());
+//                return work;
+//            }
         }).collect(Collectors.toList());
         WorkVo_O workVo_o = new WorkVo_O();
         workVo_o.setBackTime(DateUtil.currentDate().getTime());

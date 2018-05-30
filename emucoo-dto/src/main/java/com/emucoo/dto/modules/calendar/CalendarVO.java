@@ -51,5 +51,7 @@ public class CalendarVO {
             private Long memoStartTime;
             private Long memoEndTime;
             private Boolean isSign;
+            //1-未完成；2-已完成
+            private Integer memoStatus;
         }
 }
