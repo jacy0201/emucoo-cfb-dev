@@ -44,11 +44,11 @@ public class WorkTargetServiceImpl implements WorkTargetService {
     @Override
    public WorkTargetVO getWorkTarget(WorkTargetQueryVO workTargetQueryVO){
         WorkTargetVO workTargetVO=null;
-        Example example =new Example(TWorkTarget.class);
-        example.createCriteria().andEqualTo("month",workTargetQueryVO.getMonth())
-                .andEqualTo("createUserId",workTargetQueryVO.getUserID())
-                .andEqualTo("isDel",false);
-        TWorkTarget tWorkTarget=tWorkTargetMapper.selectOneByExample(example);
+        TWorkTarget t=new TWorkTarget();
+        t.setIsDel(false);
+        t.setCreateUserId(workTargetQueryVO.getUserID());
+        t.setMonth(workTargetQueryVO.getMonth());
+        TWorkTarget tWorkTarget=tWorkTargetMapper.selectOne(t);
         if(null!=tWorkTarget){
             workTargetVO=new WorkTargetVO();
             workTargetVO.setWorkTargetID(tWorkTarget.getId());
