@@ -15,5 +15,5 @@ public interface SysAreaMapper extends MyMapper<SysArea> {
 
     List<SysArea> findAreaListByUserId(Long userId);
 
-    List<SysArea> findAreaListByUserIds(List<String> userIdList);
+    List<SysArea> findDistinctAreaListByUserIds(List<String> userIdList);
 }
