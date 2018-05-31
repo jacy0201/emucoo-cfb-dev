@@ -447,7 +447,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         operateOptionMapper.insert(too);
 
 //         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
-        Date today = DateUtil.currentDate();
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
         if(isContainsDate(dts, today)) {
             buildLoopWorkInstance(task, today);
@@ -640,10 +640,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Override
     @Transactional
     public void editMemo(MemoEditVo_I voi, Long userId) {
-        Example example=new Example(TTask.class);
-        example.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("isDel",false);
         //更新工作备忘主表 t_task
-        TTask tTask =taskMapper.selectOneByExample(example);
+        TTask t=new TTask();
+        t.setWorkId(voi.getWorkID());
+        t.setIsDel(false);
+        t.setIsUse(true);
+        TTask tTask =taskMapper.selectOne(t);
         Long taskId=tTask.getId();
         TTask task=new TTask();
         task.setId(taskId);
@@ -675,7 +677,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             });
             task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         }
-        taskMapper.updateByExampleSelective(task,example);
+        taskMapper.updateByPrimaryKeySelective(task);
 
         //先删除之前创建的备忘实例
         Example exampleTLoopWork=new Example(TLoopWork.class);
