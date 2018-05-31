@@ -1,10 +1,10 @@
-
+#展览用配置文件
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: emotwo
     password: ${password}
-    url: jdbc:mysql://192.168.16.173:3306/611?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
+    url: jdbc:mysql://192.168.16.189:3306/611?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
   redis:
     cluster:
       nodes: 192.168.16.188:7000,192.168.16.188:7001,192.168.16.188:7002,192.168.16.188:7003,192.168.16.188:7004,192.168.16.188:7005

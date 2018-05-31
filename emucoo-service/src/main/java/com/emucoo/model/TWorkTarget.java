@@ -34,7 +34,7 @@ public class TWorkTarget extends BaseEntity {
      * 进货时间
      */
     @Column(name = "purchase_date")
-    private Date purchaseDate;
+    private String purchaseDate;
 
     @Column(name = "create_user_id")
     private Long createUserId;
@@ -135,7 +135,7 @@ public class TWorkTarget extends BaseEntity {
      *
      * @return purchase_date - 进货时间
      */
-    public Date getPurchaseDate() {
+    public String getPurchaseDate() {
         return purchaseDate;
     }
 
@@ -144,7 +144,7 @@ public class TWorkTarget extends BaseEntity {
      *
      * @param purchaseDate 进货时间
      */
-    public void setPurchaseDate(Date purchaseDate) {
+    public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
 
