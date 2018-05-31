@@ -19,6 +19,12 @@ public class TRepairWork {
     @Column(name = "shop_name")
     private String shopName;
 
+    @Column(name = "reporter_id")
+    private Long reporter_id;
+
+    @Column(name = "reporter_name")
+    private String reporterName;
+
     @Column(name = "report_date")
     private Date reportDate;
 
@@ -70,6 +76,12 @@ public class TRepairWork {
     @Column(name = "work_status")
     private Integer workStatus;
 
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "modify_time")
+    private Date modifyTime;
+
 
     ////////////////////////////
     //      辅助字段
@@ -114,6 +126,22 @@ public class TRepairWork {
 
     public void setShopName(String shopName) {
         this.shopName = shopName;
+    }
+
+    public Long getReporter_id() {
+        return reporter_id;
+    }
+
+    public void setReporter_id(Long reporter_id) {
+        this.reporter_id = reporter_id;
+    }
+
+    public String getReporterName() {
+        return reporterName;
+    }
+
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
     }
 
     public Date getReportDate() {
@@ -290,5 +318,21 @@ public class TRepairWork {
 
     public void setFinishRepairDateStr(String finishRepairDateStr) {
         this.finishRepairDateStr = finishRepairDateStr;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 }
