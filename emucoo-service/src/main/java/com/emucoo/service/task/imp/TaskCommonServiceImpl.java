@@ -422,11 +422,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Override
     public void switchCommonTask(List<Long> data, boolean state) {
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         for (Long id : data) {
             taskMapper.switchCommonTaskById(id, state);
             if (state) {
                 TTask task = taskMapper.selectByPrimaryKey(id);
-                Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
                 createCommonLoopWork(task, today);
             }
         }
