@@ -29,7 +29,7 @@ public class TaskAssignController extends AppBaseController {
     @PostMapping("/fetchSubmitToken")
 	public AppResult<SubmitTokenVo_O> fetchSubmitToken() {
 		SubmitTokenVo_O submitToken = new SubmitTokenVo_O();
-		submitToken.setSubmitToken(ReSubmitTokenManager.getToken());
+		submitToken.setSubmitToken(UserTokenManager.getInstance().produceReSubmitToken());
 	    return success(submitToken);
     }
 
@@ -60,7 +60,7 @@ public class TaskAssignController extends AppBaseController {
 
 	    if(ReSubmitTokenManager.validateToken(submitToken)){
 	    	loopWorkService.createAssignTask(assignTaskCreationVo_i, loginUserId);
-	    	ReSubmitTokenManager.clearToken(submitToken);
+	    	UserTokenManager.getInstance().clearReSubmitToken(submitToken);
 	    	return success("创建成功");
 		} else {
 	        return fail(AppExecStatus.SERVICE_ERR, "创建任务失败！");

@@ -1,6 +1,7 @@
 package com.emucoo.restApi.sdk.token;
 
 import com.emucoo.common.util.StringUtil;
+import com.emucoo.common.util.UuidUtil;
 import com.emucoo.dto.base.ISystem;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.utils.RedisClusterClient;
@@ -53,6 +54,15 @@ public class UserTokenManager {
         return RedisCachedUtil.set(ISystem.IUSER.USER_TOKEN,userToken,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
     }*/
 
+	public String produceReSubmitToken() {
+        String key = UuidUtil.creatUUID();
+        redisClient.set("submit:token:" + key, "resubmit-token", 1000*60*30);
+        return key;
+	}
+
+	public void clearReSubmitToken(String key) {
+	    redisClient.delete("submit:token:" + key);
+    }
 
 	private RedisClusterClient redisClient = SpringContextUtil.getApplicationContext().getBean(RedisClusterClient.class);
 
