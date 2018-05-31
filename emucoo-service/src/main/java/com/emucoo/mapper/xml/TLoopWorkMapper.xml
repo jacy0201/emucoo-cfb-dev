@@ -49,10 +49,10 @@
 
     <select id="countPendingReviewWorkNum" resultType="java.lang.Integer">
         select count(1) from t_loop_work a inner join t_task b on a.task_id = b.id
-        where audit_user_id=#{auditUserId}
-        and work_status=2
-        and work_result is NULL
-        and type is not null
+        where a.audit_user_id=#{auditUserId}
+        and a.work_status=2
+        and a.work_result is NULL
+        and a.type is not null
     </select>
 
     <select id="listPendingExecute" resultType="com.emucoo.model.TLoopWork">
