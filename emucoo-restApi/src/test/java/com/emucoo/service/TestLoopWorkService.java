@@ -1,6 +1,6 @@
 package com.emucoo.service;
 
-import com.emucoo.model.TLoopWork;
+import com.emucoo.dto.modules.task.WorkVo_O;
 import com.emucoo.restApi.RestApp;
 import com.emucoo.service.task.LoopWorkService;
 import com.emucoo.utils.DateUtil;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
+import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RestApp.class})
@@ -22,10 +22,9 @@ public class TestLoopWorkService {
 
     @Test
     public void testListPendingExecute() {
-        List<TLoopWork> list = loopWorkService.listPendingExecute(61L, DateUtil.currentDate());
-        Assert.check(list != null && list.size() > 0);
-        for(TLoopWork work : list) {
-            System.out.println(work.getId());
-        }
+        Date dt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        WorkVo_O workVo = loopWorkService.viewPendingExecuteWorks(dt,61L);
+        Assert.check(workVo != null);
+        System.out.println(workVo.getWorkArr().size());
     }
 }

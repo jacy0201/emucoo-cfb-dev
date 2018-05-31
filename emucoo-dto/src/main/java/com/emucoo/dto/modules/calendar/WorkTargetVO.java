@@ -31,8 +31,17 @@ public class WorkTargetVO {
     @ApiModelProperty(value="进货时间",name="purchaseDate",example ="2018-05-29")
     private Date purchaseDate;
 
-    //行事历任务
-    private List<SaleVO> saleList;
+    @ApiModelProperty(value="销售目标集合",name="saleList",notes = "编辑/添加 月工作目标时传此参数")
+    private  List<SaleVO> saleList;
+
+    //直营店
+    private List<SaleVO> saleDirectList;
+    private double totalDirectTarget=0;
+    private double totalDirectActual=0;
+    //加盟店
+    private List<SaleVO> saleJoinList;
+    private double totalJoinTarget=0;
+    private double totalJoinActual=0;
 
     @Data
     public static class SaleVO{

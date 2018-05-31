@@ -1,5 +1,6 @@
 package com.emucoo.service.calendar.impl;
 
+import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.dto.modules.calendar.WorkTargetDelVO;
 import com.emucoo.dto.modules.calendar.WorkTargetQueryVO;
 import com.emucoo.dto.modules.calendar.WorkTargetVO;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @Transactional
 @Service
-public class WorkTargetServiceImpl implements WorkTargetService {
+public class WorkTargetServiceImpl extends BaseServiceImpl<TWorkTarget> implements WorkTargetService {
 
     @Resource
     private TWorkTargetMapper tWorkTargetMapper;
@@ -59,9 +60,15 @@ public class WorkTargetServiceImpl implements WorkTargetService {
             Example exampleSale=new Example(TSaleTarget.class);
             exampleSale.createCriteria().andEqualTo("workTargetId",tWorkTarget.getId());
             List<TSaleTarget> saleTargetList=tSaleTargetMapper.selectByExample(exampleSale);
-            List<WorkTargetVO.SaleVO> list=null;
+            List<WorkTargetVO.SaleVO> saleDirectList=null;
+            List<WorkTargetVO.SaleVO> saleJoinList=null;
             if(null!=saleTargetList && saleTargetList.size()>0) {
-                list=new ArrayList<>();
+                saleDirectList=new ArrayList<>();
+                saleJoinList=new ArrayList<>();
+                 double totalDirectTarget=0;
+                 double totalDirectActual=0;
+                 double totalJoinTarget=0;
+                 double totalJoinActual=0;
                 WorkTargetVO.SaleVO saleVO=null;
                 for (TSaleTarget tSaleTarget:saleTargetList){
                     saleVO=new WorkTargetVO.SaleVO();
@@ -70,11 +77,26 @@ public class WorkTargetServiceImpl implements WorkTargetService {
                     saleVO.setTargetAmount(tSaleTarget.getTargetAmount());
                     saleVO.setShopId(tSaleTarget.getShopId());
                     TShopInfo shopInfo=tShopInfoMapper.selectByPrimaryKey(tSaleTarget.getShopId());
-                    saleVO.setShopName(shopInfo.getShopName());
-                    saleVO.setShopType(shopInfo.getType());
-                    list.add(saleVO);
+                    if(null!=shopInfo) {
+                        saleVO.setShopName(shopInfo.getShopName());
+                        saleVO.setShopType(shopInfo.getType());
+                        if(1==shopInfo.getType()){//1-直营店
+                            totalDirectTarget=totalDirectTarget+tSaleTarget.getTargetAmount();
+                            totalDirectActual=totalDirectActual+tSaleTarget.getActualAmount();
+                            saleDirectList.add(saleVO);
+                        }else if(2==shopInfo.getType()){//2-加盟店
+                            totalJoinTarget=totalJoinTarget+tSaleTarget.getTargetAmount();
+                            totalJoinActual=totalJoinActual+tSaleTarget.getActualAmount();
+                            saleJoinList.add(saleVO);
+                        }
+                    }
                 }
-                workTargetVO.setSaleList(list);
+                workTargetVO.setTotalDirectActual(totalDirectActual);
+                workTargetVO.setTotalDirectTarget(totalDirectTarget);
+                workTargetVO.setTotalJoinActual(totalJoinActual);
+                workTargetVO.setTotalJoinTarget(totalJoinTarget);
+                workTargetVO.setSaleDirectList(saleDirectList);
+                workTargetVO.setSaleJoinList(saleJoinList);
             }
         }
        return  workTargetVO;

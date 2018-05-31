@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_front_plan")
 public class TFrontPlan extends BaseEntity {
@@ -134,6 +135,17 @@ public class TFrontPlan extends BaseEntity {
 
     @Transient
     private TShopInfo shop;
+
+    @Transient
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     /**
      * @return id
