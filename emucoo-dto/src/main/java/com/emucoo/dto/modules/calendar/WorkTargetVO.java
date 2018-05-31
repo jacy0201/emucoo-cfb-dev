@@ -28,8 +28,8 @@ public class WorkTargetVO {
     /**
      * 进货时间
      */
-    @ApiModelProperty(value="进货时间",name="purchaseDate",example ="2018-05-29")
-    private Date purchaseDate;
+    @ApiModelProperty(value="进货时间",name="purchaseDate",example ="2018/05/29")
+    private String purchaseDate;
 
     @ApiModelProperty(value="销售目标集合",name="saleList",notes = "编辑/添加 月工作目标时传此参数")
     private  List<SaleVO> saleList;
