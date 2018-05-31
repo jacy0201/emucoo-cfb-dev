@@ -15,10 +15,6 @@ import java.util.List;
  */
 public interface LoopWorkService extends BaseService<TLoopWork> {
 
-    List<TLoopWork> listPendingExecute(Long submitUserId, Date date);
-
-    List<TLoopWork> listPendingReview(Long auditUserId);
-
     int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
 
     int fetchPendingReviewWorkNum(Long submitUserId);
@@ -90,4 +86,8 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
 
     void buildAssingTaskInstance();
+
+    WorkVo_O viewPendingExecuteWorks(Date needDate, Long submitUserId);
+
+    WorkVo_O viewPendingReviewWorks(Long auditUserId);
 }

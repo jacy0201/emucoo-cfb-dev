@@ -2,6 +2,7 @@ package com.emucoo.service.task.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.base.ITask;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -49,22 +50,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Autowired
     private TOperateDataForWorkMapper operateDataForWorkMapper;
 
-    /**
-     * @param submitUserId
-     * @param date
-     * @return
-     */
-    @Override
-    public List<TLoopWork> listPendingExecute(Long submitUserId, Date date) {
-        return loopWorkMapper.listPendingExecute(submitUserId, date);
-    }
+    @Autowired
+    private TFrontPlanMapper frontPlanMapper;
 
-    @Override
-    public List<TLoopWork> listPendingReview(Long auditUserId) {
-        Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        Date rdt = DateUtil.dateAddDay(ldt, 1);
-        return loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
-    }
+    @Autowired
+    private TLoopPlanMapper loopPlanMapper;
+
+    @Autowired
+    private SysDeptMapper sysDeptMapper;
 
     public int fetchPendingExecuteWorkNum(Long submitUserId, Date today) {
         return loopWorkMapper.countPendingExecuteWorkNum(submitUserId, today);
@@ -881,4 +874,109 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
     }
     // end：定时任务方法完
+
+    @Override
+    public WorkVo_O viewPendingExecuteWorks(Date needDate, Long submitUserId) {
+        List<TLoopWork> loopWorks = loopWorkMapper.listPendingExecute(submitUserId, needDate);
+        List<TFrontPlan> frontPlans = frontPlanMapper.listTodayPlanOfUser(submitUserId, needDate);
+        List<WorkVo_O.Work> inspections = frontPlans.stream().map(frontPlan -> {
+            WorkVo_O.Work work = new WorkVo_O.Work();
+            work.setId(frontPlan.getId());
+            work.setWorkID(Long.toString(frontPlan.getId()));
+            work.setWorkType(ITask.INSPECTION);
+            work.setSubID("");
+            work.getInspection().setInspEndTime(frontPlan.getPlanDate().getTime());
+            work.getInspection().setInspStartTime(frontPlan.getPlanDate().getTime());
+            work.getInspection().setInspStatus(frontPlan.getStatus() == 1 ? 1 : 0);
+            work.getInspection().setInspTitle(frontPlan.getTitle());
+//            TLoopPlan loopPlan = loopPlanMapper.selectByPrimaryKey(frontPlan.getLoopPlanId());
+//            if (loopPlan != null) {
+//                SysDept dept = sysDeptMapper.selectByPrimaryKey(loopPlan.getDptId());
+//                work.getInspection().setInspTitle(dept == null ? dept.getDptName() : "" + "巡检安排");
+//            }
+            return work;
+        }).collect(Collectors.toList());
+
+
+        List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
+            WorkVo_O.Work work = new WorkVo_O.Work();
+            work.setId(t.getId());
+            work.setWorkID(t.getWorkId());
+            work.setWorkType(t.getType());
+            work.setSubID(t.getSubWorkId());
+            if (t.getType() == ITask.MEMO) {
+//                TTask tt = taskMapper.selectByPrimaryKey(t.getTaskId());
+                work.getMemo().setMemoStartTime(t.getExecuteBeginDate().getTime());
+                work.getMemo().setMemoEndTime(t.getExecuteEndDate().getTime());
+                work.getMemo().setMemoTitle(t.getTaskTitle());
+                work.getMemo().setMemoContent(t.getDescription());
+                work.getMemo().setIsSign(t.getIsSign());
+                return work;
+            } else {
+                work.getTask().setTaskTitle(t.getTaskTitle());
+                work.getTask().setTaskStatus(t.getWorkStatus());
+                work.getTask().setTaskResult(t.getWorkResult());
+                work.getTask().setTaskSourceType(0);
+                work.getTask().setTaskSourceName("");
+                work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
+//                SysUser u = userMapper.selectByPrimaryKey(t.getExcuteUserId());
+                work.getTask().setTaskSubHeadUrl(t.getAvatar());
+                work.getTask().setTaskSubName(t.getUserName());
+                return work;
+            }
+        }).collect(Collectors.toList());
+        works.addAll(inspections);
+        WorkVo_O workVo_o = new WorkVo_O();
+        workVo_o.setBackTime(DateUtil.currentDate().getTime());
+        workVo_o.setDate(DateUtil.YYYYMMDD.format(needDate));
+        workVo_o.setWorkArr(works);
+        return workVo_o;
+    }
+
+    @Override
+    public WorkVo_O viewPendingReviewWorks(Long auditUserId) {
+        Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
+        Date rdt = DateUtil.dateAddDay(ldt, 1);
+        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
+        List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
+            WorkVo_O.Work work = new WorkVo_O.Work();
+            work.setId(t.getId());
+            work.setWorkID(t.getWorkId());
+            work.setSubID(t.getSubWorkId());
+            work.setWorkType(t.getType());
+            TTask tt = taskMapper.selectByPrimaryKey(t.getTaskId());
+            if(t.getType() == ITask.MEMO) {
+                work.getMemo().setMemoTitle(tt.getName());
+                work.getMemo().setMemoContent(tt.getDescription());
+                work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
+                work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
+                work.getMemo().setIsSign(t.getIsSign());
+                return work;
+
+            } else {
+                work.getTask().setTaskTitle(tt.getName());
+                work.getTask().setTaskStatus(t.getWorkStatus());
+                work.getTask().setTaskResult(t.getWorkResult());
+                work.getTask().setTaskSourceType(0);
+                work.getTask().setTaskSourceName("");
+                work.getTask().setTaskDeadline(t.getAuditDeadline() == null ? 0L : t.getAuditDeadline().getTime());
+                SysUser u = userMapper.selectByPrimaryKey(t.getAuditUserId());
+                work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
+                work.getTask().setTaskSubName(u.getRealName());
+                return work;
+            }
+//            if (ITask.INSPECTION == t.getType()) {
+//                work.getInspection().setInspEndTime(t.getExecuteBeginDate().getTime());
+//                work.getInspection().setInspStartTime(t.getExecuteEndDate().getTime());
+//                work.getInspection().setInspStatus(t.getWorkStatus());
+//                work.getInspection().setInspTitle(tt.getName());
+//                return work;
+//            }
+        }).collect(Collectors.toList());
+        WorkVo_O workVo_o = new WorkVo_O();
+        workVo_o.setBackTime(DateUtil.currentDate().getTime());
+        workVo_o.setWorkArr(works);
+        workVo_o.setDate(DateUtil.YYYYMMDD.format(new Date()));
+        return workVo_o;
+    }
 }
