@@ -75,6 +75,7 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
     public void save(PlanArrangeAddIn planArrangeAddIn, SysUser user) {
         try {
             List<Shop> shopList = planArrangeAddIn.getShopArr();
+            Date now = new Date();
             for (Shop shop : shopList) {
                 TFrontPlan tFrontPlan = new TFrontPlan();
                 tFrontPlan.setId(shop.getSubID());
@@ -83,6 +84,9 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 }
                 tFrontPlan.setShopId(shop.getShopID());
                 Date date = new Date(shop.getExPatrloShopArrangeTime());
+                if(date.before(now)) {
+                    throw new BaseException("安排日期不能小于当前！");
+                }
                 tFrontPlan.setPlanPreciseTime(date);
                 tFrontPlan.setRemindType(shop.getRemindType().byteValue());
                 Date remindDate = TimeTaskUtil.calActualRemindTime(date, shop.getRemindType());
@@ -102,7 +106,6 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 String planDateStr = planArrangeAddIn.getExPatrloShopArrangeDate();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
                 tFrontPlan.setPlanDate(sdf.parse(planDateStr));
-                Date now = new Date();
                 tFrontPlan.setModifyTime(now);
                 tFrontPlan.setModifyUserId(user.getId());
                 tFrontPlan.setArrangerId(user.getId());
