@@ -1,12 +1,15 @@
 package com.emucoo.restApi.controller.calendar;
 
+import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.calendar.WorkTargetDelVO;
 import com.emucoo.dto.modules.calendar.WorkTargetQueryVO;
 import com.emucoo.dto.modules.calendar.WorkTargetVO;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TWorkTarget;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.calendar.WorkTargetService;
 import com.emucoo.utils.DateUtil;
@@ -17,8 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -63,6 +68,12 @@ public class WorkTargetController extends AppBaseController {
     @PostMapping(value = "/addWorkTarget")
     public AppResult addWorkTarget(@RequestBody ParamVo<WorkTargetVO> params) {
         WorkTargetVO workTargetVO = params.getData();
+        Example example=new Example(TWorkTarget.class);
+        example.createCriteria().andEqualTo("month",workTargetVO.getMonth()).andEqualTo("isDel",false);
+        List list=workTargetService.selectByExample(example);
+        if(null!=list && list.size()>0){
+            return fail(AppExecStatus.INVALID_PARAM,"该月工作目标已存在!");
+        }
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         workTargetService.addWorkTarget(workTargetVO,user.getId());
         return success("success");
