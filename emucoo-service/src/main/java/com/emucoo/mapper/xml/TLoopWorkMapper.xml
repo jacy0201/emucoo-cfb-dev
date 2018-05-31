@@ -268,7 +268,7 @@
             t.loop_cycle_type taskRepeatType,
             t.loop_cycle_value taskRepeatValue,
             t.preinstall_score taskRank,
-            t.audit_type reviewItemType,
+            t.score_type reviewItemType,
             (select group_concat(img_url) from t_file where find_in_set(id, t.illustration_img_ids)) imgurls
         from t_loop_work s left join t_task t on s.task_id = t.id
         where s.id = #{loopWorkId}
