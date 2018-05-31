@@ -5,6 +5,8 @@ import com.emucoo.model.TRepairWork;
 import com.emucoo.service.task.TaskRepairService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 public class TaskRepairServiceImpl implements TaskRepairService {
 
     @Autowired
@@ -15,5 +17,11 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         TRepairWork work = repairWorkMapper.selectByPrimaryKey(workId);
 
         return work;
+    }
+
+    @Override
+    public List<TRepairWork> listRepairWorksByShopId(Long shopId) {
+        List<TRepairWork> works = repairWorkMapper.fetchWorksByShopId();
+        return works;
     }
 }

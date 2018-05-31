@@ -5,5 +5,8 @@
 
     </resultMap>
 
+    <select id="fetchWorksByShopId" resultType="com.emucoo.model.TRepairWork">
+        select * from t_repair_work where shop_id = #{shopId}
+    </select>
 
 </mapper>
