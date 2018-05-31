@@ -50,13 +50,23 @@ public class UserTokenManager {
 		return instance;
 	}
 
+
 	/*public String saveUserToken(String userToken){
         return RedisCachedUtil.set(ISystem.IUSER.USER_TOKEN,userToken,ISystem.IUSER.USER_TOKEN_EXPIRATION_TIME);
     }*/
 
+    public boolean validateToken(String submitToken) {
+        Long v = redisClient.getObject("submit:token:"+submitToken, Long.class);
+        if(v.longValue() == 20180531){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 	public String produceReSubmitToken() {
         String key = UuidUtil.creatUUID();
-        redisClient.set("submit:token:" + key, "resubmit-token", 1000*60*30);
+        redisClient.set("submit:token:" + key, new Long(20180531), 1000*60*30);
         return key;
 	}
 
