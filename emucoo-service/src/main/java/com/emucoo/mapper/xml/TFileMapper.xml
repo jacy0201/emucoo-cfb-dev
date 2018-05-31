@@ -36,4 +36,16 @@
             </foreach>
         </where>
     </delete>
+    
+    <delete id="cleanFileById" parameterType="Long">
+      DELETE FROM t_file
+      WHERE FIND_IN_SET(id,
+        (
+        SELECT
+        group_concat(desc_img_ids)
+        FROM t_form_pbm_val
+        WHERE form_result_id = #{resultId} AND desc_img_ids IS NOT NULL
+        )
+      ) > 0
+    </delete>
 </mapper>

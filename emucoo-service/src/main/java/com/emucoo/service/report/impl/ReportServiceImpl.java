@@ -230,8 +230,10 @@ public class ReportServiceImpl implements ReportService {
                 naNum++;
                 TFormPbm tFormPbm = tFormPbmMapper.selectByPrimaryKey(tFormPbmVal.getFormProblemId());
                 naTotalScore += tFormPbm.getScore();
+            } else {
+                actualScore += tFormPbmVal.getScore();
             }
-            actualScore += tFormPbmVal.getScore();
+
         }
         FormRulesVo formNa = new FormRulesVo();
         formNa.setItemID(2);
@@ -268,6 +270,16 @@ public class ReportServiceImpl implements ReportService {
                 TFormSubPbmVal subPbmValForThisOppt = null;
                 if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                    if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
+                        List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
+                        List<ProblemImg> problemImgs = new ArrayList<>();
+                        for (TFile file : descImgs) {
+                            ProblemImg problemImg = new ProblemImg();
+                            problemImg.setImgUrl(file.getImgUrl());
+                            problemImgs.add(problemImg);
+                        }
+                        chancePointVo.setDescImgArr(problemImgs);
+                    }
                 } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
@@ -693,6 +705,16 @@ public class ReportServiceImpl implements ReportService {
             TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
             if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                 pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
+                    List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
+                    List<ProblemImg> problemImgs = new ArrayList<>();
+                    for (TFile file : descImgs) {
+                        ProblemImg problemImg = new ProblemImg();
+                        problemImg.setImgUrl(file.getImgUrl());
+                        problemImgs.add(problemImg);
+                    }
+                    chancePointVo.setDescImgArr(problemImgs);
+                }
             } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                 subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
                 pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
@@ -813,9 +835,11 @@ public class ReportServiceImpl implements ReportService {
             List<TFormCheckResult> topSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
             List<AbilitySubForm> resultSubForm = new ArrayList<>();
             List<Long> subResultIds = new ArrayList<>();
+            int formCnt = 0;
             for(TFormCheckResult subResult : topSubFormResults) {
+                formCnt++;
                 // 只筛选经过打分且结果可用的子表结果
-                if(subResult.getIsDone().equals(true) && subResult.getResultCanUse().equals(true)) {
+                if(subResult.getIsDone().equals(true) && subResult.getResultCanUse().equals(true) && (subResult.getIsPass().equals(false) || formCnt == 4)) {
                     subResultIds.add(subResult.getId());
                     AbilitySubForm subForm = new AbilitySubForm();
                     subForm.setSubFormID(subResult.getFormMainId());
@@ -836,69 +860,75 @@ public class ReportServiceImpl implements ReportService {
                             if(CollectionUtils.isNotEmpty(formPbmVals)) {
                                 List<ProblemVo> problemArray = new ArrayList<>();
                                 for(TFormPbmVal pbmVal : formPbmVals) {
-                                    ProblemVo problemVo = new ProblemVo();
-                                    problemVo.setProblemID(pbmVal.getFormProblemId());
-                                    problemVo.setProblemName(pbmVal.getProblemName());
-                                    problemVo.setIsPass(pbmVal.getIsPass());
-                                    problemVo.setIsDone(pbmVal.getIsScore());
-                                    problemVo.setCheckMode(pbmVal.getCheckMethod());
-                                    problemVo.setNotes(pbmVal.getNotes());
-                                    problemVo.setProblemDescription(pbmVal.getProblemDescription());
-                                    if(StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
-                                        List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
-                                        List<ProblemImg> problemImgs = new ArrayList<>();
-                                        for(TFile file : descImgs) {
-                                            ProblemImg problemImg = new ProblemImg();
-                                            problemImg.setImgUrl(file.getImgUrl());
-                                            problemImgs.add(problemImg);
+                                    // 只需要未通过的题项
+                                    if(pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false)) {
+                                        ProblemVo problemVo = new ProblemVo();
+                                        problemVo.setProblemID(pbmVal.getFormProblemId());
+                                        problemVo.setProblemName(pbmVal.getProblemName());
+                                        problemVo.setIsPass(pbmVal.getIsPass());
+                                        problemVo.setIsDone(pbmVal.getIsScore());
+                                        problemVo.setCheckMode(pbmVal.getCheckMethod());
+                                        problemVo.setNotes(pbmVal.getNotes());
+                                        problemVo.setProblemDescription(pbmVal.getProblemDescription());
+                                        if (StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
+                                            List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
+                                            List<ProblemImg> problemImgs = new ArrayList<>();
+                                            for (TFile file : descImgs) {
+                                                ProblemImg problemImg = new ProblemImg();
+                                                problemImg.setImgUrl(file.getImgUrl());
+                                                problemImgs.add(problemImg);
+                                            }
+                                            problemVo.setDescImgArr(problemImgs);
                                         }
-                                        problemVo.setDescImgArr(problemImgs);
-                                    }
 
-                                    List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
-                                    if(CollectionUtils.isNotEmpty(subPbmVals)) {
-                                        problemVo.setIsSubProblem(true);
-                                        List<SubProblemVo> subProblemVos = new ArrayList<>();
-                                        for(TFormSubPbmVal subPbmVal : subPbmVals) {
-                                            SubProblemVo subProblemVo = new SubProblemVo();
-                                            subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
-                                            subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
-                                            subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
-                                            subProblemVo.setIsPass(subPbmVal.getIsPass());
-                                            subProblemVo.setIsDone(subPbmVal.getIsScore());
-                                            subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
-                                            subProblemVo.setNotes(subPbmVal.getNotes());
-                                            if(subPbmVal.getSubFormId() != null) {
-                                                subProblemVo.setIsSubList(true);
-                                                AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
-                                                subProblemVo.setSubListObject(subFormReport);
-                                            } else {
-                                                subProblemVo.setIsSubList(false);
-                                            }
-                                            if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
-                                                List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
-                                                List<ProblemImg> problemImgs = new ArrayList<>();
-                                                for (TFile file : descImgs) {
-                                                    ProblemImg problemImg = new ProblemImg();
-                                                    problemImg.setImgUrl(file.getImgUrl());
-                                                    problemImgs.add(problemImg);
+                                        List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
+                                        if (CollectionUtils.isNotEmpty(subPbmVals)) {
+                                            problemVo.setIsSubProblem(true);
+                                            List<SubProblemVo> subProblemVos = new ArrayList<>();
+                                            for (TFormSubPbmVal subPbmVal : subPbmVals) {
+                                                // 只读取未通过的子题项
+                                                if(subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false)) {
+                                                    SubProblemVo subProblemVo = new SubProblemVo();
+                                                    subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
+                                                    subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
+                                                    subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
+                                                    subProblemVo.setIsPass(subPbmVal.getIsPass());
+                                                    subProblemVo.setIsDone(subPbmVal.getIsScore());
+                                                    subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
+                                                    subProblemVo.setNotes(subPbmVal.getNotes());
+                                                    if (subPbmVal.getSubFormId() != null) {
+                                                        subProblemVo.setIsSubList(true);
+                                                        AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
+                                                        subProblemVo.setSubListObject(subFormReport);
+                                                    } else {
+                                                        subProblemVo.setIsSubList(false);
+                                                    }
+                                                    if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
+                                                        List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
+                                                        List<ProblemImg> problemImgs = new ArrayList<>();
+                                                        for (TFile file : descImgs) {
+                                                            ProblemImg problemImg = new ProblemImg();
+                                                            problemImg.setImgUrl(file.getImgUrl());
+                                                            problemImgs.add(problemImg);
+                                                        }
+                                                        subProblemVo.setDescImgArr(problemImgs);
+                                                    }
+                                                    subProblemVos.add(subProblemVo);
                                                 }
-                                                subProblemVo.setDescImgArr(problemImgs);
                                             }
-                                            subProblemVos.add(subProblemVo);
+                                            problemVo.setSubProblemArray(subProblemVos);
+                                        } else {
+                                            problemVo.setIsSubProblem(false);
                                         }
-                                        problemVo.setSubProblemArray(subProblemVos);
-                                    } else {
-                                        problemVo.setIsSubProblem(false);
+                                        if (pbmVal.getSubFormId() != null) {
+                                            problemVo.setIsSubList(true);
+                                            AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
+                                            problemVo.setSubListObject(subFormReport);
+                                        } else {
+                                            problemVo.setIsSubList(false);
+                                        }
+                                        problemArray.add(problemVo);
                                     }
-                                    if(pbmVal.getSubFormId() != null) {
-                                        problemVo.setIsSubList(true);
-                                        AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
-                                        problemVo.setSubListObject(subFormReport);
-                                    } else {
-                                        problemVo.setIsSubList(false);
-                                    }
-                                    problemArray.add(problemVo);
                                 }
                                 subFormKind.setProblemArray(problemArray);
                             }
@@ -907,6 +937,7 @@ public class ReportServiceImpl implements ReportService {
                         subForm.setSubFormKindArray(subFormKinds);
                     }
                     resultSubForm.add(subForm);
+                    break;
                 }
             }
             reportVo.setResultSubForm(resultSubForm);
@@ -1036,65 +1067,71 @@ public class ReportServiceImpl implements ReportService {
                     if (CollectionUtils.isNotEmpty(formPbmVals)) {
                         List<ProblemVo> problemArray = new ArrayList<>();
                         for (TFormPbmVal pbmVal : formPbmVals) {
-                            ProblemVo problemVo = new ProblemVo();
-                            problemVo.setProblemID(pbmVal.getFormProblemId());
-                            problemVo.setProblemName(pbmVal.getProblemName());
-                            problemVo.setIsPass(pbmVal.getIsPass());
-                            problemVo.setIsDone(pbmVal.getIsScore());
-                            problemVo.setCheckMode(pbmVal.getCheckMethod());
-                            problemVo.setNotes(pbmVal.getNotes());
-                            problemVo.setProblemDescription(pbmVal.getProblemDescription());
-                            if (StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
-                                List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
-                                List<ProblemImg> problemImgs = new ArrayList<>();
-                                for (TFile file : descImgs) {
-                                    ProblemImg problemImg = new ProblemImg();
-                                    problemImg.setImgUrl(file.getImgUrl());
-                                    problemImgs.add(problemImg);
+                            // 只需要未通过的题项
+                            if (pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false)) {
+                                ProblemVo problemVo = new ProblemVo();
+                                problemVo.setProblemID(pbmVal.getFormProblemId());
+                                problemVo.setProblemName(pbmVal.getProblemName());
+                                problemVo.setIsPass(pbmVal.getIsPass());
+                                problemVo.setIsDone(pbmVal.getIsScore());
+                                problemVo.setCheckMode(pbmVal.getCheckMethod());
+                                problemVo.setNotes(pbmVal.getNotes());
+                                problemVo.setProblemDescription(pbmVal.getProblemDescription());
+                                if (StringUtils.isNotBlank(pbmVal.getDescImgIds())) {
+                                    List<TFile> descImgs = tFileMapper.selectByIds(pbmVal.getDescImgIds());
+                                    List<ProblemImg> problemImgs = new ArrayList<>();
+                                    for (TFile file : descImgs) {
+                                        ProblemImg problemImg = new ProblemImg();
+                                        problemImg.setImgUrl(file.getImgUrl());
+                                        problemImgs.add(problemImg);
+                                    }
+                                    problemVo.setDescImgArr(problemImgs);
                                 }
-                                problemVo.setDescImgArr(problemImgs);
-                            }
 
-                            List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
-                            if (CollectionUtils.isNotEmpty(subPbmVals)) {
-                                problemVo.setIsSubProblem(true);
-                                List<SubProblemVo> subProblemVos = new ArrayList<>();
-                                for (TFormSubPbmVal subPbmVal : subPbmVals) {
-                                    SubProblemVo subProblemVo = new SubProblemVo();
-                                    subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
-                                    subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
-                                    subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
-                                    subProblemVo.setIsPass(subPbmVal.getIsPass());
-                                    subProblemVo.setIsDone(subPbmVal.getIsScore());
-                                    subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
-                                    subProblemVo.setNotes(subPbmVal.getNotes());
-                                    if (subPbmVal.getSubFormId() != null) {
-                                        subProblemVo.setIsSubList(true);
-                                    } else {
-                                        subProblemVo.setIsSubList(false);
-                                    }
-                                    if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
-                                        List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
-                                        List<ProblemImg> problemImgs = new ArrayList<>();
-                                        for (TFile file : descImgs) {
-                                            ProblemImg problemImg = new ProblemImg();
-                                            problemImg.setImgUrl(file.getImgUrl());
-                                            problemImgs.add(problemImg);
+                                List<TFormSubPbmVal> subPbmVals = pbmVal.getFormSubPbmValList();
+                                if (CollectionUtils.isNotEmpty(subPbmVals)) {
+                                    problemVo.setIsSubProblem(true);
+                                    List<SubProblemVo> subProblemVos = new ArrayList<>();
+                                    for (TFormSubPbmVal subPbmVal : subPbmVals) {
+                                        // 只读取未通过的子题项
+                                        if (subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false)) {
+                                            SubProblemVo subProblemVo = new SubProblemVo();
+                                            subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
+                                            subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
+                                            subProblemVo.setSubProblemName(subPbmVal.getSubProblemName());
+                                            subProblemVo.setIsPass(subPbmVal.getIsPass());
+                                            subProblemVo.setIsDone(subPbmVal.getIsScore());
+                                            subProblemVo.setCheckMode(subPbmVal.getCheckMethod());
+                                            subProblemVo.setNotes(subPbmVal.getNotes());
+                                            if (subPbmVal.getSubFormId() != null) {
+                                                subProblemVo.setIsSubList(true);
+                                            } else {
+                                                subProblemVo.setIsSubList(false);
+                                            }
+                                            if (StringUtils.isNotBlank(subPbmVal.getDescImgIds())) {
+                                                List<TFile> descImgs = tFileMapper.selectByIds(subPbmVal.getDescImgIds());
+                                                List<ProblemImg> problemImgs = new ArrayList<>();
+                                                for (TFile file : descImgs) {
+                                                    ProblemImg problemImg = new ProblemImg();
+                                                    problemImg.setImgUrl(file.getImgUrl());
+                                                    problemImgs.add(problemImg);
+                                                }
+                                                subProblemVo.setDescImgArr(problemImgs);
+                                            }
+                                            subProblemVos.add(subProblemVo);
                                         }
-                                        subProblemVo.setDescImgArr(problemImgs);
                                     }
-                                    subProblemVos.add(subProblemVo);
+                                    problemVo.setSubProblemArray(subProblemVos);
+                                } else {
+                                    problemVo.setIsSubProblem(false);
                                 }
-                                problemVo.setSubProblemArray(subProblemVos);
-                            } else {
-                                problemVo.setIsSubProblem(false);
+                                if (pbmVal.getSubFormId() != null) {
+                                    problemVo.setIsSubList(true);
+                                } else {
+                                    problemVo.setIsSubList(false);
+                                }
+                                problemArray.add(problemVo);
                             }
-                            if (pbmVal.getSubFormId() != null) {
-                                problemVo.setIsSubList(true);
-                            } else {
-                                problemVo.setIsSubList(false);
-                            }
-                            problemArray.add(problemVo);
                         }
                         subFormKind.setProblemArray(problemArray);
                     }

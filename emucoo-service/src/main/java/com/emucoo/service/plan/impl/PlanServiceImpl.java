@@ -268,7 +268,7 @@ public class PlanServiceImpl implements PlanService {
             String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
             List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
             // 获取分区
-            List<SysArea> areaList = sysAreaMapper.findAreaListByUserIds(userIdList);
+            List<SysArea> areaList = sysAreaMapper.findDistinctAreaListByUserIds(userIdList);
             //查询品牌
             List<TBrandInfo> brandInfos = null;//tBrandInfoMapper.findBrandListByUserId(user.getId());
             List<PrecinctArr> precinctArr = new ArrayList<>();

@@ -285,6 +285,7 @@ public class FormServiceImpl implements FormService {
                 // 这里删除的是value表里的数据，模版结构不需要变，所以不用删，删的是本次打表的得分数据。
                 formCheckResultMapper.deleteByPrimaryKey(result.getId());
                 formValueMapper.cleanByResultId(result.getId());
+                fileMapper.cleanFileById(result.getId());
                 formPbmValMapper.cleanByResultId(result.getId());
                 formSubPbmValMapper.cleanByResultId(result.getId());
                 formOpptValueMapper.cleanByResultId(result.getId());
@@ -355,6 +356,31 @@ public class FormServiceImpl implements FormService {
                 formPbmVal.setProblemName(problemVo.getProblemName());
                 formPbmVal.setProblemSchemaType(problemVo.getProblemType());
                 formPbmVal.setScore(problemVo.getProblemScore());
+                // 保存题项照片数据
+                String imgIds = "";
+                List<ProblemImg> descImgArr = problemVo.getDescImgArr();
+                if (CollectionUtils.isNotEmpty(descImgArr)) {
+                    List<TFile> imgs = new ArrayList<>();
+                    for (ProblemImg problemImg : descImgArr) {
+                        TFile descImg = new TFile();
+                        descImg.setImgUrl(problemImg.getImgUrl());
+                        descImg.setCreateTime(DateUtil.currentDate());
+                        descImg.setModifyTime(DateUtil.currentDate());
+                        descImg.setIsDel(DeleteStatus.COMMON.getCode());
+                        descImg.setCreateUserId(user.getId());
+                        descImg.setSource(ImgSourceType.FROM_FRONT.getCode().byteValue());
+                        imgs.add(descImg);
+                    }
+                    fileMapper.insertList(imgs);
+
+                    for (TFile file : imgs) {
+                        imgIds += file.getId() + ",";
+                    }
+                    if (StringUtil.isNotBlank(imgIds)) {
+                        imgIds = imgIds.substring(0, imgIds.length() - 1);
+                    }
+                }
+                formPbmVal.setDescImgIds(imgIds);
 
                 formPbmValMapper.insert(formPbmVal);
 

@@ -1,5 +1,6 @@
 package com.emucoo.dto.modules.form;
 
+import com.emucoo.dto.modules.abilityForm.ProblemImg;
 import lombok.Data;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public class FormProblemVo {
     private Integer problemTotal;
     private Integer problemType;
     private List<FormSubProblemVo> subProblemArray;
+    private List<ProblemImg> descImgArr;
     private List<FormSubProblemUnitVo> subProblemUnitArray;
 }
