@@ -41,7 +41,7 @@
     </resultMap>
 
     <select id="countPendingExecuteWorkNum" resultType="java.lang.Integer">
-        select count(1) from t_loop_work a inner join (select id, name, is_use from t_task where (type =1 and is_use=1) or type != 1) b on a.task_id = b.id
+        select count(1) from t_loop_work a inner join (select id from t_task where (type =1 and is_use=1) or type != 1) b on a.task_id = b.id
         where a.excute_user_id=#{submitUserId}
         and a.type is not null
         and #{today} between a.execute_begin_date and a.execute_end_date
@@ -58,7 +58,7 @@
     <select id="listPendingExecute" resultType="com.emucoo.model.TLoopWork">
         SELECT t1.*, t2.head_img_url as avatar, t2.real_name as userName, t3.description, t3.`name` AS taskTitle, t3.is_use as available
         FROM t_loop_work t1
-        inner join (select id, name, is_use from t_task where (type = 1 and is_use = 1) or type != 1) t3 on t1.task_id = t3.id
+        inner join (select  * from t_task where (type = 1 and is_use = 1) or type != 1) t3 on t1.task_id = t3.id
         LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
         WHERE t1.excute_user_id = #{executeUserId}
                 AND t1.type is not null
