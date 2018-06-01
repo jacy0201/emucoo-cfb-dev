@@ -131,13 +131,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
         if (loopWork == null)
             return;
-        loopWork.setType(atai.getWorkType());
-        loopWork.setWorkResult(atai.getReviewResult());
-        loopWork.setAuditUserId(user.getId());
-        loopWork.setAuditUserName(user.getUsername());
-        loopWork.setAuditTime(DateUtil.currentDate());
-
-        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
         List<String> aimgs = new ArrayList<>();
         if (atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
@@ -159,8 +152,15 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         toof.setAuditResult(atai.getReviewResult());
         toof.setModifyTime(DateUtil.currentDate());
         toof.setAuditContent(atai.getReviewOpinion());
-
         operateDataForWorkMapper.auditOperateData(toof);
+
+        loopWork.setType(atai.getWorkType());
+        loopWork.setWorkStatus(4);
+        loopWork.setWorkResult(atai.getReviewResult());
+        loopWork.setAuditUserId(user.getId());
+        loopWork.setAuditUserName(user.getUsername());
+        loopWork.setAuditTime(DateUtil.currentDate());
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
 
     @Override

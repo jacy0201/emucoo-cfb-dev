@@ -306,6 +306,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
         loopWork.setAuditTime(DateUtil.currentDate());
+        loopWork.setWorkStatus(4);
         loopWork.setWorkResult(auditResult);
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }

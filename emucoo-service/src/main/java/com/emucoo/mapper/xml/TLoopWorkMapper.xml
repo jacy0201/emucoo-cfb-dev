@@ -268,13 +268,13 @@
 
     <update id="markExpiredExecutionWorks">
         <![CDATA[
-        update t_loop_work set work_status=3, work_result=2 where work_status=1 and execute_deadline < #{dt} and type in (1,2,3)
+        update t_loop_work set work_status=3, work_result=2 where work_status=1 and execute_deadline < #{dt} and type in (1,2,3,5)
         ]]>
     </update>
 
     <update id="markExpiredAuditWorks">
         <![CDATA[
-        update t_loop_work set work_status=3, work_result=1 where work_status=2 and work_result is null and audit_deadline < #{dt} and type in (1,2,3)
+        update t_loop_work set work_status=5, work_result=1 where work_status=2 and audit_deadline < #{dt} and type in (1,2,3)
         ]]>
     </update>
 
