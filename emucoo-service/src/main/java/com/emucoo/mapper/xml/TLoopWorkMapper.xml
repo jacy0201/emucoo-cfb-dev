@@ -53,6 +53,7 @@
         and a.work_status=2
         and a.work_result is NULL
         and a.type is not null
+        and #{today} between a.execute_begin_date and a.execute_end_date
     </select>
 
     <select id="listPendingExecute" resultType="com.emucoo.model.TLoopWork">
@@ -74,6 +75,7 @@
             AND t1.work_status = 2
             AND t1.work_result is NULL
             AND t1.type is NOT NULL
+            AND #{today} between a.execute_begin_date and a.execute_end_date
     </select>
 
     <select id="calendarMonthList" resultType="com.emucoo.model.TLoopWork">
@@ -257,8 +259,8 @@
             t.description taskExplain,
             DATE_FORMAT(s.execute_begin_date, '%Y%m%d %T') startDate,
             DATE_FORMAT(s.execute_end_date, '%Y%m%d %T') endDate,
-            s.execute_deadline submitDeadline,
-            s.audit_deadline reviewDeadline,
+            UNIX_TIMESTAMP(s.execute_deadline) submitDeadline,
+            UNIX_TIMESTAMP(s.audit_deadline) reviewDeadline,
             s.excute_user_id executorID,
             s.excute_user_name executorName,
             s.audit_user_id auditorID,
