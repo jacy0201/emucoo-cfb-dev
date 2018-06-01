@@ -8,6 +8,7 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.LoopWorkService;
 import com.emucoo.utils.DateUtil;
+import com.emucoo.utils.TaskExeDateGenerator;
 import com.emucoo.utils.TaskUniqueIdUtils;
 import com.emucoo.utils.WaterMarkUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -740,36 +741,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     private List<Date> genDatesByRepeatType(TTask task) {
-        List<Date> dts = new ArrayList<>();
-        int repeatType = task.getLoopCycleType();
-        switch (repeatType) {
-            case 0:
-                dts.add(task.getTaskStartDate());
-                break;
-
-            case 1:
-                Date sdt = task.getTaskStartDate();
-                Date edt = task.getTaskEndDate();
-                while (DateUtil.compare(sdt, edt) <= 0) {
-                    dts.add(sdt);
-                    sdt = DateUtil.dateAddDay(sdt, 1);
-                }
-                break;
-
-            case 2:
-                List<Integer> wkdays = Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
-                Date sdt1 = task.getTaskStartDate();
-                Date edt1 = task.getTaskEndDate();
-                while (DateUtil.compare(sdt1, edt1) <= 0) {
-                    if (wkdays.contains(DateUtil.getDayOfWeek(sdt1))) {
-                        dts.add(sdt1);
-                    }
-                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
-                }
-                break;
-
-        }
-        return dts;
+        return TaskExeDateGenerator.generateExeDatesByTask(task);
     }
 
     @Override
