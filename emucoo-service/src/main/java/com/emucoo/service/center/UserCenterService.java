@@ -22,7 +22,7 @@ public interface UserCenterService extends BaseService<TLoopWork> {
     List<TaskVO> getReportList(String month,Long userId);
 
     //巡店任务
-    List<TFrontPlan> frontPlanList(String month,Long userId);
+    List<TaskVO> frontPlanList(String month,Long userId);
 
     //维修任务
 
