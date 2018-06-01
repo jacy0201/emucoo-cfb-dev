@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class WorkTargetVO {
     private String purchaseDate;
 
     @ApiModelProperty(value="销售目标集合",name="saleList",notes = "编辑/添加 月工作目标时传此参数")
-    private  List<SaleVO> saleList;
+    private  List<SaleVO> saleList= new ArrayList<>();
 
     //直营店
     private List<SaleVO> saleDirectList;
