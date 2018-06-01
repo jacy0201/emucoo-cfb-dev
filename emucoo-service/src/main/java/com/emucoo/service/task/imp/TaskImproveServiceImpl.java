@@ -211,10 +211,8 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_TWO);
 
         // 设置提交时间的12小时后
-        Calendar cl = Calendar.getInstance();
-        cl.add(Calendar.HOUR_OF_DAY, 12);
-        loopWork.setAuditDeadline(cl.getTime());
         loopWork.setModifyTime(new Date());
+        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 12, 0));
 
         // WorkImgAppend
         List<ImgUrl> list = submitIn.getExecuteImgArr();
@@ -263,7 +261,8 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setSubWorkId(auditIn.getSubID());
         loopWork.setAuditUserId(user.getId());
         loopWork.setWorkResult(auditIn.getReviewResult());
-        loopWorkMapper.updateByPrimaryKey(loopWork);
+        loopWork.setAuditTime(DateUtil.currentDate());
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
         List<TFile> imgs = new ArrayList<>();
         List<ImageUrl> imageUrls = auditIn.getReviewImgArr();

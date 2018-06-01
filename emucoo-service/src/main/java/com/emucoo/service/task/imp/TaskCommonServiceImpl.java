@@ -199,16 +199,17 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setExcuteUserId(user.getId());
         loopWork.setExcuteUserName(user.getUsername());
         loopWork.setModifyTime(DateUtil.currentDate());
+        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 4, 0));
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] tms = task.getAuditDeadline().split(":");
             if (tms.length == 1) {
                 int mi = Integer.parseInt(tms[0]);
-                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
             }
             if (tms.length == 2) {
                 int hr = Integer.parseInt(tms[0]);
                 int mi = Integer.parseInt(tms[1]);
-                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
             }
         }
         loopWork.setWorkStatus(2);
@@ -278,6 +279,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
+        loopWork.setAuditTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
         List<TaskCommonAuditIn.AuditTaskItem> taskItemArr = taskCommonAuditIn.getReviewArr();

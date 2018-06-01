@@ -93,7 +93,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         lw.setWorkStatus(2);
         lw.setAuditDeadline(DateUtil.addDateHours(new Date(), 12));
         lw.setModifyTime(DateUtil.currentDate());
-        loopWorkMapper.updateWorkStatus(lw);
+        loopWorkMapper.updateByPrimaryKeySelective(lw);
 
         List<String> imgids = new ArrayList<>();
         if (voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
@@ -135,8 +135,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWork.setWorkResult(atai.getReviewResult());
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
+        loopWork.setAuditTime(DateUtil.currentDate());
 
-        loopWorkMapper.auditLoopWork(loopWork);
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
         List<String> aimgs = new ArrayList<>();
         if (atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
