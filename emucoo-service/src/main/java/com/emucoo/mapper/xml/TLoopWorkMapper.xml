@@ -75,7 +75,7 @@
             AND t1.work_status = 2
             AND t1.work_result is NULL
             AND t1.type is NOT NULL
-            AND #{today} between a.execute_begin_date and a.execute_end_date
+            AND #{today} between t1.execute_begin_date and t1.execute_end_date
     </select>
 
     <select id="calendarMonthList" resultType="com.emucoo.model.TLoopWork">
