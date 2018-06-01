@@ -64,8 +64,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public int fetchPendingReviewWorkNum(Long submitUserId) {
-        return loopWorkMapper.countPendingReviewWorkNum(submitUserId);
+    public int fetchPendingReviewWorkNum(Long submitUserId, Date today) {
+        return loopWorkMapper.countPendingReviewWorkNum(submitUserId, today);
     }
 
     @Override
@@ -935,9 +935,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Override
     public WorkVo_O viewPendingReviewWorks(Long auditUserId) {
-        Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        Date rdt = DateUtil.dateAddDay(ldt, 1);
-        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
+        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, today);
         List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
             WorkVo_O.Work work = new WorkVo_O.Work();
             work.setId(t.getId());

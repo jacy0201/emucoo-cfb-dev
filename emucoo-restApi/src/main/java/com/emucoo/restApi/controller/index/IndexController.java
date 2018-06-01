@@ -177,7 +177,7 @@ public class IndexController extends AppBaseController {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
         int inswks = loopPlanService.countFrontPlan(loginUserId, today);
         int exewks = loopWorkService.fetchPendingExecuteWorkNum(loginUserId, today);
-        int rvwwks = loopWorkService.fetchPendingReviewWorkNum(loginUserId);
+        int rvwwks = loopWorkService.fetchPendingReviewWorkNum(loginUserId, today);
         PendingWorkNumVo_O pendingWorkNumVo = new PendingWorkNumVo_O();
         pendingWorkNumVo.setPendingExecuteNum(exewks + inswks);
         pendingWorkNumVo.setPendingReviewNum(rvwwks);
