@@ -6,7 +6,6 @@ import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
-import com.emucoo.restApi.sdk.token.ReSubmitTokenManager;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.sys.UserService;
 import com.emucoo.service.task.LoopWorkService;
@@ -29,7 +28,7 @@ public class TaskAssignController extends AppBaseController {
     @PostMapping("/fetchSubmitToken")
 	public AppResult<SubmitTokenVo_O> fetchSubmitToken() {
 		SubmitTokenVo_O submitToken = new SubmitTokenVo_O();
-		submitToken.setSubmitToken(ReSubmitTokenManager.getToken());
+		submitToken.setSubmitToken(UserTokenManager.getInstance().produceReSubmitToken());
 	    return success(submitToken);
     }
 
@@ -58,9 +57,9 @@ public class TaskAssignController extends AppBaseController {
 
 	    long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
 
-	    if(ReSubmitTokenManager.validateToken(submitToken)){
+	    if(UserTokenManager.getInstance().validateToken(submitToken)){
 	    	loopWorkService.createAssignTask(assignTaskCreationVo_i, loginUserId);
-	    	ReSubmitTokenManager.clearToken(submitToken);
+	    	UserTokenManager.getInstance().clearReSubmitToken(submitToken);
 	    	return success("创建成功");
 		} else {
 	        return fail(AppExecStatus.SERVICE_ERR, "创建任务失败！");
