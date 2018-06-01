@@ -478,6 +478,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteEndDate(dt);
             lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + task.getExecuteDeadline()));
 
+            lw.setCreateUserId(task.getCreateUserId());
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
 
