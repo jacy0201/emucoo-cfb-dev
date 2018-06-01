@@ -70,7 +70,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
         //更新用户 push token
         user.setPushToken(pushToken);
         //如果用户没传token 需要设置为null
-        userMapper.updateByPrimaryKey(user);
+        userMapper.updateByPrimaryKeySelective(user);
 
         UserLoginInfo loginInfo = new UserLoginInfo();
 

@@ -55,7 +55,7 @@ public class IndexController extends AppBaseController {
 
     @PostMapping("/login")
     public AppResult<UserLoginInfo> login(@RequestBody ParamVo<UserVo_I> data) {
-        String pushToken = data.getData().getPushToken();
+        String pushToken = null!=data.getData().getPushToken()?data.getData().getPushToken():null;
         String mobile = data.getData().getMobile();
         String password = data.getData().getPassword();
 
