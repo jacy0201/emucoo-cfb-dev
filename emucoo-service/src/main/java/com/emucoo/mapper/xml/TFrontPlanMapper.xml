@@ -1,187 +1,183 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.emucoo.mapper.TFrontPlanMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TFrontPlan" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="loop_plan_id" property="loopPlanId" jdbcType="BIGINT" />
-    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
-    <result column="plan_date" property="planDate" jdbcType="DATE" />
-    <result column="status" property="status" jdbcType="BIT" />
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="plan_precise_time" property="planPreciseTime" jdbcType="TIMESTAMP" />
-    <result column="report_id" property="reportId" jdbcType="BIGINT" />
-    <result column="check_form_ids" property="checkFormIds" jdbcType="VARCHAR" />
-    <result column="remind_type" property="remindType" jdbcType="TINYINT" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="actual_execute_time" property="actualExecuteTime" jdbcType="TIMESTAMP" />
-    <result column="actual_execute_address" property="actualExecuteAddress" jdbcType="VARCHAR" />
-    <result column="actual_remind_time" property="actualRemindTime" jdbcType="TIMESTAMP" />
-    <result column="arranger_id" property="arrangerId" jdbcType="BIGINT" />
-    <result column="arrangee_id" property="arrangeeId" jdbcType="BIGINT" />
-    <result column="sub_plan_id" property="subPlanId" jdbcType="BIGINT"/>
-    <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
-    <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />
-    <result column="is_del" property="isDel" jdbcType="BIT" />
-    <result column="org_id" property="orgId" jdbcType="BIGINT" />
-    <association property="shop" javaType="com.emucoo.model.TShopInfo">
-      <id column="shop_id_in" property="id" jdbcType="BIGINT"/>
-      <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
-    </association>
-  </resultMap>
+<mapper namespace="com.emucoo.mapper.TFrontPlanMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TFrontPlan">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="loop_plan_id" property="loopPlanId" jdbcType="BIGINT"/>
+        <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
+        <result column="plan_date" property="planDate" jdbcType="DATE"/>
+        <result column="status" property="status" jdbcType="BIT"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="plan_precise_time" property="planPreciseTime" jdbcType="TIMESTAMP"/>
+        <result column="report_id" property="reportId" jdbcType="BIGINT"/>
+        <result column="check_form_ids" property="checkFormIds" jdbcType="VARCHAR"/>
+        <result column="remind_type" property="remindType" jdbcType="TINYINT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="actual_execute_time" property="actualExecuteTime" jdbcType="TIMESTAMP"/>
+        <result column="actual_execute_address" property="actualExecuteAddress" jdbcType="VARCHAR"/>
+        <result column="actual_remind_time" property="actualRemindTime" jdbcType="TIMESTAMP"/>
+        <result column="arranger_id" property="arrangerId" jdbcType="BIGINT"/>
+        <result column="arrangee_id" property="arrangeeId" jdbcType="BIGINT"/>
+        <result column="sub_plan_id" property="subPlanId" jdbcType="BIGINT"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+        <association property="shop" javaType="com.emucoo.model.TShopInfo">
+            <id column="shop_id_in" property="id" jdbcType="BIGINT"/>
+            <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
 
-  <select id="countTodayPlanOfUser" resultType="java.lang.Integer" >
-    select count(id)
-    from t_front_plan
-    where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
-  </select>
+    <select id="countTodayPlanOfUser" resultType="java.lang.Integer">
+        select count(id)
+        from t_front_plan
+        where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+    </select>
 
-  <select id="listTodayPlanOfUser" resultMap="BaseResultMap">
-    select * from t_front_plan
-    where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
-  </select>
+    <select id="listTodayPlanOfUser" resultType="com.emucoo.model.TFrontPlan">
+        select a.*, concat(b.shop_name, '巡检安排') as title from t_front_plan a
+        left join t_shop_info b on a.shop_id = b.id
+        where a.arrangee_id=#{userId} and DATE_FORMAT(a.plan_date,'%Y-%m-%d') = #{today}
+    </select>
 
-  <select id="listCalendar"  resultMap="BaseResultMap">
-    select * from t_front_plan
-    where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
-  </select>
+    <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">
+        INSERT INTO t_front_plan
+        (
+        shop_id,
+        sub_plan_id,
+        status,
+        arrange_year,
+        arrange_month,
+        create_time,
+        modify_time,
+        create_user_id,
+        modify_user_id,
+        org_id,
+        is_del
+        ) values (
+        #{shop.id},
+        #{subPlanId},
+        #{status},
+        #{arrangeYear},
+        #{arrangeMonth},
+        #{createTime},
+        #{modifyTime},
+        #{createUserId},
+        #{modifyUserId},
+        #{orgId},
+        #{isDel}
+        )
+    </insert>
 
-  <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">
-    INSERT INTO t_front_plan
-    (
-      shop_id,
-      sub_plan_id,
-      status,
-      arrange_year,
-      arrange_month,
-      create_time,
-      modify_time,
-      create_user_id,
-      modify_user_id,
-      org_id,
-      is_del
-    ) values (
-      #{shop.id},
-      #{subPlanId},
-      #{status},
-      #{arrangeYear},
-      #{arrangeMonth},
-      #{createTime},
-      #{modifyTime},
-      #{createUserId},
-      #{modifyUserId},
-      #{orgId},
-      #{isDel}
-    )
-  </insert>
+    <update id="updateFrontPlan" parameterType="com.emucoo.model.TFrontPlan">
+        UPDATE t_front_plan
+        SET
+        plan_date = #{planDate},
+        status = #{status},
+        plan_precise_time = #{planPreciseTime},
+        remind_type = #{remindType},
+        actual_remind_time = #{actualRemindTime},
+        remark = #{remark},
+        arranger_id = #{arrangerId},
+        arrangee_id = #{arrangeeId},
+        notice_user_id = #{noticeUserId},
+        modify_user_id = #{modifyUserId},
+        modify_time = #{modifyTime}
+        WHERE id = #{id}
+    </update>
 
-  <update id="updateFrontPlan" parameterType="com.emucoo.model.TFrontPlan">
-    UPDATE t_front_plan
-    SET
-      plan_date = #{planDate},
-      status = #{status},
-      plan_precise_time = #{planPreciseTime},
-      remind_type = #{remindType},
-      actual_remind_time = #{actualRemindTime},
-      remark = #{remark},
-      arranger_id = #{arrangerId},
-      arrangee_id = #{arrangeeId},
-      notice_user_id = #{noticeUserId},
-      modify_user_id = #{modifyUserId},
-      modify_time = #{modifyTime}
-    WHERE id = #{id}
-  </update>
-  
-  <update id="uploadArrangeProcess" parameterType="com.emucoo.model.TFrontPlan">
-    UPDATE t_front_plan
-    SET
-    actual_execute_time = #{actualExecuteTime},
-    longitude = #{longitude},
-    latitude = #{latitude},
-    actual_execute_address = #{actualExecuteAddress},
-    status = #{status},
-    modify_user_id = #{modifyUserId},
-    modify_time = #{modifyTime}
-    WHERE id = #{id}
-  </update>
+    <update id="uploadArrangeProcess" parameterType="com.emucoo.model.TFrontPlan">
+        UPDATE t_front_plan
+        SET
+        actual_execute_time = #{actualExecuteTime},
+        longitude = #{longitude},
+        latitude = #{latitude},
+        actual_execute_address = #{actualExecuteAddress},
+        status = #{status},
+        modify_user_id = #{modifyUserId},
+        modify_time = #{modifyTime}
+        WHERE id = #{id}
+    </update>
 
-  <select id="findArrangeListByAreaId" resultMap="BaseResultMap">
-    SELECT
-    plan.id,
-    plan.plan_date,
-    plan.status,
-    plan.shop_id,
-    plan.sub_plan_id,
-    shopinfo.shop_name
-    FROM t_front_plan plan
-    INNER JOIN t_shop_info shopinfo
-    ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
-    AND shopinfo.is_use = TRUE
-    WHERE plan.shop_id in
-    (
-      SELECT
-      shop.id
-      from t_shop_info shop
-      INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
-      AND userShop.user_id IN
-      <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
-        #{userid}
-      </foreach>
-      WHERE shop.area_id = #{areaId}
-    )
-    AND plan.arrange_year = #{year} AND plan.arrange_month = #{month} AND plan.sub_plan_id = #{subPlanId}
-    AND plan.is_del = FALSE
-  </select>
+    <select id="findArrangeListByAreaId" resultMap="BaseResultMap">
+        SELECT
+        plan.id,
+        plan.plan_date,
+        plan.status,
+        plan.shop_id,
+        plan.sub_plan_id,
+        shopinfo.shop_name
+        FROM t_front_plan plan
+        INNER JOIN t_shop_info shopinfo
+        ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
+        AND shopinfo.is_use = TRUE
+        WHERE plan.shop_id in
+        (
+        SELECT
+        shop.id
+        from t_shop_info shop
+        INNER JOIN sys_user_shop userShop ON userShop.shop_id = shop.id
+        AND userShop.user_id IN
+        <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
+            #{userid}
+        </foreach>
+        WHERE shop.area_id = #{areaId}
+        )
+        AND plan.arrange_year = #{year} AND plan.arrange_month = #{month} AND plan.sub_plan_id = #{subPlanId}
+        AND plan.is_del = FALSE
+    </select>
 
-  <select id="findFinishedArrangeListByForms"  resultType="com.emucoo.model.ShopFormUseSummary">
-     SELECT
-     plan.shop_id AS shopId,
-     COUNT(planForm.form_main_id) AS formCount,
-     planForm.form_main_id AS formId
-     FROM t_front_plan plan
-     INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
-     AND planForm.report_status=1 AND planForm.is_del = FALSE
-     INNER JOIN sys_user_shop userShop ON userShop.shop_id = plan.shop_id
-     AND userShop.user_id IN
-     <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
-       #{userid}
-     </foreach>
-     WHERE planForm.form_main_id IN
-     <foreach collection="formIds" item="item" open="(" close=")" separator=",">
-      #{item}
-     </foreach>
-    AND plan.sub_plan_id = #{planId} AND plan.status=4 AND plan.is_del = FALSE
-    GROUP BY plan.shop_id, planForm.form_main_id
-  </select>
+    <select id="findFinishedArrangeListByForms" resultType="com.emucoo.model.ShopFormUseSummary">
+        SELECT
+        plan.shop_id AS shopId,
+        COUNT(planForm.form_main_id) AS formCount,
+        planForm.form_main_id AS formId
+        FROM t_front_plan plan
+        INNER JOIN t_front_plan_form planForm ON planForm.front_plan_id = plan.id
+        AND planForm.report_status=1 AND planForm.is_del = FALSE
+        INNER JOIN sys_user_shop userShop ON userShop.shop_id = plan.shop_id
+        AND userShop.user_id IN
+        <foreach collection="userIds" item="userid" open="(" close=")" separator=",">
+            #{userid}
+        </foreach>
+        WHERE planForm.form_main_id IN
+        <foreach collection="formIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        AND plan.sub_plan_id = #{planId} AND plan.status=4 AND plan.is_del = FALSE
+        GROUP BY plan.shop_id, planForm.form_main_id
+    </select>
 
-  <update id="deleteFrontPlanByIds" parameterType="ArrayList">
-    UPDATE t_front_plan
-    SET is_del = TRUE
-    WHERE id IN
-    <foreach collection="list" item="item" open="(" close=")" separator=",">
-      #{item}
-    </foreach>
-  </update>
+    <update id="deleteFrontPlanByIds" parameterType="ArrayList">
+        UPDATE t_front_plan
+        SET is_del = TRUE
+        WHERE id IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
 
-  <update id="updateFrontPlanStatus">
-    UPDATE t_front_plan
-    SET status = #{status}
-    WHERE id = #{arrangeId}
-  </update>
+    <update id="updateFrontPlanStatus">
+        UPDATE t_front_plan
+        SET status = #{status}
+        WHERE id = #{arrangeId}
+    </update>
 
-  <select id="filterExecuteRemindArrange" resultMap="BaseResultMap">
-    SELECT
-    plan.id,
-    plan.shop_id,
-    plan.plan_precise_time,
-    plan.actual_execute_time,
-    plan.remind_type,
-    plan.arrangee_id,
-    shopinfo.shop_name
-    FROM t_front_plan plan
-    INNER JOIN t_shop_info shopinfo
-    ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
-    WHERE plan.is_del = FALSE AND plan.status = 2 AND plan.plan_precise_time
-    BETWEEN #{remindTimeLeft} AND #{remindTimeRight}
-  </select>
+    <select id="filterExecuteRemindArrange" resultMap="BaseResultMap">
+        SELECT
+        plan.id,
+        plan.shop_id,
+        plan.plan_precise_time,
+        plan.actual_execute_time,
+        plan.remind_type,
+        plan.arrangee_id,
+        shopinfo.shop_name
+        FROM t_front_plan plan
+        INNER JOIN t_shop_info shopinfo
+        ON plan.shop_id = shopinfo.id AND shopinfo.is_del = FALSE
+        WHERE plan.is_del = FALSE AND plan.status = 2 AND plan.plan_precise_time
+        BETWEEN #{remindTimeLeft} AND #{remindTimeRight}
+    </select>
 </mapper>

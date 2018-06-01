@@ -213,11 +213,12 @@ public class CalendarServiceImpl implements CalendarService {
 
         }else if(ConstantsUtil.LoopWork.TYPE_FIVE.equals(workType)){
             //删除工作备忘实例
-            Example exampleTLoopWork=new Example(TLoopWork.class);
-            exampleTLoopWork.createCriteria().andEqualTo("workId",calendarDelVO.getWorkID()).andEqualTo("type",5);
-            TLoopWork tLoopWork=tLoopWorkMapper.selectOneByExample(exampleTLoopWork);
+            TLoopWork t=new TLoopWork();
+            t.setWorkId(calendarDelVO.getWorkID());
+            t.setType(5);
+            TLoopWork tLoopWork=tLoopWorkMapper.selectOne(t);
             if(tLoopWork.getExcuteUserId().equals(currentUserId)){
-                tLoopWorkMapper.deleteByExample(exampleTLoopWork);
+                tLoopWorkMapper.delete(t);
                 //删除工作备忘
                 Example example=new Example(TTask.class);
                 example.createCriteria().andEqualTo("workId",calendarDelVO.getWorkID());

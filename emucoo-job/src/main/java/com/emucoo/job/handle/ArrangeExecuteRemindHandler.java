@@ -3,6 +3,7 @@ package com.emucoo.job.handle;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.emucoo.common.util.MsgPushing;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.FunctionType;
 import com.emucoo.enums.ModuleType;
@@ -17,6 +18,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,10 +62,13 @@ public class ArrangeExecuteRemindHandler extends IJobHandler {
             for(TFrontPlan frontPlan : frontPlanList) {
                 SysUser user = userService.findById(frontPlan.getArrangeeId());
                 if(user != null) {
-                    pushTokens.add(user.getPushToken());
+                    if(StringUtils.isNotBlank(user.getPushToken())) {
+                        pushTokens.add(user.getPushToken());
+                    }
                     TBusinessMsg businessMsg = new TBusinessMsg();
                     businessMsg.setCreateTime(currentDate);
-                    businessMsg.setContent(sendContent);
+                    businessMsg.setMsg(sendContent);
+                    businessMsg.setContent(frontPlan.getShop().getShopName() + "巡店安排");
                     businessMsg.setFunctionType(FunctionType.EXECUTE_REMIND.getCode().byteValue());
                     businessMsg.setUnionType(ModuleType.SHOP_PLAN.getCode().byteValue());
                     businessMsg.setUnionId(frontPlan.getId());

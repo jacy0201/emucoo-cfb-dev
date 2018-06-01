@@ -26,17 +26,6 @@ public class MemoController extends AppBaseController {
 	@Autowired
     private UserService userService;
 
-	/**
-     *  取得防止重复提交的token
-	 */
-    @ApiOperation(value = "取得防止重复提交的token")
-    @PostMapping("/fetchSubmitToken")
-	public AppResult<SubmitTokenVo_O> fetchSubmitToken() {
-		SubmitTokenVo_O submitToken = new SubmitTokenVo_O();
-		submitToken.setSubmitToken(ReSubmitTokenManager.getToken());
-	    return success(submitToken);
-    }
-
     /**
      * 取联系人列表
      * @param params
@@ -61,14 +50,8 @@ public class MemoController extends AppBaseController {
 	public AppResult editMemo(@RequestBody ParamVo<MemoEditVo_I> params) {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         MemoEditVo_I memoEditVo_I = params.getData();
-	    String submitToken = memoEditVo_I.getSubmitToken();
-	    if(ReSubmitTokenManager.validateToken(submitToken)){
-	    	loopWorkService.editMemo(memoEditVo_I, user.getId());
-	    	ReSubmitTokenManager.clearToken(submitToken);
-	    	return success("success");
-		} else {
-	        return fail(AppExecStatus.SERVICE_ERR, "编辑工作备忘失败！");
-		}
+        loopWorkService.editMemo(memoEditVo_I, user.getId());
+        return success("success");
 	}
 
     /**

@@ -211,6 +211,13 @@
         </root>
     </springProfile>
 
+    <springProfile name="show">
+        <root level="info">
+            <appender-ref ref="INFO_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+    </springProfile>
     <!--生产环境:输出到文件-->
     <springProfile name="pro">
         <root level="info">

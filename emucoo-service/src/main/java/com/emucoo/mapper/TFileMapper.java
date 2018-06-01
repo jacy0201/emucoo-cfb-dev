@@ -10,4 +10,6 @@ public interface TFileMapper extends MyMapper<TFile> {
     List<TFile> fetchFilesByIds(List<String> idList);
 
     void dropByIds(List<String> strings);
+
+    void cleanFileById(Long resultId);
 }

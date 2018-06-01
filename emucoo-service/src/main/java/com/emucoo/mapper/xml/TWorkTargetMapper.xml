@@ -9,7 +9,7 @@
     <result column="month" property="month" jdbcType="VARCHAR" />
     <result column="kpi" property="kpi" jdbcType="VARCHAR" />
     <result column="work_content" property="workContent" jdbcType="VARCHAR" />
-    <result column="purchase_date" property="purchaseDate" jdbcType="TIMESTAMP" />
+    <result column="purchase_date" property="purchaseDate" jdbcType="VARCHAR" />
     <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_user_id" property="modifyUserId" jdbcType="BIGINT" />

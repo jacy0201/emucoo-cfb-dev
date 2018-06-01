@@ -19,4 +19,23 @@
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
   </resultMap>
+
+  <select id="findMsgSummaryByUserId" parameterType="Long" resultType="com.emucoo.model.MsgReceiveSummary">
+    SELECT
+    msgCount,
+    send_time AS msgSendTime,
+    content AS msgContent,
+    function_type
+    FROM
+    (
+        SELECT
+        count(id) as msgCount,
+        max(id) as id
+        FROM t_business_msg
+        WHERE receiver_id = #{userId} AND is_read = FALSE
+      GROUP BY function_type
+    ) AS t
+    left join t_business_msg as msg
+    ON t.id = msg.id
+  </select>
 </mapper>

@@ -1,7 +1,6 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import io.swagger.models.auth.In;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -172,6 +171,61 @@ public class TLoopWork extends BaseEntity {
 
     @Transient
     private String executeUserHeadImgUrl;
+
+    @Transient
+    private String taskTitle;
+
+    @Transient
+    private Boolean available;
+
+    @Transient
+    private String avatar;
+
+    @Transient
+    private String userName;
+
+    @Transient
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getTaskTitle() {
+        return taskTitle;
+    }
+
+    public void setTaskTitle(String taskTitle) {
+        this.taskTitle = taskTitle;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     /**
      * @return id

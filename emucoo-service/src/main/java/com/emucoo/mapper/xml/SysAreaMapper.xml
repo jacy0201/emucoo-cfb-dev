@@ -38,8 +38,9 @@
         WHERE area.is_del = FALSE
     </select>
 
-    <select id="findAreaListByUserIds" parameterType="ArrayList" resultType="com.emucoo.model.SysArea">
+    <select id="findDistinctAreaListByUserIds" parameterType="ArrayList" resultType="com.emucoo.model.SysArea">
       SELECT
+        DISTINCT
         area.id,
         area.area_name,
         area.area_desc
