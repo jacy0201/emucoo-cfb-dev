@@ -42,11 +42,6 @@
         where a.arrangee_id=#{userId} and DATE_FORMAT(a.plan_date,'%Y-%m-%d') = #{today}
     </select>
 
-    <select id="listCalendar" resultMap="BaseResultMap">
-        select * from t_front_plan
-        where arrangee_id=#{userId} and status=0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
-    </select>
-
     <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">
         INSERT INTO t_front_plan
         (
