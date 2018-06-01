@@ -92,6 +92,28 @@
         ORDER BY t1.execute_end_date asc
     </select>
 
+    <select id="getTaskList" resultType="com.emucoo.model.TLoopWork">
+        SELECT t1.*,t3.`name` AS taskTitle
+        FROM t_loop_work t1
+        LEFT JOIN t_task t3 ON t1.task_id = t3.id
+        WHERE 1=1
+        <if test="workType != null">
+            AND t1.type=#{workType}
+        </if>
+        <if test="auditUserId != null">
+            AND  t1.audit_user_id=#{auditUserId}
+        </if>
+        <if test="excuteUserId != null">
+            AND  t1.excute_user_id=#{excuteUserId}
+        </if>
+        <if test="createUserId != null">
+            AND  t1.create_user_id=#{createUserId}
+        </if>
+        AND ((year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
+        OR (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr}) )
+        ORDER BY t1.modify_time DESC
+    </select>
+
     <select id="calendarDateList" resultType="com.emucoo.model.TLoopWork">
         SELECT t1.*, t2.head_img_url, t2.real_name, t3.`name` AS taskTitle
         FROM t_loop_work t1
@@ -150,6 +172,9 @@
             </if>
             <if test="workResult != null">
                 work_result = #{workResult}
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime}
             </if>
         </set>
         WHERE work_id = #{workId} and sub_work_id = #{subWorkId} and type=#{type}
