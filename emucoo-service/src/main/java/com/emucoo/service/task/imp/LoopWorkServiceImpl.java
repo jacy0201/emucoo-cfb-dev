@@ -7,10 +7,7 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.LoopWorkService;
-import com.emucoo.utils.DateUtil;
-import com.emucoo.utils.TaskExeDateGenerator;
-import com.emucoo.utils.TaskUniqueIdUtils;
-import com.emucoo.utils.WaterMarkUtils;
+import com.emucoo.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,7 +88,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         lw.setType(voi.getWorkType());
         lw.setWorkId(voi.getWorkID());
         lw.setSubWorkId(voi.getSubID());
-        lw.setWorkStatus(2);
+        lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
         lw.setAuditDeadline(DateUtil.addDateHours(new Date(), 12));
         lw.setModifyTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(lw);
@@ -156,7 +153,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         operateDataForWorkMapper.auditOperateData(toof);
 
         loopWork.setType(atai.getWorkType());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(atai.getReviewResult());
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
@@ -469,7 +466,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(task.getId());
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
 
             lw.setWorkId(task.getWorkId());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
@@ -596,7 +593,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(5);
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
@@ -690,7 +687,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(voi.getSubWorkID());
             lw.setType(5);
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));

@@ -4,6 +4,7 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.TaskCommonService;
+import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
 import com.emucoo.utils.TaskUniqueIdUtils;
 import com.emucoo.utils.WaterMarkUtils;
@@ -212,7 +213,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
             }
         }
-        loopWork.setWorkStatus(2);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
 
         loopWorkMapper.updateWorkStatus(loopWork);
 
@@ -306,7 +307,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
         loopWork.setAuditTime(DateUtil.currentDate());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(auditResult);
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
@@ -829,7 +830,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 //            loopWork.setVersion();
             loopWork.setWorkId(uniWorkId);
 //            loopWork.setWorkResult();
-            loopWork.setWorkStatus(1);
+            loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
 
             loopWorkMapper.insert(loopWork);
 

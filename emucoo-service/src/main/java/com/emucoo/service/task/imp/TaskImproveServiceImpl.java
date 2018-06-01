@@ -167,7 +167,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setExecuteDeadline(dateDeadline);
 // TODO:                loopWork.setExecuteRemindTime();
 
-        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_ONE);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
         loopWork.setType(ConstantsUtil.LoopWork.TYPE_THREE);
 
         loopWork.setExcuteUserId(executor.getExecutorID());
@@ -208,7 +208,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setSubWorkId(submitIn.getSubID());
         loopWork.setType(submitIn.getWorkType());
         loopWork.setExcuteUserId(user.getId());
-        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_TWO);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
 
         // 设置提交时间的12小时后
         loopWork.setModifyTime(new Date());
@@ -285,7 +285,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setType(auditIn.getWorkType());
         loopWork.setSubWorkId(auditIn.getSubID());
         loopWork.setAuditUserId(user.getId());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(auditIn.getReviewResult());
         loopWork.setAuditTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
