@@ -52,7 +52,6 @@
         select count(1) from t_loop_work a inner join t_task b on a.task_id = b.id
         where a.audit_user_id=#{auditUserId}
         and a.work_status=2
-        and a.work_result is NULL
         and a.type is not null
         and #{today} between a.execute_begin_date and a.audit_deadline
     </select>
@@ -75,7 +74,6 @@
         inner JOIN t_task t3 ON t1.task_id = t3.id
         WHERE t1.audit_user_id = #{auditUserId}
         AND t1.work_status = 2
-        AND t1.work_result is NULL
         AND t1.type is NOT NULL
         AND #{today} between t1.execute_begin_date and t1.audit_deadline
     </select>
