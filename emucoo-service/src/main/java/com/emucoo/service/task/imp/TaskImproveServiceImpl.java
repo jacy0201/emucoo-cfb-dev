@@ -256,13 +256,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     public void auditImproveTask(TaskImproveAuditIn auditIn, SysUser user) {
         // LoopWork
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(auditIn.getWorkID(), auditIn.getSubID(), auditIn.getWorkType());
-        loopWork.setWorkId(auditIn.getWorkID());
-        loopWork.setType(auditIn.getWorkType());
-        loopWork.setSubWorkId(auditIn.getSubID());
-        loopWork.setAuditUserId(user.getId());
-        loopWork.setWorkResult(auditIn.getReviewResult());
-        loopWork.setAuditTime(DateUtil.currentDate());
-        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
         List<TFile> imgs = new ArrayList<>();
         List<ImageUrl> imageUrls = auditIn.getReviewImgArr();
@@ -287,6 +280,15 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             odw.setAuditImgIds(StringUtils.join(imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList()), ","));
         };
         operateDataForWorkMapper.updateByPrimaryKey(odw);
+
+        loopWork.setWorkId(auditIn.getWorkID());
+        loopWork.setType(auditIn.getWorkType());
+        loopWork.setSubWorkId(auditIn.getSubID());
+        loopWork.setAuditUserId(user.getId());
+        loopWork.setWorkStatus(4);
+        loopWork.setWorkResult(auditIn.getReviewResult());
+        loopWork.setAuditTime(DateUtil.currentDate());
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
 
     private List<String> convertImgIds2ImgUrls(String ids) {
