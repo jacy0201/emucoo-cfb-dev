@@ -18,11 +18,12 @@ public interface UserCenterService extends BaseService<TLoopWork> {
     //我创建的任务
     List<TaskVO> createTaskList(String month,Long userId);
 
+    //巡店任务
+    List<TaskVO> frontPlanList(String month,Long userId);
+
     //我接收的报告
     List<TaskVO> getReportList(String month,Long userId);
 
-    //巡店任务
-    List<TaskVO> frontPlanList(String month,Long userId);
 
     //维修任务
 

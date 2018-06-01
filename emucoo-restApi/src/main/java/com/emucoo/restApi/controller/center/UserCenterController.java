@@ -10,10 +10,8 @@ import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.sys.SysUserService;
-import com.emucoo.service.task.LoopWorkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.tomcat.util.threads.TaskQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -101,6 +99,19 @@ public class UserCenterController extends AppBaseController {
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         return success("success");
+    }
+
+
+    /**
+     * 巡店任务
+     */
+    @ApiOperation(value="巡店任务")
+    @PostMapping("/frontPlanList")
+    public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params){
+        TaskQuery taskQuery=params.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        List<TaskVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
+        return success(list);
     }
 
 
