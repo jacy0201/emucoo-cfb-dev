@@ -67,21 +67,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public void add(TLoopWork loopWork) {
-        loopWorkMapper.insert(loopWork);
-    }
-
-    @Override
-    public void modify(TLoopWork loopWork) {
-        loopWorkMapper.updateByPrimaryKey(loopWork);
-    }
-
-    @Override
-    public TLoopWork fetchByWorkId(String workId, String subWorkId, int workType) {
-        return loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
-    }
-
-    @Override
     @Transactional
     public void submitAssignTask(AssignTaskSubmitVo_I voi) {
         TLoopWork lw = loopWorkMapper.fetchOneTaskByWorkIds(voi.getWorkID(), voi.getSubID());
@@ -442,12 +427,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
         if(isContainsDate(dts, today)) {
-            buildLoopWorkInstance(task, today);
+            createAssignWorkInstance(task, today);
         }
 
     }
 
-    private void buildLoopWorkInstance(TTask task, Date dt) {
+    private void createAssignWorkInstance(TTask task, Date dt) {
         // 根据执行人产生任务实例
         if (StringUtils.isBlank(task.getExecuteUserIds())) {
             return;
@@ -771,12 +756,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWorkMapper.updateByExampleSelective(tLoopWork,example);
     }
 
-
-    @Override
-    public TTask fetchTaskById(long id) {
-        return taskMapper.selectByPrimaryKey(id);
-    }
-
     @Override
     public AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
@@ -825,11 +804,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     private boolean isContainsDate(List<Date> dates, Date dt) {
-        for (Date date : dates) {
-            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
-                return true;
-        }
-        return false;
+        return TaskExeDateGenerator.isContainsDate(dates, dt);
     }
 
     @Override
@@ -840,7 +815,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         for (TTask task : assignTasks) {
             List<Date> dts = genDatesByRepeatType(task);
             if (isContainsDate(dts, today)) {
-                buildLoopWorkInstance(task, today);
+                createAssignWorkInstance(task, today);
             }
         }
     }

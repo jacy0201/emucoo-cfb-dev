@@ -23,4 +23,6 @@ public interface TTaskMapper extends MyMapper<TTask> {
     List<TTask> filterAvailableCommonTask(Date theDay);
 
     List<TTask> filterAvailableAssignTask(Date theDay);
+
+    List<TTask> filterAvailableImproveTask(Date theDay);
 }
