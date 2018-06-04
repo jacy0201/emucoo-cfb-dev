@@ -192,8 +192,6 @@ public class SysDeptController extends BaseResource {
 	//@RequiresPermissions("sys:user:deleteUser")
 	public ApiResult deleteUser(@RequestBody SysUserRelation sysUserRelation){
 		if(sysUserRelation.getId()==null){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
-		if(sysUserRelation.getUserId()==null){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-        //检查该用户是否有下级，如果有下级需先删除下级用户
         SysUserRelation sysUserRelation1=sysUserRelationService.findById(sysUserRelation.getId());
         Long userId=sysUserRelation1.getUserId();
         Long parentUserId=sysUserRelation1.getParentUserId();
