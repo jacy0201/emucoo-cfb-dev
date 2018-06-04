@@ -1,6 +1,7 @@
 package com.emucoo.restApi.controller.center;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskQuery;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.model.SysUser;
@@ -98,7 +99,8 @@ public class UserCenterController extends AppBaseController {
     public AppResult getReportList(@RequestBody ParamVo<TaskQuery> params){
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        return success("success");
+        List<ReportVO> list=userCenterService.getReportList(taskQuery.getMonth(),currUser.getId());
+        return success(list);
     }
 
 
@@ -113,7 +115,5 @@ public class UserCenterController extends AppBaseController {
         List<TaskVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
-
-
 
 }

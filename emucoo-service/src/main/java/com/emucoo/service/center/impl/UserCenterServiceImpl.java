@@ -1,6 +1,7 @@
 package com.emucoo.service.center.impl;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -104,15 +105,10 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     //我接收的报告
     @Override
-    public List<TaskVO> getReportList(String month,Long userId){
-        return null;
+    public List<ReportVO> getReportList(String month, Long userId){
 
+        return  null;
     }
-
-
-
-
-
 
 
     private List<TaskVO> getTaskVOS(List<TLoopWork> loopWorkList) {
@@ -135,8 +131,6 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
         }
         return list;
     }
-
-
 
 
 }

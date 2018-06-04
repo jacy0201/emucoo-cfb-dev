@@ -44,6 +44,19 @@
             a.user_id = #{userId} and a.is_read=0
     </select>
 
+    <select id="fetchReceiveReport" resultType="com.emucoo.dto.modules.center.ReportVO">
+        select  b.id as reportId,
+        b.reporter_name as reporterName,
+        b.
+        from t_report_user a
+        INNER JOIN t_report_user reportUser ON reportUser.report_id = report.id
+        AND reportUser.user_id = #{userId}
+        left join sys_dept d on b.reporter_dpt_id=d.id
+        where
+        a.user_id = #{userId} and a.is_read=0
+    </select>
+
+
     <select id="findReportByUser" resultMap="BaseResultMap">
         SELECT
         report.id,
