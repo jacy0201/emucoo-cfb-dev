@@ -1,27 +1,27 @@
 package com.emucoo.enums;
 
 /**
- * Created by sj on 2018/5/23.
+ * Created by sj on 2018/6/1.
  */
-public enum FormType {
-    RVR_TYPE(1, "类RVR表"),
+public enum ShopType {
+    DIRECT_SALE(1, "直营"),
 
-    ABILITY_TYPE(2, "能力模型表");
+    FRANCHISE(2, "加盟");
 
     private final Integer code;
     private final String msg;
 
 
-    private FormType(Integer val, String info) {
+    private ShopType(Integer val, String info) {
         this.code = val;
         this.msg = info;
 
     }
 
     // 普通方法
-    public static String getName(int index) {
-        for (FormType c : FormType.values()) {
-            if (c.getCode() == index) {
+    public static String getName(int code) {
+        for (ShopType c : ShopType.values()) {
+            if (c.getCode() == code) {
                 return c.msg;
             }
         }

@@ -590,7 +590,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 taskOption.setNeedFeedbackText(option.getFeedbackNeedText());
                 taskOption.setFeedbackTextName(option.getFeedbackTextName());
                 taskOption.setFeedbackTextDescription(option.getFeedbackTextDescription());
-                taskOption.setNeedFeedbackImg(option.getFeedbackNeedNum());
+                taskOption.setNeedFeedbackNum(option.getFeedbackNeedNum());
                 taskOption.setFeedbackNumName(option.getFeedbackNumName());
                 taskOption.setFeedbackNumType(option.getFeedbackNumType());
                 taskOption.setNeedFeedbackImg(option.getFeedbackImgType() == 0 ? false : true);

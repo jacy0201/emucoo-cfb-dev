@@ -94,10 +94,7 @@
         SELECT t1.*,t3.`name` AS taskTitle
         FROM t_loop_work t1
         LEFT JOIN t_task t3 ON t1.task_id = t3.id
-        WHERE 1=1
-        <if test="workType != null">
-            AND t1.type=#{workType}
-        </if>
+        WHERE t1.type != 4
         <if test="auditUserId != null">
             AND  t1.audit_user_id=#{auditUserId}
         </if>
@@ -109,7 +106,15 @@
         </if>
         AND ((year(t1.execute_begin_date)=#{yearStr} and month(t1.execute_begin_date) = #{monthStr})
         OR (year(t1.execute_end_date)=#{yearStr} and month(t1.execute_end_date) = #{monthStr}) )
-        ORDER BY t1.modify_time DESC
+        <if test="auditUserId != null">
+            ORDER BY t1.audit_time DESC
+        </if>
+        <if test="excuteUserId != null">
+            ORDER BY t1.execute_deadline DESC
+        </if>
+        <if test="createUserId != null">
+            ORDER BY t1.create_time DESC
+        </if>
     </select>
 
     <select id="calendarDateList" resultType="com.emucoo.model.TLoopWork">
@@ -281,8 +286,8 @@
         s.work_status taskStatus,
         t.name taskTitle,
         t.description taskExplain,
-        DATE_FORMAT(s.execute_begin_date, '%Y%m%d %T') startDate,
-        DATE_FORMAT(s.execute_end_date, '%Y%m%d %T') endDate,
+        DATE_FORMAT(s.execute_begin_date, '%Y%m%d') startDate,
+        DATE_FORMAT(s.execute_end_date, '%Y%m%d') endDate,
         (UNIX_TIMESTAMP(s.execute_deadline) * 1000) as submitDeadline,
         (UNIX_TIMESTAMP(s.audit_deadline) * 1000) as reviewDeadline,
         s.excute_user_id executorID,

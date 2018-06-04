@@ -45,6 +45,9 @@ public class TFormSubPbmVal extends BaseEntity {
     @Column(name = "is_score")
     private Boolean isScore;
 
+    @Column(name = "is_na")
+    private Boolean isNa;
+
     @Column(name = "problem_description")
     private String problemDescription;
 
@@ -142,6 +145,14 @@ public class TFormSubPbmVal extends BaseEntity {
      */
     public void setSubProblemName(String subProblemName) {
         this.subProblemName = subProblemName;
+    }
+
+    public Boolean getIsNa() {
+        return isNa;
+    }
+
+    public void setIsNa(Boolean isNa) {
+        this.isNa = isNa;
     }
 
     /**

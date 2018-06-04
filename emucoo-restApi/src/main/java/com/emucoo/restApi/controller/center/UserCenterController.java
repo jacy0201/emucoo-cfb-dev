@@ -1,6 +1,7 @@
 package com.emucoo.restApi.controller.center;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskQuery;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.model.SysUser;
@@ -10,10 +11,8 @@ import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.sys.SysUserService;
-import com.emucoo.service.task.LoopWorkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.tomcat.util.threads.TaskQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,8 +49,6 @@ public class UserCenterController extends AppBaseController {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
         sysUserService.editUser(sysUser);
-        //删除redis 缓存
-    //    redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
         return success("success");
     }
 
@@ -100,9 +97,21 @@ public class UserCenterController extends AppBaseController {
     public AppResult getReportList(@RequestBody ParamVo<TaskQuery> params){
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        return success("success");
+        List<ReportVO> list=userCenterService.getReportList(taskQuery.getMonth(),currUser.getId());
+        return success(list);
     }
 
 
+    /**
+     * 巡店任务
+     */
+    @ApiOperation(value="巡店任务")
+    @PostMapping("/frontPlanList")
+    public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params){
+        TaskQuery taskQuery=params.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        List<TaskVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
+        return success(list);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.emucoo.service.center;
 
 import com.emucoo.common.base.service.BaseService;
+import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TLoopWork;
@@ -18,11 +19,11 @@ public interface UserCenterService extends BaseService<TLoopWork> {
     //我创建的任务
     List<TaskVO> createTaskList(String month,Long userId);
 
-    //我接收的报告
-    List<TaskVO> getReportList(String month,Long userId);
-
     //巡店任务
-    List<TFrontPlan> frontPlanList(String month,Long userId);
+    List<TaskVO> frontPlanList(String month,Long userId);
+
+    //我接收的报告
+    List<ReportVO> getReportList(String month, Long userId);
 
     //维修任务
 
