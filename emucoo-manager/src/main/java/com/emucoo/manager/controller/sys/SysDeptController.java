@@ -152,16 +152,6 @@ public class SysDeptController extends BaseResource {
 		if(jedisCluster.exists(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId())){
             //删除缓存
             jedisCluster.del(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId());
-			/*String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId());
-			String[] idArr = userIdStr.split(",");
-			if(null!=idArr && idArr.length>0) {
-				//判断是否存在该下级
-				List userIdList = new ArrayList(Arrays.asList(idArr));
-				if (!userIdList.contains(sysUserRelation.getUserId().toString())) {
-					userIdList.add(sysUserRelation.getUserId().toString());
-					jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
-				}
-			}*/
 		}
 		return success("success");
 	}
@@ -207,20 +197,6 @@ public class SysDeptController extends BaseResource {
         if(jedisCluster.exists(ISystem.IUSER.USER_RECENT + parentUserId)){
             //删除缓存
             jedisCluster.del(ISystem.IUSER.USER_RECENT + parentUserId);
-			/*String userIdStr=jedisCluster.get(ISystem.IUSER.USER_RECENT + parentUserId);
-            String[] idArr = userIdStr.split(",");
-            if(null!=idArr && idArr.length>0) {
-				List<Long> userIdList = new ArrayList(Arrays.asList(idArr));
-				//缓存中删除该下级
-				for (int i = 0; i < userIdList.size(); i++) {
-                    Long rUserId=userIdList.get(i);
-					if (userId.equals(rUserId)) {
-						userIdList.remove(i);
-						break;
-					}
-				}
-				jedisCluster.set(ISystem.IUSER.USER_RECENT + sysUserRelation.getParentUserId(), StringUtils.join(userIdList, ","));
-			}*/
         }
 		return success("success");
 	}
