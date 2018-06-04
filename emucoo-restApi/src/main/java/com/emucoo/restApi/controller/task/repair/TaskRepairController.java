@@ -70,7 +70,7 @@ public class TaskRepairController extends AppBaseController {
     }
 
     @ApiOperation(value = "完成维修任务", httpMethod = "POST")
-    @PostMapping
+    @PostMapping("/finish")
     public AppResult<String> finish(@RequestBody ParamVo<TRepairWork> param) {
         TRepairWork work = param.getData();
         taskRepairService.finishRepairWork(work);
@@ -78,7 +78,7 @@ public class TaskRepairController extends AppBaseController {
     }
 
     @ApiOperation(value = "验收维修任务", httpMethod = "POST")
-    @PostMapping
+    @PostMapping("/audit")
     public AppResult<String> audit(@RequestBody ParamVo<TRepairWork> param) {
         TRepairWork work = param.getData();
         taskRepairService.auditRepairWork(work);
