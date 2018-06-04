@@ -13,6 +13,7 @@ public class SubProblemVo {
     private String problemDescription;
     private Boolean isDone;
     private Boolean isPass;
+    private Boolean isNA;
     private Boolean isSubList;
     private List<ProblemChanceVo> subProblemChanceArray;
     private List<ProblemChanceVo> subOtherChanceArray;
@@ -49,6 +50,14 @@ public class SubProblemVo {
 
     public String getNotes() {
         return notes;
+    }
+
+    public Boolean getIsNA() {
+        return isNA;
+    }
+
+    public void setIsNA(Boolean isNA) {
+        this.isNA = isNA;
     }
 
     public String getProblemDescription() {

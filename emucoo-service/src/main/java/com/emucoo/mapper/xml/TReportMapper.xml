@@ -129,4 +129,20 @@
           #{createUserId}
         )
     </insert>
+
+    <select id="findReportByFormIdAndTime" resultType="com.emucoo.model.TReport">
+        SELECT
+        report.id,
+        report.shop_id,
+        report.shop_name,
+        report.reporter_position,
+        report.reporter_name,
+        report.form_result_id,
+        report.create_time
+        FROM t_report report
+        INNER JOIN t_form_check_result result ON result.id = report.form_result_id
+        AND result.form_main_id = #{formId}
+        WHERE report.create_time BETWEEN #{beginDate} AND #{endDate}
+        ORDER BY report.create_time ASC
+    </select>
 </mapper>

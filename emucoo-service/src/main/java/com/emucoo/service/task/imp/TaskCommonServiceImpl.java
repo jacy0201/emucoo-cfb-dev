@@ -214,7 +214,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
         loopWork.setWorkStatus(2);
 
-        loopWorkMapper.updateWorkStatus(loopWork);
 
         List<TOperateDataForWork> odfws1 = new ArrayList<>();
         List<TOperateDataForWork> odfws2 = new ArrayList<>();
@@ -255,7 +254,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setImgIds(StringUtils.join(imgids, ","));
             odfw.setNumOptionType(option.getFeedbackNumType());
             odfw.setNumOptionName(option.getFeedbackNumName());
-            odfw.setNumOptionValue(String.valueOf(taskItem.getDigitalItemValue()));
+            odfw.setNumOptionValue(String.valueOf(taskItem.getDigitalItemValue() == null ? 0.0 : taskItem.getDigitalItemValue()));
             odfw.setCreateTime(DateUtil.currentDate());
             odfw.setModifyTime(DateUtil.currentDate());
         }
@@ -266,6 +265,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
         }
 
+        loopWorkMapper.updateWorkStatus(loopWork);
     }
 
     @Override
