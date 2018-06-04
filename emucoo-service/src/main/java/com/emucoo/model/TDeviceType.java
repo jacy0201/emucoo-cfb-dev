@@ -1,19 +1,20 @@
 package com.emucoo.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "t_device_type")
 public class TDeviceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long id = 0;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "type_id")
-    private long typeId;
+    private long typeId = 0;
 
     @Column(name = "type_name")
     private String typeName;
@@ -24,7 +25,11 @@ public class TDeviceType {
     @Column(name = "description")
     private String description;
 
-    @Column
+    @Transient
+    private List<TDeviceType> children;
+
+    @Transient
+    private List<TDeviceProblem> problems;
 
     public long getId() {
         return id;
@@ -72,5 +77,21 @@ public class TDeviceType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<TDeviceType> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<TDeviceType> children) {
+        this.children = children;
+    }
+
+    public List<TDeviceProblem> getProblems() {
+        return problems;
+    }
+
+    public void setProblems(List<TDeviceProblem> problems) {
+        this.problems = problems;
     }
 }
