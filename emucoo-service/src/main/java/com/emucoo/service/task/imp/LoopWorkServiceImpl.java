@@ -64,8 +64,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public int fetchPendingReviewWorkNum(Long submitUserId) {
-        return loopWorkMapper.countPendingReviewWorkNum(submitUserId);
+    public int fetchPendingReviewWorkNum(Long submitUserId, Date today) {
+        return loopWorkMapper.countPendingReviewWorkNum(submitUserId, today);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         lw.setWorkStatus(2);
         lw.setAuditDeadline(DateUtil.addDateHours(new Date(), 12));
         lw.setModifyTime(DateUtil.currentDate());
-        loopWorkMapper.updateWorkStatus(lw);
+        loopWorkMapper.updateByPrimaryKeySelective(lw);
 
         List<String> imgids = new ArrayList<>();
         if (voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
@@ -131,12 +131,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
         if (loopWork == null)
             return;
-        loopWork.setType(atai.getWorkType());
-        loopWork.setWorkResult(atai.getReviewResult());
-        loopWork.setAuditUserId(user.getId());
-        loopWork.setAuditUserName(user.getUsername());
-
-        loopWorkMapper.auditLoopWork(loopWork);
 
         List<String> aimgs = new ArrayList<>();
         if (atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
@@ -158,8 +152,15 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         toof.setAuditResult(atai.getReviewResult());
         toof.setModifyTime(DateUtil.currentDate());
         toof.setAuditContent(atai.getReviewOpinion());
-
         operateDataForWorkMapper.auditOperateData(toof);
+
+        loopWork.setType(atai.getWorkType());
+        loopWork.setWorkStatus(4);
+        loopWork.setWorkResult(atai.getReviewResult());
+        loopWork.setAuditUserId(user.getId());
+        loopWork.setAuditUserName(user.getUsername());
+        loopWork.setAuditTime(DateUtil.currentDate());
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
 
     @Override
@@ -477,6 +478,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteEndDate(dt);
             lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + task.getExecuteDeadline()));
 
+            lw.setCreateUserId(task.getCreateUserId());
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
 
@@ -598,6 +600,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
+            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
             Date RemindTime=null;
             //type=1 ，提醒时间为 日程开始时间
             if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
@@ -692,6 +695,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
+            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
             Date RemindTime=null;
             //type=1 ，提醒时间为 日程开始时间
             if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
@@ -935,9 +939,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Override
     public WorkVo_O viewPendingReviewWorks(Long auditUserId) {
-        Date ldt = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        Date rdt = DateUtil.dateAddDay(ldt, 1);
-        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, ldt, rdt);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
+        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, today);
         List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
             WorkVo_O.Work work = new WorkVo_O.Work();
             work.setId(t.getId());

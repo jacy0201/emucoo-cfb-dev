@@ -1,17 +1,18 @@
 package com.emucoo.restApi.controller.calendar;
 
-import com.emucoo.common.base.rest.ApiExecStatus;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.calendar.WorkTargetDelVO;
 import com.emucoo.dto.modules.calendar.WorkTargetQueryVO;
 import com.emucoo.dto.modules.calendar.WorkTargetVO;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TShopInfo;
 import com.emucoo.model.TWorkTarget;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.calendar.WorkTargetService;
+import com.emucoo.service.sys.SysShopService;
 import com.emucoo.utils.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,8 @@ public class WorkTargetController extends AppBaseController {
 
     @Autowired
     private WorkTargetService workTargetService;
+    @Autowired
+    private SysShopService  sysShopService;
 
     /**
      * 获取用户月工作目标
@@ -91,6 +94,20 @@ public class WorkTargetController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         workTargetService.editWorkTarget(workTargetVO,user.getId());
         return success("success");
+    }
+
+    /**
+     * 选择店面
+     * @param
+     * @return
+     */
+    @ApiOperation(value = "选择店面")
+    @PostMapping(value = "/selectShop")
+    public AppResult selectShop() {
+        Example example=new Example(TShopInfo.class);
+        example.createCriteria().andEqualTo("isDel",false).andEqualTo("isUse",true);
+        List<TShopInfo> list=sysShopService.selectByExample(example);
+        return success(list);
     }
 
 

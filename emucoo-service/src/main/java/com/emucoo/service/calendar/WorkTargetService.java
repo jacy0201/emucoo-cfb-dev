@@ -1,13 +1,10 @@
 package com.emucoo.service.calendar;
 
 import com.emucoo.common.base.service.BaseService;
-import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.dto.modules.calendar.WorkTargetDelVO;
 import com.emucoo.dto.modules.calendar.WorkTargetQueryVO;
 import com.emucoo.dto.modules.calendar.WorkTargetVO;
-import com.emucoo.model.SysPost;
 import com.emucoo.model.TWorkTarget;
-import com.emucoo.service.sys.SysPostService;
 
 /**
  * 工作目标

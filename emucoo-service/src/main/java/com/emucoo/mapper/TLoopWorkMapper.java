@@ -23,7 +23,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     List<TLoopWork> listPendingExecute(@Param("executeUserId") Long executeUserId, @Param("date") Date date);
 
-    List<TLoopWork> listPendingReview(@Param("auditUserId") Long auditUserId, @Param("ldt") Date ldt, @Param("rdt") Date rdt);
+    List<TLoopWork> listPendingReview(@Param("auditUserId") Long auditUserId, @Param("today") Date today);
 
     List<TLoopWork> calendarMonthList(@Param("userId") Long userId,@Param("yearStr") String yearStr,@Param("monthStr")  String monthStr);
 
@@ -31,7 +31,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     int countPendingExecuteWorkNum(@Param("submitUserId") Long submitUserId, @Param("today") Date today);
 
-    int countPendingReviewWorkNum(@Param("auditUserId") Long auditUserId);
+    int countPendingReviewWorkNum(@Param("auditUserId") Long auditUserId, @Param("today") Date today);
 
     List<TLoopWork> fetchTaskExeHistory(@Param("workType") String workType, @Param("workId") String workId);
 
@@ -56,4 +56,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     List<TLoopWork> filterAuditRemindWorks(@Param("deadTimeLeft") Date deadTimeLeft, @Param("deadTimeRight") Date deadTimeRight, @Param("remindTimeLeft") Date remindTimeLeft, @Param("remindTimeRight") Date remindTimeRight);
 
     int isLoopWorkExist(@Param("taskId") Long taskId, @Param("dt") Date dt, @Param("executorId") Long executorId);
+
+    List<TLoopWork> getTaskList(@Param("yearStr") String yearStr,@Param("monthStr") String monthStr,
+                                @Param("auditUserId") Long auditUserId,@Param("excuteUserId") Long excuteUserId,@Param("createUserId") Long createUserId);
 }

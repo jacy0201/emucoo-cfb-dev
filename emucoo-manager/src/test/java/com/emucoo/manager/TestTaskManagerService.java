@@ -21,7 +21,7 @@ public class TestTaskManagerService {
     @Test
     public void testSwitchCommonTask() {
         List<Long> ids = new ArrayList<>();
-        ids.add(84L);
+        ids.add(246L);
 
         taskCommonService.switchCommonTask(ids, true);
         Assert.assertTrue(true);

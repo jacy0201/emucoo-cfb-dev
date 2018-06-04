@@ -21,6 +21,7 @@
         <result column="reporter_dpt_id" property="reporterDptId" jdbcType="BIGINT"/>
         <result column="reporter_position_id" property="reporterPositionId" jdbcType="VARCHAR"/>
         <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+        <result column="form_type" property="formType" jdbcType="INTEGER"/>
         <association property="reportUser" javaType="com.emucoo.model.TReportUser">
             <id column="report_user_id" property="id" jdbcType="BIGINT"/>
             <id column="user_id" property="userId" jdbcType="BIGINT"/>
@@ -43,6 +44,22 @@
         where
             a.user_id = #{userId} and a.is_read=0
     </select>
+
+    <select id="fetchReceiveReport" resultType="com.emucoo.model.TReport">
+        SELECT
+        report.id AS reportId,
+        report.shop_name AS shopName,
+        report.reporter_name AS reporterName,
+        report.form_type AS formType,
+        report.check_form_time AS checkFormTime
+        FROM t_report report
+        INNER JOIN t_report_user reportUser
+        ON reportUser.report_id = report.id
+        AND reportUser.user_id = #{userId}
+        AND str_to_date(report.create_time,'%Y-%m') =str_to_date(#{month},'%Y-%m')
+        ORDER BY report.create_time DESC
+    </select>
+
 
     <select id="findReportByUser" resultMap="BaseResultMap">
         SELECT

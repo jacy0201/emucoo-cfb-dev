@@ -199,16 +199,17 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setExcuteUserId(user.getId());
         loopWork.setExcuteUserName(user.getUsername());
         loopWork.setModifyTime(DateUtil.currentDate());
+        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 4, 0));
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] tms = task.getAuditDeadline().split(":");
             if (tms.length == 1) {
                 int mi = Integer.parseInt(tms[0]);
-                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
             }
             if (tms.length == 2) {
                 int hr = Integer.parseInt(tms[0]);
                 int mi = Integer.parseInt(tms[1]);
-                loopWork.setAuditTime(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
             }
         }
         loopWork.setWorkStatus(2);
@@ -270,23 +271,22 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Override
     public void auditTask(TaskCommonAuditIn taskCommonAuditIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonAuditIn.getWorkID(), taskCommonAuditIn.getSubID(), taskCommonAuditIn.getWorkType());
-
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
         HashMap<Long, TOperateOption> optMaps = new HashMap<>();
         for (TOperateOption opt : options) {
             optMaps.put(opt.getId(), opt);
         }
-        loopWork.setAuditUserId(user.getId());
-        loopWork.setAuditUserName(user.getUsername());
-        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
 
+        int auditResult = 1;
         List<TaskCommonAuditIn.AuditTaskItem> taskItemArr = taskCommonAuditIn.getReviewArr();
         for (TaskCommonAuditIn.AuditTaskItem taskItem : taskItemArr) {
             // 任务审核
             TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
             odfw.setTaskItemId(taskItem.getTaskItemID());
             odfw.setLoopWorkId(loopWork.getId());
-            odfw.setAuditResult(taskItem.getReviewResult());
+            int tmpi = taskItem.getReviewResult() == null ? 2 : taskItem.getReviewResult();
+            auditResult = (tmpi == 1 && auditResult == 1)? 1:2;
+            odfw.setAuditResult(tmpi);
             odfw.setAuditContent(taskItem.getReviewOpinion());
             odfw.setAuditUserId(user.getId());
             List<ImageUrl> imgarr = taskItem.getReviewImgArr();
@@ -302,6 +302,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setAuditImgIds(StringUtils.join(imgids, ","));
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
         }
+
+        loopWork.setAuditUserId(user.getId());
+        loopWork.setAuditUserName(user.getUsername());
+        loopWork.setAuditTime(DateUtil.currentDate());
+        loopWork.setWorkStatus(4);
+        loopWork.setWorkResult(auditResult);
+        loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
 
     @Override
@@ -312,13 +319,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             return;
 
         fileMapper.deleteByIds(opData.getImgIds());
-//        List<Long> oldids = Arrays.asList(opData.getImgIds().split(",")).stream().map(id -> Long.valueOf(id)).collect(Collectors.toList());
-//        for(Long id : oldids) {
-//            TFile file = fileMapper.selectByPrimaryKey(id);
-//            String location = file.getLocation();
-//            Date fileDate = file.getFileDate();
-//        }
-
         List<ExecuteImgIn.ExecuteImg> inimgs = vo.getExecuteImgArr();
         List<TFile> newImgs = new ArrayList<>();
         for (ExecuteImgIn.ExecuteImg inimg : inimgs) {
@@ -329,7 +329,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             nimg.setModifyTime(DateUtil.currentDate());
             nimg.setCreateUserId(user.getId());
             nimg.setIsDel(false);
-
             newImgs.add(nimg);
         }
         fileMapper.insertList(newImgs);

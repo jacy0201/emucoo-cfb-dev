@@ -17,7 +17,7 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
 
     int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
 
-    int fetchPendingReviewWorkNum(Long submitUserId);
+    int fetchPendingReviewWorkNum(Long submitUserId, Date today);
 
     void add(TLoopWork loopWork);
 

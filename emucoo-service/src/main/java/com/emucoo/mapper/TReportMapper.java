@@ -18,4 +18,6 @@ public interface TReportMapper extends MyMapper<TReport> {
     List<TReport> findReportByUser(Long userId);
 
     List<TReport> findReportByFormIdAndTime(@Param("formId")Long formId, @Param("beginDate")Date beginReportDate, @Param("endDate")Date endReportDate);
+
+    List<TReport> fetchReceiveReport(@Param("userId") Long userId, @Param("month") String month);
 }

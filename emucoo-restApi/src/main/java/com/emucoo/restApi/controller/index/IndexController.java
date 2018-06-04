@@ -55,7 +55,7 @@ public class IndexController extends AppBaseController {
 
     @PostMapping("/login")
     public AppResult<UserLoginInfo> login(@RequestBody ParamVo<UserVo_I> data) {
-        String pushToken = data.getData().getPushToken();
+        String pushToken = null!=data.getData().getPushToken()?data.getData().getPushToken():null;
         String mobile = data.getData().getMobile();
         String password = data.getData().getPassword();
 
@@ -177,7 +177,7 @@ public class IndexController extends AppBaseController {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
         int inswks = loopPlanService.countFrontPlan(loginUserId, today);
         int exewks = loopWorkService.fetchPendingExecuteWorkNum(loginUserId, today);
-        int rvwwks = loopWorkService.fetchPendingReviewWorkNum(loginUserId);
+        int rvwwks = loopWorkService.fetchPendingReviewWorkNum(loginUserId, today);
         PendingWorkNumVo_O pendingWorkNumVo = new PendingWorkNumVo_O();
         pendingWorkNumVo.setPendingExecuteNum(exewks + inswks);
         pendingWorkNumVo.setPendingReviewNum(rvwwks);
