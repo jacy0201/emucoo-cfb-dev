@@ -49,8 +49,6 @@ public class UserCenterController extends AppBaseController {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
         sysUserService.editUser(sysUser);
-        //删除redis 缓存
-    //    redisClient.delete(ISystem.IUSER.USER + sysUser.getId());
         return success("success");
     }
 
