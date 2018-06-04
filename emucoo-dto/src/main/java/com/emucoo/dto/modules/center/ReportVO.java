@@ -13,7 +13,7 @@ public class ReportVO {
     //打表人
     private String reporterName;
     //报告类型 :1RVR类表，2能力模型表
-    private Integer formType;
+    private Byte formType;
     //打表日期
     private Long checkFormTime;
     //报告名称：店铺名称+formType+评估报告

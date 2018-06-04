@@ -23,17 +23,19 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     @Resource
     private TLoopWorkMapper tLoopWorkMapper;
-
     @Resource
     private TFrontPlanMapper tFrontPlanMapper;
-
     @Resource
     private TFrontPlanFormMapper tFrontPlanFormMapper;
-
     @Resource
     private TFormMainMapper tFormMainMapper;
     @Resource
     private TShopInfoMapper tShopInfoMapper;
+    @Resource
+    private TReportMapper tReportMapper;
+    @Resource
+    private TFormCheckResultMapper formCheckResultMapper;
+
 
     //我执行的任务
     @Override
@@ -106,8 +108,27 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
     //我接收的报告
     @Override
     public List<ReportVO> getReportList(String month, Long userId){
-
-        return  null;
+        List<TReport> list =tReportMapper.fetchReceiveReport(userId,month);
+        List<ReportVO> reportList=null;
+        if(null!=list && list.size()>0){
+            ReportVO reportVO=null;
+            reportList=new ArrayList<>();
+            for(TReport report:list){
+                reportVO=new ReportVO();
+                reportVO.setReportId(report.getId());
+                reportVO.setCheckFormTime(report.getCheckFormTime().getTime());
+                reportVO.setFormType(report.getFormType());
+                reportVO.setReporterName(report.getReporterName());
+                reportVO.setShopName(report.getShopName());
+                Long formResultId=report.getFormResultId();
+                TFormCheckResult tfr=formCheckResultMapper.selectByPrimaryKey(formResultId);
+                if(null!=tfr){
+                    reportVO.setReportName(tfr.getFormMainName());
+                }
+                reportList.add(reportVO);
+            }
+        }
+        return  reportList;
     }
 
 
