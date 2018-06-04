@@ -56,4 +56,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     List<TLoopWork> filterAuditRemindWorks(@Param("deadTimeLeft") Date deadTimeLeft, @Param("deadTimeRight") Date deadTimeRight, @Param("remindTimeLeft") Date remindTimeLeft, @Param("remindTimeRight") Date remindTimeRight);
 
     int isLoopWorkExist(@Param("taskId") Long taskId, @Param("dt") Date dt, @Param("executorId") Long executorId);
+
+    List<TLoopWork> getTaskList(@Param("yearStr") String yearStr,@Param("monthStr") String monthStr,
+                                @Param("auditUserId") Long auditUserId,@Param("excuteUserId") Long excuteUserId,@Param("createUserId") Long createUserId);
 }

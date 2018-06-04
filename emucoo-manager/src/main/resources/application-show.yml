@@ -1,4 +1,4 @@
-
+#展览用配置文件
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver

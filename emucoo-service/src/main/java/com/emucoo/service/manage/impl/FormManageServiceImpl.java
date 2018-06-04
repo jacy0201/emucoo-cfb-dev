@@ -555,6 +555,7 @@ public class FormManageServiceImpl implements FormManageService {
                                         problemVo.setCheckMode(formPbm.getCheckMethod());
                                         problemVo.setProblemName(formPbm.getName());
                                         problemVo.setIsDone(false);
+                                        problemVo.setIsNA(false);
                                         problemVo.setIsPass(false);
                                         pbmIds.add(formPbm.getId());
                                         // 组装子题
@@ -567,6 +568,7 @@ public class FormManageServiceImpl implements FormManageService {
                                                 subProblemVo.setSubProblemID(formSubPbm.getId());
                                                 subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
                                                 subProblemVo.setIsDone(false);
+                                                subProblemVo.setIsNA(false);
                                                 subProblemVo.setIsPass(false);
                                                 subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
                                                 if (formSubPbm.getSubFormId() != null) {
@@ -700,6 +702,7 @@ public class FormManageServiceImpl implements FormManageService {
                             problemVo.setCheckMode(formPbm.getCheckMethod());
                             problemVo.setProblemName(formPbm.getName());
                             problemVo.setIsDone(false);
+                            problemVo.setIsNA(false);
                             problemVo.setIsPass(false);
                             pbmIds.add(formPbm.getId());
                             // 组装子题
@@ -713,6 +716,7 @@ public class FormManageServiceImpl implements FormManageService {
                                     subProblemVo.setSubProblemName(formSubPbm.getSubProblemName());
                                     subProblemVo.setCheckMode(formSubPbm.getCheckMethod());
                                     subProblemVo.setIsDone(false);
+                                    subProblemVo.setIsNA(false);
                                     subProblemVo.setIsPass(false);
                                     if (formSubPbm.getSubFormId() != null) {
                                         subProblemVo.setIsSubList(true);
