@@ -7,9 +7,7 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.LoopWorkService;
-import com.emucoo.utils.DateUtil;
-import com.emucoo.utils.TaskUniqueIdUtils;
-import com.emucoo.utils.WaterMarkUtils;
+import com.emucoo.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,28 +67,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public void add(TLoopWork loopWork) {
-        loopWorkMapper.insert(loopWork);
-    }
-
-    @Override
-    public void modify(TLoopWork loopWork) {
-        loopWorkMapper.updateByPrimaryKey(loopWork);
-    }
-
-    @Override
-    public TLoopWork fetchByWorkId(String workId, String subWorkId, int workType) {
-        return loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
-    }
-
-    @Override
     @Transactional
     public void submitAssignTask(AssignTaskSubmitVo_I voi) {
         TLoopWork lw = loopWorkMapper.fetchOneTaskByWorkIds(voi.getWorkID(), voi.getSubID());
         lw.setType(voi.getWorkType());
         lw.setWorkId(voi.getWorkID());
         lw.setSubWorkId(voi.getSubID());
-        lw.setWorkStatus(2);
+        lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
         lw.setAuditDeadline(DateUtil.addDateHours(new Date(), 12));
         lw.setModifyTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(lw);
@@ -155,7 +138,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         operateDataForWorkMapper.auditOperateData(toof);
 
         loopWork.setType(atai.getWorkType());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(atai.getReviewResult());
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
@@ -444,12 +427,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
         if(isContainsDate(dts, today)) {
-            buildLoopWorkInstance(task, today);
+            createAssignWorkInstance(task, today);
         }
 
     }
 
-    private void buildLoopWorkInstance(TTask task, Date dt) {
+    private void createAssignWorkInstance(TTask task, Date dt) {
         // 根据执行人产生任务实例
         if (StringUtils.isBlank(task.getExecuteUserIds())) {
             return;
@@ -468,7 +451,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(task.getId());
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
 
             lw.setWorkId(task.getWorkId());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
@@ -595,7 +578,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(5);
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
@@ -690,7 +673,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setIsSign(voi.getIsSign());
             lw.setSubWorkId(voi.getSubWorkID());
             lw.setType(5);
-            lw.setWorkStatus(1);
+            lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
             lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
@@ -742,36 +725,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     private List<Date> genDatesByRepeatType(TTask task) {
-        List<Date> dts = new ArrayList<>();
-        int repeatType = task.getLoopCycleType();
-        switch (repeatType) {
-            case 0:
-                dts.add(task.getTaskStartDate());
-                break;
-
-            case 1:
-                Date sdt = task.getTaskStartDate();
-                Date edt = task.getTaskEndDate();
-                while (DateUtil.compare(sdt, edt) <= 0) {
-                    dts.add(sdt);
-                    sdt = DateUtil.dateAddDay(sdt, 1);
-                }
-                break;
-
-            case 2:
-                List<Integer> wkdays = Arrays.asList(task.getLoopCycleValue().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
-                Date sdt1 = task.getTaskStartDate();
-                Date edt1 = task.getTaskEndDate();
-                while (DateUtil.compare(sdt1, edt1) <= 0) {
-                    if (wkdays.contains(DateUtil.getDayOfWeek(sdt1))) {
-                        dts.add(sdt1);
-                    }
-                    sdt1 = DateUtil.dateAddDay(sdt1, 1);
-                }
-                break;
-
-        }
-        return dts;
+        return TaskExeDateGenerator.generateExeDatesByTask(task);
     }
 
     @Override
@@ -802,12 +756,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         tLoopWork.setWorkStatus(memoFinishVo_I.getMemoStatus());
         tLoopWork.setModifyTime(new Date());
         loopWorkMapper.updateByExampleSelective(tLoopWork,example);
-    }
-
-
-    @Override
-    public TTask fetchTaskById(long id) {
-        return taskMapper.selectByPrimaryKey(id);
     }
 
     @Override
@@ -858,11 +806,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     private boolean isContainsDate(List<Date> dates, Date dt) {
-        for (Date date : dates) {
-            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
-                return true;
-        }
-        return false;
+        return TaskExeDateGenerator.isContainsDate(dates, dt);
     }
 
     @Override
@@ -873,7 +817,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         for (TTask task : assignTasks) {
             List<Date> dts = genDatesByRepeatType(task);
             if (isContainsDate(dts, today)) {
-                buildLoopWorkInstance(task, today);
+                createAssignWorkInstance(task, today);
             }
         }
     }

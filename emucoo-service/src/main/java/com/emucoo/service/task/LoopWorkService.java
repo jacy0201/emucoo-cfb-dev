@@ -4,7 +4,6 @@ import com.emucoo.common.base.service.BaseService;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TLoopWork;
-import com.emucoo.model.TTask;
 
 import java.util.Date;
 import java.util.List;
@@ -18,12 +17,6 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
 
     int fetchPendingReviewWorkNum(Long submitUserId, Date today);
-
-    void add(TLoopWork loopWork);
-
-    void modify(TLoopWork loopWork);
-
-    TLoopWork fetchByWorkId(String workId, String subWorkId, int workType);
 
     void submitAssignTask(AssignTaskSubmitVo_I voi);
 
@@ -72,10 +65,7 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
      */
     void deleteMemo(MemoDeleteVo_I  memoDeleteVo_I, Long userId);
 
-
     ExeHistoryVo_O viewTaskExeHistory(String workType, String workId);
-
-    TTask fetchTaskById(long id);
 
     AssignTaskHistoryVo_O viewAssignTaskHistory(int workType, String workId, String subWorkId);
 

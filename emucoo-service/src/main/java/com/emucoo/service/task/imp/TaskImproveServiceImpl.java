@@ -3,7 +3,6 @@ package com.emucoo.service.task.imp;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.dto.modules.task.TaskImproveSubmitIn.ImgUrl;
 import com.emucoo.dto.modules.task.TaskImproveVo.CCPerson;
-import com.emucoo.dto.modules.task.TaskImproveVo.Executor;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.TaskImproveService;
@@ -45,6 +44,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
 	private WaterMarkUtils waterMarkUtils;*/
 
     @Override
+    @Transactional
     public void createImproveTask(TaskImproveVo vo, SysUser user) {
         List<String> timgids = new ArrayList<>();
         vo.getTaskImgArr().forEach(imageUrl -> {
@@ -53,6 +53,10 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             fileMapper.insert(tImg);
             timgids.add(Long.toString(tImg.getId()));
         });
+
+        List<CCPerson> ccPersonlist = vo.getCcPersonArray();
+        String ccpIds = StringUtils.join(ccPersonlist.stream().map(ccPerson -> ccPerson.getCcPersonID()).collect(Collectors.toList()), ",");
+        String ccpNms = StringUtils.join(ccPersonlist.stream().map(ccPerson -> ccPerson.getCcPersonName()).collect(Collectors.toList()), ",");
 
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         TTask task = new TTask();
@@ -79,6 +83,9 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         task.setCreateTime(DateUtil.currentDate());
         task.setModifyUserId(user.getId());
         task.setModifyTime(DateUtil.currentDate());
+        if(vo.getCcPersonArray() != null && vo.getCcPersonArray().size() > 0) {
+            task.setCcUserIds(StringUtils.join(ccPersonlist.stream().map(ccPerson -> ccPerson.getCcPersonID()).collect(Collectors.toList()), ","));
+        }
         taskMapper.insert(task);
 
         long taskId = task.getId();
@@ -95,92 +102,69 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         operateOptionMapper.insert(oo);
 
         // LoopWork
-        List<TLoopWork> loopWorkList = new ArrayList<TLoopWork>();
-
-        List<CCPerson> ccPersonlist = vo.getCcPersonArray();
-        String ccpIds = StringUtils.join(ccPersonlist.stream().map(ccPerson -> ccPerson.getCcPersonID()).collect(Collectors.toList()), ",");
-        String ccpNms = StringUtils.join(ccPersonlist.stream().map(ccPerson -> ccPerson.getCcPersonName()).collect(Collectors.toList()), ",");
-
-        List<Executor> executorList = vo.getExecutorArray();
-
-        // create task instance for each executor.
-        for (Executor executor : executorList) {
-            // 重复规则逻辑处理
-            if (vo.getTaskRepeatType() == 0) {// 不重复
-
-                Date beginDt = DateUtil.strToSimpleYYMMDDDate(vo.getStartDate());
-                Date endDt = DateUtil.strToSimpleYYMMDDDate(vo.getEndDate());
-                Date deadlineDt = DateUtil.yyyyMMddHHmmssStrToDate(vo.getEndDate() + vo.getSubmitDeadlineRule());
-
-                TLoopWork loopWork = buildLoopWork(vo, user, uniWorkId, taskId, ccpIds, executor, beginDt, endDt, deadlineDt);
-                loopWorkList.add(loopWork);
-            } else if (vo.getTaskRepeatType() == 1) {// 每天
-                Date startDate = DateUtil.strToSimpleYYMMDDDate(vo.getStartDate());
-                Date endDate = DateUtil.strToSimpleYYMMDDDate(vo.getEndDate());
-                int days = daysBetween(startDate, endDate);
-                for (int i = 0; i <= days; i++) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(startDate);
-                    calendar.add(Calendar.DAY_OF_MONTH, i);
-                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(vo.getSubmitDeadlineRule().substring(0, 2)));
-                    calendar.set(Calendar.MINUTE, Integer.parseInt(vo.getSubmitDeadlineRule().substring(2, 4)));
-                    calendar.set(Calendar.SECOND, Integer.parseInt(vo.getSubmitDeadlineRule().substring(4, 6)));
-
-                    Date beginDt = calendar.getTime();
-                    Date endDt = calendar.getTime();
-                    Date deadlineDt = calendar.getTime();
-
-                    TLoopWork loopWork = buildLoopWork(vo, user, uniWorkId, taskId, ccpIds, executor, beginDt, endDt, deadlineDt);
-                    loopWorkList.add(loopWork);
-                }
-            } else if (vo.getTaskRepeatType() == 2) {// 每周
-                // 符合条件日期集合
-                List<String> list = WeekDayUtil.getDates(vo.getStartDate(), vo.getEndDate(), vo.getTaskRepeatValue());
-
-                for (String date : list) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(DateUtil.strToSimpleYYMMDDDate(date));
-                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(vo.getSubmitDeadlineRule().substring(0, 2)));
-                    calendar.set(Calendar.MINUTE, Integer.parseInt(vo.getSubmitDeadlineRule().substring(2, 4)));
-                    calendar.set(Calendar.SECOND, Integer.parseInt(vo.getSubmitDeadlineRule().substring(4, 6)));
-
-                    Date beginDt = DateUtil.strToSimpleYYMMDDDate(date);
-                    Date endDt = DateUtil.strToSimpleYYMMDDDate(date);
-                    Date deadlineDt = calendar.getTime();
-
-                    TLoopWork loopWork = buildLoopWork(vo, user, uniWorkId, taskId, ccpIds, executor, beginDt, endDt, deadlineDt);
-                    loopWorkList.add(loopWork);
-                }
-            }
+        List<Date> exeDates = TaskExeDateGenerator.generateExeDatesByTask(task);
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        if (TaskExeDateGenerator.isContainsDate(exeDates, today)) {
+            createImproveWorkInstance(task, today);
         }
-        loopWorkMapper.insertList(loopWorkList);
     }
 
-    private TLoopWork buildLoopWork(TaskImproveVo vo, SysUser user, String uniWorkId, long taskId, String ccpIds, Executor executor, Date beginDt, Date endDt, Date dateDeadline) {
-        TLoopWork loopWork = new TLoopWork();
-        loopWork.setWorkId(uniWorkId);
-        loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
-        loopWork.setTaskId(taskId);
+    private void createImproveWorkInstance(TTask task, Date today) {
+        // 根据执行人产生任务实例
+        if (StringUtils.isBlank(task.getExecuteUserIds())) {
+            return;
+        }
 
-        loopWork.setExecuteBeginDate(beginDt);
-        loopWork.setExecuteEndDate(endDt);
-        loopWork.setExecuteDeadline(dateDeadline);
-// TODO:                loopWork.setExecuteRemindTime();
+        List<Long> executorIds = Arrays.asList(task.getExecuteUserIds().split(",")).stream().map(s -> Long.parseLong(s)).collect(Collectors.toList());
+        for(Long executorId : executorIds) {
+            int count = loopWorkMapper.isLoopWorkExist(task.getId(), today, executorId);
+            if (count > 0)
+                continue;
 
-        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_ONE);
-        loopWork.setType(ConstantsUtil.LoopWork.TYPE_THREE);
+            TLoopWork loopWork = new TLoopWork();
+            loopWork.setWorkId(task.getWorkId());
+            loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
+            loopWork.setTaskId(task.getId());
 
-        loopWork.setExcuteUserId(executor.getExecutorID());
-        loopWork.setExcuteUserName(executor.getExecutorName());
-        loopWork.setAuditUserId(vo.getAuditorID());
-        loopWork.setAuditUserName(vo.getAuditorName());
-        loopWork.setSendUserIds(ccpIds);
+            loopWork.setExecuteBeginDate(today);
+            loopWork.setExecuteEndDate(today);
+            if (StringUtils.isNotBlank(task.getExecuteDeadline())) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(today);
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(task.getExecuteDeadline().substring(0, 2)));
+                calendar.set(Calendar.MINUTE, Integer.parseInt(task.getExecuteDeadline().substring(2, 4)));
+                calendar.set(Calendar.SECOND, Integer.parseInt(task.getExecuteDeadline().substring(4, 6)));
+                loopWork.setExecuteDeadline(calendar.getTime());
+            } else {
+                loopWork.setExecuteDeadline(DateUtil.timeForward(today, 21, 0));
+            }
+            loopWork.setExecuteRemindTime(DateUtil.timeBackward(loopWork.getExecuteDeadline(), 1, 0));
 
-        loopWork.setCreateUserId(user.getId());
-        loopWork.setCreateUserName(user.getUsername());
-        loopWork.setCreateTime(DateUtil.currentDate());
-        loopWork.setModifyTime(DateUtil.currentDate());
-        return loopWork;
+            loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
+            loopWork.setType(ConstantsUtil.LoopWork.TYPE_THREE);
+
+            loopWork.setExcuteUserId(executorId);
+            SysUser eUser = userMapper.selectByPrimaryKey(executorId);
+            if (eUser != null) {
+                loopWork.setExcuteUserName(eUser.getRealName());
+            }
+            loopWork.setAuditUserId(task.getAuditUserId());
+            SysUser aUser = userMapper.selectByPrimaryKey(task.getAuditUserId());
+            if(aUser != null) {
+                loopWork.setAuditUserName(aUser.getRealName());
+            }
+            loopWork.setSendUserIds(task.getCcUserIds());
+
+            loopWork.setCreateUserId(task.getCreateUserId());
+            SysUser cUser = userMapper.selectByPrimaryKey(task.getCreateUserId());
+            if(cUser != null) {
+                loopWork.setCreateUserName(cUser.getRealName());
+            }
+            loopWork.setCreateTime(DateUtil.currentDate());
+            loopWork.setModifyTime(DateUtil.currentDate());
+
+            loopWorkMapper.insert(loopWork);
+        }
     }
 
     /**
@@ -201,6 +185,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     }
 
     @Override
+    @Transactional
     public void submitImproveTask(TaskImproveSubmitIn submitIn, SysUser user) {
         // LoopWork
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(submitIn.getWorkID(), submitIn.getSubID(), submitIn.getWorkType());
@@ -208,7 +193,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setSubWorkId(submitIn.getSubID());
         loopWork.setType(submitIn.getWorkType());
         loopWork.setExcuteUserId(user.getId());
-        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_TWO);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
 
         // 设置提交时间的12小时后
         loopWork.setModifyTime(new Date());
@@ -232,14 +217,14 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWorkMapper.updateByPrimaryKey(loopWork);
 
 
-        List<String> imgids = imgs.stream().map(img-> Long.toString(img.getId())).collect(Collectors.toList());
+        List<String> imgids = imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList());
 
         TOperateOption oo = operateOptionMapper.fetchOneByTaskId(loopWork.getTaskId());
         TOperateDataForWork odw = new TOperateDataForWork();
         odw.setImgIds(StringUtils.join(imgids, ","));
         odw.setLoopWorkId(loopWork.getId());
         odw.setNumOptionName(oo.getFeedbackNumName());
-        if(oo.getFeedbackNeedNum()) {
+        if (oo.getFeedbackNeedNum()) {
             odw.setNumOptionType(oo.getFeedbackNumType());
             odw.setNumOptionValue(Double.toString(submitIn.getDigitalItemValue()));
         }
@@ -253,13 +238,14 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     }
 
     @Override
+    @Transactional
     public void auditImproveTask(TaskImproveAuditIn auditIn, SysUser user) {
         // LoopWork
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(auditIn.getWorkID(), auditIn.getSubID(), auditIn.getWorkType());
 
         List<TFile> imgs = new ArrayList<>();
         List<ImageUrl> imageUrls = auditIn.getReviewImgArr();
-        if(imageUrls != null && imageUrls.size() > 0) {
+        if (imageUrls != null && imageUrls.size() > 0) {
             imageUrls.forEach(imageUrl -> {
                 TFile img = new TFile();
                 img.setImgUrl(imageUrl.getImgUrl());
@@ -276,23 +262,24 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         odw.setAuditUserId(user.getId());
         odw.setAuditContent(auditIn.getReviewOpinion());
         odw.setAuditResult(auditIn.getReviewResult());
-        if(imgs.size() > 0) {
+        if (imgs.size() > 0) {
             odw.setAuditImgIds(StringUtils.join(imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList()), ","));
-        };
+        }
+        ;
         operateDataForWorkMapper.updateByPrimaryKey(odw);
 
         loopWork.setWorkId(auditIn.getWorkID());
         loopWork.setType(auditIn.getWorkType());
         loopWork.setSubWorkId(auditIn.getSubID());
         loopWork.setAuditUserId(user.getId());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(auditIn.getReviewResult());
         loopWork.setAuditTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
 
     private List<String> convertImgIds2ImgUrls(String ids) {
-        if(StringUtils.isNotBlank(ids)) {
+        if (StringUtils.isNotBlank(ids)) {
             List<String> idList = Arrays.asList(StringUtils.split(ids, ","));
             List<TFile> imgs = fileMapper.fetchFilesByIds(idList);
             return imgs.stream().map(img -> img.getImgUrl()).collect(Collectors.toList());
@@ -300,6 +287,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             return new ArrayList<>();
         }
     }
+
     @Override
     public TaskImproveDetailOut viewImproveTaskDetail(TaskImproveDetailIn taskImproveDetailIn) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(taskImproveDetailIn.getWorkID(), taskImproveDetailIn.getSubID());
@@ -320,7 +308,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             return imageUrl;
         }).collect(Collectors.toList()));
         String ccps = statement.getCcPersonNames();
-        if(StringUtils.isNotBlank(ccps)) {
+        if (StringUtils.isNotBlank(ccps)) {
             List<String> userNames = Arrays.asList(ccps.split(",")).stream().map(uid -> {
                 SysUser usr = userMapper.selectByPrimaryKey(Long.valueOf(uid));
                 return usr.getRealName();
@@ -347,7 +335,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         if (odw != null) {
             review.setAuditorID(odw.getAuditUserId());
             SysUser u = userMapper.selectByPrimaryKey(odw.getAuditUserId());
-            if(u != null) {
+            if (u != null) {
                 review.setAuditorName(u.getRealName());
                 review.setAuditorHeadUrl(u.getHeadImgUrl());
             }
@@ -374,7 +362,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             answer.setAnswerName(comment.getUserName());
             SysUser u = userMapper.selectByPrimaryKey(comment.getUserId());
             answer.setAnswerHeadUrl(u.getHeadImgUrl());
-            answer.setReplyAction(comment.getIsShow()?0:1);
+            answer.setReplyAction(comment.getIsShow() ? 0 : 1);
             answer.setReplyImgArr(convertImgIds2ImgUrls(comment.getImgIds()).stream().map(url -> {
                 ImageUrl imageUrl = new ImageUrl();
                 imageUrl.setImgUrl(url);
@@ -391,4 +379,15 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         return out;
     }
 
+    // scheduler useing:
+
+    @Override
+    @Transactional
+    public void buildImproveTaskInstance() {
+        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
+        List<TTask> tasks = taskMapper.filterAvailableImproveTask(today);
+        for(TTask task : tasks) {
+            createImproveWorkInstance(task, today);
+        }
+    }
 }

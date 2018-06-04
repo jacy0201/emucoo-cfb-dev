@@ -16,10 +16,12 @@ public final class ConstantsUtil {
 		public static final Integer TYPE_FOUR = 4;
 		public static final Integer TYPE_FIVE = 5;
 		
-		// 1：未提交 2：已提交 3：已过期
-		public static final Integer WORK_STATUS_ONE = 1;
-		public static final Integer WORK_STATUS_TWO = 2;
-		public static final Integer WORK_STATUS_THREE = 3;
+		// 1：未执行 2：已执行提交 3：执行过期 4: 已审核 5: 审核过期
+		public static final Integer WORK_STATUS_1 = 1;
+		public static final Integer WORK_STATUS_2 = 2;
+		public static final Integer WORK_STATUS_3 = 3;
+		public static final Integer WORK_STATUS_4 = 4;
+		public static final Integer WORK_STATUS_5 = 5;
 	}
 
 	public interface WorkDataAppend {

@@ -19,4 +19,5 @@ public interface TaskImproveService {
 
 	TaskImproveDetailOut viewImproveTaskDetail(TaskImproveDetailIn taskImproveDetailIn);
 
+    void buildImproveTaskInstance();
 }

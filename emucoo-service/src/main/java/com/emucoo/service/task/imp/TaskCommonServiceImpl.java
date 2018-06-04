@@ -4,6 +4,7 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.TaskCommonService;
+import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
 import com.emucoo.utils.TaskUniqueIdUtils;
 import com.emucoo.utils.WaterMarkUtils;
@@ -73,6 +74,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }).filter(url -> url != null).collect(Collectors.toList());
     }
 
+    // used for app interface
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn voi) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(voi.getWorkID(), voi.getSubID(), voi.getWorkType());
@@ -88,7 +90,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 }).collect(Collectors.toList()));
             });
         }
-
 
         List<TaskCommonItemVo> list = loopWorkMapper.fetchTaskCommonItem(loopWork.getId());
         List<TaskCommonItem> itemList = new ArrayList<TaskCommonItem>();
@@ -188,6 +189,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void submitTask(TaskCommonSubmitIn taskCommonSubmitIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonSubmitIn.getWorkID(), taskCommonSubmitIn.getSubID(), taskCommonSubmitIn.getWorkType());
         TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
@@ -212,7 +214,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
             }
         }
-        loopWork.setWorkStatus(2);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
 
 
         List<TOperateDataForWork> odfws1 = new ArrayList<>();
@@ -269,6 +271,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void auditTask(TaskCommonAuditIn taskCommonAuditIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonAuditIn.getWorkID(), taskCommonAuditIn.getSubID(), taskCommonAuditIn.getWorkType());
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
@@ -306,7 +309,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setAuditUserId(user.getId());
         loopWork.setAuditUserName(user.getUsername());
         loopWork.setAuditTime(DateUtil.currentDate());
-        loopWork.setWorkStatus(4);
+        loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(auditResult);
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
     }
@@ -366,6 +369,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void createCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setName(data.getName());
@@ -393,6 +397,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void saveCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setId(data.getId());
@@ -415,11 +420,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void removeCommonTask(List<Long> ids) {
         taskMapper.removeCommonTaskByIds(ids);
     }
 
     @Override
+    @Transactional
     public void switchCommonTask(List<Long> data, boolean state) {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         for (Long id : data) {
@@ -431,6 +438,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
     }
 
+    // used for admin backend
     @Override
     public TaskParameterVo detailCommonTask(Long taskId) {
         TaskParameterVo vo = new TaskParameterVo();
@@ -615,6 +623,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
+    @Transactional
     public void configCommonTask(TaskParameterVo data) {
         TTask task = taskMapper.selectByPrimaryKey(data.getId());
         if (task == null) {
@@ -829,7 +838,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 //            loopWork.setVersion();
             loopWork.setWorkId(uniWorkId);
 //            loopWork.setWorkResult();
-            loopWork.setWorkStatus(1);
+            loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
 
             loopWorkMapper.insert(loopWork);
 
