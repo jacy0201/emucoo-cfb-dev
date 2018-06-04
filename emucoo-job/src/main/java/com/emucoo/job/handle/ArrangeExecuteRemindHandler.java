@@ -3,7 +3,6 @@ package com.emucoo.job.handle;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.emucoo.common.util.MsgPushing;
-import com.emucoo.common.util.StringUtil;
 import com.emucoo.enums.Constant;
 import com.emucoo.enums.FunctionType;
 import com.emucoo.enums.ModuleType;

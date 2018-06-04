@@ -598,6 +598,7 @@ public class FormServiceImpl implements FormService {
                                 formPbmVal.setFormProblemId(problemVo.getProblemID());
                                 formPbmVal.setIsPass(problemVo.getIsPass());
                                 formPbmVal.setIsScore(problemVo.getIsDone());
+                                formPbmVal.setIsNa(problemVo.getIsNA());
                                 formPbmVal.setFormResultId(subFormResult.getId());
                                 formPbmVal.setFormValueId(formValue.getId());
                                 formPbmVal.setProblemDescription(problemVo.getProblemDescription());
@@ -725,6 +726,7 @@ public class FormServiceImpl implements FormService {
                                         subPbmVal.setFormResultId(subFormResult.getId());
                                         subPbmVal.setIsPass(subProblemVo.getIsPass());
                                         subPbmVal.setIsScore(subProblemVo.getIsDone());
+                                        subPbmVal.setIsNa(subProblemVo.getIsNA());
                                         subPbmVal.setProblemValueId(formPbmVal.getId());
                                         subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
                                         subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
@@ -891,6 +893,7 @@ public class FormServiceImpl implements FormService {
                         formPbmVal.setFormProblemId(problemVo.getProblemID());
                         formPbmVal.setIsPass(problemVo.getIsPass());
                         formPbmVal.setIsScore(problemVo.getIsDone());
+                        formPbmVal.setIsNa(problemVo.getIsNA());
                         formPbmVal.setFormResultId(subFormResult.getId());
                         formPbmVal.setFormValueId(formValue.getId());
                         formPbmVal.setProblemDescription(problemVo.getProblemDescription());
@@ -1013,6 +1016,7 @@ public class FormServiceImpl implements FormService {
                                 subPbmVal.setFormResultId(subFormResult.getId());
                                 subPbmVal.setIsPass(subProblemVo.getIsPass());
                                 subPbmVal.setIsScore(subProblemVo.getIsDone());
+                                subPbmVal.setIsNa(subProblemVo.getIsNA());
                                 subPbmVal.setProblemValueId(formPbmVal.getId());
                                 subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
                                 subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
