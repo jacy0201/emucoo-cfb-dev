@@ -251,7 +251,7 @@
         task.report_id = #{reportId} AND task.is_del = FALSE AND is_use = TRUE
         INNER JOIN sys_user user ON twork.excute_user_id = user.id
         WHERE twork.type=3
-        GROUP BY twork.excute_user_id
+        GROUP BY twork.work_id,twork.excute_user_id
         ORDER BY twork.create_time DESC
     </select>
 
