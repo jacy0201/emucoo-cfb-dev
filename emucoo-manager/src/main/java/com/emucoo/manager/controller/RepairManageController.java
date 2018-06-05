@@ -46,6 +46,13 @@ public class RepairManageController extends BaseResource {
         return success(pageInfo);
     }
 
+    @ApiOperation(value = "设备类别列表", httpMethod = "POST")
+    @PostMapping("/types")
+    public ApiResult<List<TDeviceType>> types() {
+        List<TDeviceType> types = taskRepairService.listTopDeviceTypes();
+        return success(types);
+    }
+
     @ApiOperation(value = "设备详情", httpMethod = "POST")
     @PostMapping("/info")
     public ApiResult<TDeviceType> info(@RequestBody ParamVo<Long> paramVo) {

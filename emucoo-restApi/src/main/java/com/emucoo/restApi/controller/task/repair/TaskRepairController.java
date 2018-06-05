@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
-@Api(description = "常规任务管理")
+@Api(description = "维修任务")
 @RestController
 @RequestMapping("/api/task/repair")
 public class TaskRepairController extends AppBaseController {

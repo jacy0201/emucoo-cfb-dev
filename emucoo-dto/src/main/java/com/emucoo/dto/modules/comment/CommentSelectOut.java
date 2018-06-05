@@ -7,17 +7,18 @@ import lombok.Data;
 
 @Data
 public class CommentSelectOut {
-	
-	private Long replyID;
-	private String replyContent;
-	private Long replyTime;
-	private Long answerID;// 回复人ID
-	private String answerName;
-	private String answerHeadUrl;
-	private String replyAction;// 1不可删，2可删
-	
-	private List<ImgUrl> replyImgArr = new ArrayList<ImgUrl>();
-
+	private Long commentID;
+	private String commentContent;
+	//评论时间
+	private Long commentTime;
+	//评论人ID
+	private Long commentUserID;
+	//评论人姓名
+	private String commentUserName;
+	//评论人头像
+	private String commentHeadUrl;
+	//评论照片
+	private List<ImgUrl> commentImgArr = new ArrayList<ImgUrl>();
 	@Data
 	public static class ImgUrl {
 		private String imgUrl;

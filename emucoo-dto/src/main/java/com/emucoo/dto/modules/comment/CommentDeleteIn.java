@@ -4,8 +4,5 @@ import lombok.Data;
 
 @Data
 public class CommentDeleteIn {
-	private Integer workType;
-	private Long workID;
-	private Long replyID;
-	
+	private Long commentId;
 }
