@@ -28,6 +28,10 @@ public class TFormMain extends BaseEntity {
     @ApiModelProperty(name = "description", value = "表单描述")
     private String description;
 
+    @ApiModelProperty(name = "formType", value = "表单类型 1-RVR类表，2-能力模型表，3-红黄绿")
+    @Column(name = "form_type")
+    private Integer formType;
+
     @Column(name = "create_time")
     private Date createTime;
 
@@ -72,9 +76,6 @@ public class TFormMain extends BaseEntity {
 
     @Column(name = "subject_type")
     private Integer subjectType;
-
-    @Column(name = "form_type")
-    private Integer formType;
 
     @Transient
     private List<SysDept> ccDepts;
