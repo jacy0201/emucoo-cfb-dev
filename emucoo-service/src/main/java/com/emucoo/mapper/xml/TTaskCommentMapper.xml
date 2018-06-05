@@ -24,14 +24,4 @@
         select * from t_comment where union_id=#{loopWorkId} and is_del != 1
     </select>
 
-    <select id="" resultType="com.emucoo.model.TTaskComment">
-        select a.id, a.union_id as unionId, a.union_type as unionType, a.user_id as userId, a.user_name as userName,
-            a.is_show as isShow, a.is_del as isDel, a.img_ids as imgIds, a.create_time as createTime,
-            a.modify_time as modifyTime, a.create_user_id as createUserId, a.modify_user_id as modifyUserId,
-            (select group_concat(b.img_url) from t_file b where find_in_set(b.id, group_concat(a.img_ids))) as imgUrls
-        from t_comment a
-        where a.union_id=#{workId} and a.union_type=#{workType} and a.is_del = 0
-        limit #{pageStart}, #{pageSize}
-    </select>
-
 </mapper>
