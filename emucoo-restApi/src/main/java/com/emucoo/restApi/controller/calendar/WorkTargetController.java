@@ -70,14 +70,17 @@ public class WorkTargetController extends AppBaseController {
     @ApiOperation(value = "添加工作目标")
     @PostMapping(value = "/addWorkTarget")
     public AppResult addWorkTarget(@RequestBody ParamVo<WorkTargetVO> params) {
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         WorkTargetVO workTargetVO = params.getData();
         Example example=new Example(TWorkTarget.class);
-        example.createCriteria().andEqualTo("month",workTargetVO.getMonth()).andEqualTo("isDel",false);
+        example.createCriteria().andEqualTo("month",workTargetVO.getMonth())
+                .andEqualTo("isDel",false)
+                .andEqualTo("createUserId",user.getId());
         List list=workTargetService.selectByExample(example);
         if(null!=list && list.size()>0){
             return fail(AppExecStatus.INVALID_PARAM,"该月工作目标已存在!");
         }
-        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+
         workTargetService.addWorkTarget(workTargetVO,user.getId());
         return success("success");
     }
