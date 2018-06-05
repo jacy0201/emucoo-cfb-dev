@@ -1,6 +1,7 @@
 package com.emucoo.model;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Table(name = "t_device_type")
@@ -24,6 +25,20 @@ public class TDeviceType {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "modify_time")
+    private Date modifyTime;
+
+    @Column(name = "is_use")
+    private boolean isUse;
+
+    @Column(name = "is_del")
+    private boolean isDel;
+
+
 
     @Transient
     private List<TDeviceType> children;
@@ -93,5 +108,37 @@ public class TDeviceType {
 
     public void setProblems(List<TDeviceProblem> problems) {
         this.problems = problems;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(boolean use) {
+        isUse = use;
+    }
+
+    public boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(boolean del) {
+        isDel = del;
     }
 }

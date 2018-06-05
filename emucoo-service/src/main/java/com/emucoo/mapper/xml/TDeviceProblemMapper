@@ -6,6 +6,9 @@
         <result column="device_type_id" property="deviceTypeId" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+
     </resultMap>
 
 

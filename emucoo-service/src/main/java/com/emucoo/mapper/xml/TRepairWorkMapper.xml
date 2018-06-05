@@ -7,7 +7,7 @@
         <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
         <result column="reporter_id" property="reporterId" jdbcType="BIGINT" />
         <result column="reporter_name" property="reporterName" jdbcType="VARCHAR" />
-        <result column="report_date" property="reportDate" jdbcType="DATETIME" />
+        <result column="report_date" property="reportDate" jdbcType="TIMESTAMP" />
         <result column="device_id" property="deviceId" jdbcType="BIGINT" />
         <result column="device_title" property="deviceTitle" jdbcType="VARCHAR" />
         <result column="problem_id" property="problemId" jdbcType="BIGINT" />
@@ -16,8 +16,8 @@
         <result column="problem_imgs" property="problemImgs" jdbcType="VARCHAR" />
         <result column="repair_man_id" property="repairManId" jdbcType="BIGINT" />
         <result column="repair_man_name" property="repairManName" jdbcType="VARCHAR" />
-        <result column="expect_date" property="expectDate" jdbcType="DATETIME" />
-        <result column="finish_date" property="finishDate" jdbcType="DATETIME" />
+        <result column="expect_date" property="expectDate" jdbcType="TIMESTAMP" />
+        <result column="finish_date" property="finishDate" jdbcType="TIMESTAMP" />
         <result column="repair_notes" property="repairNotes" jdbcType="VARCHAR" />
         <result column="repair_imgs" property="repair_imgs" jdbcType="VARCHAR" />
         <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR" />

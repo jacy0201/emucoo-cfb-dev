@@ -8,6 +8,10 @@
         <result column="parent_type_name" property="parentTypeName" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="brand_ids" property="Ids" jdbcType="VARCHAR"/>
+        <result column="is_use" property="isUse" jdbcType="BIT" />
+        <result column="is_del" property="isDel" jdbcType="BIT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <select id="countDeviceTypesByKeyword" resultType="java.lang.Integer">

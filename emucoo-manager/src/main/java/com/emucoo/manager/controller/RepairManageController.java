@@ -32,7 +32,7 @@ public class RepairManageController extends BaseResource {
 
         TDeviceType dvc = paramVo.getData();
         String keyword = dvc.getName();
-        long typeId = dvc.getTypeId();
+        long typeId = dvc.getParentTypeId();
 
         int total = taskRepairService.countDeviceTypes(keyword, typeId);
         List<TDeviceType> dts = taskRepairService.listDeviceTypes(keyword, typeId, pageNm, pageSz);
