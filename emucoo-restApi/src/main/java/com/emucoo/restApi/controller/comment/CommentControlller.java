@@ -8,6 +8,7 @@ import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.comment.CommentService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ public class CommentControlller extends AppBaseController {
 	 * @param
 	 * @param base
 	 */
+	@ApiOperation(value = "添加评论/回复")
 	@PostMapping(value = "add")
 	public AppResult add(@RequestBody ParamVo<CommentAddIn> base) {
 		CommentAddIn vo = base.getData();
@@ -42,10 +44,11 @@ public class CommentControlller extends AppBaseController {
 	}
 
 	/**
-	 * 查询评论
+	 * 查询评论列表
 	 * @param base
 	 * @return
 	 */
+	@ApiOperation(value = "查询评论列表")
 	@PostMapping("getCommentList")
 	public AppResult<List<CommentSelectOut>> getCommentList(@RequestBody ParamVo<CommentSelectIn> base) {
 		CommentSelectIn vo = base.getData();
@@ -59,13 +62,12 @@ public class CommentControlller extends AppBaseController {
 	 * @param base
 	 * @return
 	 */
+	@ApiOperation(value = "查询回复列表")
 	@PostMapping("getReplyList")
-	public AppResult<List<CommentSelectOut>> getReplyList(@RequestBody ParamVo<ReplySelectIn> base) {
-		ReplySelectIn replySelectIn = base.getData();
+	public AppResult<List<CommentSelectOut>> getReplyList(@RequestBody ParamVo<CommentSelectIn> base) {
+		CommentSelectIn vo = base.getData();
 		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-		CommentSelectIn vo=new CommentSelectIn();
-		vo.setCommentID(replySelectIn.getCommentID());
-		vo.setWorkType(5);
+		vo.setWorkType(6);
 		List<CommentSelectOut> outList = commentService.select(vo, user);
 		return success(outList);
 	}
@@ -75,6 +77,7 @@ public class CommentControlller extends AppBaseController {
 	 *
 	 * @param base
 	 */
+	@ApiOperation(value = "删除评论")
 	@PostMapping("delete")
 	public AppResult<String> delete(@RequestBody ParamVo<CommentDeleteIn> base) {
 		CommentDeleteIn vo = base.getData();

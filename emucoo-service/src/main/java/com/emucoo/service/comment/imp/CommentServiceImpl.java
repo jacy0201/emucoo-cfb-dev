@@ -43,8 +43,8 @@ public class CommentServiceImpl implements CommentService {
         Integer workType=vo.getWorkType();
         comment.setUnionType(workType);
         Long unionId=null;
-        //如果workType 为 常规、指派、改善 任务类型，则根据 workID 和 subID 获取任务主键ID
-        if (workType == 1 || workType == 2 || workType == 3){
+        //如果workType 为 常规、指派、改善 、备忘 任务类型，则根据 workID 和 subID 获取任务主键ID
+        if (workType == 1 || workType == 2 || workType == 3 || workType==5){
             TLoopWork tLoopWork=new TLoopWork();
             tLoopWork.setWorkId(vo.getWorkID());
             tLoopWork.setSubWorkId(vo.getSubID());
@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
             unionId=loopWork.getId();
         }else if(workType == 4){// workType==4 巡店，巡店的评论对象是报告
             unionId=vo.getReportID();
-        }else if(workType == 5){//workType==5 评论， 针对评论的 回复
+        }else if(workType == 6){//workType==6 评论， 针对评论的 回复
             unionId=vo.getCommentID();
         }
         comment.setUnionId(unionId);
@@ -100,11 +100,11 @@ public class CommentServiceImpl implements CommentService {
         Long commentId=vo.getCommentID();
         List<CommentSelectOut> list=null;
         Long unionId=null;
-        //workType=5 评论，查询类型为评论的评论 ，即查询回复
-        if(5==workType){//查询回复
+        //workType=6 评论，查询类型为评论的评论 ，即查询回复
+        if(6==workType){//查询回复
             unionId=commentId;
         }else{//查询评论
-            if (workType == 1 || workType == 2 || workType == 3){
+            if (workType == 1 || workType == 2 || workType == 3|| workType==5){
                 TLoopWork tLoopWork=new TLoopWork();
                 tLoopWork.setWorkId(workId);
                 tLoopWork.setSubWorkId(subId);
