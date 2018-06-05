@@ -11,4 +11,8 @@ public interface TDeviceTypeMapper extends MyMapper<TDeviceType> {
     List<TDeviceType> filterDeviceTypesByKeyword(@Param("keyword") String keyword, @Param("typeId") long typeId, @Param("pageStart") int pageStart, @Param("pageSz") int pageSz);
 
     int countDeviceTypesByKeyword(@Param("keyword") String keyword, @Param("typeId") long typeId);
+
+    void switchDeviceTypeUsage(@Param("dvcId") long deviceTypeId, @Param("usage") boolean b);
+
+    void removeDeviceType(long deviceTypeId);
 }

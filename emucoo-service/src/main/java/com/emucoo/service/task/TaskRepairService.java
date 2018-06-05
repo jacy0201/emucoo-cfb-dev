@@ -30,4 +30,10 @@ public interface TaskRepairService {
     void configDeviceCategory(TDeviceType dvc);
 
     void attachDeviceProblem(TDeviceType dvc);
+
+    void removeDeviceType(long deviceTypeId);
+
+    void switchDeviceUsable(long deviceTypeId, boolean b);
+
+    TDeviceType fetchDeviceTypeInfo(long deviceTypeId);
 }

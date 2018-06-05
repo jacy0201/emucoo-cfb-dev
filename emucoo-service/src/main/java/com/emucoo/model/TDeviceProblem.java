@@ -1,6 +1,7 @@
 package com.emucoo.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_device_problem")
 public class TDeviceProblem {
@@ -15,8 +16,11 @@ public class TDeviceProblem {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "is_del")
-    private boolean isDel;
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "modify_time")
+    private Date modifyTime;
 
     public long getId() {
         return id;
@@ -42,11 +46,19 @@ public class TDeviceProblem {
         this.name = name;
     }
 
-    public boolean isDel() {
-        return isDel;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setDel(boolean del) {
-        isDel = del;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 }

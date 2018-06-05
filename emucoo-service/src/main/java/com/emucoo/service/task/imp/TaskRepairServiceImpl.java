@@ -65,6 +65,21 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     }
 
     @Override
+    public void removeDeviceType(long deviceTypeId) {
+        deviceTypeMapper.removeDeviceType(deviceTypeId);
+    }
+
+    @Override
+    public void switchDeviceUsable(long deviceTypeId, boolean b) {
+        deviceTypeMapper.switchDeviceTypeUsage(deviceTypeId, b);
+    }
+
+    @Override
+    public TDeviceType fetchDeviceTypeInfo(long deviceTypeId) {
+        return deviceTypeMapper.selectByPrimaryKey(deviceTypeId);
+    }
+
+    @Override
     public List<TDeviceType> listDeviceTypes(String keyword, long typeId, int pageNm, int pageSz) {
         return deviceTypeMapper.filterDeviceTypesByKeyword(keyword, typeId, (pageNm - 1) * pageSz, pageSz);
     }
