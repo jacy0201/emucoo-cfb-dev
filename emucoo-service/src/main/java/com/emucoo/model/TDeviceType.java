@@ -41,7 +41,8 @@ public class TDeviceType {
     @Column(name = "is_del")
     private boolean isDel;
 
-
+    @Transient
+    private long brandId;
 
     @Transient
     private List<TDeviceType> children;
@@ -151,5 +152,13 @@ public class TDeviceType {
 
     public void setDel(boolean del) {
         isDel = del;
+    }
+
+    public long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(long brandId) {
+        this.brandId = brandId;
     }
 }

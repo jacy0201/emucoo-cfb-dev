@@ -341,13 +341,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    public int countCommonTaskByName(String keyword) {
-        return taskMapper.countCommonTaskByName(keyword);
+    public int countCommonTaskByName(String keyword, Boolean usage) {
+        return taskMapper.countCommonTaskByName(keyword, usage);
     }
 
     @Override
-    public List<TaskParameterVo> listCommonTaskByName(String keyword, int pageNm, int pageSz) {
-        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, (pageNm - 1) * pageSz, pageSz);
+    public List<TaskParameterVo> listCommonTaskByName(String keyword, Boolean usage, int pageNm, int pageSz ) {
+        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, usage,(pageNm - 1) * pageSz, pageSz);
         List<TaskParameterVo> taskList = new ArrayList<>();
         for (TTask task : tasks) {
             TaskParameterVo vo = new TaskParameterVo();
