@@ -94,4 +94,9 @@
     <select id="filterAvailableAssignTask" resultType="com.emucoo.model.TTask">
         select * from t_task where type = 2  and is_use =1 and  (is_del = 0 or is_del is null) and #{theDay} between task_start_date and task_end_date
     </select>
+
+    <select id="filterAvailableImproveTask" resultType="com.emucoo.model.TTask">
+        select * from t_task where type = 3  and is_use =1 and  (is_del = 0 or is_del is null) and #{theDay} between task_start_date and task_end_date
+    </select>
+
 </mapper>
