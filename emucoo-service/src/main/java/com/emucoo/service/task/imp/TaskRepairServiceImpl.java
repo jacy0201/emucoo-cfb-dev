@@ -1,5 +1,6 @@
 package com.emucoo.service.task.imp;
 
+import com.emucoo.mapper.TDeviceProblemMapper;
 import com.emucoo.mapper.TDeviceTypeMapper;
 import com.emucoo.mapper.TRepairWorkMapper;
 import com.emucoo.model.TDeviceProblem;
@@ -21,6 +22,9 @@ public class TaskRepairServiceImpl implements TaskRepairService {
 
     @Autowired
     private TDeviceTypeMapper deviceTypeMapper;
+
+    @Autowired
+    private TDeviceProblemMapper deviceProblemMapper;
 
     @Override
     public TRepairWork detail(long workId) {
@@ -109,5 +113,12 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Transactional
     public void attachDeviceProblem(TDeviceType dvc) {
         List<TDeviceProblem> problems = dvc.getProblems();
+        for(TDeviceProblem problem : problems) {
+            if (problem.getId() == 0){
+                deviceProblemMapper.insert(problem);
+            } else {
+                deviceProblemMapper.updateByPrimaryKeySelective(problem);
+            }
+        }
     }
 }
