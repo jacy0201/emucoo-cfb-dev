@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void add(CommentAddIn vo, SysUser user) {
         TTaskComment comment = new TTaskComment();
-        comment.setContent(vo.getReplyContent());
+        comment.setContent(vo.getContent());
         Integer workType=vo.getWorkType();
         comment.setUnionType(workType);
         Long unionId=null;

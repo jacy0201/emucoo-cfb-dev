@@ -15,7 +15,7 @@ public class CommentAddIn {
 	private String subID;
 	//workType为4时需传 reportID
 	private Long reportID;
-	private String replyContent;
+	private String content;
 	private List<ImgUrl> commentImgArr = new ArrayList<ImgUrl>();
 	@Data
 	public static class ImgUrl {
