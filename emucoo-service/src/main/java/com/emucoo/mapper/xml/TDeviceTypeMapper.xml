@@ -36,4 +36,12 @@
         </if>
         limit #{pageStart}, #{pageSz}
     </select>
+    
+    <update id="switchDeviceTypeUsage">
+        update t_device_type set is_use = #{usage} where id = #{dvcId}
+    </update>
+
+    <update id="removeDeviceType">
+        update t_device_type set is_del = 1 where id = #{deviceTypeId}
+    </update>
 </mapper>

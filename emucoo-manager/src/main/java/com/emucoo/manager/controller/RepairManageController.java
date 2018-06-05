@@ -46,6 +46,38 @@ public class RepairManageController extends BaseResource {
         return success(pageInfo);
     }
 
+    @ApiOperation(value = "设备详情", httpMethod = "POST")
+    @PostMapping("/info")
+    public ApiResult<TDeviceType> info(@RequestBody ParamVo<Long> paramVo) {
+        long deviceTypeId = paramVo.getData();
+        TDeviceType deviceType = taskRepairService.fetchDeviceTypeInfo(deviceTypeId);
+        return success(deviceType);
+    }
+
+    @ApiOperation(value = "启用设备", httpMethod = "POST")
+    @PostMapping("/enable")
+    public ApiResult<String> enable(@RequestBody ParamVo<Long> paramVo){
+        long deviceTypeId = paramVo.getData();
+        taskRepairService.switchDeviceUsable(deviceTypeId, true);
+        return success("设备成功启用！");
+    }
+
+    @ApiOperation(value = "停用设备", httpMethod = "POST")
+    @PostMapping("/disable")
+    public ApiResult<String> disable(@RequestBody ParamVo<Long> paramVo){
+        long deviceTypeId = paramVo.getData();
+        taskRepairService.switchDeviceUsable(deviceTypeId, false);
+        return success("设备停用完成！");
+    }
+
+    @ApiOperation(value = "删除设备", httpMethod = "POST")
+    @PostMapping("/remove")
+    public ApiResult<String> remove(@RequestBody ParamVo<Long> paramVo) {
+        long deviceTypeId = paramVo.getData();
+        taskRepairService.removeDeviceType(deviceTypeId);
+        return success("删除设备成功！");
+    }
+
     @ApiOperation(value = "创建编辑设备", httpMethod = "POST")
     @PostMapping("/save")
     public ApiResult<String> save(@RequestBody ParamVo<TDeviceType> paramVo) {
