@@ -64,7 +64,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         task.setName(vo.getTaskTitle());
         task.setDescription(vo.getTaskExplain());
         task.setType(3);
-        task.setIllustrationImgIds(StringUtils.join(timgids));
+        task.setIllustrationImgIds(StringUtils.join(timgids, ","));
         task.setTaskStartDate(DateUtil.strToSimpleYYMMDDDate(vo.getStartDate()));
         task.setTaskEndDate(DateUtil.strToSimpleYYMMDDDate(vo.getEndDate()));
         task.setExecuteDeadline(vo.getSubmitDeadlineRule());
