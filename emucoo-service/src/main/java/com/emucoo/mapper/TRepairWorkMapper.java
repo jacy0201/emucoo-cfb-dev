@@ -8,4 +8,5 @@ import java.util.List;
 public interface TRepairWorkMapper extends MyMapper<TRepairWork> {
 
     List<TRepairWork> fetchWorksByShopId();
+
 }
