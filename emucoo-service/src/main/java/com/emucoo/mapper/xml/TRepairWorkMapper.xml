@@ -12,7 +12,7 @@
         <result column="device_title" property="deviceTitle" jdbcType="VARCHAR" />
         <result column="problem_id" property="problemId" jdbcType="BIGINT" />
         <result column="problem_name" property="problemName" jdbcType="VARCHAR" />
-        <result column="urgent_level" property="urgentLevel" jdbcType="INT" />
+        <result column="urgent_level" property="urgentLevel" jdbcType="INTEGER" />
         <result column="problem_imgs" property="problemImgs" jdbcType="VARCHAR" />
         <result column="repair_man_id" property="repairManId" jdbcType="BIGINT" />
         <result column="repair_man_name" property="repairManName" jdbcType="VARCHAR" />
@@ -21,8 +21,8 @@
         <result column="repair_notes" property="repairNotes" jdbcType="VARCHAR" />
         <result column="repair_imgs" property="repair_imgs" jdbcType="VARCHAR" />
         <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR" />
-        <result column="review_result" property="reviewResult" jdbcType="INT" />
-        <result column="work_status" property="workStatus" jdbcType="INT" />
+        <result column="review_result" property="reviewResult" jdbcType="INTEGER" />
+        <result column="work_status" property="workStatus" jdbcType="INTEGER" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
 
