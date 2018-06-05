@@ -1158,8 +1158,8 @@ public class FormServiceImpl implements FormService {
         String postStr = "";
         String postIdStr = "";
         for (SysPost post : postions) {
-            postStr += post.getPostName();
-            postIdStr += post.getId();
+            postStr += post.getPostName() + ",";
+            postIdStr += post.getId() + ",";
         }
         if (StringUtils.isNotBlank(postStr)) {
             postStr = postStr.substring(0, postStr.length() - 1);
