@@ -13,11 +13,11 @@ public class TDeviceType {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "type_id")
-    private long typeId = 0;
+    @Column(name = "parent_type_id")
+    private long parentTypeId = 0;
 
-    @Column(name = "type_name")
-    private String typeName;
+    @Column(name = "parent_type_name")
+    private String parentTypeName;
 
     @Column(name = "brand_ids")
     private String brandIds;
@@ -47,20 +47,20 @@ public class TDeviceType {
         this.name = name;
     }
 
-    public long getTypeId() {
-        return typeId;
+    public long getParentTypeId() {
+        return parentTypeId;
     }
 
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
+    public void setParentTypeId(long parentTypeId) {
+        this.parentTypeId = parentTypeId;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getParentTypeName() {
+        return parentTypeName;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setParentTypeName(String parentTypeName) {
+        this.parentTypeName = parentTypeName;
     }
 
     public String getBrandIds() {

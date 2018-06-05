@@ -4,18 +4,20 @@
     <resultMap id="BaseResultMap" type="com.emucoo.model.TDeviceType">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="type_id" property="typeId" jdbcType="BIGINT"/>
-        <result column="type_name" property="typeName" jdbcType="VARCHAR"/>
+        <result column="parent_type_id" property="parentTypeId" jdbcType="BIGINT"/>
+        <result column="parent_type_name" property="parentTypeName" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="brand_ids" property="Ids" jdbcType="VARCHAR"/>
-
     </resultMap>
 
-    <select id="" resultType="java.lang.Integer">
+    <select id="countDeviceTypesByKeyword" resultType="java.lang.Integer">
         select * from t_device_type
         where (is_del is null or is_del = 0)
         <if test="keywork != null and keyword.trim() != '' ">
             and name like concat('%', #{keyword}, '%')
+        </if>
+        <if test="typeId != null and typeId != 0">
+            and parent_type_id = #{typeId}
         </if>
     </select>
 
@@ -24,6 +26,9 @@
         where (is_del is null or is_del = 0)
         <if test="keywork != null and keyword.trim() != '' ">
             and name like concat('%', #{keyword}, '%')
+        </if>
+        <if test="typeId != null and typeId != 0">
+            and parent_type_id = #{typeId}
         </if>
         limit #{pageStart}, #{pageSz}
     </select>
