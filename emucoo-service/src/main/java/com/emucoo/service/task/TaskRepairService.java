@@ -36,4 +36,6 @@ public interface TaskRepairService {
     void switchDeviceUsable(long deviceTypeId, boolean b);
 
     TDeviceType fetchDeviceTypeInfo(long deviceTypeId);
+
+    List<TDeviceType> listTopDeviceTypes();
 }

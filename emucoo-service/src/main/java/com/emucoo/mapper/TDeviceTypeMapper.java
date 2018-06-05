@@ -15,4 +15,8 @@ public interface TDeviceTypeMapper extends MyMapper<TDeviceType> {
     void switchDeviceTypeUsage(@Param("dvcId") long deviceTypeId, @Param("usage") boolean b);
 
     void removeDeviceType(long deviceTypeId);
+
+    List<TDeviceType> findChildren(long deviceTypeId);
+
+    List<TDeviceType> listTopDeviceTypes();
 }

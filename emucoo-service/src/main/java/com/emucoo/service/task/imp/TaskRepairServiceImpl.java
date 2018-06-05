@@ -33,6 +33,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         return work;
     }
 
+
     @Override
     public List<TRepairWork> listRepairWorksByShopId(Long shopId) {
         List<TRepairWork> works = repairWorkMapper.fetchWorksByShopId();
@@ -76,7 +77,15 @@ public class TaskRepairServiceImpl implements TaskRepairService {
 
     @Override
     public TDeviceType fetchDeviceTypeInfo(long deviceTypeId) {
-        return deviceTypeMapper.selectByPrimaryKey(deviceTypeId);
+        TDeviceType deviceType =  deviceTypeMapper.selectByPrimaryKey(deviceTypeId);
+        List<TDeviceType> children = deviceTypeMapper.findChildren(deviceTypeId);
+        deviceType.setChildren(children);
+        for(TDeviceType child : children) {
+            child.setChildren(deviceTypeMapper.findChildren(child.getId()));
+        }
+        List<TDeviceProblem> problems = deviceProblemMapper.findDeviceTypeProblems(deviceTypeId);
+        deviceType.setProblems(problems);
+        return deviceType;
     }
 
     @Override
@@ -92,6 +101,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Override
     @Transactional
     public void saveDeviceType(TDeviceType dvc) {
+        dvc.setTier(2);
         if(dvc.getId() == 0) {
             deviceTypeMapper.insert(dvc);
         } else {
@@ -135,5 +145,10 @@ public class TaskRepairServiceImpl implements TaskRepairService {
                 deviceProblemMapper.updateByPrimaryKeySelective(problem);
             }
         }
+    }
+
+    @Override
+    public List<TDeviceType> listTopDeviceTypes() {
+        return deviceTypeMapper.listTopDeviceTypes();
     }
 }

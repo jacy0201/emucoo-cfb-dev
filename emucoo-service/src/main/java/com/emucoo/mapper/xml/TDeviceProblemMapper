@@ -10,5 +10,8 @@
 
     </resultMap>
 
+    <select id="findDeviceTypeProblems" resultType="com.emucoo.model.TDeviceProblem">
+        select * from t_device_problem where device_type_id = #{deviceTypeId}
+    </select>
 
 </mapper>

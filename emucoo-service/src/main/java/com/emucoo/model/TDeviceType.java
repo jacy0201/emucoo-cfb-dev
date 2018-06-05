@@ -14,6 +14,9 @@ public class TDeviceType {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "tier")
+    private int tier;
+
     @Column(name = "parent_type_id")
     private long parentTypeId = 0;
 
@@ -126,19 +129,27 @@ public class TDeviceType {
         this.modifyTime = modifyTime;
     }
 
-    public boolean getIsUse() {
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public boolean isUse() {
         return isUse;
     }
 
-    public void setIsUse(boolean use) {
+    public void setUse(boolean use) {
         isUse = use;
     }
 
-    public boolean getIsDel() {
+    public boolean isDel() {
         return isDel;
     }
 
-    public void setIsDel(boolean del) {
+    public void setDel(boolean del) {
         isDel = del;
     }
 }
