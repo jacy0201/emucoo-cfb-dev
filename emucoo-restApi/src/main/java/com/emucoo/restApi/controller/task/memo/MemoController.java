@@ -82,9 +82,9 @@ public class MemoController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         MemoCreationVo_I memoCreationVo_I = params.getData();
         String submitToken = memoCreationVo_I.getSubmitToken();
-        if(ReSubmitTokenManager.validateToken(submitToken)){
+        if(UserTokenManager.getInstance().validateToken(submitToken)){
             loopWorkService.createMemo(memoCreationVo_I, user.getId());
-            ReSubmitTokenManager.clearToken(submitToken);
+            UserTokenManager.getInstance().clearReSubmitToken(submitToken);
             return success("success");
         } else {
             return fail(AppExecStatus.SERVICE_ERR, "创建任务失败！");
