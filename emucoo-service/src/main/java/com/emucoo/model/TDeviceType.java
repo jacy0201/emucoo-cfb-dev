@@ -1,22 +1,24 @@
 package com.emucoo.model;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Table(name = "t_device_type")
 public class TDeviceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long id = 0;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "type_id")
-    private long typeId;
+    @Column(name = "parent_type_id")
+    private long parentTypeId = 0;
 
-    @Column(name = "type_name")
-    private String typeName;
+    @Column(name = "parent_type_name")
+    private String parentTypeName;
 
     @Column(name = "brand_ids")
     private String brandIds;
@@ -24,7 +26,25 @@ public class TDeviceType {
     @Column(name = "description")
     private String description;
 
-    @Column
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "modify_time")
+    private Date modifyTime;
+
+    @Column(name = "is_use")
+    private boolean isUse;
+
+    @Column(name = "is_del")
+    private boolean isDel;
+
+
+
+    @Transient
+    private List<TDeviceType> children;
+
+    @Transient
+    private List<TDeviceProblem> problems;
 
     public long getId() {
         return id;
@@ -42,20 +62,20 @@ public class TDeviceType {
         this.name = name;
     }
 
-    public long getTypeId() {
-        return typeId;
+    public long getParentTypeId() {
+        return parentTypeId;
     }
 
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
+    public void setParentTypeId(long parentTypeId) {
+        this.parentTypeId = parentTypeId;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getParentTypeName() {
+        return parentTypeName;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setParentTypeName(String parentTypeName) {
+        this.parentTypeName = parentTypeName;
     }
 
     public String getBrandIds() {
@@ -72,5 +92,53 @@ public class TDeviceType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<TDeviceType> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<TDeviceType> children) {
+        this.children = children;
+    }
+
+    public List<TDeviceProblem> getProblems() {
+        return problems;
+    }
+
+    public void setProblems(List<TDeviceProblem> problems) {
+        this.problems = problems;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public boolean getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(boolean use) {
+        isUse = use;
+    }
+
+    public boolean getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(boolean del) {
+        isDel = del;
     }
 }

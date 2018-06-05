@@ -34,20 +34,17 @@ public class TRepairWork {
     @Column(name = "device_title")
     private String deviceTitle;
 
-    @Column(name = "trouble_id")
-    private Long troubleId;
+    @Column(name = "problem_id")
+    private Long problemId;
 
-    @Column(name = "trouble_name")
-    private String troubleName;
+    @Column(name = "problem_name")
+    private String problemName;
 
     @Column(name = "urgent_level")
     private Integer urgentLevel;
 
-    @Column(name = "trouble_notes")
-    private String troubleNotes;
-
-    @Column(name = "trouble_imgs")
-    private String troubleImgs;
+    @Column(name = "problem_imgs")
+    private String problemImgs;
 
     @Column(name = "repair_man_id")
     private Long repairManId;
@@ -55,11 +52,11 @@ public class TRepairWork {
     @Column(name = "repair_man_name")
     private String repairManName;
 
-    @Column(name = "expect_repair_date")
-    private Date expectRepairDate;
+    @Column(name = "expect_date")
+    private Date expectDate;
 
-    @Column(name = "finish_repair_date")
-    private Date finishRepairDate;
+    @Column(name = "finish_date")
+    private Date finishDate;
 
     @Column(name = "repair_notes")
     private String repairNotes;
@@ -168,20 +165,20 @@ public class TRepairWork {
         this.deviceTitle = deviceTitle;
     }
 
-    public Long getTroubleId() {
-        return troubleId;
+    public Long getProblemId() {
+        return problemId;
     }
 
-    public void setTroubleId(Long troubleId) {
-        this.troubleId = troubleId;
+    public void setProblemId(Long problemId) {
+        this.problemId = problemId;
     }
 
-    public String getTroubleName() {
-        return troubleName;
+    public String getProblemName() {
+        return problemName;
     }
 
-    public void setTroubleName(String troubleName) {
-        this.troubleName = troubleName;
+    public void setProblemName(String problemName) {
+        this.problemName = problemName;
     }
 
     public Integer getUrgentLevel() {
@@ -192,20 +189,12 @@ public class TRepairWork {
         this.urgentLevel = urgentLevel;
     }
 
-    public String getTroubleNotes() {
-        return troubleNotes;
+    public String getProblemImgs() {
+        return problemImgs;
     }
 
-    public void setTroubleNotes(String troubleNotes) {
-        this.troubleNotes = troubleNotes;
-    }
-
-    public String getTroubleImgs() {
-        return troubleImgs;
-    }
-
-    public void setTroubleImgs(String troubleImgs) {
-        this.troubleImgs = troubleImgs;
+    public void setProblemImgs(String problemImgs) {
+        this.problemImgs = problemImgs;
     }
 
     public Long getRepairManId() {
@@ -224,20 +213,20 @@ public class TRepairWork {
         this.repairManName = repairManName;
     }
 
-    public Date getExpectRepairDate() {
-        return expectRepairDate;
+    public Date getExpectDate() {
+        return expectDate;
     }
 
-    public void setExpectRepairDate(Date expectRepairDate) {
-        this.expectRepairDate = expectRepairDate;
+    public void setExpectDate(Date expectDate) {
+        this.expectDate = expectDate;
     }
 
-    public Date getFinishRepairDate() {
-        return finishRepairDate;
+    public Date getFinishDate() {
+        return finishDate;
     }
 
-    public void setFinishRepairDate(Date finishRepairDate) {
-        this.finishRepairDate = finishRepairDate;
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
     }
 
     public String getRepairNotes() {
