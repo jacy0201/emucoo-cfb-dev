@@ -281,6 +281,20 @@
         ]]>
     </update>
 
+    <update id="markExpiredExeOperateOptions">
+        <![CDATA[
+        update t_operate_data_for_work a inner join t_loop_work b on a.loop_work_id = b.id set a.audit_result = 2
+        where b.work_status=1 and b.execute_deadline < #{dt}
+        ]]>
+    </update>
+
+    <update id="markExpiredAuditOperateOptions">
+        <![CDATA[
+        update t_operate_data_for_work a inner join t_loop_work b on a.loop_work_id = b.id set a.audit_result = 1
+        where b.work_status=2 and b.audit_deadline < #{dt}
+        ]]>
+    </update>
+
     <select id="fetchCommonTaskStatement" resultType="com.emucoo.dto.modules.task.TaskCommonStatement">
         select
         s.work_status taskStatus,
