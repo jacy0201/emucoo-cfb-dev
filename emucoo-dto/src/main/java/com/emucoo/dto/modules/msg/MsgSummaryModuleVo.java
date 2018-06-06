@@ -11,8 +11,8 @@ import lombok.Data;
 @ApiModel(value = "消息不同模块数组")
 public class MsgSummaryModuleVo {
 
-    @ApiModelProperty(value = "消息模块类别", name = "moduleType", notes = "1:创建提醒，2：执行提醒，3：待审提醒，4：超时提醒，5：审核完成提醒，6：评论提醒")
-    Integer moduleType;
+    @ApiModelProperty(value = "消息功能类别", name = "functionType", notes = "1:创建提醒，2：执行提醒，3：待审提醒，4：超时提醒，5：审核完成提醒，6：评论提醒")
+    Integer functionType;
     String msgContent;
     Integer msgCount;
     @ApiModelProperty(value = "最新的消息发送时间戳", name = "msgSendTimeStamp")

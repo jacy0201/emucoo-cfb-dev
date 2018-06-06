@@ -75,8 +75,8 @@ public class FormManageServiceImpl implements FormManageService {
     }
 
     @Override
-    public List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz) {
-        return formMainMapper.findFormsByName(keyword, (pageNm - 1) * pageSz, pageSz);
+    public List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz, Integer formType) {
+        return formMainMapper.findFormsByName(keyword, (pageNm - 1) * pageSz, pageSz, formType);
     }
 
     @Override
@@ -506,7 +506,12 @@ public class FormManageServiceImpl implements FormManageService {
             AbilityFormMain formVo = new AbilityFormMain();
             TFormMain main = new TFormMain();
             main.setId(formIn.getFormID());
-            main.setFormType(formIn.getFormType());
+            if(formIn.getFormType() != null) {
+                main.setFormType(formIn.getFormType());
+            } else {
+                main.setFormType(FormType.ABILITY_TYPE.getCode());
+            }
+
             TFormMain form = formMainMapper.selectOne(main);
             Long userId = null;
             if(user != null) {

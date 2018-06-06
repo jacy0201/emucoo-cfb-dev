@@ -35,7 +35,6 @@ import java.util.List;
 public class PlanStatisticsManageController extends BaseResource {
 
 
-
     @Autowired
     private PlanStatisticsService planStatisticsService;
 

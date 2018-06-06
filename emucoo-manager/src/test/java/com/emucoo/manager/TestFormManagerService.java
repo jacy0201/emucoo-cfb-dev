@@ -26,7 +26,7 @@ public class TestFormManagerService {
 
     @Test
     public void testListForms() {
-        List<TFormMain> forms = formManageService.findFormsByNameKeyword(null, 1, 50);
+        List<TFormMain> forms = formManageService.findFormsByNameKeyword(null, 1, 50, 1);
         assertThat(forms).isNotEmpty();
         forms.forEach(form -> System.out.println(form.getCreateTime()));
     }

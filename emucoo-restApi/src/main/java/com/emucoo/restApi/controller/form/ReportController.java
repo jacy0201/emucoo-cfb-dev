@@ -11,6 +11,7 @@ import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.report.ReportService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,6 +93,7 @@ public class ReportController extends AppBaseController {
         return success(getOpptOut);
     }
 
+    @ApiOperation(value = "查询能力模型报告")
     @PostMapping(value = "findAbilityReportInfo")
     public AppResult<AbilityReportVo> findAbilityReportInfo(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
         GetReportIn reportIn = params.getData();

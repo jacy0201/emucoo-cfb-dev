@@ -1,6 +1,7 @@
 package com.emucoo.service.planStatistics.impl;
 
 import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.statistics.plan.GeneratePlanReportIn;
 import com.emucoo.enums.FormType;
 import com.emucoo.mapper.*;
@@ -8,6 +9,7 @@ import com.emucoo.model.*;
 import com.emucoo.service.planStatistics.PlanStatisticsService;
 import com.emucoo.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +89,13 @@ public class PlanStatisticsServiceImpl implements PlanStatisticsService {
                             //statistics.setShopType(ShopType.getName(shop.getType()));
                         }
 
-                        // 获取店铺城市
-                        districtParam.setAreaCode(shop.getCity());
-                        SysDistrict district = sysDistrictMapper.selectOne(districtParam);
-                        if(district != null) {
-                            statistics.setCity(district.getAreaName());
+                        if(StringUtils.isNotBlank(shop.getCity())) {
+                            // 获取店铺城市
+                            districtParam.setAreaCode(shop.getCity());
+                            SysDistrict district = sysDistrictMapper.selectOne(districtParam);
+                            if (district != null) {
+                                statistics.setCity(district.getAreaName());
+                            }
                         }
 
                         if(shop.getBrandId() != null) {
