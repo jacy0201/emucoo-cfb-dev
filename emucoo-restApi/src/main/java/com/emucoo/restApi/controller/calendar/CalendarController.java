@@ -96,7 +96,7 @@ public class CalendarController extends AppBaseController {
     @PostMapping(value = "/delete")
     public AppResult delete(@RequestBody ParamVo<CalendarDelVO> params) {
         CalendarDelVO calendarDelVO=params.getData();
-        checkParam(calendarDelVO.getId(),"id不能为空!");
+        checkParam(calendarDelVO.getWorkID(),"workID不能为空!");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         calendarService.deleteCalendar(calendarDelVO,user.getId());
         //返回按姓名首字母排序的集合;

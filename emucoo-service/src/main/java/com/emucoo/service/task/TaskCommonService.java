@@ -16,9 +16,9 @@ public interface TaskCommonService {
 
     void editExcImgs(ExecuteImgIn vo, SysUser user);
 
-    int countCommonTaskByName(String keyword);
+    int countCommonTaskByName(String keyword, Boolean usage);
 
-    List<TaskParameterVo> listCommonTaskByName(String keyword, int pageNm, int pageSz);
+    List<TaskParameterVo> listCommonTaskByName(String keyword, Boolean usage, int pageNm, int pageSz);
 
     void createCommonTask(TaskParameterVo data);
 

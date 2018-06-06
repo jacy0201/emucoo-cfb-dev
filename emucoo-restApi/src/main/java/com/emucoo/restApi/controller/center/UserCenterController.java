@@ -5,6 +5,7 @@ import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskQuery;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
@@ -111,6 +112,18 @@ public class UserCenterController extends AppBaseController {
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TaskVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
+        return success(list);
+    }
+
+    /**
+     * 维修任务
+     */
+    @ApiOperation(value="维修任务")
+    @PostMapping("/repairWorkList")
+    public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params){
+        TaskQuery taskQuery=params.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
 

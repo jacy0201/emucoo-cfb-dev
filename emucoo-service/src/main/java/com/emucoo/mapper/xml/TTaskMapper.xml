@@ -54,6 +54,9 @@
             <if test="keyword != null and keyword != ''">
                 and name like concat('%', #{keyword}, '%')
             </if>
+            <if test="usage != null">
+                and is_use = #{usage}
+            </if>
         </where>
     </select>
 
@@ -63,6 +66,9 @@
             (is_del = 0 or is_del is null) and type = 1
             <if test="keyword != null and keyword != ''">
                 and name like concat('%', #{keyword}, '%')
+            </if>
+            <if test="usage != null">
+                and is_use = #{usage}
             </if>
         </where>
         order by modify_time desc

@@ -34,10 +34,10 @@ public class TaskManageController extends BaseResource {
         int pageSz = param.getPageSize();
         TaskParameterVo dataIn = param.getData();
         String keyword =  dataIn.getName();
+        Boolean usage = dataIn.getIsUse();
 
-
-        int total = taskCommonService.countCommonTaskByName(keyword);
-        List<TaskParameterVo> taskList = taskCommonService.listCommonTaskByName(keyword, pageNm, pageSz);
+        int total = taskCommonService.countCommonTaskByName(keyword, usage);
+        List<TaskParameterVo> taskList = taskCommonService.listCommonTaskByName(keyword, usage, pageNm, pageSz);
 
         PageInfo pageInfo = new PageInfo(taskList);
         pageInfo.setPageSize(pageSz);

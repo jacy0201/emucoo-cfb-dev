@@ -195,14 +195,13 @@ public class CalendarServiceImpl implements CalendarService {
 
     public void deleteCalendar(CalendarDelVO calendarDelVO, Long currentUserId) {
         Integer workType = calendarDelVO.getWorkType();
-        Long id =Long.parseLong(calendarDelVO.getId());
         if(ConstantsUtil.LoopWork.TYPE_FOUR.equals(workType)){
-            TFrontPlan frontPlan= tFrontPlanMapper.selectByPrimaryKey(id);
+            TFrontPlan frontPlan= tFrontPlanMapper.selectByPrimaryKey(Long.parseLong(calendarDelVO.getWorkID()));
             //status=2 未巡店
             if(frontPlan.getArrangerId().equals(currentUserId) && frontPlan.getStatus().equals(2)){
                 //删除巡店安排
                 TFrontPlan tFrontPlan=new TFrontPlan();
-                tFrontPlan.setId(id);
+                tFrontPlan.setId(Long.parseLong(calendarDelVO.getWorkID()));
                 tFrontPlan.setIsDel(true);
                 tFrontPlan.setModifyUserId(currentUserId);
                 tFrontPlan.setModifyTime(new Date());
