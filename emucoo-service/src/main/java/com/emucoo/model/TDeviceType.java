@@ -138,20 +138,20 @@ public class TDeviceType {
         this.tier = tier;
     }
 
-    public boolean isUse() {
+    public void setIsUse(boolean isUse) {
+        this.isUse = isUse;
+    }
+
+    public boolean getIsUse(){
         return isUse;
     }
 
-    public void setUse(boolean use) {
-        isUse = use;
+    public void setIsDel(boolean isDel) {
+        this.isDel = isDel;
     }
 
-    public boolean isDel() {
+    public boolean getIsDel(){
         return isDel;
-    }
-
-    public void setDel(boolean del) {
-        isDel = del;
     }
 
     public long getBrandId() {

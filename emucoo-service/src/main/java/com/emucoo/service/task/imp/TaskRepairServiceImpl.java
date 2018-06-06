@@ -7,11 +7,12 @@ import com.emucoo.model.TDeviceProblem;
 import com.emucoo.model.TDeviceType;
 import com.emucoo.model.TRepairWork;
 import com.emucoo.service.task.TaskRepairService;
+import com.emucoo.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -102,6 +103,8 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Transactional
     public void saveDeviceType(TDeviceType dvc) {
         dvc.setTier(2);
+        dvc.setCreateTime(DateUtil.currentDate());
+        dvc.setModifyTime(DateUtil.currentDate());
         if(dvc.getId() == 0) {
             deviceTypeMapper.insert(dvc);
         } else {
@@ -109,41 +112,58 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         }
     }
 
-    private List<TDeviceType> extractChildrenType(TDeviceType dvc) {
-        List<TDeviceType> list = new ArrayList<>();
+    private void configChildrenCategory(TDeviceType dvc) {
         List<TDeviceType> children = dvc.getChildren();
-        list.addAll(children);
+        List<TDeviceType> childTypes = deviceTypeMapper.findChildren(dvc.getId());
         for(TDeviceType tdt : children) {
-            list.addAll(extractChildrenType(tdt));
+            tdt.setParentTypeId(dvc.getId());
+            tdt.setTier(dvc.getTier() + 1);
+            if (tdt.getId() == 0){
+                deviceTypeMapper.insert(tdt);
+            } else {
+                deviceTypeMapper.updateByPrimaryKeySelective(tdt);
+                Iterator<TDeviceType> it = childTypes.iterator();
+                while (it.hasNext()) {
+                    if (it.next().getId() == tdt.getId()){
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+            configChildrenCategory(tdt);
         }
-        return list;
+        for(TDeviceType old : childTypes) {
+            deviceTypeMapper.deleteByPrimaryKey(old.getId());
+        }
     }
 
     @Override
     @Transactional
     public void configDeviceCategory(TDeviceType dvc) {
-        List<TDeviceType> children = extractChildrenType(dvc);
-        List<TDeviceType> newList = new ArrayList<>();
-        for(TDeviceType tdt : children) {
-            if (tdt.getId() == 0) {
-                newList.add(tdt);
-            } else {
-                deviceTypeMapper.updateByPrimaryKeySelective(tdt);
-            }
-        }
-        deviceTypeMapper.insertList(newList);
+        configChildrenCategory(dvc);
     }
 
     @Override
     @Transactional
     public void attachDeviceProblem(TDeviceType dvc) {
+        List<TDeviceProblem> oldProblems = deviceProblemMapper.findDeviceTypeProblems(dvc.getId());
         List<TDeviceProblem> problems = dvc.getProblems();
         for(TDeviceProblem problem : problems) {
             if (problem.getId() == 0){
                 deviceProblemMapper.insert(problem);
             } else {
                 deviceProblemMapper.updateByPrimaryKeySelective(problem);
+                Iterator<TDeviceProblem> it =  oldProblems.iterator();
+                while(it.hasNext()) {
+                    if (it.next().getId() == problem.getId()){
+                        it.remove();
+                        break;
+                    }
+                }
             }
+        }
+        for(TDeviceProblem oldproblem : oldProblems) {
+            deviceProblemMapper.deleteByPrimaryKey(oldproblem.getId());
         }
     }
 

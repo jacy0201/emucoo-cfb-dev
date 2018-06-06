@@ -14,4 +14,6 @@ public class GetFormInfoIn {
     private Long formID;
     @ApiModelProperty(value = "表单类型 1-类RVR表，2-能力模型", name = "formType", required = true, example = "2")
     private Integer formType;
+    @ApiModelProperty(value = "店铺id", name = "shopID", required = true, example = "2")
+    private Long shopID;
 }

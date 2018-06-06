@@ -785,6 +785,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void markExpiredWorks() {
         Date dt = DateUtil.currentDate();
+        // 注意顺序，expired option的必须放在前面，不然work状态改了，option的过滤条件就不起效果了。
+        loopWorkMapper.markExpiredExeOperateOptions(dt);
+        loopWorkMapper.markExpiredAuditOperateOptions(dt);
         loopWorkMapper.markExpiredExecutionWorks(dt);
         loopWorkMapper.markExpiredAuditWorks(dt);
     }

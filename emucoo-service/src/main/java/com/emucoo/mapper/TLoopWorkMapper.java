@@ -47,6 +47,10 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     void markExpiredExecutionWorks(Date dt);
 
+    void markExpiredExeOperateOptions(Date dt);
+
+    void markExpiredAuditOperateOptions(Date dt);
+
     TaskCommonStatement fetchCommonTaskStatement(Long loopWorkId);
 
     List<TaskCommonItemVo> fetchTaskCommonItem(Long loopWorkId);
@@ -59,4 +63,5 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     List<TLoopWork> getTaskList(@Param("yearStr") String yearStr,@Param("monthStr") String monthStr,
                                 @Param("auditUserId") Long auditUserId,@Param("excuteUserId") Long excuteUserId,@Param("createUserId") Long createUserId);
+
 }

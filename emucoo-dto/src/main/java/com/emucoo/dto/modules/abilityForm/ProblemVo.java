@@ -1,25 +1,44 @@
 package com.emucoo.dto.modules.abilityForm;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
  * Created by sj on 2018/5/17.
  */
+@ApiModel
 public class ProblemVo {
+    @ApiModelProperty(value = "题项名", name = "problemName", example = "101.门店人员配置")
     private String problemName;
+    @ApiModelProperty(value = "题项id", name = "problemID", example = "1")
     private Long problemID;
+    @ApiModelProperty(value = "检查方式", name = "checkMode", example = "")
     private String checkMode;
+    @ApiModelProperty(value = "检查结果", name = "notes", example = "地板不干净，玻璃脏")
     private String notes;
+    @ApiModelProperty(value = "问题描述", name = "problemDescription", example = "")
     private String problemDescription;
+    @ApiModelProperty(value = "是否完成", name = "isDone", example = "true")
     private Boolean isDone;
+    @ApiModelProperty(value = "是否通过", name = "isPass", example = "true")
     private Boolean isPass;
+    @ApiModelProperty(value = "是否NA", name = "isNA", example = "true")
     private Boolean isNA;
+    @ApiModelProperty(value = "是否有子题", name = "isSubProblem", example = "true")
     private Boolean isSubProblem;
+    @ApiModelProperty(value = "是否有子表", name = "isSubList", example = "true")
     private Boolean isSubList;
+    @ApiModelProperty(value = "子题数组", name = "subProblemArray")
     private List<SubProblemVo> subProblemArray;
+    @ApiModelProperty(value = "机会点数组", name = "chanceArray")
     private List<ProblemChanceVo> chanceArray;
+    @ApiModelProperty(value = "其他机会点数组", name = "otherChanceArray")
     private List<ProblemChanceVo> otherChanceArray;
+    @ApiModelProperty(value = "照片数组", name = "descImgArr")
     private List<ProblemImg> descImgArr;
+    @ApiModelProperty(value = "子表", name = "subListObject")
     private AbilitySubForm subListObject;
 
     public void setProblemName(String problemName) {

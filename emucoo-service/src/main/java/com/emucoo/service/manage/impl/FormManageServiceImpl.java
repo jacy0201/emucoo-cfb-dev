@@ -69,9 +69,15 @@ public class FormManageServiceImpl implements FormManageService {
     @Autowired
     private SysUserMapper userMapper;
 
+    @Autowired
+    private TShopInfoMapper shopInfoMapper;
+
+    @Autowired
+    private TBrandInfoMapper brandInfoMapper;
+
     @Override
-    public int countFormsByNameKeyword(String keyword) {
-        return formMainMapper.countFormsByName(keyword);
+    public int countFormsByNameKeyword(String keyword, Integer formType) {
+        return formMainMapper.countFormsByName(keyword, formType);
     }
 
     @Override
@@ -83,7 +89,6 @@ public class FormManageServiceImpl implements FormManageService {
     public void createForm(TFormMain form, Long userId) {
         form.setCreateTime(DateUtil.currentDate());
         form.setModifyTime(DateUtil.currentDate());
-        form.setFormType(FormType.RVR_TYPE.getCode());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
         form.setIsDel(false);
@@ -518,6 +523,14 @@ public class FormManageServiceImpl implements FormManageService {
                 userId = user.getId();
             }
             if(form != null) {
+                // 查询店铺
+                TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+
+                TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
+                Date now = new Date();
+                formVo.setShopName(shopInfo.getShopName());
+                formVo.setBrandName(brandInfo.getBrandName());
+                formVo.setGradeDate(DateUtil.dateToString1(now));
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
                 Example formMainExp = new Example(TFormMain.class);
