@@ -1,6 +1,7 @@
 package com.emucoo.restApi.controller.center;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.center.RepairWorkVO;
 import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskQuery;
 import com.emucoo.dto.modules.center.TaskVO;
@@ -123,7 +124,7 @@ public class UserCenterController extends AppBaseController {
     public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params){
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
+        List<RepairWorkVO> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
 
