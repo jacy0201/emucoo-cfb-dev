@@ -83,7 +83,6 @@ public class FormManageServiceImpl implements FormManageService {
     public void createForm(TFormMain form, Long userId) {
         form.setCreateTime(DateUtil.currentDate());
         form.setModifyTime(DateUtil.currentDate());
-        form.setFormType(FormType.RVR_TYPE.getCode());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
         form.setIsDel(false);
