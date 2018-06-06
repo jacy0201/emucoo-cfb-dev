@@ -70,8 +70,8 @@ public class FormManageServiceImpl implements FormManageService {
     private SysUserMapper userMapper;
 
     @Override
-    public int countFormsByNameKeyword(String keyword) {
-        return formMainMapper.countFormsByName(keyword);
+    public int countFormsByNameKeyword(String keyword, Integer formType) {
+        return formMainMapper.countFormsByName(keyword, formType);
     }
 
     @Override

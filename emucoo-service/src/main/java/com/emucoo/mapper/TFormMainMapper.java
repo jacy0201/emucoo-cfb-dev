@@ -11,7 +11,7 @@ public interface TFormMainMapper extends MyMapper<TFormMain> {
     List<TFormMain> findFormsByName(@Param("keyword") String keyword, @Param("startRow") int startRow, @Param("size") int pageSz,
                                     @Param("formType")Integer formType);
 
-    Integer countFormsByName(@Param("keyword") String keyword);
+    Integer countFormsByName(@Param("keyword") String keyword, @Param("formType")Integer formType);
 
     void removeByIds(List<Long> ids);
 

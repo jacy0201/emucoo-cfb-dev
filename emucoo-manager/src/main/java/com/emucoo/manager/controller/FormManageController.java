@@ -57,7 +57,7 @@ public class FormManageController extends BaseResource {
         int pageNm = paramVo.getPageNumber();
         int pageSz = paramVo.getPageSize();
         String keyword = paramVo.getData()==null?"":paramVo.getData().getName();
-        int total = formManageService.countFormsByNameKeyword(keyword);
+        int total = formManageService.countFormsByNameKeyword(keyword, form.getFormType());
         List<TFormMain> forms = formManageService.findFormsByNameKeyword(keyword, pageNm, pageSz, form.getFormType());
         PageInfo pageInfo = new PageInfo(forms);
         pageInfo.setPageNum(pageNm);
