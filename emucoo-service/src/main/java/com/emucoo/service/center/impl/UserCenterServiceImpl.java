@@ -1,6 +1,7 @@
 package com.emucoo.service.center.impl;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.dto.modules.center.RepairWorkVO;
 import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.mapper.*;
@@ -136,9 +137,9 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     //维修任务
     @Override
-    public List<TRepairWork> repairWorkList(String month,Long userId){
-
-        return null;
+    public List<RepairWorkVO> repairWorkList(String month, Long userId){
+        List<RepairWorkVO> list=tRepairWorkMapper.getRepairWorkList(month,userId);
+        return list;
     }
 
 
