@@ -35,6 +35,8 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
     private TReportMapper tReportMapper;
     @Resource
     private TFormCheckResultMapper formCheckResultMapper;
+    @Resource
+    private TRepairWorkMapper tRepairWorkMapper;
 
 
     //我执行的任务
@@ -129,6 +131,14 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
             }
         }
         return  reportList;
+    }
+
+
+    //维修任务
+    @Override
+    public List<TRepairWork> repairWorkList(String month,Long userId){
+
+        return null;
     }
 
 
