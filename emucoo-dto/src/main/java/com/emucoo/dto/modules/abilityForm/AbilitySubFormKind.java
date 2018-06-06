@@ -1,5 +1,6 @@
 package com.emucoo.dto.modules.abilityForm;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 /**
  * Created by sj on 2018/5/17.
  */
+@ApiModel
 public class AbilitySubFormKind {
     @ApiModelProperty(value = "类别名", name = "kindName", example = "1.根据目标100%完成人员配备")
     private String kindName;
