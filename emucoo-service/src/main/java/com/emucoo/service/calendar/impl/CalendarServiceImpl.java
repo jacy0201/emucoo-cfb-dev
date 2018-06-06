@@ -215,8 +215,8 @@ public class CalendarServiceImpl implements CalendarService {
             TLoopWork t=new TLoopWork();
             t.setWorkId(calendarDelVO.getWorkID());
             t.setType(5);
-            TLoopWork tLoopWork=tLoopWorkMapper.selectOne(t);
-            if(tLoopWork.getExcuteUserId().equals(currentUserId)){
+            List<TLoopWork> list=tLoopWorkMapper.select(t);
+            if(list.get(0).getExcuteUserId().equals(currentUserId)){
                 tLoopWorkMapper.delete(t);
                 //删除工作备忘
                 Example example=new Example(TTask.class);
