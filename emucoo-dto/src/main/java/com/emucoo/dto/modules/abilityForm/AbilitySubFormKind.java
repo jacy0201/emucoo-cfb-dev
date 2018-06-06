@@ -1,15 +1,22 @@
 package com.emucoo.dto.modules.abilityForm;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
  * Created by sj on 2018/5/17.
  */
 public class AbilitySubFormKind {
+    @ApiModelProperty(value = "类别名", name = "kindName", example = "1.根据目标100%完成人员配备")
     private String kindName;
+    @ApiModelProperty(value = "类别id", name = "kindID", example = "1")
     private Long kindID;
+    @ApiModelProperty(value = "是否完成", name = "isDone", example = "true")
     private Boolean isDone;
+    @ApiModelProperty(value = "是否通过", name = "isPass", example = "true")
     private Boolean isPass;
+    @ApiModelProperty(value = "题项数组", name = "problemArray")
     private List<ProblemVo> problemArray;
 
     public void setKindName(String kindName) {
