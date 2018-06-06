@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface FormManageService {
 
-    int countFormsByNameKeyword(String keyword);
+    int countFormsByNameKeyword(String keyword, Integer formType);
 
-    List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz);
+    List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz, Integer formType);
 
     void createForm(TFormMain form, Long userId);
 

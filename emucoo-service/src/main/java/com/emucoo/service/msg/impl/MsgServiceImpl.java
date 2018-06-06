@@ -31,7 +31,7 @@ public class MsgServiceImpl implements MsgService {
             List<MsgSummaryModuleVo> msgSummaryModuleVos = new ArrayList<>();
             for(MsgReceiveSummary msgReceiveSummary : msgReceiveSummaryList) {
                 MsgSummaryModuleVo msgSummaryModuleVo = new MsgSummaryModuleVo();
-                msgSummaryModuleVo.setModuleType(msgReceiveSummary.getFunctionType());
+                msgSummaryModuleVo.setFunctionType(msgReceiveSummary.getFunctionType());
                 msgSummaryModuleVo.setMsgContent(msgReceiveSummary.getMsgContent());
                 msgSummaryModuleVo.setMsgCount(msgReceiveSummary.getMsgCount());
                 msgSummaryModuleVo.setMsgSendTimeStamp(msgReceiveSummary.getMsgSendTime().getTime());

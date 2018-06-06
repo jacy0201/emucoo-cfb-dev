@@ -50,11 +50,15 @@ public class FormManageController extends BaseResource {
     @ApiOperation(value = "表单列表", httpMethod = "POST")
     @PostMapping("/list")
     public ApiResult<PageInfo> list(@RequestBody ParamVo<TFormMain> paramVo) {
+        TFormMain form = paramVo.getData();
+        if (form.getFormType() == null) {
+            return fail("formType不能为空.");
+        }
         int pageNm = paramVo.getPageNumber();
         int pageSz = paramVo.getPageSize();
         String keyword = paramVo.getData()==null?"":paramVo.getData().getName();
-        int total = formManageService.countFormsByNameKeyword(keyword);
-        List<TFormMain> forms = formManageService.findFormsByNameKeyword(keyword, pageNm, pageSz);
+        int total = formManageService.countFormsByNameKeyword(keyword, form.getFormType());
+        List<TFormMain> forms = formManageService.findFormsByNameKeyword(keyword, pageNm, pageSz, form.getFormType());
         PageInfo pageInfo = new PageInfo(forms);
         pageInfo.setPageNum(pageNm);
         pageInfo.setPageSize(pageSz);
@@ -68,6 +72,9 @@ public class FormManageController extends BaseResource {
         TFormMain form = paramVo.getData();
         if(form == null)
             return fail("parameter is wrong.");
+        if(form.getFormType() == null) {
+            return fail("formType不能为空.");
+        }
         formManageService.createForm(form, 0L);
         return success("ok");
     }

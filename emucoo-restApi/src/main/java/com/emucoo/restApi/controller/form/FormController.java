@@ -98,7 +98,6 @@ public class FormController extends AppBaseController {
     public AppResult<AbilityFormMain> getAbilityForm(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<GetFormInfoIn> paramVo) {
         GetFormInfoIn formIn = paramVo.getData();
         checkParam(formIn.getFormID(), "表单id不能为空！");
-        checkParam(formIn.getFormType(), "表单类型不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
         AbilityFormMain form = formManageService.getAbilityForm(formIn, user);
         return success(form);

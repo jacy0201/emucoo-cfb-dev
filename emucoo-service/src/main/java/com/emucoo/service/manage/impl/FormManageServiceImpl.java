@@ -69,21 +69,26 @@ public class FormManageServiceImpl implements FormManageService {
     @Autowired
     private SysUserMapper userMapper;
 
+    @Autowired
+    private TShopInfoMapper shopInfoMapper;
+
+    @Autowired
+    private TBrandInfoMapper brandInfoMapper;
+
     @Override
-    public int countFormsByNameKeyword(String keyword) {
-        return formMainMapper.countFormsByName(keyword);
+    public int countFormsByNameKeyword(String keyword, Integer formType) {
+        return formMainMapper.countFormsByName(keyword, formType);
     }
 
     @Override
-    public List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz) {
-        return formMainMapper.findFormsByName(keyword, (pageNm - 1) * pageSz, pageSz);
+    public List<TFormMain> findFormsByNameKeyword(String keyword, int pageNm, int pageSz, Integer formType) {
+        return formMainMapper.findFormsByName(keyword, (pageNm - 1) * pageSz, pageSz, formType);
     }
 
     @Override
     public void createForm(TFormMain form, Long userId) {
         form.setCreateTime(DateUtil.currentDate());
         form.setModifyTime(DateUtil.currentDate());
-        form.setFormType(FormType.RVR_TYPE.getCode());
         form.setCreateUserId(userId);
         form.setModifyUserId(userId);
         form.setIsDel(false);
@@ -506,13 +511,26 @@ public class FormManageServiceImpl implements FormManageService {
             AbilityFormMain formVo = new AbilityFormMain();
             TFormMain main = new TFormMain();
             main.setId(formIn.getFormID());
-            main.setFormType(formIn.getFormType());
+            if(formIn.getFormType() != null) {
+                main.setFormType(formIn.getFormType());
+            } else {
+                main.setFormType(FormType.ABILITY_TYPE.getCode());
+            }
+
             TFormMain form = formMainMapper.selectOne(main);
             Long userId = null;
             if(user != null) {
                 userId = user.getId();
             }
             if(form != null) {
+                // 查询店铺
+                TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+
+                TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
+                Date now = new Date();
+                formVo.setShopName(shopInfo.getShopName());
+                formVo.setBrandName(brandInfo.getBrandName());
+                formVo.setGradeDate(DateUtil.dateToString1(now));
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
                 Example formMainExp = new Example(TFormMain.class);

@@ -39,4 +39,12 @@ public class MsgController extends AppBaseController {
         MsgSummaryOut msgSummaryOut = msgService.msgSummary(user);
         return success(msgSummaryOut);
     }
+
+    @PostMapping("/msgList")
+    public AppResult<MsgSummaryOut> msgList(HttpServletRequest request) {
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        MsgSummaryOut msgSummaryOut = msgService.msgSummary(user);
+        return success(msgSummaryOut);
+    }
+
 }
