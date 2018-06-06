@@ -545,6 +545,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setIsUse(true);
         task.setTaskEndDate(DateUtil.strToYYMMDDDate(voi.getEndDate()));
         task.setTaskStartDate(DateUtil.strToYYMMDDDate(voi.getStartDate()));
+        task.setStartTime(voi.getStartTime());
+        task.setEndTime(voi.getEndTime());
         task.setLoopCycleType(voi.getTaskRepeatType());
         task.setLoopCycleValue(voi.getTaskRepeatValue());
         task.setExecuteUserIds(userId.toString());

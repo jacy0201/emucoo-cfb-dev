@@ -2,6 +2,7 @@ package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
 import com.emucoo.model.SysArea;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,7 @@ public interface SysAreaMapper extends MyMapper<SysArea> {
      */
     List<SysArea> listByDpt(HashMap paramMap);
 
-    List<SysArea> findAreaListByUserId(Long userId);
+    List<SysArea> findAreaListByUserId(@Param("userId") Long userId);
 
     List<SysArea> findDistinctAreaListByUserIds(List<String> userIdList);
 }
