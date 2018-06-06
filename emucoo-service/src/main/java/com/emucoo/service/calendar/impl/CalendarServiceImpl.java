@@ -7,6 +7,7 @@ import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.calendar.CalendarService;
 import com.emucoo.utils.ConstantsUtil;
+import com.emucoo.utils.DateUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -285,8 +286,11 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarVO.Memo memo= new CalendarVO.Memo();
         memo.setWorkID(loopWork.getWorkId());
         memo.setSubID(loopWork.getSubWorkId());
-        memo.setMemoEndTime(loopWork.getExecuteEndDate().getTime());
-        memo.setMemoStartTime(loopWork.getExecuteBeginDate().getTime());
+        TTask tTask=loopWork.getTask();
+        Date memoStartTime= DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(tTask.getTaskStartDate())+" "+tTask.getStartTime());
+        Date memoEndTime= DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(tTask.getTaskEndDate())+" "+tTask.getEndTime());
+        memo.setMemoStartTime(memoStartTime.getTime());
+        memo.setMemoEndTime(memoEndTime.getTime());
         memo.setWorkType(5);
         memo.setMemoStatus(loopWork.getWorkStatus());
         memo.setIsSign(loopWork.getIsSign());
@@ -294,10 +298,9 @@ public class CalendarServiceImpl implements CalendarService {
         ttask.setWorkId(loopWork.getWorkId());
         ttask.setIsUse(true);
         ttask.setIsDel(false);
-        TTask task=taskMapper.selectOne(ttask);
+        TTask task=loopWork.getTask();
         memo.setMemoTitle(task.getName());
         memo.setMemoContent(task.getDescription());
-
         return memo;
     }
 
@@ -306,7 +309,7 @@ public class CalendarServiceImpl implements CalendarService {
         task.setWorkID(tLoopWork.getWorkId());
         task.setWorkType(tLoopWork.getType());
         task.setSubID(tLoopWork.getSubWorkId());
-        TTask tt = taskMapper.selectByPrimaryKey(tLoopWork.getTaskId());
+        TTask tt = tLoopWork.getTask();
         task.setTaskTitle(tt.getName());
         task.setTaskStatus(tLoopWork.getWorkStatus());
         task.setTaskResult(tLoopWork.getWorkResult());

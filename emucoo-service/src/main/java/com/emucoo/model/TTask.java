@@ -34,6 +34,20 @@ public class TTask extends BaseEntity {
     private String description;
 
     /**
+     * 重复开始时间
+     */
+    @Column(name = "start_time")
+    private String startTime;
+
+    /**
+
+     * 重复结束时间
+     */
+    @Column(name = "end_time")
+    private String endTime;
+
+
+    /**
      * 执行截止时间
      */
     @Column(name = "execute_deadline")
@@ -882,6 +896,23 @@ public class TTask extends BaseEntity {
      */
     public void setFrontPlanId(Long frontPlanId) {
         this.frontPlanId = frontPlanId;
+    }
+
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public List<TLoopWork> getWorkList() {

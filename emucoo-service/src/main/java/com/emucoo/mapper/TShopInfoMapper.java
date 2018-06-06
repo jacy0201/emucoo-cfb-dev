@@ -18,4 +18,6 @@ public interface TShopInfoMapper extends MyMapper<TShopInfo> {
    void updateByManagerId(@Param("userId")Long userId);
 
     List<TShopInfo> selectShopListByUserIds(List<String> userIdList);
+
+    List<TShopInfo> getShopListByUserIDAndAreaID(@Param("userId")Long userId,@Param("areaId")Long areaId);
 }
