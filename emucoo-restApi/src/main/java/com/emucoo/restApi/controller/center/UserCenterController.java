@@ -1,11 +1,9 @@
 package com.emucoo.restApi.controller.center;
 
 import com.emucoo.dto.base.ParamVo;
-import com.emucoo.dto.modules.center.RepairWorkVO;
-import com.emucoo.dto.modules.center.ReportVO;
-import com.emucoo.dto.modules.center.TaskQuery;
-import com.emucoo.dto.modules.center.TaskVO;
+import com.emucoo.dto.modules.center.*;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -112,7 +110,7 @@ public class UserCenterController extends AppBaseController {
     public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params){
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TaskVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
+        List<FrontPlanVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
 

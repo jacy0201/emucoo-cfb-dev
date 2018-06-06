@@ -1,6 +1,7 @@
 package com.emucoo.service.center.impl;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
+import com.emucoo.dto.modules.center.FrontPlanVO;
 import com.emucoo.dto.modules.center.RepairWorkVO;
 import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskVO;
@@ -70,7 +71,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     @Override
     //巡店任务
-    public List<TaskVO> frontPlanList(String month,Long userId){
+    public List<FrontPlanVO> frontPlanList(String month, Long userId){
         String[] DateStr = month.split("-");
         Example example=new Example(TFrontPlan.class);
         example.createCriteria() .andEqualTo("arrangeYear", DateStr[0])
@@ -82,26 +83,30 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
         example.setOrderByClause("modify_time desc");
         example.and(criteria2);
         List<TFrontPlan> frontPlanList = tFrontPlanMapper.selectByExample(example);
-        List<TaskVO> list=null;
+        List<FrontPlanVO> list=null;
         if(null!=frontPlanList && frontPlanList.size()>0) {
-            TaskVO taskVO=null;
+            FrontPlanVO frontPlanVO=null;
             for (TFrontPlan frontPlan : frontPlanList) {
-                taskVO= new TaskVO();
-                taskVO.setID(frontPlan.getId());
-                taskVO.setSubID(frontPlan.getSubPlanId().toString());
-                taskVO.setModifyTime(frontPlan.getModifyTime().getTime());
-                taskVO.setWorkType(4);
+                frontPlanVO= new FrontPlanVO();
+                frontPlanVO.setID(frontPlan.getId());
+                frontPlanVO.setSubID(frontPlan.getSubPlanId().toString());
+                frontPlanVO.setWorkType(4);
+                frontPlanVO.setShopId(frontPlan.getShopId());
+                TShopInfo shopInfo = tShopInfoMapper.selectByPrimaryKey(frontPlan.getShopId());
+                String shopName = shopInfo == null ? "" : shopInfo.getShopName();
+                frontPlanVO.setShopName(shopName);
+                frontPlanVO.setTaskStatus(frontPlan.getStatus());
+                frontPlanVO.setActualRemindTime(frontPlan.getActualRemindTime().getTime());
+                frontPlanVO.setPlanPreciseTime(frontPlan.getPlanPreciseTime().getTime());
                 Example exampleForm = new Example(TFrontPlanForm.class);
                 exampleForm.createCriteria().andEqualTo("frontPlanId", frontPlan.getId()).andEqualTo("isDel", false);
                 List<TFrontPlanForm> formList = tFrontPlanFormMapper.selectByExample(exampleForm);
                 if (null != formList && formList.size() > 0) {
-                    TShopInfo shopInfo = tShopInfoMapper.selectByPrimaryKey(frontPlan.getShopId());
                     TFormMain tFormMain = tFormMainMapper.selectByPrimaryKey(formList.get(0).getFormMainId());
                     String formName=  tFormMain == null ? "" : tFormMain.getName();
-                    String shopName = shopInfo == null ? "" : shopInfo.getShopName();
-                    taskVO.setTaskTitle(shopName + formName + "检查");
+                    frontPlanVO.setTaskTitle(shopName + formName + "检查");
                 }
-                list.add(taskVO);
+                list.add(frontPlanVO);
             }
         }
         return list;
@@ -154,10 +159,13 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 taskVO.setWorkID(loopWork.getWorkId());
                 taskVO.setSubID(loopWork.getSubWorkId());
                 taskVO.setTaskTitle(loopWork.getTaskTitle());
-                //workStatus=3 或 5 系统待审核
+                //workStatus=5 系统待审核
                 taskVO.setTaskStatus(loopWork.getWorkStatus());
                 taskVO.setTaskResult(loopWork.getWorkResult());
-                taskVO.setModifyTime(loopWork.getModifyTime().getTime());
+                taskVO.setExecuteDeadline(loopWork.getExecuteDeadline().getTime());
+                taskVO.setExecuteRemindTime(loopWork.getExecuteRemindTime().getTime());
+                taskVO.setAuditDeadline(loopWork.getAuditDeadline().getTime());
+                taskVO.setReporterName(loopWork.getExcuteUserName());
                 list.add(taskVO);
             }
         }

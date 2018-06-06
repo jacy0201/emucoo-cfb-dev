@@ -25,6 +25,8 @@
         <result column="duration_time_type" property="durationTimeType" jdbcType="BIT"/>
         <result column="task_start_date" property="taskStartDate" jdbcType="DATE"/>
         <result column="task_end_date" property="taskEndDate" jdbcType="DATE"/>
+        <result column="start_time" property="startTime" jdbcType="VARCHAR"/>
+        <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
         <result column="loop_cycle_type" property="loopCycleType" jdbcType="BIT"/>
         <result column="loop_cycle_value" property="loopCycleValue" jdbcType="VARCHAR"/>
         <result column="work_id" property="workId" jdbcType="VARCHAR"/>

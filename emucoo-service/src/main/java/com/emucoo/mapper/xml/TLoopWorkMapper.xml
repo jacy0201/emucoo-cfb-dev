@@ -117,11 +117,8 @@
         </if>
     </select>
 
-    <select id="calendarDateList" resultType="com.emucoo.model.TLoopWork">
-        SELECT t1.*, t2.head_img_url, t2.real_name, t3.`name` AS taskTitle
-        FROM t_loop_work t1
-        LEFT JOIN sys_user t2 ON t1.excute_user_id = t2.id
-        LEFT JOIN t_task t3 ON t1.task_id = t3.id
+    <select id="calendarDateList" resultMap="BaseResultMap">
+        SELECT t1.*  FROM t_loop_work t1
         WHERE
         <if test="workType != null">
             t1.type=#{workType} AND
@@ -129,7 +126,6 @@
         (t1.audit_user_id = #{userId} or t1.excute_user_id=#{userId})
         AND
         #{executeDate} between str_to_date(t1.execute_begin_date,'%Y-%m-%d') and t1.execute_end_date
-        GROUP BY t1.id
         ORDER BY t1.execute_end_date asc
     </select>
 
