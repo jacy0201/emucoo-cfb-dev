@@ -1,11 +1,11 @@
 package com.emucoo.manager.controller;
 
-import com.emucoo.common.PageInfo;
 import com.emucoo.common.base.rest.ApiResult;
 import com.emucoo.common.base.rest.BaseResource;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.model.TDeviceType;
 import com.emucoo.service.task.TaskRepairService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +37,11 @@ public class RepairManageController extends BaseResource {
         int total = taskRepairService.countDeviceTypes(keyword, typeId);
         List<TDeviceType> dts = taskRepairService.listDeviceTypes(keyword, typeId, pageNm, pageSz);
 
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotalCount(total);
-        pageInfo.setPageNumber(pageNm);
+        PageInfo pageInfo = new PageInfo(dts);
+        pageInfo.setTotal(total);
+        pageInfo.setPageNum(pageNm);
         pageInfo.setPageSize(pageSz);
-        pageInfo.setTotalPage(total % pageSz == 0 ? total / pageSz : total / pageSz + 1);
-        pageInfo.setData(dts);
+        pageInfo.setPages(total % pageSz == 0 ? total / pageSz : total / pageSz + 1);
         return success(pageInfo);
     }
 

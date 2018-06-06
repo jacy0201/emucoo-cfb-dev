@@ -20,7 +20,7 @@ public class TRepairWork {
     private String shopName;
 
     @Column(name = "reporter_id")
-    private Long reporter_id;
+    private Long reporterId;
 
     @Column(name = "reporter_name")
     private String reporterName;
@@ -125,12 +125,12 @@ public class TRepairWork {
         this.shopName = shopName;
     }
 
-    public Long getReporter_id() {
-        return reporter_id;
+    public Long getReporterId() {
+        return reporterId;
     }
 
-    public void setReporter_id(Long reporter_id) {
-        this.reporter_id = reporter_id;
+    public void setReporterId(Long reporterId){
+        this.reporterId = reporterId;
     }
 
     public String getReporterName() {
