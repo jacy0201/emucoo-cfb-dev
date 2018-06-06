@@ -69,6 +69,12 @@ public class FormManageServiceImpl implements FormManageService {
     @Autowired
     private SysUserMapper userMapper;
 
+    @Autowired
+    private TShopInfoMapper shopInfoMapper;
+
+    @Autowired
+    private TBrandInfoMapper brandInfoMapper;
+
     @Override
     public int countFormsByNameKeyword(String keyword, Integer formType) {
         return formMainMapper.countFormsByName(keyword, formType);
@@ -517,6 +523,12 @@ public class FormManageServiceImpl implements FormManageService {
                 userId = user.getId();
             }
             if(form != null) {
+                // 查询店铺
+                TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+
+                TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
+                formVo.setShopName(shopInfo.getShopName());
+                formVo.setBrandName(brandInfo.getBrandName());
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
                 Example formMainExp = new Example(TFormMain.class);
