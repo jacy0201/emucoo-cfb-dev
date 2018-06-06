@@ -527,8 +527,10 @@ public class FormManageServiceImpl implements FormManageService {
                 TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
 
                 TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
+                Date now = new Date();
                 formVo.setShopName(shopInfo.getShopName());
                 formVo.setBrandName(brandInfo.getBrandName());
+                formVo.setGradeDate(DateUtil.dateToString1(now));
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
                 Example formMainExp = new Example(TFormMain.class);
