@@ -49,4 +49,8 @@
     <select id="listTopDeviceTypes" resultType="com.emucoo.model.TDeviceType">
         select * from t_device_type where parent_type_id = 0
     </select>
+
+    <select id="findChildren" resultType="com.emucoo.model.TDeviceType">
+        select * from t_device_type where parent_type_id = #{deviceTypeId}
+    </select>
 </mapper>
