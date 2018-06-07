@@ -861,7 +861,7 @@ public class ReportServiceImpl implements ReportService {
                                 List<ProblemVo> problemArray = new ArrayList<>();
                                 for(TFormPbmVal pbmVal : formPbmVals) {
                                     // 只需要未通过的题项
-                                    if(pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false) && pbmVal.getIsNa().equals(false)) {
+                                    if(Boolean.TRUE.equals(pbmVal.getIsScore()) && Boolean.FALSE.equals(pbmVal.getIsPass()) && Boolean.FALSE.equals(pbmVal.getIsNa())) {
                                         ProblemVo problemVo = new ProblemVo();
                                         problemVo.setProblemID(pbmVal.getFormProblemId());
                                         problemVo.setProblemName(pbmVal.getProblemName());
@@ -887,7 +887,7 @@ public class ReportServiceImpl implements ReportService {
                                             List<SubProblemVo> subProblemVos = new ArrayList<>();
                                             for (TFormSubPbmVal subPbmVal : subPbmVals) {
                                                 // 只读取未通过的子题项
-                                                if(subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false) && subPbmVal.getIsNa().equals(false)) {
+                                                if(Boolean.TRUE.equals(subPbmVal.getIsScore()) && Boolean.FALSE.equals(subPbmVal.getIsPass()) && Boolean.FALSE.equals(subPbmVal.getIsNa())) {
                                                     SubProblemVo subProblemVo = new SubProblemVo();
                                                     subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
                                                     subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
@@ -940,7 +940,7 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 }
             }
-            reportVo.setResultSubForm(resultSubForm);
+            reportVo.setResultKindArray(resultSubForm);
             // 查询关联的机会点信息
             Example reportOpptExp = new Example(TReportOppt.class);
             reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
@@ -1005,11 +1005,13 @@ public class ReportServiceImpl implements ReportService {
                         if (subCheckResult.getSubjectType().equals(2)) {
                             subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
+                            chancePointVo.setChanceDescription(subPbmValForThisOppt.getProblemDescription());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
                         } else {
                             pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
+                            chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
                         }
                         formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
@@ -1018,7 +1020,6 @@ public class ReportServiceImpl implements ReportService {
                     }
                 }
                 chancePointVo.setChanceContent(pbmCascadingRelation.toString());
-                chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());
                 List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
                 chancePointVo.setWorkArr(workArr);
                 chancePointVos.add(chancePointVo);
@@ -1068,7 +1069,7 @@ public class ReportServiceImpl implements ReportService {
                         List<ProblemVo> problemArray = new ArrayList<>();
                         for (TFormPbmVal pbmVal : formPbmVals) {
                             // 只需要未通过的题项
-                            if (pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false) && pbmVal.getIsNa().equals(false)) {
+                            if (Boolean.TRUE.equals(pbmVal.getIsScore()) && Boolean.FALSE.equals(pbmVal.getIsPass()) && Boolean.FALSE.equals(pbmVal.getIsNa())) {
                                 ProblemVo problemVo = new ProblemVo();
                                 problemVo.setProblemID(pbmVal.getFormProblemId());
                                 problemVo.setProblemName(pbmVal.getProblemName());
@@ -1094,7 +1095,7 @@ public class ReportServiceImpl implements ReportService {
                                     List<SubProblemVo> subProblemVos = new ArrayList<>();
                                     for (TFormSubPbmVal subPbmVal : subPbmVals) {
                                         // 只读取未通过的子题项
-                                        if (subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false) && subPbmVal.getIsNa().equals(false)) {
+                                        if (Boolean.TRUE.equals(subPbmVal.getIsScore()) && Boolean.FALSE.equals(subPbmVal.getIsPass()) && Boolean.FALSE.equals(subPbmVal.getIsNa())) {
                                             SubProblemVo subProblemVo = new SubProblemVo();
                                             subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
                                             subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());

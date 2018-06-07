@@ -17,7 +17,7 @@ public class AbilityReportVo {
     private String inspectorPosition;
     private String checkDepartmentName;
     private String resultName;
-    private List<AbilitySubForm> resultSubForm;
+    private List<AbilitySubForm> resultKindArray;
     private List<ChancePointVo> chancePointArr;
 
     public void setShopName(String shopName) {
@@ -76,12 +76,12 @@ public class AbilityReportVo {
         return resultName;
     }
 
-    public List<AbilitySubForm> getResultSubForm() {
-        return resultSubForm;
+    public List<AbilitySubForm> getResultKindArray() {
+        return resultKindArray;
     }
 
-    public void setResultSubForm(List<AbilitySubForm> resultSubForm) {
-        this.resultSubForm = resultSubForm;
+    public void setResultKindArray(List<AbilitySubForm> resultKindArray) {
+        this.resultKindArray = resultKindArray;
     }
 
     public List<ChancePointVo> getChancePointArr() {
