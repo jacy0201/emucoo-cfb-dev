@@ -783,7 +783,7 @@ public class ReportServiceImpl implements ReportService {
             reportWork.setExecutorHeadImgUrl(work.getExecuteUserHeadImgUrl());
             reportWork.setTaskTitle(work.getTask().getName());
             reportWork.setWorkType(work.getType());
-            List<TLoopWork> userWorks = tLoopWorkMapper.findImproveTaskListByUser(opptId, reportId, work.getExcuteUserId());
+            List<TLoopWork> userWorks = tLoopWorkMapper.findImproveTaskListByUser(opptId, reportId, work.getWorkId(), work.getExcuteUserId());
             for(TLoopWork userwork : userWorks) {
                 if (userwork.getWorkStatus() != null && userwork.getWorkStatus().equals(2)) {
                     doneNum++;
