@@ -72,9 +72,9 @@ public class FormManageController extends BaseResource {
         if (form == null) {
             return fail("parameter is wrong.");
         }
-        if (form.getFormType() == null) {
+        /*if (form.getFormType() == null) {
             return fail("formType不能为空.");
-        }
+        }*/
         formManageService.createForm(form, 0L);
         return success("ok");
     }
