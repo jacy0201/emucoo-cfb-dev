@@ -1,9 +1,9 @@
 package com.emucoo.restApi.controller.center;
 
+import com.alibaba.druid.util.StringUtils;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.center.*;
 import com.emucoo.model.SysUser;
-import com.emucoo.model.TFrontPlan;
 import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -13,6 +13,7 @@ import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.sys.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,10 +49,41 @@ public class UserCenterController extends AppBaseController {
         if(null==sysUser.getId()){return fail(AppExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
-        sysUserService.editUser(sysUser);
+        sysUserService.updateSelective(sysUser);
         return success("success");
     }
 
+    /**
+     * 检查原密码
+     */
+    @ApiOperation(value="检查原密码")
+    @PostMapping("checkOldPwd")
+    public AppResult checkOldPwd(@RequestBody ParamVo<PasswordVO> params){
+        PasswordVO passwordVO=params.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        if(null==passwordVO.getOldPassword()){return fail(AppExecStatus.INVALID_PARAM,"原密码不能为空!");}
+        if (!StringUtils.equalsIgnoreCase(currUser.getPassword(), new Sha256Hash(passwordVO.getOldPassword(), currUser.getSalt()).toHex())) {
+            return AppResult.busErrorRes("原密码错误！");
+        }
+        return success("success");
+    }
+
+    /**
+     * 修改密码
+     */
+    @ApiOperation(value="修改密码")
+    @PostMapping("updatePwd")
+    public AppResult updatePwd(@RequestBody ParamVo<PasswordVO> params){
+        PasswordVO passwordVO=params.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        if(null==passwordVO.getNewPassword()){return fail(AppExecStatus.INVALID_PARAM,"密码不能为空!");}
+        SysUser sysUser=new SysUser();
+        sysUser.setId(currUser.getId());
+        sysUser.setModifyTime(new Date());
+        sysUser.setModifyUserId(currUser.getId());
+        sysUserService.updateSelective(sysUser);
+        return success("success");
+    }
 
     /**
      * 我执行的任务
