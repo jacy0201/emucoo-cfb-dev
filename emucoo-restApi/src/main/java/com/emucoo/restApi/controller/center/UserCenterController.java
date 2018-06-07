@@ -41,12 +41,14 @@ public class UserCenterController extends AppBaseController {
     /**
      * 编辑资料
      */
-    @ApiOperation(value="编辑资料")
+    @ApiOperation(value = "编辑资料")
     @PostMapping("/editUser")
-    public AppResult editUser(@RequestBody ParamVo<SysUser> params){
-        SysUser sysUser=params.getData();
+    public AppResult editUser(@RequestBody ParamVo<SysUser> params) {
+        SysUser sysUser = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        if(null==sysUser.getId()){return fail(AppExecStatus.INVALID_PARAM,"id 不能为空!");}
+        if (null == sysUser.getId()) {
+            return fail(AppExecStatus.INVALID_PARAM, "id 不能为空!");
+        }
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
         sysUserService.updateSelective(sysUser);
@@ -56,12 +58,14 @@ public class UserCenterController extends AppBaseController {
     /**
      * 检查原密码
      */
-    @ApiOperation(value="检查原密码")
+    @ApiOperation(value = "检查原密码")
     @PostMapping("checkOldPwd")
-    public AppResult checkOldPwd(@RequestBody ParamVo<PasswordVO> params){
-        PasswordVO passwordVO=params.getData();
+    public AppResult checkOldPwd(@RequestBody ParamVo<PasswordVO> params) {
+        PasswordVO passwordVO = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        if(null==passwordVO.getOldPassword()){return fail(AppExecStatus.INVALID_PARAM,"原密码不能为空!");}
+        if (null == passwordVO.getOldPassword()) {
+            return fail(AppExecStatus.INVALID_PARAM, "原密码不能为空!");
+        }
         if (!StringUtils.equalsIgnoreCase(currUser.getPassword(), new Sha256Hash(passwordVO.getOldPassword(), currUser.getSalt()).toHex())) {
             return AppResult.busErrorRes("原密码错误！");
         }
@@ -71,13 +75,15 @@ public class UserCenterController extends AppBaseController {
     /**
      * 修改密码
      */
-    @ApiOperation(value="修改密码")
+    @ApiOperation(value = "修改密码")
     @PostMapping("updatePwd")
-    public AppResult updatePwd(@RequestBody ParamVo<PasswordVO> params){
-        PasswordVO passwordVO=params.getData();
+    public AppResult updatePwd(@RequestBody ParamVo<PasswordVO> params) {
+        PasswordVO passwordVO = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        if(null==passwordVO.getNewPassword()){return fail(AppExecStatus.INVALID_PARAM,"密码不能为空!");}
-        SysUser sysUser=new SysUser();
+        if (null == passwordVO.getNewPassword()) {
+            return fail(AppExecStatus.INVALID_PARAM, "密码不能为空!");
+        }
+        SysUser sysUser = new SysUser();
         sysUser.setId(currUser.getId());
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
@@ -88,48 +94,48 @@ public class UserCenterController extends AppBaseController {
     /**
      * 我执行的任务
      */
-    @ApiOperation(value="我执行的任务")
+    @ApiOperation(value = "我执行的任务")
     @PostMapping("/executeTaskList")
-    public AppResult executeTaskList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult executeTaskList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TaskVO> list=userCenterService.executeTaskList(taskQuery.getMonth(),currUser.getId());
+        List<TaskVO> list = userCenterService.executeTaskList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
     /**
      * 我审核的任务
      */
-    @ApiOperation(value="我审核的任务")
+    @ApiOperation(value = "我审核的任务")
     @PostMapping("/auditTaskList")
-    public AppResult auditTaskList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult auditTaskList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TaskVO> list=userCenterService.auditTaskList(taskQuery.getMonth(),currUser.getId());
+        List<TaskVO> list = userCenterService.auditTaskList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
     /**
      * 我创建的任务
      */
-    @ApiOperation(value="我创建的任务")
+    @ApiOperation(value = "我创建的任务")
     @PostMapping("/createTaskList")
-    public AppResult createTaskList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult createTaskList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TaskVO> list=userCenterService.createTaskList(taskQuery.getMonth(),currUser.getId());
+        List<TaskVO> list = userCenterService.createTaskList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
     /**
      * 我接收的报告
      */
-    @ApiOperation(value="我接收的报告")
+    @ApiOperation(value = "我接收的报告")
     @PostMapping("/getReportList")
-    public AppResult getReportList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult getReportList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<ReportVO> list=userCenterService.getReportList(taskQuery.getMonth(),currUser.getId());
+        List<ReportVO> list = userCenterService.getReportList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
@@ -137,24 +143,24 @@ public class UserCenterController extends AppBaseController {
     /**
      * 巡店任务
      */
-    @ApiOperation(value="巡店任务")
+    @ApiOperation(value = "巡店任务")
     @PostMapping("/frontPlanList")
-    public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<FrontPlanVO> list=userCenterService.frontPlanList(taskQuery.getMonth(),currUser.getId());
+        List<FrontPlanVO> list = userCenterService.frontPlanList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
     /**
      * 维修任务
      */
-    @ApiOperation(value="维修任务")
+    @ApiOperation(value = "维修任务")
     @PostMapping("/repairWorkList")
-    public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params){
-        TaskQuery taskQuery=params.getData();
+    public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params) {
+        TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
+        List<TRepairWork> list = userCenterService.repairWorkList(taskQuery.getMonth(), currUser.getId());
         return success(list);
     }
 
