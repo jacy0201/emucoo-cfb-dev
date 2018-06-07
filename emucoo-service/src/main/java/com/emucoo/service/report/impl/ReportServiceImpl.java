@@ -940,7 +940,7 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 }
             }
-            reportVo.setResultSubForm(resultSubForm);
+            reportVo.setResultKindArray(resultSubForm);
             // 查询关联的机会点信息
             Example reportOpptExp = new Example(TReportOppt.class);
             reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
@@ -1005,11 +1005,13 @@ public class ReportServiceImpl implements ReportService {
                         if (subCheckResult.getSubjectType().equals(2)) {
                             subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
+                            chancePointVo.setChanceDescription(subPbmValForThisOppt.getProblemDescription());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
                         } else {
                             pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
+                            chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
                         }
                         formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
@@ -1018,7 +1020,6 @@ public class ReportServiceImpl implements ReportService {
                     }
                 }
                 chancePointVo.setChanceContent(pbmCascadingRelation.toString());
-                chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());
                 List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
                 chancePointVo.setWorkArr(workArr);
                 chancePointVos.add(chancePointVo);
