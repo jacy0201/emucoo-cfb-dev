@@ -566,6 +566,7 @@ public class FormServiceImpl implements FormService {
                 subFormResult.setIsDone(subForm.getIsDone());
                 subFormResult.setFormMainId(subForm.getSubFormID());
                 subFormResult.setFormMainName(subForm.getSubFormName());
+                subFormResult.setFrontPlanId(formIn.getPatrolShopArrangeID());
                 subFormResult.setResultCanUse(subForm.getIsUsable());
                 subFormResult.setParentFormId(formIn.getFormID());
                 subFormResult.setCreateTime(now);

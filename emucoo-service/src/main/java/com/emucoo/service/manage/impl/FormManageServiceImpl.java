@@ -523,14 +523,17 @@ public class FormManageServiceImpl implements FormManageService {
                 userId = user.getId();
             }
             if(form != null) {
-                // 查询店铺
-                TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+                if(formIn.getShopID() != null) {
+                    // 查询店铺
+                    TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
 
-                TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
-                Date now = new Date();
-                formVo.setShopName(shopInfo.getShopName());
-                formVo.setBrandName(brandInfo.getBrandName());
-                formVo.setGradeDate(DateUtil.dateToString1(now));
+                    TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());
+                    formVo.setShopName(shopInfo.getShopName());
+                    formVo.setBrandName(brandInfo.getBrandName());
+                    Date now = new Date();
+                    formVo.setGradeDate(DateUtil.dateToString1(now));
+                }
+
                 formVo.setFormID(form.getId());
                 formVo.setFormName(form.getName());
                 Example formMainExp = new Example(TFormMain.class);

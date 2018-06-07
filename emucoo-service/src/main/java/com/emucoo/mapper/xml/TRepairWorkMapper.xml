@@ -34,7 +34,7 @@
         select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userid} and report_time between #{beginDt} and #{endDt}
     </select>
 
-    <select id="getRepairWorkList" resultType="com.emucoo.dto.modules.center.RepairWorkVO">
+    <select id="getRepairWorkList" resultType="com.emucoo.model.TRepairWork">
         select * from t_repair_work t where
          (t.reporter_id =#{userId} or t.repair_man_id=#{userId})
          and

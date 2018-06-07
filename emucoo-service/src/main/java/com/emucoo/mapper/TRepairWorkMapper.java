@@ -12,6 +12,6 @@ public interface TRepairWorkMapper extends MyMapper<TRepairWork> {
 
     List<TRepairWork> fetchWorksListByDate(@Param("shopId") long shopId, @Param("userId") long userId, @Param("beginDt") Date beginDt, @Param("endDt") Date endDt);
 
-    List<RepairWorkVO> getRepairWorkList(@Param("month") String month, @Param("userId") Long userId);
+    List<TRepairWork> getRepairWorkList(@Param("month") String month, @Param("userId") Long userId);
 
 }
