@@ -716,7 +716,8 @@ public class FormServiceImpl implements FormService {
                                 }
                                 // 保存子表
                                 if(problemVo.getIsSubList().equals(true)) {
-                                    checkinWithAppCreatedOppts |= saveSubAbilityForm(problemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 1);
+                                    checkinWithAppCreatedOppts |= saveSubAbilityForm(problemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 1, formIn
+                                            .getPatrolShopArrangeID());
                                 }
                                 List<SubProblemVo> subProblemVos = problemVo.getSubProblemArray();
                                 if (CollectionUtils.isNotEmpty(subProblemVos)) {
@@ -831,7 +832,8 @@ public class FormServiceImpl implements FormService {
                                         }
                                         // 保存子表
                                         if (subProblemVo.getIsSubList().equals(true)) {
-                                            checkinWithAppCreatedOppts |= saveSubAbilityForm(subProblemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 2);
+                                            checkinWithAppCreatedOppts |= saveSubAbilityForm(subProblemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(),
+                                                    user, opptDescription, 2, formIn.getPatrolShopArrangeID());
                                         }
                                     }
                                 }
@@ -854,7 +856,7 @@ public class FormServiceImpl implements FormService {
     }
 
     private boolean saveSubAbilityForm(AbilitySubForm subForm, Long parentFormId, Long resultFormId, SysUser user,
-                                       String opptDescription, int subjectType) {
+                                       String opptDescription, int subjectType, Long frontPlanId) {
         Date now = new Date();
         boolean checkinWithAppCreatedOppts = false;
         TFormCheckResult subFormResult = new TFormCheckResult();
@@ -863,6 +865,7 @@ public class FormServiceImpl implements FormService {
         subFormResult.setFormMainId(subForm.getSubFormID());
         subFormResult.setFormMainName(subForm.getSubFormName());
         subFormResult.setSubjectType(subjectType);
+        subFormResult.setFrontPlanId(frontPlanId);
         subFormResult.setResultCanUse(subForm.getIsUsable());
         subFormResult.setParentFormId(parentFormId);
         subFormResult.setCreateTime(now);

@@ -296,7 +296,7 @@ public class ReportServiceImpl implements ReportService {
                 chancePointVo.setChanceContent(pbmCascadingRelation.toString());
                 //TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
                 //chancePointVo.setChanceDescription(tOpportunity.getDescription());
-                chancePointVo.setChanceDescription(tFormOpptValue.getOpptDesc());
+                chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
                 chancePointVos.add(chancePointVo);
             }
             reportOut.setChancePointArr(chancePointVos);
@@ -437,6 +437,47 @@ public class ReportServiceImpl implements ReportService {
         return tFormOpptValues;
 
     }
+
+    private List<TFormOpptValue> abilityOpptListInShopAndForm(Long shopId, Long formId, Long opptId) {
+        // 根据店铺查询巡店安排
+        Example arrangeExp = new Example(TFrontPlan.class);
+        arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
+        List<TFrontPlan> tFrontPlans = tFrontPlanMapper.selectByExample(arrangeExp);
+        if (CollectionUtils.isEmpty(tFrontPlans)) {
+            return null;
+        }
+        List<Long> arrangeIds = new ArrayList<>();
+        for (TFrontPlan frontPlan : tFrontPlans) {
+            arrangeIds.add(frontPlan.getId());
+        }
+        Example resultExp = new Example(TFormCheckResult.class);
+        resultExp.createCriteria().andEqualTo("formMainId", formId).andIn("frontPlanId", arrangeIds);
+        List<TFormCheckResult> results = tFormCheckResultMapper.selectByExample(resultExp);
+        if (CollectionUtils.isEmpty(results)) {
+            return null;
+        }
+        List<Long> resultIds = new ArrayList<>();
+        for (TFormCheckResult result : results) {
+            resultIds.add(result.getId());
+        }
+
+        for(TFormCheckResult formCheckResult : results) {
+            resultExp.clear();
+            resultExp.createCriteria().andEqualTo("parentResultId", formCheckResult.getId());
+            List<TFormCheckResult> childrenResult = tFormCheckResultMapper.selectByExample(resultExp);
+            if(CollectionUtils.isNotEmpty(childrenResult)) {
+                for(TFormCheckResult formCheckResult1 : childrenResult) {
+                    resultIds.add(formCheckResult1.getId());
+                }
+            }
+        }
+
+        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId);
+
+        return tFormOpptValues;
+
+    }
+
 
     @Transactional
     public Long saveReport(SysUser user, ReportVo reportIn) {
@@ -766,14 +807,14 @@ public class ReportServiceImpl implements ReportService {
      */
     private List<ReportWorkVo> findImproveByOppt(Long opptId, Long reportId) {
 
-        //List<TLoopWork> works = tLoopWorkMapper.findImproveTaskList(opptId, reportId);
-        List<TTask> tasks = tTaskMapper.findImproveTaskList(opptId, reportId);
-        if(CollectionUtils.isEmpty(tasks)) {
+        List<TLoopWork> works = tLoopWorkMapper.findImproveTaskList(opptId, reportId);
+        //List<TTask> tasks = tTaskMapper.findImproveTaskList(opptId, reportId);
+        if(CollectionUtils.isEmpty(works)) {
             return null;
         }
         List<ReportWorkVo> reportWorkVos = new ArrayList<>();
 
-        /*for(TLoopWork work : works) {
+        for(TLoopWork work : works) {
             int doneNum = 0;
             int passNum = 0;
             int allNum = 0;
@@ -799,8 +840,8 @@ public class ReportServiceImpl implements ReportService {
             reportWork.setPassRate(passRate);
 
             reportWorkVos.add(reportWork);
-        }*/
-        List<Long> userIds = new ArrayList<>();
+        }
+        /*List<Long> userIds = new ArrayList<>();
         for (TTask task : tasks) {
             int doneNum = 0;
             int passNum = 0;
@@ -836,7 +877,7 @@ public class ReportServiceImpl implements ReportService {
                     }
                 }
             }
-        }
+        }*/
 
         return reportWorkVos;
     }
@@ -983,13 +1024,14 @@ public class ReportServiceImpl implements ReportService {
             Example reportOpptExp = new Example(TReportOppt.class);
             reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
             List<TReportOppt> tReportOppts = tReportOpptMapper.selectByExample(reportOpptExp);
+            reportVo.setChancePointNum(tReportOppts.size() != 0 ? tReportOppts.size() : 0);
             List<ChancePointVo> chancePointVos = new ArrayList<>();
             for (TReportOppt tReportOppt : tReportOppts) {
                 ChancePointVo chancePointVo = new ChancePointVo();
                 chancePointVo.setChancePointID(tReportOppt.getOpptId());
                 chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
                 // 计算该机会点使用情况
-                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = abilityOpptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
                 chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
                 // 查询该机会点关联的题项信息
                 TFormPbmVal pbmValForThisOppt = null;
@@ -1001,6 +1043,7 @@ public class ReportServiceImpl implements ReportService {
                 TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
                 if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                    chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
                     if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
                         List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
                         List<ProblemImg> problemImgs = new ArrayList<>();
@@ -1013,6 +1056,7 @@ public class ReportServiceImpl implements ReportService {
                     }
                 } else if (ProblemType.SAMPLING.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     subPbmValForThisOppt = tFormSubPbmValMapper.selectByPrimaryKey(tFormOpptValue.getSubProblemValueId());
+                    chancePointVo.setChanceDescription(subPbmValForThisOppt.getProblemDescription());
                     if (StringUtils.isNotBlank(subPbmValForThisOppt.getDescImgIds())) {
                         List<TFile> descImgs = tFileMapper.selectByIds(subPbmValForThisOppt.getDescImgIds());
                         List<ProblemImg> problemImgs = new ArrayList<>();
@@ -1043,13 +1087,11 @@ public class ReportServiceImpl implements ReportService {
                         if (subCheckResult.getSubjectType().equals(2)) {
                             subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
-                            chancePointVo.setChanceDescription(subPbmValForThisOppt.getProblemDescription());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
                         } else {
                             pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
-                            chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
                         }
                         formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
