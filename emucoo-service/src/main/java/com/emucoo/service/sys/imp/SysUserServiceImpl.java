@@ -212,11 +212,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		//设置用户分区
 		List<Long> areaIdList=userBrandAreaShop.getListAreaId();
 		SysUserArea sysUserArea=null;
+		//先删除之前的分区关系
+		Example exampleUserArea=new Example(SysUserArea.class);
+		exampleUserArea.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+		sysUserAreaMapper.deleteByExample(exampleUserArea);
 		if(null!=areaIdList && areaIdList.size()>0) {
-			//先删除之前的分区关系
-			Example example=new Example(SysUserArea.class);
-			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-			sysUserAreaMapper.deleteByExample(example);
 			for (Long areaId : areaIdList) {
 				sysUserArea = new SysUserArea();
 				sysUserArea.setAreaId(areaId);
@@ -230,11 +230,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		//设置用户品牌
 		List<Long> brandIdList=userBrandAreaShop.getListBrandId();
 		SysUserBrand sysUserBrand=null;
+		//先删除之前的品牌关系
+		Example exampleUserBrand=new Example(SysUserBrand.class);
+		exampleUserBrand.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+		sysUserBrandMapper.deleteByExample(exampleUserBrand);
 		if(null!=brandIdList && brandIdList.size()>0) {
-			//先删除之前的品牌关系
-			Example example=new Example(SysUserBrand.class);
-			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-			sysUserBrandMapper.deleteByExample(example);
 			for (Long brandId : brandIdList) {
 				sysUserBrand = new SysUserBrand();
 				sysUserBrand.setBrandId(brandId);
@@ -245,15 +245,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
 		}
-
 		//设置用户店铺
 		List<Long> shopIdList=userBrandAreaShop.getListShopId();
 		SysUserShop sysUserShop=null;
+		//先删除之前的shop关系
+		Example exampleUserShop=new Example(SysUserShop.class);
+		exampleUserShop.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+		sysUserShopMapper.deleteByExample(exampleUserShop);
 		if(null!=shopIdList && shopIdList.size()>0) {
-			//先删除之前的shop关系
-			Example example=new Example(SysUserShop.class);
-			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-			sysUserShopMapper.deleteByExample(example);
 			for (Long shopId : shopIdList) {
 				sysUserShop = new SysUserShop();
 				sysUserShop.setShopId(shopId);
@@ -263,11 +262,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserShop.setIsDel(false);
 				sysUserShopMapper.insertSelective(sysUserShop);
 			}
-		}else{
-			//删除shop关系
-			Example example=new Example(SysUserShop.class);
-			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-			sysUserShopMapper.deleteByExample(example);
 		}
 	}
 	@Override
