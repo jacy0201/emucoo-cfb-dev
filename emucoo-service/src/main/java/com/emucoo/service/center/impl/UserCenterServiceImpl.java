@@ -142,8 +142,8 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     //维修任务
     @Override
-    public List<RepairWorkVO> repairWorkList(String month, Long userId){
-        List<RepairWorkVO> list=tRepairWorkMapper.getRepairWorkList(month,userId);
+    public List<TRepairWork> repairWorkList(String month, Long userId){
+        List<TRepairWork> list=tRepairWorkMapper.getRepairWorkList(month,userId);
         return list;
     }
 

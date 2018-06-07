@@ -6,6 +6,7 @@ import com.emucoo.dto.modules.center.RepairWorkVO;
 import com.emucoo.dto.modules.center.ReportVO;
 import com.emucoo.dto.modules.center.TaskVO;
 import com.emucoo.model.TLoopWork;
+import com.emucoo.model.TRepairWork;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface UserCenterService extends BaseService<TLoopWork> {
     List<FrontPlanVO> frontPlanList(String month, Long userId);
 
     //维修任务
-    List<RepairWorkVO> repairWorkList(String month, Long userId);
+    List<TRepairWork> repairWorkList(String month, Long userId);
 
     //我接收的报告
     List<ReportVO> getReportList(String month, Long userId);
