@@ -98,7 +98,7 @@ public class ReportController extends AppBaseController {
     public AppResult<AbilityReportVo> findAbilityReportInfo(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
         GetReportIn reportIn = params.getData();
         checkParam(reportIn.getReportID(), "表单id不能为空！");
-        checkParam(reportIn.getFormType(), "表单类型不能为空！");
+        //checkParam(reportIn.getFormType(), "表单类型不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         AbilityReportVo report = reportService.findAbilityReportInfo(user, reportIn);
         return success(report);
