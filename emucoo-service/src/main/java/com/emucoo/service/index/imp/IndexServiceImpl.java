@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("AliControlFlowStatementWithoutBraces")
 @Transactional
 @Service
 public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexService {
@@ -61,14 +62,17 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
             user = userMapper.fetchOneByUsername(mobile);
         }
 
-        if (user == null)
+        if (user == null) {
             return null;
+        }
 
-        if (0 != user.getStatus())
+        if (0 != user.getStatus()) {
             return null;
+        }
 
-        if (!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password, user.getSalt()).toHex()))
+        if (!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password, user.getSalt()).toHex())) {
             return null;
+        }
 
         //更新用户 push token
         user.setPushToken(pushToken);
@@ -137,7 +141,9 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
                 reportItemVo.setIsRead(report.getReportUser().getIsRead());
                 reportItemVo.setReportTitle(report.getShopName() + "评估表");
                 reportItemVo.setReporterName(report.getReporterName());
-                if(null!=report.getFormType()) reportItemVo.setReportType(report.getFormType().intValue());
+                if(null!=report.getFormType()) {
+                    reportItemVo.setReportType(report.getFormType().intValue());
+                }
                 reportItemVo.setReportID(report.getId());
                 reportItemVo.setReporterHeadUrl(report.getReporterHeadImgUrl());
                 reportItemVo.setReportSourceName(report.getReporterDptName());

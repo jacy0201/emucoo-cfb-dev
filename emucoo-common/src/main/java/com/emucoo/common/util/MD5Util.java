@@ -83,8 +83,9 @@ public class MD5Util {
 			BigInteger number = new BigInteger(1, messageDigest);
 			String md5 = number.toString(16);
 
-			while (md5.length() < 32)
+			while (md5.length() < 32) {
 				md5 = "0" + md5;
+			}
 
 			return md5;
 		} catch (NoSuchAlgorithmException e) {

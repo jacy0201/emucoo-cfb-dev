@@ -17,7 +17,7 @@
 
     <select id="countDeviceTypesByKeyword" resultType="java.lang.Integer">
         select count(id) from t_device_type
-        where (is_del is null or is_del = 0) and tier = 2
+        where is_del = 0 and tier = 2
         <if test="keyword != null and keyword.trim() != '' ">
             and name like concat('%', #{keyword}, '%')
         </if>
@@ -28,7 +28,7 @@
 
     <select id="filterDeviceTypesByKeyword" resultType="com.emucoo.model.TDeviceType">
         select * from t_device_type
-        where (is_del is null or is_del = 0) and tier = 2
+        where is_del = 0 and tier = 2
         <if test="keyword != null and keyword.trim() != '' ">
             and name like concat('%', #{keyword}, '%')
         </if>
@@ -51,6 +51,6 @@
     </select>
 
     <select id="findChildren" resultType="com.emucoo.model.TDeviceType">
-        select * from t_device_type where parent_type_id = #{deviceTypeId}
+        select * from t_device_type where parent_type_id = #{deviceTypeId} and is_del != 1
     </select>
 </mapper>

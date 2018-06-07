@@ -65,11 +65,11 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static boolean isBlank(String str) {
-		return StringUtil.isNull(str).equals("");
+		return "".equals(StringUtil.isNull(str));
 	}
 
 	public static boolean isBlank(Object o) {
-		return StringUtil.isNull(o).equals("");
+		return "".equals(StringUtil.isNull(o));
 	}
 
 	/**
@@ -79,9 +79,10 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static boolean isNotBlank(String str) {
-		return !StringUtil.isNull(str).equals("");
+		return !"".equals(StringUtil.isNull(str));
 	}
 
+	private static final Pattern REGEX_PHONE = Pattern.compile("^((13[0-9])|(14[57])|(15[0-9])|(17[0135678])|(18[0-9]))\\d{8}$");
 	/**
 	 * 检验手机号
 	 * 
@@ -90,12 +91,12 @@ public class StringUtil extends StringUtils {
 	 */
 	public static boolean isPhone(String phone) {
 		phone = isNull(phone);
-		Pattern regex = Pattern.compile("^((13[0-9])|(14[57])|(15[0-9])|(17[0135678])|(18[0-9]))\\d{8}$");
-		Matcher matcher = regex.matcher(phone);
+		Matcher matcher = REGEX_PHONE.matcher(phone);
 		boolean isMatched = matcher.matches();
 		return isMatched;
 	}
-	
+
+	private static final Pattern REGEX_CHN = Pattern.compile("[\\u4e00-\\u9fa5]{2,10}");
 	/**
 	 * 校验是否全中文，返回true 表示是 反之为否
 	 * 
@@ -104,12 +105,12 @@ public class StringUtil extends StringUtils {
 	 */
 	public static boolean isChinese(String realname) {
 		realname = isNull(realname);
-		Pattern regex = Pattern.compile("[\\u4e00-\\u9fa5]{2,10}");
-		Matcher matcher = regex.matcher(realname);
+		Matcher matcher = REGEX_CHN.matcher(realname);
 		boolean isMatched = matcher.matches();
 		return isMatched;
 	}
 
+	private static final Pattern REGEX_EMAIL = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 	/**
 	 * 校验邮箱格式
 	 * 
@@ -118,12 +119,13 @@ public class StringUtil extends StringUtils {
 	 */
 	public static boolean isEmail(String email) {
 		email = isNull(email);
-		Pattern regex = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
-		Matcher matcher = regex.matcher(email);
+		Matcher matcher = REGEX_EMAIL.matcher(email);
 		boolean isMatched = matcher.matches();
 		return isMatched;
 	}
 
+	private static final Pattern REGEX_ID_15 = Pattern.compile("^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$");
+	private static final Pattern REGEX_ID_18 = Pattern.compile("^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$");
 	/**
 	 * 校验身份证号码
 	 * 
@@ -133,12 +135,9 @@ public class StringUtil extends StringUtils {
 	public static boolean isCard(String cardId) {
 		cardId = isNull(cardId);
 		// 身份证正则表达式(15位)
-		Pattern isIDCard1 = Pattern.compile("^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$");
 		// 身份证正则表达式(18位)
-		Pattern isIDCard2 = Pattern
-				.compile("^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$");
-		Matcher matcher1 = isIDCard1.matcher(cardId);
-		Matcher matcher2 = isIDCard2.matcher(cardId);
+		Matcher matcher1 = REGEX_ID_15.matcher(cardId);
+		Matcher matcher2 = REGEX_ID_18.matcher(cardId);
 		boolean isMatched = matcher1.matches() || matcher2.matches();
 		return isMatched;
 	}
@@ -179,9 +178,10 @@ public class StringUtil extends StringUtils {
 		}
 		return birthday;
 	}
-	
-	
 
+
+
+	private static final Pattern REGEX_INTEGER = Pattern.compile("\\d*");
 	/**
 	 * 判断字符串是否为整数
 	 * 
@@ -192,12 +192,12 @@ public class StringUtil extends StringUtils {
 		if (isBlank(str)) {
 			return false;
 		}
-		Pattern regex = Pattern.compile("\\d*");
-		Matcher matcher = regex.matcher(str);
+		Matcher matcher = REGEX_INTEGER.matcher(str);
 		boolean isMatched = matcher.matches();
 		return isMatched;
 	}
 
+	private static final Pattern REGEX_DIGITAL = Pattern.compile("(-)?\\d*(.\\d*)?");
 	/**
 	 * 判断字符串是否为数字
 	 * 
@@ -208,8 +208,7 @@ public class StringUtil extends StringUtils {
 		if (isBlank(str)) {
 			return false;
 		}
-		Pattern regex = Pattern.compile("(-)?\\d*(.\\d*)?");
-		Matcher matcher = regex.matcher(str);
+		Matcher matcher = REGEX_DIGITAL.matcher(str);
 		boolean isMatched = matcher.matches();
 		return isMatched;
 	}
@@ -234,8 +233,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String hideFirstChar(String str, int len) {
-		if (str == null)
+		if (str == null) {
 			return null;
+		}
 		char[] chars = str.toCharArray();
 		if (str.length() <= len) {
 			for (int i = 0; i < chars.length; i++) {
@@ -258,8 +258,10 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String hideLastChar(String str, int len) {
-		if (str == null)
+		//noinspection AliControlFlowStatementWithoutBraces
+		if (str == null) {
 			return null;
+		}
 		char[] chars = str.toCharArray();
 		if (str.length() <= len) {
 			return hideLastChar(str, str.length() - 1);
@@ -281,8 +283,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String hideStr(String str, int index1, int index2) {
-		if (str == null)
+		if (str == null) {
 			return null;
+		}
 		String str1 = str.substring(index1, index2);
 		String str2 = str.substring(index2);
 		String str3 = "";
@@ -438,8 +441,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static int toInt(String str) {
-		if (StringUtil.isBlank(str))
+		if (StringUtil.isBlank(str)) {
 			return 0;
+		}
 		int ret = 0;
 		try {
 			ret = Integer.parseInt(str);
@@ -450,8 +454,9 @@ public class StringUtil extends StringUtils {
 	}
 
 	public static byte toByte(String str) {
-		if (StringUtil.isBlank(str))
+		if (StringUtil.isBlank(str)) {
 			return 0;
+		}
 		byte ret = 0;
 		try {
 			ret = Byte.parseByte(str);
@@ -468,8 +473,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static long toLong(String str) {
-		if (StringUtil.isBlank(str))
+		if (StringUtil.isBlank(str)) {
 			return 0L;
+		}
 		long ret = 0;
 		try {
 			ret = Long.parseLong(str);
@@ -486,8 +492,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static long[] toLongs(String[] str) {
-		if (str == null || str.length < 1)
+		if (str == null || str.length < 1) {
 			return new long[] { 0L };
+		}
 		long[] ret = new long[str.length];
 		ret = (long[]) ConvertUtils.convert(str, long.class);
 		return ret;
@@ -588,8 +595,9 @@ public class StringUtil extends StringUtils {
     	value = value.replace("%", "\\%");	
     	return "%" + value + "%";
     }
-    
-    
+
+
+	private static final Pattern REGEX_HTML = Pattern.compile("<.+?>");
     /**
      * 
      * 去除字符串中包含的html标签内容
@@ -597,10 +605,8 @@ public class StringUtil extends StringUtils {
      * @return
      */
     public static String removeHtmlValue(String value) {
-    	Pattern regex = Pattern.compile("<.+?>");
-		Matcher matcher = regex.matcher(value);
-		String value_ = matcher.replaceAll("");
-		return value_;
+		Matcher matcher = REGEX_HTML.matcher(value);
+		return matcher.replaceAll("");
     }
     
     /**
@@ -624,8 +630,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String urlDecode(String s, String enc) {
-		if (StringUtil.isBlank(s))
+		if (StringUtil.isBlank(s)) {
 			return s;
+		}
 		try {
 			return URLDecoder.decode(s, enc);
 		} catch (Exception e) {
@@ -653,8 +660,9 @@ public class StringUtil extends StringUtils {
 	 * @return
 	 */
 	public static String urlEncode(String s, String enc) {
-		if (StringUtil.isBlank(s))
+		if (StringUtil.isBlank(s)) {
 			return s;
+		}
 		try {
 			return URLEncoder.encode(s, enc);
 		} catch (Exception e) {
@@ -716,7 +724,7 @@ public class StringUtil extends StringUtils {
      * @return
      */
     public static boolean isEmpty(String input) {
-        return input == null || input.equals("") || input.matches(EMPTY_REGEX);
+        return input == null || "".equals(input) || input.matches(EMPTY_REGEX);
     }
 
     public static boolean isNotEmpty(String input){

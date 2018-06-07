@@ -63,8 +63,9 @@ public class IndexController extends AppBaseController {
         checkParam(password, "缺少密码");
 
         UserLoginInfo loginInfo = indexService.authenticate(mobile, password, pushToken);
-        if(loginInfo == null)
+        if(loginInfo == null) {
             return AppResult.busErrorRes("用户或密码错误！");
+        }
 
         String userToken = UserTokenManager.getInstance().saveUserToken(loginInfo.getUserId());
         loginInfo.setUserToken(userToken);

@@ -1,10 +1,7 @@
 package com.emucoo.utils;
 
-import com.emucoo.utils.GaodeGeoMap;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 
@@ -31,8 +28,9 @@ public class WaterMarkUtils {
      */
     public static String genPicUrlWithWaterMark(String picUrl, String coordinate, String shootTime) {
 
-        if(StringUtils.isBlank(picUrl))
+        if(StringUtils.isBlank(picUrl)) {
             return null;
+        }
         StringBuffer result = new StringBuffer(picUrl);
         StringBuffer sb = new StringBuffer();
         if(StringUtils.isNotBlank(coordinate)) {

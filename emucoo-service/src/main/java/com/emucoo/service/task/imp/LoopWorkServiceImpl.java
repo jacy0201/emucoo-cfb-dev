@@ -112,8 +112,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
-        if (loopWork == null)
+        if (loopWork == null) {
             return;
+        }
 
         List<String> aimgs = new ArrayList<>();
         if (atai.getReviewImgArr() != null && atai.getReviewImgArr().size() > 0) {
@@ -150,8 +151,10 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     public AssignTaskDetailVo_O viewAssignTaskDetail(String workId, String subWorkId, int workType, SysUser loginUser) {
         AssignTaskDetailVo_O result = new AssignTaskDetailVo_O();
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
-        if (loopWork == null)
+        //noinspection AliControlFlowStatementWithoutBraces
+        if (loopWork == null) {
             return null;
+        }
 
         AssignTaskStateVo stateVo = new AssignTaskStateVo();
         stateVo.setBackTime(new Date().getTime());
@@ -161,8 +164,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         stateVo.setTaskExplain(task.getDescription() == null ? "" : task.getDescription());
         stateVo.setStartDate(DateUtil.simple(task.getTaskStartDate()));
         stateVo.setEndDate(DateUtil.simple(task.getTaskEndDate()));
-        if (loopWork.getExecuteDeadline() != null) stateVo.setSubmitDeadline(loopWork.getExecuteDeadline().getTime());
-        if (loopWork.getAuditDeadline() != null) stateVo.setReviewDeadline(loopWork.getAuditDeadline().getTime());
+        //noinspection AliControlFlowStatementWithoutBraces
+        if (loopWork.getExecuteDeadline() != null) {
+            stateVo.setSubmitDeadline(loopWork.getExecuteDeadline().getTime());
+        }
+        if (loopWork.getAuditDeadline() != null) {
+            stateVo.setReviewDeadline(loopWork.getAuditDeadline().getTime());
+        }
         stateVo.setAuditorID(loopWork.getAuditUserId() == null ? 0 : loopWork.getAuditUserId());
         stateVo.setAuditorName(loopWork.getAuditUserName() == null ? "" : loopWork.getAuditUserName());
         List<String> ccps = loopWork.getSendUserIds() == null ? Arrays.asList("") : Arrays.asList(loopWork.getSendUserIds().split(",")).stream().map(id -> {
@@ -251,7 +259,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 AssignTaskReplyVo rv = new AssignTaskReplyVo();
                 rv.setReplyID(wn.getId());
                 rv.setReplyContent(wn.getContent());
-                if (wn.getCreateTime() != null) rv.setReplyTime(wn.getCreateTime().getTime());
+                if (wn.getCreateTime() != null) {
+                    rv.setReplyTime(wn.getCreateTime().getTime());
+                }
                 if (wn.getUserId() != null) {
                     rv.setAnswerID(wn.getUserId());
                     rv.setAnswerName(wn.getUserName());
@@ -283,6 +293,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     /**
      * 工作备忘详情查询
+     *
      * @param workId
      * @param subWorkId
      * @param workType
@@ -290,12 +301,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
      * @return
      */
     @Override
-    public MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser){
+    public MemoDetailVo_O viewMemoDetail(String workId, String subWorkId, Integer workType, SysUser loginUser) {
 
-        MemoDetailVo_O memoDetailVo=null;
-        TLoopWork loopWork=loopWorkMapper.fetchByWorkIdAndType(workId,subWorkId,workType);
-        if(null!=loopWork){
-            memoDetailVo=new MemoDetailVo_O();
+        MemoDetailVo_O memoDetailVo = null;
+        TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(workId, subWorkId, workType);
+        if (null != loopWork) {
+            memoDetailVo = new MemoDetailVo_O();
             memoDetailVo.setWorkID(workId);
             memoDetailVo.setSubID(subWorkId);
             memoDetailVo.setWorkType(workType);
@@ -303,29 +314,37 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setEndDateTime(loopWork.getExecuteEndDate().getTime());
             memoDetailVo.setIsSign(loopWork.getIsSign());
             memoDetailVo.setRemindType(loopWork.getExecuteRemindType());
-            if(null!=loopWork.getExecuteRemindType()){
-                Integer remindType=loopWork.getExecuteRemindType();
-                String remindName="";
-                if(remindType.equals(1)) remindName="开始时间";
-                else if(remindType.equals(2)) remindName="提前15分钟";
-                else if(remindType.equals(3)) remindName="提前30分钟";
-                else if(remindType.equals(4)) remindName="提前1小时";
-                else if(remindType.equals(5)) remindName="提前2小时";
-                else if(remindType.equals(6)) remindName="提前1天";
-                else if(remindType.equals(7)) remindName="无";
+            if (null != loopWork.getExecuteRemindType()) {
+                Integer remindType = loopWork.getExecuteRemindType();
+                String remindName = "";
+                if (remindType.equals(1)) {
+                    remindName = "开始时间";
+                } else if (remindType.equals(2)) {
+                    remindName = "提前15分钟";
+                } else if (remindType.equals(3)) {
+                    remindName = "提前30分钟";
+                } else if (remindType.equals(4)) {
+                    remindName = "提前1小时";
+                } else if (remindType.equals(5)) {
+                    remindName = "提前2小时";
+                } else if (remindType.equals(6)) {
+                    remindName = "提前1天";
+                } else if (remindType.equals(7)) {
+                    remindName = "无";
+                }
                 memoDetailVo.setRemindName(remindName);
             }
 
             memoDetailVo.setMemoStatus(loopWork.getWorkStatus());
 
             List<MemoDetailVo_O.CCPerson> ccList = new ArrayList<>();
-            String [] userIds=loopWork.getSendUserIds().split(",");
-            if(null!=userIds && userIds.length>0){
-                MemoDetailVo_O.CCPerson ccPerson=null;
-                for (String id:userIds) {
-                    ccPerson=new  MemoDetailVo_O.CCPerson();
+            String[] userIds = loopWork.getSendUserIds().split(",");
+            if (null != userIds && userIds.length > 0) {
+                MemoDetailVo_O.CCPerson ccPerson = null;
+                for (String id : userIds) {
+                    ccPerson = new MemoDetailVo_O.CCPerson();
                     SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(id));
-                    if(u!=null) {
+                    if (u != null) {
                         ccPerson.setCcPersonID(u.getId());
                         ccPerson.setCcPersonName(u.getRealName());
                         ccPerson.setHeadImgUrl(u.getHeadImgUrl());
@@ -339,10 +358,10 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             memoDetailVo.setTaskExplain(task.getDescription());
             memoDetailVo.setTaskRepeatType(task.getLoopCycleType());
             memoDetailVo.setTaskRepeatValue(task.getLoopCycleValue());
-            if(StringUtil.isNotEmpty(task.getIllustrationImgIds())) {
+            if (StringUtil.isNotEmpty(task.getIllustrationImgIds())) {
                 List<ImageUrlVo> ims = new ArrayList<ImageUrlVo>();
                 List<TFile> cimgs = fileMapper.selectByIds(task.getIllustrationImgIds());
-                if(null!=cimgs && cimgs.size()>0) {
+                if (null != cimgs && cimgs.size() > 0) {
                     cimgs.forEach(tFile -> {
                         ImageUrlVo im = new ImageUrlVo();
                         im.setImgUrl(tFile.getImgUrl());
@@ -353,7 +372,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
 
         }
-        return  memoDetailVo;
+        return memoDetailVo;
 
     }
 
@@ -395,8 +414,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 //        task.setExecutorShopIds();
 
 //        task.setCcPositionIds();
-        if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+        if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0) {
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+        }
 
         List<String> timgids = new ArrayList<String>();
         voi.getTaskImgArr().forEach(imageUrlVo -> {
@@ -426,7 +446,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 //         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
-        if(isContainsDate(dts, today)) {
+        if (isContainsDate(dts, today)) {
             createAssignWorkInstance(task, today);
         }
 
@@ -446,8 +466,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         for (Long executorId : exeids) {
             // 判断数据库里是否已经有这条数据了。
             int count = loopWorkMapper.isLoopWorkExist(task.getId(), dt, executorId);
-            if (count > 0)
+            if (count > 0) {
                 continue;
+            }
 
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(task.getId());
@@ -498,23 +519,23 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
     }
 
-    private Date getRemindTime(Integer type,Date dt){
-        Date date=null;
-        switch (type){
+    private Date getRemindTime(Integer type, Date dt) {
+        Date date = null;
+        switch (type) {
             case 2:
-                date=DateUtil.getDateMinusMinutes(dt,15);
+                date = DateUtil.getDateMinusMinutes(dt, 15);
                 break;
             case 3:
-                date= DateUtil.getDateMinusMinutes(dt,30);
+                date = DateUtil.getDateMinusMinutes(dt, 30);
                 break;
             case 4:
-                date= DateUtil.getDateMinusMinutes(dt,60);
+                date = DateUtil.getDateMinusMinutes(dt, 60);
                 break;
             case 5:
-                date= DateUtil.getDateMinusMinutes(dt,120);
+                date = DateUtil.getDateMinusMinutes(dt, 120);
                 break;
             case 6:
-                date= DateUtil.getDateMinusMinutes(dt,60*24);
+                date = DateUtil.getDateMinusMinutes(dt, 60 * 24);
                 break;
             case 7:
                 break;
@@ -524,6 +545,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     /**
      * 创建工作备忘
+     *
      * @param voi
      * @param userId
      */
@@ -551,10 +573,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setLoopCycleValue(voi.getTaskRepeatValue());
         task.setExecuteUserIds(userId.toString());
 
-        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+        if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0) {
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+        }
 
-        if(null!=voi.getTaskImgArr()) {
+        if (null != voi.getTaskImgArr()) {
             List<String> timgids = new ArrayList<String>();
             voi.getTaskImgArr().forEach(imageUrlVo -> {
                 TFile timg = new TFile();
@@ -572,7 +595,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         Long taskId = task.getId();
 
         // 根据具体执行时间生产任务实例
-        for(Date dt : dts) {
+        for (Date dt : dts) {
             // 根据执行人产生任务实例
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(taskId);
@@ -582,16 +605,16 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setType(5);
             lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
-            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
-            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
+            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + "23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
-            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
-            Date RemindTime=null;
+            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getEndTime()));
+            Date RemindTime = null;
             //type=1 ，提醒时间为 日程开始时间
-            if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
-                RemindTime=lw.getExecuteBeginDate();
-            }else{
-                RemindTime=getRemindTime(voi.getRemindType(),DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            if (null != voi.getRemindType() && voi.getRemindType().equals(1)) {
+                RemindTime = lw.getExecuteBeginDate();
+            } else {
+                RemindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
             }
             lw.setExecuteRemindTime(RemindTime);
             lw.setCreateTime(new Date());
@@ -615,6 +638,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     /**
      * 编辑工作备忘
+     *
      * @param voi
      * @param userId
      */
@@ -622,13 +646,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void editMemo(MemoEditVo_I voi, Long userId) {
         //更新工作备忘主表 t_task
-        TTask t=new TTask();
+        TTask t = new TTask();
         t.setWorkId(voi.getWorkID());
         t.setIsDel(false);
         t.setIsUse(true);
-        TTask tTask =taskMapper.selectOne(t);
-        Long taskId=tTask.getId();
-        TTask task=new TTask();
+        TTask tTask = taskMapper.selectOne(t);
+        Long taskId = tTask.getId();
+        TTask task = new TTask();
         task.setId(taskId);
         task.setName(voi.getTaskTitle());
         task.setModifyTime(DateUtil.currentDate());
@@ -641,11 +665,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setLoopCycleType(voi.getTaskRepeatType());
         task.setLoopCycleValue(voi.getTaskRepeatValue());
         task.setExecuteUserIds(userId.toString());
-        if(voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0)
+        if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0) {
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
+        }
 
-        List<ImageUrlVo> imgList=voi.getTaskImgArr();
-        if(null!=imgList && imgList.size()>0){
+        List<ImageUrlVo> imgList = voi.getTaskImgArr();
+        if (null != imgList && imgList.size() > 0) {
             List<String> timgids = new ArrayList<String>();
             imgList.forEach(imageUrlVo -> {
                 TFile timg = new TFile();
@@ -661,13 +686,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         taskMapper.updateByPrimaryKeySelective(task);
 
         //先删除之前创建的备忘实例
-        Example exampleTLoopWork=new Example(TLoopWork.class);
-        exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
+        Example exampleTLoopWork = new Example(TLoopWork.class);
+        exampleTLoopWork.createCriteria().andEqualTo("workId", voi.getWorkID()).andEqualTo("type", 5);
         loopWorkMapper.deleteByExample(exampleTLoopWork);
 
         List<Date> dts = genDatesByRepeatType(task);
         //再重新创建备忘实例
-        for(Date dt : dts) {
+        for (Date dt : dts) {
             // 根据执行人产生任务实例
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(taskId);
@@ -677,16 +702,16 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setType(5);
             lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             lw.setCreateUserId(userId);
-            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
-            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+"23:59"));
+            lw.setExecuteBeginDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
+            lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + "23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
-            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getEndTime()));
-            Date RemindTime=null;
+            lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getEndTime()));
+            Date RemindTime = null;
             //type=1 ，提醒时间为 日程开始时间
-            if(null!=voi.getRemindType() && voi.getRemindType().equals(1)){
-                RemindTime=lw.getExecuteBeginDate();
-            }else{
-                RemindTime=getRemindTime(voi.getRemindType(),DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt)+" "+voi.getStartTime()));
+            if (null != voi.getRemindType() && voi.getRemindType().equals(1)) {
+                RemindTime = lw.getExecuteBeginDate();
+            } else {
+                RemindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
             }
             lw.setExecuteRemindTime(RemindTime);
             lw.setCreateTime(new Date());
@@ -710,6 +735,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     /**
      * 删除工作备忘
+     *
      * @param voi
      * @param userId
      */
@@ -717,12 +743,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Transactional
     public void deleteMemo(MemoDeleteVo_I voi, Long userId) {
         //删除工作备忘主表 t_task
-        Example example=new Example(TTask.class);
-        example.createCriteria().andEqualTo("workId",voi.getWorkID());
+        Example example = new Example(TTask.class);
+        example.createCriteria().andEqualTo("workId", voi.getWorkID());
         taskMapper.deleteByExample(example);
         //删除工作备忘实例
-        Example exampleTLoopWork=new Example(TLoopWork.class);
-        exampleTLoopWork.createCriteria().andEqualTo("workId",voi.getWorkID()).andEqualTo("type",5);
+        Example exampleTLoopWork = new Example(TLoopWork.class);
+        exampleTLoopWork.createCriteria().andEqualTo("workId", voi.getWorkID()).andEqualTo("type", 5);
         loopWorkMapper.deleteByExample(exampleTLoopWork);
     }
 
@@ -751,13 +777,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public void finishMemo(MemoFinishVo_I  memoFinishVo_I, Long userId){
-        Example example=new Example(TLoopWork.class);
-        example.createCriteria().andEqualTo("workId",memoFinishVo_I.getWorkID()).andEqualTo("subWorkId",memoFinishVo_I.getSubWorkID());
-        TLoopWork tLoopWork=new TLoopWork();
+    public void finishMemo(MemoFinishVo_I memoFinishVo_I, Long userId) {
+        Example example = new Example(TLoopWork.class);
+        example.createCriteria().andEqualTo("workId", memoFinishVo_I.getWorkID()).andEqualTo("subWorkId", memoFinishVo_I.getSubWorkID());
+        TLoopWork tLoopWork = new TLoopWork();
         tLoopWork.setWorkStatus(memoFinishVo_I.getMemoStatus());
         tLoopWork.setModifyTime(new Date());
-        loopWorkMapper.updateByExampleSelective(tLoopWork,example);
+        loopWorkMapper.updateByExampleSelective(tLoopWork, example);
     }
 
     @Override
@@ -897,7 +923,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             work.setSubID(t.getSubWorkId());
             work.setWorkType(t.getType());
             TTask tt = taskMapper.selectByPrimaryKey(t.getTaskId());
-            if(t.getType() == ITask.MEMO) {
+            if (t.getType() == ITask.MEMO) {
                 work.getMemo().setMemoTitle(tt.getName());
                 work.getMemo().setMemoContent(tt.getDescription());
                 work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());

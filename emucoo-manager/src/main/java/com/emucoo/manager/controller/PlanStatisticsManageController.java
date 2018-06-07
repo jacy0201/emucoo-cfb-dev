@@ -7,7 +7,6 @@ import com.emucoo.model.RVRReportStatistics;
 import com.emucoo.model.TFormType;
 import com.emucoo.model.TFormValue;
 import com.emucoo.service.planStatistics.PlanStatisticsService;
-import com.sun.tools.javac.comp.Annotate;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -65,7 +63,7 @@ public class PlanStatisticsManageController extends BaseResource {
                 int col = 0;
                 for(Field field : list) {
                     String filedAnnotationValue = ((FieldName) field.getAnnotations()[0]).value();
-                    if (!filedAnnotationValue.equals("otherValueList")) {
+                    if (!"otherValueList".equals(filedAnnotationValue)) {
                         label = new Label(col++, 0, filedAnnotationValue);
                         sheet.addCell(label);
                     }
@@ -81,7 +79,7 @@ public class PlanStatisticsManageController extends BaseResource {
                     col = 0;
                     for(Field field : list) {
                         String filedAnnotationValue = ((FieldName) field.getAnnotations()[0]).value();
-                        if (!filedAnnotationValue.equals("otherValueList")) {
+                        if (!"otherValueList".equals(filedAnnotationValue)) {
                             field.setAccessible(true);
                             label = new Label(col++, row, (String) field.get(statisticsObject));
                             sheet.addCell(label);

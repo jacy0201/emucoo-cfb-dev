@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,7 +45,9 @@ public class GaodeGeoMap {
 
     private String getLocalInfoFromJson(String locationInfo) {
         JSONObject jsonObject =  JSONObject.parseObject(locationInfo);
-        if(!jsonObject.getString("status").equals("1")) return "未知地理位置";
+        if(!"1".equals(jsonObject.getString("status"))) {
+            return "未知地理位置";
+        }
         JSONObject regeocode =jsonObject.getJSONObject("regeocode");
         //String formattedAddress = regeocode.getString("formatted_address");
         JSONObject addressComponent = regeocode.getJSONObject("addressComponent");
@@ -56,8 +57,12 @@ public class GaodeGeoMap {
         String district =  addressComponent.getString("district");
         String township =  addressComponent.getString("township");
 
-        if(city.equals("[]")) city = province;
-        if(township.equals("[]")) return "未知地址";
+        if("[]".equals(city)) {
+            city = province;
+        }
+        if("[]".equals(township)) {
+            return "未知地址";
+        }
         return city + " " + district + " " + township;
     }
 }
