@@ -30,7 +30,7 @@ public class WeekDayUtil {
 	 * @return 返回时间数组
 	 */
 	public static List<String> getDates(String dateFrom, String dateEnd, String weekDays) {
-		long time = 1l;
+		long time = 1L;
 		long perDayMilSec = 24 * 60 * 60 * 1000;
 		List<String> dateList = new ArrayList<String>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");

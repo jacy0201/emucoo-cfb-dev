@@ -46,7 +46,6 @@ public class FormManageController extends BaseResource {
     private JedisCluster redisCluster;
 
 
-
     @ApiOperation(value = "表单列表", httpMethod = "POST")
     @PostMapping("/list")
     public ApiResult<PageInfo> list(@RequestBody ParamVo<TFormMain> paramVo) {
@@ -56,7 +55,7 @@ public class FormManageController extends BaseResource {
         }
         int pageNm = paramVo.getPageNumber();
         int pageSz = paramVo.getPageSize();
-        String keyword = paramVo.getData()==null?"":paramVo.getData().getName();
+        String keyword = paramVo.getData() == null ? "" : paramVo.getData().getName();
         int total = formManageService.countFormsByNameKeyword(keyword, form.getFormType());
         List<TFormMain> forms = formManageService.findFormsByNameKeyword(keyword, pageNm, pageSz, form.getFormType());
         PageInfo pageInfo = new PageInfo(forms);
@@ -70,9 +69,10 @@ public class FormManageController extends BaseResource {
     @PostMapping("/create")
     public ApiResult<String> create(@RequestBody ParamVo<TFormMain> paramVo) {
         TFormMain form = paramVo.getData();
-        if(form == null)
+        if (form == null) {
             return fail("parameter is wrong.");
-        if(form.getFormType() == null) {
+        }
+        if (form.getFormType() == null) {
             return fail("formType不能为空.");
         }
         formManageService.createForm(form, 0L);
@@ -83,7 +83,7 @@ public class FormManageController extends BaseResource {
     @PostMapping("/update")
     public ApiResult<String> update(@RequestBody ParamVo<TFormMain> paramVo) {
         TFormMain form = paramVo.getData();
-        if(form == null){
+        if (form == null) {
             return fail("parameter is wrong.");
         }
         formManageService.updateForm(form);
@@ -94,7 +94,7 @@ public class FormManageController extends BaseResource {
     @PostMapping("/delete")
     public ApiResult<String> delete(@RequestBody ParamVo<List<Long>> paramVo) {
         List<Long> ids = paramVo.getData();
-        if(ids == null || ids.size() == 0){
+        if (ids == null || ids.size() == 0) {
             return fail("parameter can not be empty.");
         }
         formManageService.deleteForms(ids);
@@ -105,7 +105,7 @@ public class FormManageController extends BaseResource {
     @PostMapping("/enable")
     public ApiResult<String> enable(@RequestBody ParamVo<List<Long>> paramVo) {
         List<Long> ids = paramVo.getData();
-        if(ids == null || ids.size() == 0){
+        if (ids == null || ids.size() == 0) {
             return fail("parameter can not be empty.");
         }
         formManageService.enableForms(ids);
@@ -116,8 +116,9 @@ public class FormManageController extends BaseResource {
     @PostMapping("/disable")
     public ApiResult<String> disable(@RequestBody ParamVo<List<Long>> paramVo) {
         List<Long> ids = paramVo.getData();
-        if(ids == null || ids.size() == 0)
+        if (ids == null || ids.size() == 0) {
             return fail("parameter can not be empty.");
+        }
         formManageService.disableForms(ids);
         return success("ok");
     }
@@ -126,8 +127,9 @@ public class FormManageController extends BaseResource {
     @PostMapping("/detail")
     public ApiResult<TFormMain> detail(@RequestBody ParamVo<TFormMain> paramVo) {
         TFormMain form = paramVo.getData();
-        if(form == null)
+        if (form == null) {
             return fail("parameter is wrong.");
+        }
         TFormMain formDetail = formManageService.fetchFormDetail(form.getId());
         return success(formDetail);
     }
@@ -136,12 +138,13 @@ public class FormManageController extends BaseResource {
     @PostMapping("/saveDetail")
     public ApiResult<String> saveDetail(@RequestBody ParamVo<TFormMain> paramVo) {
         TFormMain formDetail = paramVo.getData();
-        if(formDetail == null)
+        if (formDetail == null) {
             return fail("parameter is wrong.");
+        }
         // 当表单有改动当时候，要把app打表时当表单模版缓存清理一下
         String keyPrefix = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formDetail.getId()) + ":u";
         List<String> bufferKeys = formManageService.fetchAllBufferedFormTemplate(keyPrefix);
-        for(String key : bufferKeys) {
+        for (String key : bufferKeys) {
             redisCluster.del(key);
         }
         formManageService.saveFormDetail(formDetail);
@@ -207,23 +210,23 @@ public class FormManageController extends BaseResource {
         return success(form);
     }
 
- /*   @ApiOperation(value = "添加能力模型机会点")
-    @PostMapping(value = "/addFormOppt")
-    public ApiResult addFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
-        List<TFormOppt> tFormOpptList = paramVo.getData();
-        if(null!=tFormOpptList && tFormOpptList.size()>0)
-            formManageService.addFormOppt(tFormOpptList);
-        else
-            return fail(ApiExecStatus.INVALID_PARAM, "集合不能为空!");
+    /*   @ApiOperation(value = "添加能力模型机会点")
+       @PostMapping(value = "/addFormOppt")
+       public ApiResult addFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
+           List<TFormOppt> tFormOpptList = paramVo.getData();
+           if(null!=tFormOpptList && tFormOpptList.size()>0)
+               formManageService.addFormOppt(tFormOpptList);
+           else
+               return fail(ApiExecStatus.INVALID_PARAM, "集合不能为空!");
 
-        return success("success");
-    }
-*/
+           return success("success");
+       }
+   */
     @ApiOperation(value = "编辑能力模型机会点")
     @PostMapping(value = "/editFormOppt")
     public ApiResult editFormOppt(@RequestBody ParamVo<List<TFormOppt>> paramVo) {
         List<TFormOppt> tFormOpptList = paramVo.getData();
-        if(null==tFormOpptList || tFormOpptList.size()<=0){
+        if (null == tFormOpptList || tFormOpptList.size() <= 0) {
             return fail(ApiExecStatus.INVALID_PARAM, "集合不能为空!");
         }
         formManageService.editFormOppt(tFormOpptList);

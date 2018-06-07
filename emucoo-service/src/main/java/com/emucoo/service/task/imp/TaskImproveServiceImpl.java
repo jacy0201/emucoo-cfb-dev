@@ -136,9 +136,9 @@ public class TaskImproveServiceImpl implements TaskImproveService {
                 calendar.set(Calendar.SECOND, Integer.parseInt(task.getExecuteDeadline().substring(4, 6)));
                 loopWork.setExecuteDeadline(calendar.getTime());
             } else {
-                loopWork.setExecuteDeadline(DateUtil.timeForward(today, 21, 0));
+                loopWork.setExecuteDeadline(DateUtil.timeForward(today, 21, 0, 0));
             }
-            loopWork.setExecuteRemindTime(DateUtil.timeBackward(loopWork.getExecuteDeadline(), 1, 0));
+            loopWork.setExecuteRemindTime(DateUtil.timeBackward(loopWork.getExecuteDeadline(), 1, 0, 0));
 
             loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             loopWork.setType(ConstantsUtil.LoopWork.TYPE_THREE);
@@ -197,7 +197,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
 
         // 设置提交时间的12小时后
         loopWork.setModifyTime(new Date());
-        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 12, 0));
+        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 12, 0, 0));
 
         // WorkImgAppend
         List<ImgUrl> list = submitIn.getExecuteImgArr();

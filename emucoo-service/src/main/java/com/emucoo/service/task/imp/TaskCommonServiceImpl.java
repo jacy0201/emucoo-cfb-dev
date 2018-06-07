@@ -157,8 +157,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 answer.setAnswerID(comment.getCreateUserId().intValue());
                 if (comment.getCreateUserId() != null) {
                     SysUser commentUser = userMapper.selectByPrimaryKey(comment.getCreateUserId());
-                    if (commentUser != null)
+                    if (commentUser != null) {
                         answer.setAnswerName(commentUser.getRealName());
+                    }
                     answer.setAnswerHeadUrl(commentUser.getHeadImgUrl());
                 }
                 answer.setReplyAction(1);
@@ -201,17 +202,17 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setExcuteUserId(user.getId());
         loopWork.setExcuteUserName(user.getUsername());
         loopWork.setModifyTime(DateUtil.currentDate());
-        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 4, 0));
+        loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 4, 0, 0));
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] tms = task.getAuditDeadline().split(":");
             if (tms.length == 1) {
                 int mi = Integer.parseInt(tms[0]);
-                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 0, mi, 0));
             }
             if (tms.length == 2) {
                 int hr = Integer.parseInt(tms[0]);
                 int mi = Integer.parseInt(tms[1]);
-                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi));
+                loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), hr, mi, 0));
             }
         }
         loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
@@ -778,21 +779,21 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         if (StringUtils.isNotBlank(commonTask.getExecuteDeadline())) {
             String[] exeStr = commonTask.getExecuteDeadline().split(":");
             if (exeStr.length == 1) {
-                exeDeadLine = DateUtil.timeForward(exeBeginDt, 0, Integer.parseInt(exeStr[0].trim()));
+                exeDeadLine = DateUtil.timeForward(exeBeginDt, 0, Integer.parseInt(exeStr[0].trim()), 0);
             }
             if (exeStr.length == 2) {
-                exeDeadLine = DateUtil.timeForward(exeBeginDt, Integer.parseInt(exeStr[0].trim()), Integer.parseInt(exeStr[1].trim()));
+                exeDeadLine = DateUtil.timeForward(exeBeginDt, Integer.parseInt(exeStr[0].trim()), Integer.parseInt(exeStr[1].trim()), 0);
             }
         }
 
-        Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30);
+        Date exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, 30, 0);
         if (commonTask.getExecuteRemindTime() != null) {
             String[] remindStr = commonTask.getExecuteRemindTime().split(":");
             if (remindStr.length == 1) {
-                exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, Integer.parseInt(remindStr[0].trim()));
+                exeRemindTime = DateUtil.timeBackward(exeDeadLine, 0, Integer.parseInt(remindStr[0].trim()), 0);
             }
             if (remindStr.length == 2) {
-                exeRemindTime = DateUtil.timeBackward(exeDeadLine, Integer.parseInt(remindStr[0]), Integer.parseInt(remindStr[1]));
+                exeRemindTime = DateUtil.timeBackward(exeDeadLine, Integer.parseInt(remindStr[0]), Integer.parseInt(remindStr[1]), 0);
             }
         }
 

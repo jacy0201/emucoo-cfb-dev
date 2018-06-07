@@ -34,8 +34,9 @@ public class CookieUtil {
      */
     public static void setCookie(HttpServletRequest request,
                                  HttpServletResponse response, String name, String value, int seconds) {
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value))
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
             return;
+        }
         Cookie cookie = new Cookie(name, value);
         //cookie.setDomain(domain);
         cookie.setMaxAge(seconds);

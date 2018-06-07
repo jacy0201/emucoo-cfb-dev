@@ -31,6 +31,12 @@ public class TRepairWork {
     @Column(name = "device_id")
     private Long deviceId;
 
+    @Column(name = "device_name")
+    private String deviceName;
+
+    @Column(name = "device_idstr")
+    private String deviceIdstr;
+
     @Column(name = "device_title")
     private String deviceTitle;
 
@@ -155,6 +161,22 @@ public class TRepairWork {
 
     public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getDeviceIdstr() {
+        return deviceIdstr;
+    }
+
+    public void setDeviceIdstr(String deviceIdstr) {
+        this.deviceIdstr = deviceIdstr;
     }
 
     public String getDeviceTitle() {

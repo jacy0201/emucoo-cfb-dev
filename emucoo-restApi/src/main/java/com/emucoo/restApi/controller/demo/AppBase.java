@@ -169,7 +169,7 @@ public abstract class AppBase {
 	
 	protected Long longVal(Object obj)
 	{
-		Long res = -1l;
+		Long res = -1L;
 		
 		if(obj!=null)
 		{

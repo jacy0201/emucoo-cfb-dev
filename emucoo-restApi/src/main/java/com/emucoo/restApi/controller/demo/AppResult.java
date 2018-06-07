@@ -19,7 +19,7 @@ public class AppResult<T> extends ParamVo<T> implements Result{
 	private void init()
 	{
 		setCmd("cmd");
-		setVersion(1000l);
+		setVersion(1000L);
 		setSign("emucoo");
 		setPageType("1");
 	}
