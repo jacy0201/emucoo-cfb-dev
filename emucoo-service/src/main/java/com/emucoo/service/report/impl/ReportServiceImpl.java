@@ -861,7 +861,7 @@ public class ReportServiceImpl implements ReportService {
                                 List<ProblemVo> problemArray = new ArrayList<>();
                                 for(TFormPbmVal pbmVal : formPbmVals) {
                                     // 只需要未通过的题项
-                                    if(pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false) && pbmVal.getIsNa().equals(false)) {
+                                    if(Boolean.TRUE.equals(pbmVal.getIsScore()) && Boolean.FALSE.equals(pbmVal.getIsPass()) && Boolean.FALSE.equals(pbmVal.getIsNa())) {
                                         ProblemVo problemVo = new ProblemVo();
                                         problemVo.setProblemID(pbmVal.getFormProblemId());
                                         problemVo.setProblemName(pbmVal.getProblemName());
@@ -887,7 +887,7 @@ public class ReportServiceImpl implements ReportService {
                                             List<SubProblemVo> subProblemVos = new ArrayList<>();
                                             for (TFormSubPbmVal subPbmVal : subPbmVals) {
                                                 // 只读取未通过的子题项
-                                                if(subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false) && subPbmVal.getIsNa().equals(false)) {
+                                                if(Boolean.TRUE.equals(subPbmVal.getIsScore()) && Boolean.FALSE.equals(subPbmVal.getIsPass()) && Boolean.FALSE.equals(subPbmVal.getIsNa())) {
                                                     SubProblemVo subProblemVo = new SubProblemVo();
                                                     subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
                                                     subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
@@ -1068,7 +1068,7 @@ public class ReportServiceImpl implements ReportService {
                         List<ProblemVo> problemArray = new ArrayList<>();
                         for (TFormPbmVal pbmVal : formPbmVals) {
                             // 只需要未通过的题项
-                            if (pbmVal.getIsScore().equals(true) && pbmVal.getIsPass().equals(false) && pbmVal.getIsNa().equals(false)) {
+                            if (Boolean.TRUE.equals(pbmVal.getIsScore()) && Boolean.FALSE.equals(pbmVal.getIsPass()) && Boolean.FALSE.equals(pbmVal.getIsNa())) {
                                 ProblemVo problemVo = new ProblemVo();
                                 problemVo.setProblemID(pbmVal.getFormProblemId());
                                 problemVo.setProblemName(pbmVal.getProblemName());
@@ -1094,7 +1094,7 @@ public class ReportServiceImpl implements ReportService {
                                     List<SubProblemVo> subProblemVos = new ArrayList<>();
                                     for (TFormSubPbmVal subPbmVal : subPbmVals) {
                                         // 只读取未通过的子题项
-                                        if (subPbmVal.getIsScore().equals(true) && subPbmVal.getIsPass().equals(false) && subPbmVal.getIsNa().equals(false)) {
+                                        if (Boolean.TRUE.equals(subPbmVal.getIsScore()) && Boolean.FALSE.equals(subPbmVal.getIsPass()) && Boolean.FALSE.equals(subPbmVal.getIsNa())) {
                                             SubProblemVo subProblemVo = new SubProblemVo();
                                             subProblemVo.setSubProblemID(subPbmVal.getSubProblemId());
                                             subProblemVo.setProblemDescription(subPbmVal.getProblemDescription());
