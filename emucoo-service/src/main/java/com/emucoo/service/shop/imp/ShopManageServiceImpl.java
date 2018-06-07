@@ -4,16 +4,15 @@ import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.dto.modules.shop.FormResultVO;
 import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopVO;
-import com.emucoo.mapper.SysAreaMapper;
-import com.emucoo.mapper.SysUserMapper;
-import com.emucoo.mapper.TReportMapper;
-import com.emucoo.mapper.TShopInfoMapper;
+import com.emucoo.mapper.*;
 import com.emucoo.model.SysArea;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TFormMain;
 import com.emucoo.model.TShopInfo;
 import com.emucoo.service.shop.ShopManageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ public class ShopManageServiceImpl extends BaseServiceImpl<TShopInfo> implements
     private SysUserMapper sysUserMapper;
     @Resource
     private TReportMapper tReportMapper;
+    @Resource
+    private TFormMainMapper tFormMainMapper;
 
     @Override
     public List<SysArea> getAreaList(Long userId){
@@ -63,11 +64,17 @@ public class ShopManageServiceImpl extends BaseServiceImpl<TShopInfo> implements
     @Override
     public List<FormResultVO> getResultList(ResultQuery resultQuery){
         Long shopId=resultQuery.getShopId();
-        Long deptId=resultQuery.getDeptId();
+        Long dptId=resultQuery.getDptId();
         String startMonth=resultQuery.getStartMonth();
         String endMonth=resultQuery.getEndMonth();
         Long formId=resultQuery.getFormId();
-        return tReportMapper.getResultList(shopId,deptId,formId,startMonth,endMonth);
+        return tReportMapper.getResultList(shopId,dptId,formId,startMonth,endMonth);
     }
 
+    @Override
+    public List<TFormMain> selectFormList(){
+        Example example=new Example(TFormMain.class);
+        example.createCriteria().andEqualTo("isDel",false).andEqualTo("isUse",true);
+        return  tFormMainMapper.selectByExample(example);
+    }
 }
