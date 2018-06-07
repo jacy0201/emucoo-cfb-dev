@@ -96,8 +96,8 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 String shopName = shopInfo == null ? "" : shopInfo.getShopName();
                 frontPlanVO.setShopName(shopName);
                 frontPlanVO.setTaskStatus(frontPlan.getStatus());
-                frontPlanVO.setActualRemindTime(frontPlan.getActualRemindTime().getTime());
-                frontPlanVO.setPlanPreciseTime(frontPlan.getPlanPreciseTime().getTime());
+                if(null!=frontPlan.getActualRemindTime()) frontPlanVO.setActualRemindTime(frontPlan.getActualRemindTime().getTime());
+                if(null!=frontPlan.getPlanPreciseTime()) frontPlanVO.setPlanPreciseTime(frontPlan.getPlanPreciseTime().getTime());
                 Example exampleForm = new Example(TFrontPlanForm.class);
                 exampleForm.createCriteria().andEqualTo("frontPlanId", frontPlan.getId()).andEqualTo("isDel", false);
                 List<TFrontPlanForm> formList = tFrontPlanFormMapper.selectByExample(exampleForm);
@@ -162,9 +162,9 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 //workStatus=5 系统待审核
                 taskVO.setTaskStatus(loopWork.getWorkStatus());
                 taskVO.setTaskResult(loopWork.getWorkResult());
-                taskVO.setExecuteDeadline(loopWork.getExecuteDeadline().getTime());
-                taskVO.setExecuteRemindTime(loopWork.getExecuteRemindTime().getTime());
-                taskVO.setAuditDeadline(loopWork.getAuditDeadline().getTime());
+                if(null!=loopWork.getExecuteDeadline()) taskVO.setExecuteDeadline(loopWork.getExecuteDeadline().getTime());
+                if(null!=loopWork.getExecuteRemindTime()) taskVO.setExecuteRemindTime(loopWork.getExecuteRemindTime().getTime());
+                if(null!=loopWork.getAuditDeadline()) taskVO.setAuditDeadline(loopWork.getAuditDeadline().getTime());
                 taskVO.setReporterName(loopWork.getExcuteUserName());
                 list.add(taskVO);
             }

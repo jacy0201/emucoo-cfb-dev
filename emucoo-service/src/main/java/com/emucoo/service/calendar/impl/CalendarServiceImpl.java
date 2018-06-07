@@ -300,7 +300,7 @@ public class CalendarServiceImpl implements CalendarService {
         memo.setWorkID(loopWork.getWorkId());
         memo.setSubID(loopWork.getSubWorkId());
         TTask tTask = loopWork.getTask();
-        Date memoStartTime = DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(tTask.getTaskStartDate()) + " " + tTask.getStartTime());
+        Date memoStartTime = DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(loopWork.getExecuteBeginDate()) + " " + tTask.getStartTime());
         Date memoEndTime = DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(tTask.getTaskEndDate()) + " " + tTask.getEndTime());
         memo.setMemoStartTime(memoStartTime.getTime());
         memo.setMemoEndTime(memoEndTime.getTime());
