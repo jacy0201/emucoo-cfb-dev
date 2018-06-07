@@ -1,13 +1,17 @@
 package com.emucoo.restApi.controller.shop;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.center.TaskQuery;
+import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopListQuery;
+import com.emucoo.dto.modules.shop.ShopVO;
 import com.emucoo.model.SysArea;
 import com.emucoo.model.SysUser;
-import com.emucoo.model.TShopInfo;
+import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.shop.ShopManageService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +32,9 @@ public class ShopManageController extends AppBaseController {
     @Resource
     private ShopManageService shopManageService;
 
+    @Resource
+    private UserCenterService userCenterService;
+
     /**
      * 获取用户的分区资源
      * @return
@@ -47,7 +54,29 @@ public class ShopManageController extends AppBaseController {
     public AppResult getShopList(@RequestBody ParamVo<ShopListQuery> base) {
         ShopListQuery shopListQuery= base.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<TShopInfo> list=shopManageService.getShopList(shopListQuery.getAreaId(),user.getId());
+        List<ShopVO> list=shopManageService.getShopList(shopListQuery.getAreaId(),user.getId());
+        return success(list);
+    }
+
+    /**
+     * 稽核结果
+     */
+    @PostMapping(value = "getResultList")
+    public AppResult getResultList(@RequestBody ParamVo<ResultQuery> base) {
+        ResultQuery resultQuery= base.getData();
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        shopManageService.getResultList(resultQuery);
+        return success("");
+    }
+
+    /**
+     * 维修单
+     */
+    @PostMapping(value = "getRepairList")
+    public AppResult getRepairList(@RequestBody ParamVo<TaskQuery> base) {
+        TaskQuery taskQuery= base.getData();
+        SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
 

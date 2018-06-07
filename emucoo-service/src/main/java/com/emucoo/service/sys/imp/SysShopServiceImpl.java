@@ -11,7 +11,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysShopServiceImpl extends BaseServiceImpl<TShopInfo> implements SysShopService {
 
-	@Autowired
-	private TShopInfoMapper shopInfoMapper;
-
 }

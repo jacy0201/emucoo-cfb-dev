@@ -122,7 +122,7 @@ public class UserCenterController extends AppBaseController {
     public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params){
         TaskQuery taskQuery=params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        List<RepairWorkVO> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
+        List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
 
