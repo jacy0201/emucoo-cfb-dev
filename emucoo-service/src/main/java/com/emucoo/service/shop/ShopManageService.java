@@ -5,6 +5,7 @@ import com.emucoo.dto.modules.shop.FormResultVO;
 import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopVO;
 import com.emucoo.model.SysArea;
+import com.emucoo.model.TFormMain;
 import com.emucoo.model.TShopInfo;
 
 import java.util.List;
@@ -33,4 +34,10 @@ public interface ShopManageService extends BaseService<TShopInfo> {
      * @return
      */
     List<FormResultVO> getResultList(ResultQuery resultQuery);
+
+    /**
+     * 选择检查表
+     * @return
+     */
+    List<TFormMain> selectFormList();
 }
