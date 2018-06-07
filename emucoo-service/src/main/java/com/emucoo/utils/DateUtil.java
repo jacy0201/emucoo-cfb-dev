@@ -166,13 +166,13 @@ public class DateUtil {
         return date;
     }
 
-    public static Date timeBackward(Date dt, int hr, int mi) {
-		long ctm = dt.getTime() - hr * 1000 * 60 * 60 - mi * 1000 * 60;
+    public static Date timeBackward(Date dt, int hr, int mi, int se) {
+		long ctm = dt.getTime() - hr * 1000 * 60 * 60 - mi * 1000 * 60 - se * 1000;
 		return new Date(ctm);
     }
 
-    public static Date timeForward(Date dt, int hr, int mi) {
-        long ctm = dt.getTime() + hr * 1000 * 60 * 60 + mi * 1000 * 60;
+    public static Date timeForward(Date dt, int hr, int mi, int se) {
+        long ctm = dt.getTime() + hr * 1000 * 60 * 60 + mi * 1000 * 60 + se * 1000;
         return new Date(ctm);
     }
 

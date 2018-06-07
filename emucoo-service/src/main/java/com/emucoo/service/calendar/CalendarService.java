@@ -35,7 +35,7 @@ public interface CalendarService {
 
     /**
      * 删除行事历
-     * @param id
+     * @param calendarDelVO
      * @param currentUserId
      */
     void deleteCalendar(CalendarDelVO calendarDelVO, Long currentUserId);

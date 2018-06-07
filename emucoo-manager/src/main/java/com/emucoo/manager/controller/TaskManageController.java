@@ -26,14 +26,14 @@ public class TaskManageController extends BaseResource {
     @Autowired
     private TaskCommonService taskCommonService;
 
-    @ApiOperation(value="常规任务列表", httpMethod = "POST")
+    @ApiOperation(value = "常规任务列表", httpMethod = "POST")
     @PostMapping("/list")
     public ApiResult<PageInfo> listTasks(@RequestBody ParamVo<TaskParameterVo> param) {
 
         int pageNm = param.getPageNumber();
         int pageSz = param.getPageSize();
         TaskParameterVo dataIn = param.getData();
-        String keyword =  dataIn.getName();
+        String keyword = dataIn.getName();
         Boolean usage = dataIn.getIsUse();
 
         int total = taskCommonService.countCommonTaskByName(keyword, usage);
@@ -50,10 +50,12 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/create")
     public ApiResult<String> create(@RequestBody ParamVo<TaskParameterVo> param) {
         TaskParameterVo data = param.getData();
-        if(data == null)
+        if (data == null) {
             return fail("参数错误!");
-        if(taskCommonService.judgeExistCommonTask(data))
+        }
+        if (taskCommonService.judgeExistCommonTask(data)) {
             return fail("同名任务已经存在!");
+        }
         taskCommonService.createCommonTask(data);
         return success("Ok");
     }
@@ -62,8 +64,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/edit")
     public ApiResult<String> edit(@RequestBody ParamVo<TaskParameterVo> param) {
         TaskParameterVo data = param.getData();
-        if(data == null)
+        if (data == null) {
             return fail("参数错误!");
+        }
         taskCommonService.saveCommonTask(data);
         return success("ok");
     }
@@ -72,8 +75,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/remove")
     public ApiResult<String> remove(@RequestBody ParamVo<List<Long>> param) {
         List<Long> data = param.getData();
-        if(data == null || data.size() < 1)
+        if (data == null || data.size() < 1) {
             return fail("参数错误!");
+        }
         taskCommonService.removeCommonTask(data);
         return success("Ok");
     }
@@ -82,8 +86,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/enable")
     public ApiResult<String> enable(@RequestBody ParamVo<List<Long>> param) {
         List<Long> data = param.getData();
-        if(data == null || data.size() < 1)
+        if (data == null || data.size() < 1) {
             return fail("参数错误!");
+        }
         taskCommonService.switchCommonTask(data, true);
         return success("Ok");
     }
@@ -92,8 +97,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/disable")
     public ApiResult<String> disable(@RequestBody ParamVo<List<Long>> param) {
         List<Long> data = param.getData();
-        if(data == null || data.size() < 1)
+        if (data == null || data.size() < 1) {
             return fail("参数错误!");
+        }
         taskCommonService.switchCommonTask(data, false);
         return success("Ok");
     }
@@ -102,8 +108,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/detail")
     public ApiResult<TaskParameterVo> detail(@RequestBody ParamVo<Long> param) {
         Long taskId = param.getData();
-        if(taskId == null)
+        if (taskId == null) {
             return fail("参数错误!");
+        }
         TaskParameterVo vo = taskCommonService.detailCommonTask(taskId);
         return success(vo);
     }
@@ -112,8 +119,9 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/config")
     public ApiResult<String> config(@RequestBody ParamVo<TaskParameterVo> param) {
         TaskParameterVo data = param.getData();
-        if(data == null)
+        if (data == null) {
             return fail("参数错误!");
+        }
         taskCommonService.configCommonTask(data);
         return success("Ok");
     }
@@ -122,12 +130,12 @@ public class TaskManageController extends BaseResource {
     @PostMapping("/listDeptPos")
     public ApiResult<List<SysPost>> listDeptPos(@RequestBody ParamVo<Long> param) {
         Long deptId = param.getData();
-        if(deptId == null)
+        if (deptId == null) {
             return fail("参数错误!");
+        }
         List<SysPost> positions = taskCommonService.listPositionsOfDept(deptId);
         return success(positions);
     }
-
 
 
 }

@@ -328,14 +328,14 @@
         c.feedback_num_type as digitalItemType,
         b.id as taskSubID,
         d.head_img_url as taskSubHeadUrl,
-        a.modify_time as taskSubTime,
+        (UNIX_TIMESTAMP(a.modify_time) * 1000) as taskSubTime,
         b.work_txt as workText,
         b.num_option_value as digitalItemValue,
         b.img_ids as imageUrls,
         b.audit_result as reviewResult,
         b.id as reviewID,
         b.audit_content as reviewOpinion,
-        b.modify_time as reviewTime,
+        (UNIX_TIMESTAMP(b.modify_time) * 1000) as reviewTime,
         b.audit_user_id as auditorID,
         e.real_name as auditorName,
         e.head_img_url as auditorHeadUrl,
@@ -346,7 +346,7 @@
         left join sys_user d on a.excute_user_id = d.id
         left join sys_user e on b.audit_user_id = e.id
 
-        where a.id=#{loopWorkId}
+        where b.loop_work_id=#{loopWorkId}
     </select>
 
     <select id="filterExecuteRemindWorks" resultType="com.emucoo.model.TLoopWork">

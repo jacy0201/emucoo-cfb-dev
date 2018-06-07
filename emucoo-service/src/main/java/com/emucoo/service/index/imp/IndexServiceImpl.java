@@ -64,6 +64,9 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
         if (user == null)
             return null;
 
+        if (0 != user.getStatus())
+            return null;
+
         if (!StringUtils.equalsIgnoreCase(user.getPassword(), new Sha256Hash(password, user.getSalt()).toHex()))
             return null;
 

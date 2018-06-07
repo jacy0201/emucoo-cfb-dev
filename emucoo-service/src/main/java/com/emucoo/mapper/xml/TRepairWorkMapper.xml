@@ -9,6 +9,8 @@
         <result column="reporter_name" property="reporterName" jdbcType="VARCHAR" />
         <result column="report_date" property="reportDate" jdbcType="TIMESTAMP" />
         <result column="device_id" property="deviceId" jdbcType="BIGINT" />
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+        <result column="device_idstr" property="deviceIdstr" jdbcType="VARCHAR" />
         <result column="device_title" property="deviceTitle" jdbcType="VARCHAR" />
         <result column="problem_id" property="problemId" jdbcType="BIGINT" />
         <result column="problem_name" property="problemName" jdbcType="VARCHAR" />
@@ -28,8 +30,8 @@
 
     </resultMap>
 
-    <select id="fetchWorksByShopId" resultType="com.emucoo.model.TRepairWork">
-        select * from t_repair_work where shop_id = #{shopId}
+    <select id="fetchWorksListByDate" resultType="com.emucoo.model.TRepairWork">
+        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userid} and report_time between #{beginDt} and #{endDt}
     </select>
 
     <select id="getRepairWorkList" resultType="com.emucoo.dto.modules.center.RepairWorkVO">

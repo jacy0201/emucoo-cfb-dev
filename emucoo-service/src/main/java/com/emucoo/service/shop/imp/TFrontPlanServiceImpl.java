@@ -1,6 +1,5 @@
 package com.emucoo.service.shop.imp;
 
-import com.emucoo.dto.modules.report.*;
 import com.emucoo.mapper.TFrontPlanMapper;
 import com.emucoo.model.TFrontPlan;
 import com.emucoo.service.shop.TFrontPlanService;
@@ -19,7 +18,7 @@ public class TFrontPlanServiceImpl implements TFrontPlanService {
 
     public List<TFrontPlan> filterExecuteRemindArrange(Date currentDate, int cycleMinutes) {
         Date remindTimeLeft = currentDate;
-        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes);
+        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes, 0);
         List<TFrontPlan> frontPlans = frontPlanMapper.filterExecuteRemindArrange(remindTimeLeft, remindTimeRight);
         return frontPlans;
     }

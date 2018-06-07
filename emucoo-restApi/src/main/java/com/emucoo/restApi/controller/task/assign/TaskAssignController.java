@@ -39,8 +39,8 @@ public class TaskAssignController extends AppBaseController {
      */
     @PostMapping("/fetchContacts")
     public AppResult<ContactsVo_O> fetchContacts(@RequestBody ParamVo<ContactsVo_I> params) {
-	    ContactsVo_I contactsVo_i = params.getData();
-        ContactsVo_O result = userService.fetchContacts(contactsVo_i);
+	    ContactsVo_I paramIn = params.getData();
+        ContactsVo_O result = userService.fetchContacts(paramIn);
         return success(result);
 
     }
@@ -52,13 +52,13 @@ public class TaskAssignController extends AppBaseController {
      */
     @PostMapping("/createTask")
 	public AppResult<String> createTask(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AssignTaskCreationVo_I> params) {
-	    AssignTaskCreationVo_I assignTaskCreationVo_i = params.getData();
-	    String submitToken = assignTaskCreationVo_i.getSubmitToken();
+	    AssignTaskCreationVo_I inParam = params.getData();
+	    String submitToken = inParam.getSubmitToken();
 
 	    long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
 
 	    if(UserTokenManager.getInstance().validateToken(submitToken)){
-	    	loopWorkService.createAssignTask(assignTaskCreationVo_i, loginUserId);
+	    	loopWorkService.createAssignTask(inParam, loginUserId);
 	    	UserTokenManager.getInstance().clearReSubmitToken(submitToken);
 	    	return success("创建成功");
 		} else {

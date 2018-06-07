@@ -66,9 +66,12 @@ public class CalendarController extends AppBaseController {
         CalendarListDateIn calendarListDateIn = params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long currentUserId = user.getId();
-        if (null == calendarListDateIn.getUserId()) calendarListDateIn.setUserId(currentUserId);
-
-        if (null == calendarListDateIn.getExecuteDate()) calendarListDateIn.setExecuteDate(DateUtil.getCurrentDate());
+        if (null == calendarListDateIn.getUserId()) {
+            calendarListDateIn.setUserId(currentUserId);
+        }
+        if (null == calendarListDateIn.getExecuteDate()) {
+            calendarListDateIn.setExecuteDate(DateUtil.getCurrentDate());
+        }
         CalendarListDateOut calendarListDateOut = calendarService.listCalendarDate(calendarListDateIn);
 
         return success(calendarListDateOut);
@@ -90,15 +93,14 @@ public class CalendarController extends AppBaseController {
 
     /**
      * 删除行事历
-     *
      */
     @ApiOperation(value = "删除行事历")
     @PostMapping(value = "/delete")
     public AppResult delete(@RequestBody ParamVo<CalendarDelVO> params) {
-        CalendarDelVO calendarDelVO=params.getData();
-        checkParam(calendarDelVO.getWorkID(),"workID不能为空!");
+        CalendarDelVO calendarDelVO = params.getData();
+        checkParam(calendarDelVO.getWorkID(), "workID不能为空!");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        calendarService.deleteCalendar(calendarDelVO,user.getId());
+        calendarService.deleteCalendar(calendarDelVO, user.getId());
         //返回按姓名首字母排序的集合;
         return success("success");
     }
