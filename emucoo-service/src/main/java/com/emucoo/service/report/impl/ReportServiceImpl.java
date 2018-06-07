@@ -833,7 +833,7 @@ public class ReportServiceImpl implements ReportService {
             Example subResultExp = new Example(TFormCheckResult.class);
             subResultExp.createCriteria().andEqualTo("parentResultId", result.getId());
             List<TFormCheckResult> topSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
-            List<AbilitySubForm> resultSubForm = new ArrayList<>();
+            //List<AbilitySubForm> resultSubForm = new ArrayList<>();
             List<Long> subResultIds = new ArrayList<>();
             int formCnt = 0;
             for(TFormCheckResult subResult : topSubFormResults) {
@@ -841,12 +841,12 @@ public class ReportServiceImpl implements ReportService {
                 // 只筛选经过打分且结果可用的子表结果
                 if(subResult.getIsDone().equals(true) && subResult.getResultCanUse().equals(true) && (subResult.getIsPass().equals(false) || formCnt == 4)) {
                     subResultIds.add(subResult.getId());
-                    AbilitySubForm subForm = new AbilitySubForm();
+                    /*AbilitySubForm subForm = new AbilitySubForm();
                     subForm.setSubFormID(subResult.getFormMainId());
                     subForm.setSubFormName(subResult.getFormMainName());
                     subForm.setIsPass(subResult.getIsPass());
                     subForm.setIsUsable(subResult.getResultCanUse());
-                    subForm.setIsDone(subResult.getIsDone());
+                    subForm.setIsDone(subResult.getIsDone());*/
                     List<TFormValue> formTypeValues = tFormValueMapper.findTypeTreeValueListUntilSubPbm(subResult.getId());
                     if(CollectionUtils.isNotEmpty(formTypeValues)) {
                         List<AbilitySubFormKind> subFormKinds = new ArrayList<>();
@@ -898,8 +898,8 @@ public class ReportServiceImpl implements ReportService {
                                                     subProblemVo.setNotes(subPbmVal.getNotes());
                                                     if (subPbmVal.getSubFormId() != null) {
                                                         subProblemVo.setIsSubList(true);
-                                                        AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
-                                                        subProblemVo.setSubListObject(subFormReport);
+                                                        /*AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
+                                                        subProblemVo.setSubListObject(subFormReport);*/
                                                     } else {
                                                         subProblemVo.setIsSubList(false);
                                                     }
@@ -922,8 +922,8 @@ public class ReportServiceImpl implements ReportService {
                                         }
                                         if (pbmVal.getSubFormId() != null) {
                                             problemVo.setIsSubList(true);
-                                            AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
-                                            problemVo.setSubListObject(subFormReport);
+                                            /*AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
+                                            problemVo.setSubListObject(subFormReport);*/
                                         } else {
                                             problemVo.setIsSubList(false);
                                         }
@@ -933,14 +933,15 @@ public class ReportServiceImpl implements ReportService {
                                 subFormKind.setProblemArray(problemArray);
                             }
                             subFormKinds.add(subFormKind);
+                            reportVo.setResultKindArray(subFormKinds);
                         }
-                        subForm.setSubFormKindArray(subFormKinds);
+                        //subForm.setSubFormKindArray(subFormKinds);
                     }
-                    resultSubForm.add(subForm);
+                    //resultSubForm.add(subForm);
                     break;
                 }
             }
-            reportVo.setResultKindArray(resultSubForm);
+
             // 查询关联的机会点信息
             Example reportOpptExp = new Example(TReportOppt.class);
             reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
