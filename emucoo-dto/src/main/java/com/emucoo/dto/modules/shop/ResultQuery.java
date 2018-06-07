@@ -9,5 +9,4 @@ public class ResultQuery {
     private String endMonth;
     private Long deptId;
     private Long formId;
-    private String formName;
 }

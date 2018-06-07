@@ -2,6 +2,7 @@ package com.emucoo.restApi.controller.shop;
 
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.center.TaskQuery;
+import com.emucoo.dto.modules.shop.FormResultVO;
 import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopListQuery;
 import com.emucoo.dto.modules.shop.ShopVO;
@@ -64,9 +65,8 @@ public class ShopManageController extends AppBaseController {
     @PostMapping(value = "getResultList")
     public AppResult getResultList(@RequestBody ParamVo<ResultQuery> base) {
         ResultQuery resultQuery= base.getData();
-        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        shopManageService.getResultList(resultQuery);
-        return success("");
+        List<FormResultVO> list =shopManageService.getResultList(resultQuery);
+        return success(list);
     }
 
     /**

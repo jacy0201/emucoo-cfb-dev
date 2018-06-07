@@ -6,6 +6,7 @@ import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopVO;
 import com.emucoo.mapper.SysAreaMapper;
 import com.emucoo.mapper.SysUserMapper;
+import com.emucoo.mapper.TReportMapper;
 import com.emucoo.mapper.TShopInfoMapper;
 import com.emucoo.model.SysArea;
 import com.emucoo.model.SysUser;
@@ -24,11 +25,12 @@ public class ShopManageServiceImpl extends BaseServiceImpl<TShopInfo> implements
 
     @Resource
     private SysAreaMapper sysAreaMapper;
-
     @Resource
     private TShopInfoMapper shopInfoMapper;
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private TReportMapper tReportMapper;
 
     @Override
     public List<SysArea> getAreaList(Long userId){
@@ -60,8 +62,12 @@ public class ShopManageServiceImpl extends BaseServiceImpl<TShopInfo> implements
 
     @Override
     public List<FormResultVO> getResultList(ResultQuery resultQuery){
-
-        return  null;
+        Long shopId=resultQuery.getShopId();
+        Long deptId=resultQuery.getDeptId();
+        String startMonth=resultQuery.getStartMonth();
+        String endMonth=resultQuery.getEndMonth();
+        Long formId=resultQuery.getFormId();
+        return tReportMapper.getResultList(shopId,deptId,formId,startMonth,endMonth);
     }
 
 }
