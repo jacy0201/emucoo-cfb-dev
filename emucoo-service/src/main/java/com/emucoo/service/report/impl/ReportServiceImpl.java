@@ -731,7 +731,7 @@ public class ReportServiceImpl implements ReportService {
             chancePointVo.setChanceContent(pbmCascadingRelation.toString());
             //TOpportunity tOpportunity = tOpportunityMapper.selectByPrimaryKey(tFormOpptValue.getOpptId());
             //chancePointVo.setChanceDescription(tOpportunity.getDescription());
-            chancePointVo.setChanceDescription(tReportOppt.getOpptDesc());
+            chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
             List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
             chancePointVo.setWorkArr(workArr);
             chancePointVos.add(chancePointVo);
@@ -766,14 +766,14 @@ public class ReportServiceImpl implements ReportService {
      */
     private List<ReportWorkVo> findImproveByOppt(Long opptId, Long reportId) {
 
-        List<TLoopWork> works = tLoopWorkMapper.findImproveTaskList(opptId, reportId);
-        //List<TTask> tasks = tTaskMapper.findImproveTaskList(opptId, reportId);
-        if(CollectionUtils.isEmpty(works)) {
+        //List<TLoopWork> works = tLoopWorkMapper.findImproveTaskList(opptId, reportId);
+        List<TTask> tasks = tTaskMapper.findImproveTaskList(opptId, reportId);
+        if(CollectionUtils.isEmpty(tasks)) {
             return null;
         }
         List<ReportWorkVo> reportWorkVos = new ArrayList<>();
 
-        for(TLoopWork work : works) {
+        /*for(TLoopWork work : works) {
             int doneNum = 0;
             int passNum = 0;
             int allNum = 0;
@@ -799,6 +799,43 @@ public class ReportServiceImpl implements ReportService {
             reportWork.setPassRate(passRate);
 
             reportWorkVos.add(reportWork);
+        }*/
+        List<Long> userIds = new ArrayList<>();
+        for (TTask task : tasks) {
+            int doneNum = 0;
+            int passNum = 0;
+            int allNum = 0;
+
+            if(StringUtils.isNotBlank(task.getExecuteUserIds())) {
+                String[] exectuteUserIds = task.getExecuteUserIds().split(",");
+                for(String executeUserId : exectuteUserIds) {
+                    if(!userIds.contains(Long.valueOf(executeUserId))) {
+                        userIds.add(Long.valueOf(executeUserId));
+                        List<TLoopWork> userWorks = tLoopWorkMapper.findImproveTaskListByUser(opptId, reportId, task.getWorkId(), Long.valueOf(executeUserId));
+                        for (TLoopWork userwork : userWorks) {
+                            ReportWorkVo reportWork = new ReportWorkVo();
+                            if (userwork.getWorkStatus() != null && userwork.getWorkStatus().equals(2)) {
+                                doneNum++;
+                                if (userwork.getWorkResult() != null && userwork.getWorkResult().equals(1)) {
+                                    passNum++;
+                                }
+                            }
+                            allNum++;
+
+                            reportWork.setExecutorID(userwork.getExcuteUserId());
+                            reportWork.setExecutorName(userwork.getExcuteUserName());
+                            reportWork.setExecutorHeadImgUrl(userwork.getExecuteUserHeadImgUrl());
+                            reportWork.setTaskTitle(task.getName());
+                            reportWork.setWorkType(task.getType());
+                            reportWork.setAllNum(allNum);
+                            reportWork.setDoneNum(doneNum);
+                            float passRate = (float) passNum / allNum;
+                            reportWork.setPassRate(passRate);
+                            reportWorkVos.add(reportWork);
+                        }
+                    }
+                }
+            }
         }
 
         return reportWorkVos;
