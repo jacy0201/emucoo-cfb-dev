@@ -263,10 +263,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserShop.setIsDel(false);
 				sysUserShopMapper.insertSelective(sysUserShop);
 			}
+		}else{
+			//删除shop关系
+			Example example=new Example(SysUserShop.class);
+			example.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+			sysUserShopMapper.deleteByExample(example);
 		}
-
-
-
 	}
 	@Override
 	@Transactional(rollbackFor = Exception.class)
