@@ -16,6 +16,7 @@ public class AbilityReportVo {
     private String inspectorName;
     private String inspectorPosition;
     private String checkDepartmentName;
+    private Integer chancePointNum;
     private String resultName;
     private List<AbilitySubFormKind> resultKindArray;
     private List<ChancePointVo> chancePointArr;
@@ -90,5 +91,13 @@ public class AbilityReportVo {
 
     public void setChancePointArr(List<ChancePointVo> chancePointArr) {
         this.chancePointArr = chancePointArr;
+    }
+
+    public Integer getChancePointNum() {
+        return chancePointNum;
+    }
+
+    public void setChancePointNum(Integer chancePointNum) {
+        this.chancePointNum = chancePointNum;
     }
 }
