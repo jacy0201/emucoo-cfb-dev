@@ -12,10 +12,11 @@ public class SHA1Util {
         byte[] result = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
-            if (charsetname == null || "".equals(charsetname))
+            if (charsetname == null || "".equals(charsetname)) {
                 result = md.digest(origin.getBytes());
-            else
+            } else {
                 result = md.digest(origin.getBytes(charsetname));
+            }
         } catch (Exception e) {
         }
         return result;
@@ -38,7 +39,7 @@ public class SHA1Util {
     }
 
     public static String hex2Base64(String hexString) {
-        if (hexString == null || hexString.equals("")) {
+        if (hexString == null || "".equals(hexString)) {
             return null;
         }
         hexString = hexString.toLowerCase();
@@ -57,8 +58,9 @@ public class SHA1Util {
         String temp;
         for (byte x : b) {
             temp = Integer.toHexString(x & 0XFF);
-            if (temp.length() == 1)
+            if (temp.length() == 1) {
                 hs.append("0");
+            }
             hs.append(temp);
         }
         return hs.toString();

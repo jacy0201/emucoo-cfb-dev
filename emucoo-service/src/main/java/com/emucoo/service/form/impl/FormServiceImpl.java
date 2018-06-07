@@ -238,8 +238,9 @@ public class FormServiceImpl implements FormService {
                     if(oppts != null && oppts.size() > 0) {
                         for(TOpportunity oppt : oppts) {
                             // 前端创建的机会点，只有在创建它的用户再次使用该表单打表的时候才会显示出来，其他用户，其他表单都需要过滤掉。
-                            if(oppt.getCreateType() == 2 && oppt.getCreateUserId() != user.getId())
+                            if(oppt.getCreateType() == 2 && oppt.getCreateUserId() != user.getId()) {
                                 continue;
+                            }
 //                            TFormOpptValue opptValue = formOpptValueMapper.fetchOnePbmOpptValue(pbmVal.getId(), oppt.getId(), 1);
                             FormChanceVo formChanceVo = new FormChanceVo();
                             formChanceVo.setChanceID(oppt.getId());

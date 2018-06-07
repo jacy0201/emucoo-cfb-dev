@@ -60,8 +60,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
 
     private List<ImageUrl> convertImgIds2Urls(String ids) {
-        if (ids == null)
+        if (ids == null) {
             return new ArrayList<>();
+        }
         return Arrays.asList(ids.split(",")).stream().filter(iid -> StringUtils.isNotBlank(iid)).map(iid -> {
             TFile img = fileMapper.selectByPrimaryKey(Long.parseLong(iid));
             if (img == null) {
@@ -262,8 +263,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setModifyTime(DateUtil.currentDate());
         }
 
-        if (odfws1.size() > 0)
+        if (odfws1.size() > 0) {
             operateDataForWorkMapper.insertList(odfws1);
+        }
         for (TOperateDataForWork odfw : odfws2) {
             operateDataForWorkMapper.updateByPrimaryKeySelective(odfw);
         }
@@ -319,8 +321,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     public void editExcImgs(ExecuteImgIn vo, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(vo.getWorkID(), vo.getSubID());
         TOperateDataForWork opData = operateDataForWorkMapper.fetchOneByLoopWorkId(loopWork.getId());
-        if (StringUtils.isBlank(opData.getImgIds()))
+        if (StringUtils.isBlank(opData.getImgIds())) {
             return;
+        }
 
         fileMapper.deleteByIds(opData.getImgIds());
         List<ExecuteImgIn.ExecuteImg> inimgs = vo.getExecuteImgArr();
@@ -392,8 +395,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
     @Override
     public boolean judgeExistCommonTask(TaskParameterVo taskParameterVo) {
-        if (taskMapper.judgeExistCommonTask(taskParameterVo.getName()) > 0)
+        if (taskMapper.judgeExistCommonTask(taskParameterVo.getName()) > 0) {
             return true;
+        }
         return false;
     }
 
@@ -463,20 +467,23 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         if (StringUtils.isNotBlank(task.getExecuteDeadline())) {
             String[] exeTm = task.getExecuteDeadline().split(":");
             vo.setExeCloseHour(Integer.parseInt(exeTm[0] == null ? "0" : exeTm[0]));
-            if (exeTm.length == 2)
+            if (exeTm.length == 2) {
                 vo.setExeCloseMinute(Integer.parseInt(exeTm[1] == null ? "0" : exeTm[1]));
+            }
         }
         if (StringUtils.isNotBlank(task.getExecuteRemindTime())) {
             String[] remTm = task.getExecuteRemindTime().split(":");
             vo.setAuditCloseHour(Integer.parseInt(remTm[0] == null ? "0" : remTm[0]));
-            if (remTm.length == 2)
+            if (remTm.length == 2) {
                 vo.setAuditCloseMinute(Integer.parseInt(remTm[1] == null ? "0" : remTm[1]));
+            }
         }
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] audTm = task.getAuditDeadline().split(":");
             vo.setExeRemindHour(Integer.parseInt(audTm[0] == null ? "0" : audTm[0]));
-            if (audTm.length == 2)
+            if (audTm.length == 2) {
                 vo.setExeRemindMinute(Integer.parseInt(audTm[1] == null ? "0" : audTm[1]));
+            }
         }
 
         vo.setExeUserType(task.getExecuteUserType());
@@ -614,8 +621,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     private void cleanOldConfigForCommonTask(TTask task) {
         if (task.getIllustrationImgIds() != null) {
             List<String> ids = Arrays.asList(task.getIllustrationImgIds().split(","));
-            if (ids.size() > 0)
+            if (ids.size() > 0) {
                 fileMapper.dropByIds(ids);
+            }
         }
         operateOptionMapper.dropSampleImagesByTaskId(task.getId());
         operateOptionMapper.dropByTaskId(task.getId());
@@ -767,8 +775,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     private void createCommonLoopWork(TTask commonTask, Date theDay) {
-        if (!isExecuteDate(commonTask, theDay))
+        if (!isExecuteDate(commonTask, theDay)) {
             return;
+        }
         List<SysUser> executors = determinExecutors(commonTask);
 
         // 因为拆分的具体的loop work没有跨天执行的，所以可以直接计算出明天就是该任务实例的执行日期
@@ -803,8 +812,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         for (SysUser executor : executors) {
             // 判断数据库里是否已经有这条数据了
             int count = loopWorkMapper.isLoopWorkExist(commonTask.getId(), theDay, executor.getId());
-            if (count > 0)
+            if (count > 0) {
                 continue;
+            }
 
             TLoopWork loopWork = new TLoopWork();
 //            loopWork.setAuditDeadline();

@@ -46,8 +46,9 @@ public class TaskExeDateGenerator {
 
     public static boolean isContainsDate(List<Date> dates, Date dt) {
         for (Date date : dates) {
-            if (DateUtil.simple(date).equals(DateUtil.simple(dt)))
+            if (DateUtil.simple(date).equals(DateUtil.simple(dt))) {
                 return true;
+            }
         }
         return false;
     }

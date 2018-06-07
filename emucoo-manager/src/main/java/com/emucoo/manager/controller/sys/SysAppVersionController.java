@@ -55,7 +55,9 @@ public class SysAppVersionController extends BaseResource {
     @ApiOperation(value="创建版本")
     public ApiResult save(@RequestBody SysAppVersion sysAppVersion){
         //检查版本号是否存在
-        if (checkHasVersion(sysAppVersion)) return fail(ApiExecStatus.INVALID_PARAM, "版本号已存在!");
+        if (checkHasVersion(sysAppVersion)) {
+            return fail(ApiExecStatus.INVALID_PARAM, "版本号已存在!");
+        }
         sysAppVersion.setCreateTime(new Date());
         sysAppVersion.setCreateUserId(ShiroUtils.getUserId());
         sysAppVersion.setIsDel(false);

@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * author: Shayne
  * at: 2018-06-07
- *
  */
 
 @Service
@@ -123,14 +122,35 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         }
     }
 
+    /**
+     * 递归删除子设备
+     *
+     * @param dvcId
+     */
+    private void recurseDeleteChildrenCategory(long dvcId) {
+        List<TDeviceType> list = deviceTypeMapper.findChildren(dvcId);
+        for (TDeviceType deviceType : list) {
+            deviceTypeMapper.removeDeviceType(deviceType.getId());
+            recurseDeleteChildrenCategory(deviceType.getId());
+        }
+    }
+
+    /**
+     * 递归配置子设备
+     *
+     * @param dvc
+     */
     private void configChildrenCategory(TDeviceType dvc) {
         List<TDeviceType> children = dvc.getChildren();
+        if (children == null) {
+            return;
+        }
         List<TDeviceType> childTypes = deviceTypeMapper.findChildren(dvc.getId());
         for (TDeviceType tdt : children) {
             tdt.setParentTypeId(dvc.getId());
             tdt.setTier(dvc.getTier() + 1);
             if (tdt.getId() == 0) {
-                deviceTypeMapper.insert(tdt);
+                deviceTypeMapper.insertUseGeneratedKeys(tdt);
             } else {
                 deviceTypeMapper.updateByPrimaryKeySelective(tdt);
                 Iterator<TDeviceType> it = childTypes.iterator();
@@ -144,7 +164,8 @@ public class TaskRepairServiceImpl implements TaskRepairService {
             configChildrenCategory(tdt);
         }
         for (TDeviceType old : childTypes) {
-            deviceTypeMapper.deleteByPrimaryKey(old.getId());
+            deviceTypeMapper.removeDeviceType(old.getId());
+            recurseDeleteChildrenCategory(old.getId());
         }
     }
 
@@ -161,8 +182,11 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         List<TDeviceProblem> problems = dvc.getProblems();
         for (TDeviceProblem problem : problems) {
             if (problem.getId() == 0) {
+                problem.setCreateTime(DateUtil.currentDate());
+                problem.setModifyTime(DateUtil.currentDate());
                 deviceProblemMapper.insert(problem);
             } else {
+                problem.setModifyTime(DateUtil.currentDate());
                 deviceProblemMapper.updateByPrimaryKeySelective(problem);
                 Iterator<TDeviceProblem> it = oldProblems.iterator();
                 while (it.hasNext()) {

@@ -231,15 +231,17 @@ public class FormManageServiceImpl implements FormManageService {
         // 每次都要把抽查类问题自动创建的机会点和关系删除掉。
         List<Long> opptIds = formOpptMapper.fetchOpptIdsByProblemIds(probIds, 2);
         formTypeMapper.dropByFormMainId(formMain.getId());
-        if(mdlIds.size() > 0)
+        if(mdlIds.size() > 0) {
             formPbmMapper.dropByFormTypeIds(mdlIds);
+        }
         if(probIds.size() > 0) {
             formSubPbmMapper.dropByProblemIds(probIds);
             formSubPbmHeaderMapper.dropByProblemIds(probIds);
             formOpptMapper.dropByProblemIds(probIds);
         }
-        if(opptIds.size() > 0)
+        if(opptIds.size() > 0) {
             opportunityMapper.dropByIds(opptIds);
+        }
     }
 
 
@@ -300,8 +302,9 @@ public class FormManageServiceImpl implements FormManageService {
             } else { // 如果是检查类型的题目，则一道题可能对应与多个机会点，需要检查每次的机会点是否相同，更新关联表
                 if(problem.getOppts() != null && problem.getOppts().size() > 0) {
                     problem.getOppts().forEach(oppt -> {
-                        if(oppt.getId() == null)
+                        if(oppt.getId() == null) {
                             return;
+                        }
                         TFormOppt formOppt = new TFormOppt();
                         formOppt.setProblemId(problem.getId());
                         formOppt.setProblemType(problem.getProblemSchemaType());
@@ -823,10 +826,11 @@ public class FormManageServiceImpl implements FormManageService {
     @Transactional(rollbackFor = Exception.class)
     public void addFormOppt(List<TFormOppt> tFormOpptList){
         for (TFormOppt tFormOppt : tFormOpptList){
-            if(null!=tFormOppt.getSubProblemId())
+            if(null!=tFormOppt.getSubProblemId()) {
                 tFormOppt.setProblemType(2);
-            else
+            } else {
                 tFormOppt.setProblemType(1);
+            }
             tFormOppt.setCreateTime(new Date());
 
             insertListOpt(tFormOppt.getOpptIdStr(),tFormOppt.getProblemType(),tFormOppt.getProblemId(),tFormOppt.getSubProblemId());
@@ -856,10 +860,11 @@ public class FormManageServiceImpl implements FormManageService {
         }
         //关联机会点
         for (TFormOppt tFormOppt : tFormOpptList){
-            if(null!=tFormOppt.getSubProblemId())
+            if(null!=tFormOppt.getSubProblemId()) {
                 tFormOppt.setProblemType(2);
-            else
+            } else {
                 tFormOppt.setProblemType(1);
+            }
 
             insertListOpt(tFormOppt.getOpptIdStr(),tFormOppt.getProblemType(),tFormOppt.getProblemId(),tFormOppt.getSubProblemId());
         }

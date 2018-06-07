@@ -34,7 +34,9 @@ public class SysUserRelationServiceImpl extends BaseServiceImpl<SysUserRelation>
        for (SysUserRelation sysUserRelation :list){
            if(null!=sysUserRelation.getParentUserId()){
                SysUser sysUser=sysUserMapper.selectByPrimaryKey(sysUserRelation.getParentUserId());
-               if(null!=sysUser)sysUserRelation.setParentUserName(sysUser.getRealName());
+               if(null!=sysUser) {
+                   sysUserRelation.setParentUserName(sysUser.getRealName());
+               }
            }
            sysUserRelation.setUserName(sysUserMapper.selectByPrimaryKey(sysUserRelation.getUserId()).getRealName());
            if(null!=sysUserRelation.getPostId()) {

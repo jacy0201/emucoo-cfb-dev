@@ -1,16 +1,9 @@
 package com.emucoo.restApi.controller.form;
 
-import com.emucoo.common.base.rest.ApiExecStatus;
-import com.emucoo.common.base.rest.ApiResult;
-import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
-import com.emucoo.service.manage.FormManageService;
-import com.emucoo.service.report.ReportService;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.emucoo.common.Constant;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
+import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
 import com.emucoo.model.SysUser;
@@ -22,8 +15,10 @@ import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.service.form.FormService;
+import com.emucoo.service.manage.FormManageService;
+import com.emucoo.service.report.ReportService;
 import com.emucoo.utils.DateUtil;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,16 +53,18 @@ public class FormController extends AppBaseController {
         checkParam(formIn.getShopID(), "店铺id不能为空！");
 
         TShopInfo shopInfo = formService.findShopInfo(formIn);
-        if(shopInfo == null)
+        if(shopInfo == null) {
             return fail(AppExecStatus.FAIL, "该门店不存在！");
+        }
 
         // 因为有可能有用户通过app创建的form机会点，所以key里要有user对信息
         String key = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formIn.getChecklistID()) + ":u" + Long.toString(user.getId()) ;
         FormOut formOut = redisClusterClient.getObject(key, FormOut.class);
         if(formOut == null) {
             formOut = formService.checkoutFormInfo(user, formIn.getChecklistID());
-            if (formOut == null)
+            if (formOut == null) {
                 return fail(AppExecStatus.FAIL, "表单不存在或者未启用！");
+            }
             redisClusterClient.buffer(key, formOut);
         }
 

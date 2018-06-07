@@ -9,7 +9,7 @@ public class TDeviceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id = 0;
+    private long id = 0L;
 
     @Column(name = "name")
     private String name;

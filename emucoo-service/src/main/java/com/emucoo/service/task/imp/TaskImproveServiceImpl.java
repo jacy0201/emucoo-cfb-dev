@@ -118,8 +118,9 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         List<Long> executorIds = Arrays.asList(task.getExecuteUserIds().split(",")).stream().map(s -> Long.parseLong(s)).collect(Collectors.toList());
         for(Long executorId : executorIds) {
             int count = loopWorkMapper.isLoopWorkExist(task.getId(), today, executorId);
-            if (count > 0)
+            if (count > 0) {
                 continue;
+            }
 
             TLoopWork loopWork = new TLoopWork();
             loopWork.setWorkId(task.getWorkId());
