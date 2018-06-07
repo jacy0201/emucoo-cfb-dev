@@ -106,5 +106,15 @@
     <select id="filterAvailableImproveTask" resultType="com.emucoo.model.TTask">
         select * from t_task where type = 3  and is_use =1 and  (is_del = 0 or is_del is null) and #{theDay} between task_start_date and task_end_date
     </select>
-
+    <select id="findImproveTaskList" resultType="com.emucoo.model.TTask">
+        SELECT
+        task.id,
+        task.name,
+        task.type,
+        task.work_id,
+        task.execute_user_ids
+        FROM t_task task
+        WHERE task.type=3 AND task.oppt_id = #{opptId} AND task.report_id = #{reportId} AND task.is_del = FALSE AND task.is_use = TRUE
+        ORDER BY task.create_time DESC
+    </select>
 </mapper>
