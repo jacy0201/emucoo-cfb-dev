@@ -1,6 +1,7 @@
 package com.emucoo.mapper;
 
 import com.emucoo.common.base.mapper.MyMapper;
+import com.emucoo.dto.modules.form.OpptDetailOut;
 import com.emucoo.model.TOpportunity;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,4 +26,6 @@ public interface TOpportunityMapper extends MyMapper<TOpportunity> {
     void cleanOpptsByResultId(Long id);
 
     Integer judgeExistsByName(@Param("opptId") Long opptId, @Param("opptName") String name);
+
+    OpptDetailOut sumChancePointReport(Long id);
 }

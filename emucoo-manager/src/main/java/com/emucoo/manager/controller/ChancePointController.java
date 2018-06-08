@@ -118,7 +118,7 @@ public class ChancePointController extends BaseResource {
     @ApiOperation(value = "机会点详情", httpMethod = "POST")
     @PostMapping("/detail")
     public ApiResult<OpptDetailOut> detail(@RequestBody ParamVo<TOpportunity> param) {
-        OpptDetailOut out = chancePointService.fetchDetail(param.getData());
+        OpptDetailOut out = chancePointService.fetchDetailReport(param.getData());
         return success(out);
     }
 

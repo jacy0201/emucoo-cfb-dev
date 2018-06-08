@@ -26,9 +26,13 @@
     </resultMap>
 
     <insert id="upsert" parameterType="com.emucoo.model.TOpportunity">
-        insert into t_opportunity (id, type, name, is_del, is_use, description, front_can_create, create_type, create_time, modify_time, create_user_id, modify_user_id, org_id)
-        values (#{id}, #{type}, #{name}, #{isDel}, #{isUse}, #{description}, #{frontCanCreate}, #{createType}, #{createTime}, #{modifyTime}, #{createUserId}, #{modifyUserId}, #{orgId})
-        on duplicate key update type=#{type}, name=#{name}, is_del=#{isDel}, is_use=#{isUse}, description=#{description}, front_can_create=#{frontCanCreate}, create_type=#{createType}, modify_time=#{modifyTime}, modify_user_id=#{modifyUserId}, org_id=#{orgId}
+        insert into t_opportunity (id, type, name, is_del, is_use, description, front_can_create, create_type,
+        create_time, modify_time, create_user_id, modify_user_id, org_id)
+        values (#{id}, #{type}, #{name}, #{isDel}, #{isUse}, #{description}, #{frontCanCreate}, #{createType},
+        #{createTime}, #{modifyTime}, #{createUserId}, #{modifyUserId}, #{orgId})
+        on duplicate key update type=#{type}, name=#{name}, is_del=#{isDel}, is_use=#{isUse},
+        description=#{description}, front_can_create=#{frontCanCreate}, create_type=#{createType},
+        modify_time=#{modifyTime}, modify_user_id=#{modifyUserId}, org_id=#{orgId}
     </insert>
 
     <select id="findChancePointsByName" resultMap="BaseResultMap">
@@ -95,14 +99,36 @@
     </delete>
 
     <select id="findOpptsByPbmId" resultMap="BaseResultMap">
-        select b.* from t_form_oppt a left join t_opportunity b on a.oppt_id=b.id where a.problem_id=#{id} and a.problem_type=1
+        select b.* from t_form_oppt a left join t_opportunity b on a.oppt_id=b.id where a.problem_id=#{id} and
+        a.problem_type=1
     </select>
 
     <delete id="cleanOpptsByResultId">
-        delete from t_opportunity where create_type=2 and id in (select distinct oppt_id from `t_form_oppt_value` where form_result_id=#{resultId});
+        delete from t_opportunity where create_type=2 and id in (select distinct oppt_id from `t_form_oppt_value` where
+        form_result_id=#{resultId});
     </delete>
 
     <select id="judgeExistsByName" resultType="java.lang.Integer">
         select count(*) from t_opportunity where create_type=1 and name=#{opptName} and is_del != 1 and id != #{opptId}
+    </select>
+
+    <select id="sumChancePointReport" resultType="com.emucoo.dto.modules.form.OpptDetailOut">
+        select a.name, d.create_time as `date`, k.name as formName, l.type_name as formTypeName, j.name as
+        problemName, j.score as problemScore, h.dpt_name as deptName, g.area_name as areaName, f.brand_name as
+        brandName, e.shop_name as shopName
+        from t_opportunity a
+        inner join t_form_oppt_value b on a.id = b.oppt_id
+        left join t_form_check_result d on b.form_result_id = d.id
+        left join sys_user c on a.create_user_id = c.id
+        left join t_shop_info e on d.shop_id = e.id
+        left join t_brand_info f on e.brand_id = f.id
+        left join sys_area g on g.id = e.area_id
+        left join sys_dept h on h.id = c.dpt_id
+        left join t_form_pbm j on j.id = b.problem_id
+        left join t_form_main k on k.id = d.form_main_id
+        left join t_form_type l on l.form_main_id = k.id
+        where a.id = #{id}
+        order by d.create_time, l.id asc
+        limit 1
     </select>
 </mapper>
