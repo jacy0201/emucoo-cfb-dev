@@ -452,6 +452,7 @@ public class ReportServiceImpl implements ReportService {
         }
         Example resultExp = new Example(TFormCheckResult.class);
         resultExp.createCriteria().andEqualTo("formMainId", formId).andIn("frontPlanId", arrangeIds);
+        resultExp.selectProperties("id");
         List<TFormCheckResult> results = tFormCheckResultMapper.selectByExample(resultExp);
         if (CollectionUtils.isEmpty(results)) {
             return null;
@@ -461,22 +462,23 @@ public class ReportServiceImpl implements ReportService {
             resultIds.add(result.getId());
         }
 
-        for(TFormCheckResult formCheckResult : results) {
+        resultExp.clear();
+        resultExp.createCriteria().andIn("parentResultId", resultIds);
+        resultExp.selectProperties("id");
+        List<TFormCheckResult> childrenResults = tFormCheckResultMapper.selectByExample(resultExp);
+        if (CollectionUtils.isNotEmpty(childrenResults)) {
+            List<Long> childrenResultIds = new ArrayList<>();
+            for (TFormCheckResult formCheckResult1 : childrenResults) {
+                resultIds.add(formCheckResult1.getId());
+                childrenResultIds.add(formCheckResult1.getId());
+            }
             resultExp.clear();
-            resultExp.createCriteria().andEqualTo("parentResultId", formCheckResult.getId());
-            List<TFormCheckResult> childrenResults = tFormCheckResultMapper.selectByExample(resultExp);
-            if(CollectionUtils.isNotEmpty(childrenResults)) {
-                for(TFormCheckResult formCheckResult1 : childrenResults) {
-                    resultIds.add(formCheckResult1.getId());
-                    resultExp.clear();
-                    resultExp.createCriteria().andEqualTo("parentResultId", formCheckResult1.getId());
-                    List<TFormCheckResult> subChildrenResults = tFormCheckResultMapper.selectByExample(resultExp);
-                    if (CollectionUtils.isNotEmpty(subChildrenResults)) {
-                        for (TFormCheckResult formCheckResult2 : subChildrenResults) {
-                            resultIds.add(formCheckResult2.getId());
-                        }
-                    }
-
+            resultExp.createCriteria().andIn("parentResultId", childrenResultIds);
+            resultExp.selectProperties("id");
+            List<TFormCheckResult> subChildrenResults = tFormCheckResultMapper.selectByExample(resultExp);
+            if (CollectionUtils.isNotEmpty(subChildrenResults)) {
+                for (TFormCheckResult formCheckResult2 : subChildrenResults) {
+                    resultIds.add(formCheckResult2.getId());
                 }
             }
         }
@@ -925,13 +927,14 @@ public class ReportServiceImpl implements ReportService {
             // 查询子表结果集
             for (TFormCheckResult subResult : topSubFormResults) {
                 subResultIds.add(subResult.getId());
-                subResultExp.clear();
-                subResultExp.createCriteria().andEqualTo("parentResultId", subResult.getId());
-                List<TFormCheckResult> leafSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
-                if(CollectionUtils.isNotEmpty(leafSubFormResults)) {
-                    for(TFormCheckResult leafCheckResult : leafSubFormResults) {
-                        subResultIds.add(leafCheckResult.getId());
-                    }
+            }
+            subResultExp.clear();
+            subResultExp.createCriteria().andIn("parentResultId", subResultIds);
+            subResultExp.selectProperties("id");
+            List<TFormCheckResult> leafSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
+            if (CollectionUtils.isNotEmpty(leafSubFormResults)) {
+                for (TFormCheckResult leafCheckResult : leafSubFormResults) {
+                    subResultIds.add(leafCheckResult.getId());
                 }
             }
 
