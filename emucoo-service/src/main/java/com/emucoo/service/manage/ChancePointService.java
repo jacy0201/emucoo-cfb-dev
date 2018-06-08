@@ -24,7 +24,7 @@ public interface ChancePointService {
 
     TOpportunity fetchChancePointById(Long id);
 
-    OpptDetailOut fetchDetail(TOpportunity data);
+    OpptDetailOut fetchDetailReport(TOpportunity data);
 
     boolean judgeExisted(TOpportunity opportunity);
 }
