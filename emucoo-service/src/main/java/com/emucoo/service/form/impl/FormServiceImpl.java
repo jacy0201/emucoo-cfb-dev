@@ -508,6 +508,26 @@ public class FormServiceImpl implements FormService {
         return checkinWithAppCreatedOppts;
     }
 
+    private class AbilityFormResultCollection{
+        private boolean checkinWithAppCreatedOppts;
+        private int naNum;
+
+        public boolean isCheckinWithAppCreatedOppts() {
+            return checkinWithAppCreatedOppts;
+        }
+
+        public void setCheckinWithAppCreatedOppts(boolean checkinWithAppCreatedOppts) {
+            this.checkinWithAppCreatedOppts = checkinWithAppCreatedOppts;
+        }
+
+        public int getNaNum() {
+            return naNum;
+        }
+
+        public void setNaNum(int naNum) {
+            this.naNum = naNum;
+        }
+    }
     /**
      * 保存能力模型打表结果
      * @param formIn
@@ -556,6 +576,8 @@ public class FormServiceImpl implements FormService {
             formCheckResultMapper.insert(formResult);
 
             boolean checkinWithAppCreatedOppts = false;
+            AbilityFormResultCollection abilityFormResultCollection = new AbilityFormResultCollection();
+            Integer naNum = 0;
 
             List<SysPost> positions = sysPostMapper.findPositionByUserId(user.getId());
             List<String> pstns = positions.stream().map(p -> p.getPostName()).collect(Collectors.toList());
@@ -601,6 +623,9 @@ public class FormServiceImpl implements FormService {
                                 formPbmVal.setIsPass(problemVo.getIsPass());
                                 formPbmVal.setIsScore(problemVo.getIsDone());
                                 formPbmVal.setIsNa(problemVo.getIsNA());
+                                if(Boolean.TRUE.equals(problemVo.getIsNA())) {
+                                    naNum++;
+                                }
                                 formPbmVal.setFormResultId(subFormResult.getId());
                                 formPbmVal.setFormValueId(formValue.getId());
                                 formPbmVal.setProblemDescription(problemVo.getProblemDescription());
@@ -717,8 +742,12 @@ public class FormServiceImpl implements FormService {
                                 }
                                 // 保存子表
                                 if(problemVo.getIsSubList().equals(true)) {
-                                    checkinWithAppCreatedOppts |= saveSubAbilityForm(problemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 1, formIn
-                                            .getPatrolShopArrangeID(), subResultIds);
+                                    abilityFormResultCollection.setCheckinWithAppCreatedOppts(checkinWithAppCreatedOppts);
+                                    abilityFormResultCollection.setNaNum(naNum);
+                                    abilityFormResultCollection = saveSubAbilityForm(problemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(), user, opptDescription, 1, formIn
+                                            .getPatrolShopArrangeID(), subResultIds, abilityFormResultCollection);
+                                    checkinWithAppCreatedOppts |= abilityFormResultCollection.isCheckinWithAppCreatedOppts();
+                                    naNum = abilityFormResultCollection.getNaNum();
                                 }
                                 List<SubProblemVo> subProblemVos = problemVo.getSubProblemArray();
                                 if (CollectionUtils.isNotEmpty(subProblemVos)) {
@@ -730,6 +759,9 @@ public class FormServiceImpl implements FormService {
                                         subPbmVal.setIsPass(subProblemVo.getIsPass());
                                         subPbmVal.setIsScore(subProblemVo.getIsDone());
                                         subPbmVal.setIsNa(subProblemVo.getIsNA());
+                                        if (Boolean.TRUE.equals(subProblemVo.getIsNA())) {
+                                            naNum++;
+                                        }
                                         subPbmVal.setProblemValueId(formPbmVal.getId());
                                         subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
                                         subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
@@ -833,8 +865,12 @@ public class FormServiceImpl implements FormService {
                                         }
                                         // 保存子表
                                         if (subProblemVo.getIsSubList().equals(true)) {
-                                            checkinWithAppCreatedOppts |= saveSubAbilityForm(subProblemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(),
-                                                    user, opptDescription, 2, formIn.getPatrolShopArrangeID(), subResultIds);
+                                            abilityFormResultCollection.setCheckinWithAppCreatedOppts(checkinWithAppCreatedOppts);
+                                            abilityFormResultCollection.setNaNum(naNum);
+                                            abilityFormResultCollection = saveSubAbilityForm(subProblemVo.getSubListObject(), subForm.getSubFormID(), subFormResult.getId(),
+                                                    user, opptDescription, 2, formIn.getPatrolShopArrangeID(), subResultIds, abilityFormResultCollection);
+                                            checkinWithAppCreatedOppts |= abilityFormResultCollection.isCheckinWithAppCreatedOppts();
+                                            naNum = abilityFormResultCollection.getNaNum();
                                         }
                                     }
                                 }
@@ -844,6 +880,11 @@ public class FormServiceImpl implements FormService {
                     }
                 }
             }
+            // 更新NA数量
+            TFormCheckResult lastResult = new TFormCheckResult();
+            lastResult.setId(formResult.getId());
+            lastResult.setNaNum(naNum);
+            formCheckResultMapper.updateByPrimaryKeySelective(lastResult);
             // 生成并保存报告
             Long reportId = saveAbilityReport(user, now, formResult.getId(), subResultIds, formIn.getShopID(), formIn.getFormID(), formIn.getPatrolShopArrangeID());
             return reportId;
@@ -856,10 +897,25 @@ public class FormServiceImpl implements FormService {
         }
     }
 
-    private boolean saveSubAbilityForm(AbilitySubForm subForm, Long parentFormId, Long resultFormId, SysUser user,
-                                       String opptDescription, int subjectType, Long frontPlanId, List<Long> subResultIds) {
+    /**
+     * 
+     * @param subForm 子表
+     * @param parentFormId 父表id
+     * @param resultFormId 父表结果id
+     * @param user 用户
+     * @param opptDescription 机会点描述
+     * @param subjectType 所属类别
+     * @param frontPlanId 巡店安排id
+     * @param subResultIds 子表结果id集合
+     * @param abilityFormResultCollection 结果集
+     * @return
+     */
+    private AbilityFormResultCollection saveSubAbilityForm(AbilitySubForm subForm, Long parentFormId, Long resultFormId, SysUser user,
+                                                           String opptDescription, int subjectType, Long frontPlanId, List<Long> subResultIds,
+                                                           AbilityFormResultCollection abilityFormResultCollection) {
         Date now = new Date();
         boolean checkinWithAppCreatedOppts = false;
+        int naNum = abilityFormResultCollection.getNaNum();
         TFormCheckResult subFormResult = new TFormCheckResult();
         subFormResult.setIsPass(subForm.getIsPass());
         subFormResult.setIsDone(subForm.getIsDone());
@@ -900,6 +956,9 @@ public class FormServiceImpl implements FormService {
                         formPbmVal.setIsPass(problemVo.getIsPass());
                         formPbmVal.setIsScore(problemVo.getIsDone());
                         formPbmVal.setIsNa(problemVo.getIsNA());
+                        if (Boolean.TRUE.equals(problemVo.getIsNA())) {
+                            naNum++;
+                        }
                         formPbmVal.setFormResultId(subFormResult.getId());
                         formPbmVal.setFormValueId(formValue.getId());
                         formPbmVal.setProblemDescription(problemVo.getProblemDescription());
@@ -1023,6 +1082,9 @@ public class FormServiceImpl implements FormService {
                                 subPbmVal.setIsPass(subProblemVo.getIsPass());
                                 subPbmVal.setIsScore(subProblemVo.getIsDone());
                                 subPbmVal.setIsNa(subProblemVo.getIsNA());
+                                if (Boolean.TRUE.equals(subProblemVo.getIsNA())) {
+                                    naNum++;
+                                }
                                 subPbmVal.setProblemValueId(formPbmVal.getId());
                                 subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
                                 subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
@@ -1131,8 +1193,9 @@ public class FormServiceImpl implements FormService {
                 }
             }
         }
-
-        return checkinWithAppCreatedOppts;
+        abilityFormResultCollection.setNaNum(naNum);
+        abilityFormResultCollection.setCheckinWithAppCreatedOppts(checkinWithAppCreatedOppts);
+        return abilityFormResultCollection;
     }
 
     private Long saveAbilityReport(SysUser user, Date now, Long resultId, List<Long> subResultIds, Long shopId, Long formId, Long frontPlanId) {
