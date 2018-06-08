@@ -1,12 +1,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: emu2
+    username: cfb
     password: ${password}
-    url: jdbc:mysql://123.59.72.69:3306/emucoo2?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
+    url: jdbc:mysql://10.9.167.195:3306/emucoo-cfb?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&allowMultiQueries=true
   redis:
       cluster:
-        nodes: 10.9.163.206:7000,10.9.163.206:7001,10.9.163.206:7002,10.9.6.28:7003,10.9.6.28:7004,10.9.6.28:7005
+        nodes: 10.9.165.219:7000,10.9.165.219:7001,10.9.165.219:7002,10.9.106.93:7003,10.9.106.93:7004,10.9.106.93:7005
 
 publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJ8hIQck8O61Ev0F8C3YLQv6qwhZ7G4oMy53jwwiL/8L2n3aEHRtUySJlRDSV891M7+IksolgtHoyou9LaIJP9sCAwEAAQ==
 password: gh9C+z6OhPoMFfBm0/oZXhidM9a5NBDIcqIgEXV4EH2pO8chIOEnJjMlrAb7uvlJHyUfwlrp2J+jjiEqylDAtw==

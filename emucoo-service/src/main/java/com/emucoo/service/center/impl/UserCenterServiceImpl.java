@@ -85,6 +85,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
         List<TFrontPlan> frontPlanList = tFrontPlanMapper.selectByExample(example);
         List<FrontPlanVO> list=null;
         if(null!=frontPlanList && frontPlanList.size()>0) {
+            list=new ArrayList<>();
             FrontPlanVO frontPlanVO=null;
             for (TFrontPlan frontPlan : frontPlanList) {
                 frontPlanVO= new FrontPlanVO();
@@ -131,7 +132,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 Long formResultId=report.getFormResultId();
                 TFormCheckResult tfr=formCheckResultMapper.selectByPrimaryKey(formResultId);
                 if(null!=tfr){
-                    reportVO.setReportName(tfr.getFormMainName());
+                    reportVO.setReportName(report.getShopName()+tfr.getFormMainName());
                 }
                 reportList.add(reportVO);
             }
@@ -159,6 +160,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 taskVO.setWorkID(loopWork.getWorkId());
                 taskVO.setSubID(loopWork.getSubWorkId());
                 taskVO.setTaskTitle(loopWork.getTaskTitle());
+                taskVO.setWorkType(loopWork.getType());
                 //workStatus=5 系统待审核
                 taskVO.setTaskStatus(loopWork.getWorkStatus());
                 taskVO.setTaskResult(loopWork.getWorkResult());

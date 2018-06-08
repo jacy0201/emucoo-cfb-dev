@@ -16,7 +16,7 @@ public class ReportVO {
     private Byte formType;
     //打表日期
     private Long checkFormTime;
-    //报告名称：店铺名称+formType+评估报告
+    //报告名称：店铺名称+formName
     private String reportName;
 
 

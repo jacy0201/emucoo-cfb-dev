@@ -1,6 +1,7 @@
 package com.emucoo.restApi.controller.center;
 
 import com.alibaba.druid.util.StringUtils;
+import com.emucoo.dto.base.ISystem;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.center.*;
 import com.emucoo.model.SysUser;
@@ -9,6 +10,7 @@ import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.restApi.utils.RedisClusterClient;
 import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.sys.SysUserService;
 import io.swagger.annotations.Api;
@@ -37,6 +39,8 @@ public class UserCenterController extends AppBaseController {
 
     @Autowired
     private UserCenterService userCenterService;
+    @Autowired
+    private RedisClusterClient redisClient;
 
     /**
      * 编辑资料
@@ -88,6 +92,8 @@ public class UserCenterController extends AppBaseController {
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
         sysUserService.updateSelective(sysUser);
+        //删除redis 缓存
+        redisClient.delete(ISystem.IUSER.USER + currUser.getId());
         return success("success");
     }
 

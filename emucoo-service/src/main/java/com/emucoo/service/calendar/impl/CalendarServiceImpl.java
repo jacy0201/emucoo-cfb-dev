@@ -299,21 +299,28 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarVO.Memo memo = new CalendarVO.Memo();
         memo.setWorkID(loopWork.getWorkId());
         memo.setSubID(loopWork.getSubWorkId());
-        TTask tTask = loopWork.getTask();
-        Date memoStartTime = DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(loopWork.getExecuteBeginDate()) + " " + tTask.getStartTime());
-        Date memoEndTime = DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(tTask.getTaskEndDate()) + " " + tTask.getEndTime());
+        TTask tTask = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        String startDate=DateUtil.dateToString1(tTask.getTaskStartDate());
+        String endDate=DateUtil.dateToString1(tTask.getTaskEndDate());
+        Date memoStartTime=null;
+        Date memoEndTime=null;
+        if(null!=tTask.getStartTime()){
+            memoStartTime=DateUtil.toDateYYYYMMDDHHMM( startDate+ " " + tTask.getStartTime());
+        }else{
+            memoStartTime=tTask.getTaskStartDate();
+        }
+        if(null!=tTask.getEndTime()) {
+            memoEndTime=DateUtil.toDateYYYYMMDDHHMM(endDate + " " + tTask.getEndTime());
+        }else{
+            memoEndTime=tTask.getTaskEndDate();
+        }
         memo.setMemoStartTime(memoStartTime.getTime());
         memo.setMemoEndTime(memoEndTime.getTime());
         memo.setWorkType(5);
         memo.setMemoStatus(loopWork.getWorkStatus());
         memo.setIsSign(loopWork.getIsSign());
-        TTask ttask = new TTask();
-        ttask.setWorkId(loopWork.getWorkId());
-        ttask.setIsUse(true);
-        ttask.setIsDel(false);
-        TTask task = loopWork.getTask();
-        memo.setMemoTitle(task.getName());
-        memo.setMemoContent(task.getDescription());
+        memo.setMemoTitle(tTask.getName());
+        memo.setMemoContent(tTask.getDescription());
         return memo;
     }
 
@@ -322,7 +329,7 @@ public class CalendarServiceImpl implements CalendarService {
         task.setWorkID(tLoopWork.getWorkId());
         task.setWorkType(tLoopWork.getType());
         task.setSubID(tLoopWork.getSubWorkId());
-        TTask tt = tLoopWork.getTask();
+        TTask tt = taskMapper.selectByPrimaryKey(tLoopWork.getTaskId());
         task.setTaskTitle(tt.getName());
         task.setTaskStatus(tLoopWork.getWorkStatus());
         task.setTaskResult(tLoopWork.getWorkResult());

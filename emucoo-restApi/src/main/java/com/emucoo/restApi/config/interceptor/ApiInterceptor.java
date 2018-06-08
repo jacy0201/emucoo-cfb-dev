@@ -1,22 +1,15 @@
 package com.emucoo.restApi.config.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSON;
 import com.emucoo.restApi.controller.demo.AppResult;
-import org.apache.commons.io.IOUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 
 /**
  * @author fujg
@@ -49,6 +42,7 @@ public class ApiInterceptor implements HandlerInterceptor {
         	{
         		log.info("userAgent=[" + userAgent + "]来至IP=[" + ip + "]的其他客户端请求URL[" + request.getRequestURI() + "]");
         	}
+			   log.info("<<<<<<<<<<userToken:"+request.getHeader("userToken")+"");
     	}
 
 		try {
