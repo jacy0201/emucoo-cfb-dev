@@ -19,5 +19,7 @@ public class FrontPlanVO {
     private Long actualRemindTime;
     //预计到店时间
     private Long planPreciseTime;
+    //实际巡店时间
+    private Long actualExecuteTime;
 
 }
