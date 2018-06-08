@@ -159,6 +159,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 taskVO.setWorkID(loopWork.getWorkId());
                 taskVO.setSubID(loopWork.getSubWorkId());
                 taskVO.setTaskTitle(loopWork.getTaskTitle());
+                taskVO.setWorkType(loopWork.getType());
                 //workStatus=5 系统待审核
                 taskVO.setTaskStatus(loopWork.getWorkStatus());
                 taskVO.setTaskResult(loopWork.getWorkResult());
