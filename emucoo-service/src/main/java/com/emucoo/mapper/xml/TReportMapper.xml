@@ -47,11 +47,7 @@
 
     <select id="fetchReceiveReport" resultType="com.emucoo.model.TReport">
         SELECT
-        report.id AS reportId,
-        report.shop_name AS shopName,
-        report.reporter_name AS reporterName,
-        report.form_type AS formType,
-        report.check_form_time AS checkFormTime
+        report.*
         FROM t_report report
         INNER JOIN t_report_user reportUser
         ON reportUser.report_id = report.id
