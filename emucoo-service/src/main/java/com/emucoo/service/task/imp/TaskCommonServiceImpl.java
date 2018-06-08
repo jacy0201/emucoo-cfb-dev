@@ -84,7 +84,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         TaskCommonStatement taskStatement = loopWorkMapper.fetchCommonTaskStatement(loopWork.getId());
         if (taskStatement != null) {
             Optional.ofNullable(taskStatement.getImgUrls()).ifPresent((String imgUrls) -> {
-                taskStatement.setTaskImgArr(Arrays.asList(imgUrls).stream().map(s -> {
+                taskStatement.setTaskImgArr(Arrays.asList(imgUrls.split(",")).stream().map(s -> {
                     ImageUrl imageUrl = new ImageUrl();
                     imageUrl.setImgUrl(s);
                     return imageUrl;
