@@ -922,12 +922,24 @@ public class ReportServiceImpl implements ReportService {
             List<TFormCheckResult> topSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
             //List<AbilitySubForm> resultSubForm = new ArrayList<>();
             List<Long> subResultIds = new ArrayList<>();
+            // 查询子表结果集
+            for (TFormCheckResult subResult : topSubFormResults) {
+                subResultIds.add(subResult.getId());
+                subResultExp.clear();
+                subResultExp.createCriteria().andEqualTo("parentResultId", subResult.getId());
+                List<TFormCheckResult> leafSubFormResults = tFormCheckResultMapper.selectByExample(subResultExp);
+                if(CollectionUtils.isNotEmpty(leafSubFormResults)) {
+                    for(TFormCheckResult leafCheckResult : leafSubFormResults) {
+                        subResultIds.add(leafCheckResult.getId());
+                    }
+                }
+            }
+
             int formCnt = 0;
             for(TFormCheckResult subResult : topSubFormResults) {
                 formCnt++;
                 // 只筛选经过打分且结果可用的子表结果
                 if(subResult.getIsDone().equals(true) && subResult.getResultCanUse().equals(true) && (subResult.getIsPass().equals(false) || formCnt == 4)) {
-                    subResultIds.add(subResult.getId());
                     /*AbilitySubForm subForm = new AbilitySubForm();
                     subForm.setSubFormID(subResult.getFormMainId());
                     subForm.setSubFormName(subResult.getFormMainName());
@@ -985,7 +997,7 @@ public class ReportServiceImpl implements ReportService {
                                                     subProblemVo.setNotes(subPbmVal.getNotes());
                                                     if (subPbmVal.getSubFormId() != null) {
                                                         subProblemVo.setIsSubList(true);
-                                                        /*AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId(), subResultIds);
+                                                        /*AbilitySubForm subFormReport = findSubAbilityReportInfo(subPbmVal.getSubFormId(), subResult.getId());
                                                         subProblemVo.setSubListObject(subFormReport);*/
                                                     } else {
                                                         subProblemVo.setIsSubList(false);
@@ -1009,7 +1021,7 @@ public class ReportServiceImpl implements ReportService {
                                         }
                                         if (pbmVal.getSubFormId() != null) {
                                             problemVo.setIsSubList(true);
-                                            /*AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId(), subResultIds);
+                                            /*AbilitySubForm subFormReport = findSubAbilityReportInfo(pbmVal.getSubFormId(), subResult.getId());
                                             problemVo.setSubListObject(subFormReport);*/
                                         } else {
                                             problemVo.setIsSubList(false);
@@ -1093,17 +1105,19 @@ public class ReportServiceImpl implements ReportService {
                 TFormCheckResult subCheckResult = tFormCheckResultMapper.selectByPrimaryKey(formValue.getFormResultId());
                 if(subCheckResult.getParentResultId() != null) {
                     pbmCascadingRelation.insert(0, subCheckResult.getFormMainName() + "#");
-                    Example subPbmValExp = new Example(TFormSubPbmVal.class);
-                    Example pbmValExp = new Example(TFormPbmVal.class);
                     if(subCheckResult.getSubjectType() != null) {
                         if (subCheckResult.getSubjectType().equals(2)) {
-                            subPbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
-                            subPbmValForThisOppt = tFormSubPbmValMapper.selectOneByExample(subPbmValExp);
+                            TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
+                            subPbmVal.setSubFormId(subCheckResult.getFormMainId());
+                            subPbmVal.setFormResultId(subCheckResult.getParentResultId());
+                            subPbmValForThisOppt = tFormSubPbmValMapper.selectOne(subPbmVal);
                             pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(subPbmValForThisOppt.getProblemValueId());
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#" + subPbmValForThisOppt.getSubProblemName() + "#");
                         } else {
-                            pbmValExp.createCriteria().andEqualTo("subFormId", subCheckResult.getFormMainId()).andEqualTo("formResultId", subCheckResult.getParentResultId());
-                            pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(pbmValForThisOppt);
+                            TFormPbmVal pbmVal = new TFormPbmVal();
+                            pbmVal.setSubFormId(subCheckResult.getFormMainId());
+                            pbmVal.setFormResultId(subCheckResult.getParentResultId());
+                            pbmValForThisOppt = tFormPbmValMapper.selectOne(pbmVal);
                             pbmCascadingRelation.insert(0, pbmValForThisOppt.getProblemName() + "#");
                         }
                         formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
@@ -1134,12 +1148,11 @@ public class ReportServiceImpl implements ReportService {
      * @param subResultIds
      * @return
      */
-    private AbilitySubForm findSubAbilityReportInfo(Long subFormId, Long parentResultId, List<Long> subResultIds) {
+    private AbilitySubForm findSubAbilityReportInfo(Long subFormId, Long parentResultId) {
         TFormCheckResult param = new TFormCheckResult();
         param.setFormMainId(subFormId);
         param.setParentResultId(parentResultId);
         TFormCheckResult subResult = tFormCheckResultMapper.selectOne(param);
-        subResultIds.add(subResult.getId());
         AbilitySubForm subForm = null;
         // 只筛选经过打分且结果可用的子表结果
         if (subResult.getIsDone().equals(true)) {
