@@ -516,7 +516,7 @@ public class FormManageServiceImpl implements FormManageService {
         try {
             AbilityFormMain formVo = new AbilityFormMain();
             TFormMain main = new TFormMain();
-            main.setId(formIn.getFormID());
+            //main.setId(formIn.getFormID());
             if(formIn.getFormType() != null) {
                 main.setFormType(formIn.getFormType());
             } else {

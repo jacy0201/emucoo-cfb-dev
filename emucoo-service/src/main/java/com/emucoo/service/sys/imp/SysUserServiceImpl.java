@@ -208,15 +208,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop,Long createUserId){
+	public void setBrandArea(UserBrandAreaShop userBrandAreaShop,Long createUserId){
 		//设置用户分区
 		List<Long> areaIdList=userBrandAreaShop.getListAreaId();
 		SysUserArea sysUserArea=null;
-		//先删除之前的分区关系
-		Example exampleUserArea=new Example(SysUserArea.class);
-		exampleUserArea.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-		sysUserAreaMapper.deleteByExample(exampleUserArea);
+
 		if(null!=areaIdList && areaIdList.size()>0) {
+			//先删除之前的分区关系
+			Example exampleUserArea = new Example(SysUserArea.class);
+			exampleUserArea.createCriteria().andEqualTo("userId", userBrandAreaShop.getUserId());
+			sysUserAreaMapper.deleteByExample(exampleUserArea);
 			for (Long areaId : areaIdList) {
 				sysUserArea = new SysUserArea();
 				sysUserArea.setAreaId(areaId);
@@ -230,11 +231,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		//设置用户品牌
 		List<Long> brandIdList=userBrandAreaShop.getListBrandId();
 		SysUserBrand sysUserBrand=null;
-		//先删除之前的品牌关系
-		Example exampleUserBrand=new Example(SysUserBrand.class);
-		exampleUserBrand.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
-		sysUserBrandMapper.deleteByExample(exampleUserBrand);
+
 		if(null!=brandIdList && brandIdList.size()>0) {
+			//先删除之前的品牌关系
+			Example exampleUserBrand = new Example(SysUserBrand.class);
+			exampleUserBrand.createCriteria().andEqualTo("userId", userBrandAreaShop.getUserId());
+			sysUserBrandMapper.deleteByExample(exampleUserBrand);
 			for (Long brandId : brandIdList) {
 				sysUserBrand = new SysUserBrand();
 				sysUserBrand.setBrandId(brandId);
@@ -245,12 +247,17 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
 		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void setShop(UserBrandAreaShop userBrandAreaShop,Long createUserId){
 		//设置用户店铺
 		List<Long> shopIdList=userBrandAreaShop.getListShopId();
 		SysUserShop sysUserShop=null;
 		//先删除之前的shop关系
-		Example exampleUserShop=new Example(SysUserShop.class);
-		exampleUserShop.createCriteria().andEqualTo("userId",userBrandAreaShop.getUserId());
+		Example exampleUserShop = new Example(SysUserShop.class);
+		exampleUserShop.createCriteria().andEqualTo("userId", userBrandAreaShop.getUserId());
 		sysUserShopMapper.deleteByExample(exampleUserShop);
 		if(null!=shopIdList && shopIdList.size()>0) {
 			for (Long shopId : shopIdList) {
@@ -264,6 +271,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			}
 		}
 	}
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void editUser(SysUser sysUser){
