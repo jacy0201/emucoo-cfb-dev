@@ -208,7 +208,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void setBrandAreaShop(UserBrandAreaShop userBrandAreaShop,Long createUserId){
+	public void setBrandArea(UserBrandAreaShop userBrandAreaShop,Long createUserId){
 		//设置用户分区
 		List<Long> areaIdList=userBrandAreaShop.getListAreaId();
 		SysUserArea sysUserArea=null;
@@ -247,15 +247,19 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				sysUserBrandMapper.insertSelective(sysUserBrand);
 			}
 		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void setShop(UserBrandAreaShop userBrandAreaShop,Long createUserId){
 		//设置用户店铺
 		List<Long> shopIdList=userBrandAreaShop.getListShopId();
 		SysUserShop sysUserShop=null;
-
+		//先删除之前的shop关系
+		Example exampleUserShop = new Example(SysUserShop.class);
+		exampleUserShop.createCriteria().andEqualTo("userId", userBrandAreaShop.getUserId());
+		sysUserShopMapper.deleteByExample(exampleUserShop);
 		if(null!=shopIdList && shopIdList.size()>0) {
-			//先删除之前的shop关系
-			Example exampleUserShop = new Example(SysUserShop.class);
-			exampleUserShop.createCriteria().andEqualTo("userId", userBrandAreaShop.getUserId());
-			sysUserShopMapper.deleteByExample(exampleUserShop);
 			for (Long shopId : shopIdList) {
 				sysUserShop = new SysUserShop();
 				sysUserShop.setShopId(shopId);
@@ -267,6 +271,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			}
 		}
 	}
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void editUser(SysUser sysUser){

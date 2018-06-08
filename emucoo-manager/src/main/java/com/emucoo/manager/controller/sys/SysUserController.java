@@ -163,12 +163,24 @@ public class SysUserController extends BaseResource {
     /**
      * 设置用户品牌分区
      */
-    @ApiOperation(value="设置品牌分区店铺")
-    @PostMapping("/setBrandAreaShop")
+    @ApiOperation(value="设置品牌分区")
+    @PostMapping("/setBrandArea")
     // @RequiresPermissions("sys:user:setBrandArea")
-    public ApiResult setBrandAreaShop(@RequestBody UserBrandAreaShop userBrandAreaShop){
+    public ApiResult setBrandArea(@RequestBody UserBrandAreaShop userBrandAreaShop){
         if(null==userBrandAreaShop.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
-        sysUserService.setBrandAreaShop(userBrandAreaShop,ShiroUtils.getUserId());
+        sysUserService.setBrandArea(userBrandAreaShop,ShiroUtils.getUserId());
+        return success("success");
+    }
+
+    /**
+     * 设置用户店铺
+     */
+    @ApiOperation(value="设置用户店铺")
+    @PostMapping("/setShop")
+    // @RequiresPermissions("sys:user:setBrandArea")
+    public ApiResult setShop(@RequestBody UserBrandAreaShop userBrandAreaShop){
+        if(null==userBrandAreaShop.getUserId()){return fail(ApiExecStatus.INVALID_PARAM,"userId 不能为空!");}
+        sysUserService.setShop(userBrandAreaShop,ShiroUtils.getUserId());
         return success("success");
     }
 
