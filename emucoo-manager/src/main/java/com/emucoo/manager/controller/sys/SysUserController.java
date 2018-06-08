@@ -71,7 +71,12 @@ public class SysUserController extends BaseResource {
     @PostMapping("/save")
     // @RequiresPermissions("sys:user:save")
     public ApiResult save(@RequestBody SysUser sysUser){
-        checkUser(sysUser);
+        int result=checkUser(sysUser);
+        if(0!=result){
+            if(result==-1) return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");
+            else if(result==-2) return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");
+            else if(result==-3) return  fail(ApiExecStatus.INVALID_PARAM,"email已存在!");
+        }
         sysUser.setIsDel(false);
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUserId(ShiroUtils.getUserId());
@@ -96,7 +101,12 @@ public class SysUserController extends BaseResource {
         if(null==sysUser.getId()){return fail(ApiExecStatus.INVALID_PARAM,"id 不能为空!");}
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(ShiroUtils.getUserId());
-        checkUser(sysUser);
+        int result=checkUser(sysUser);
+        if(0!=result){
+            if(result==-1) return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");
+            else if(result==-2) return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");
+            else if(result==-3) return  fail(ApiExecStatus.INVALID_PARAM,"email已存在!");
+        }
         //sha256加密
         /*String salt = RandomStringUtils.randomAlphanumeric(20);
         sysUser.setPassword(new Sha256Hash(MD5Util.getMd5Hash(sysUser.getPassword()),salt).toHex());
@@ -107,27 +117,37 @@ public class SysUserController extends BaseResource {
         return success("success");
     }
 
-    private ApiResult checkUser(SysUser sysUser){
+    private int checkUser(SysUser sysUser){
+        int result=0;
         Example example=new Example(SysUser.class);
-        Example.Criteria criteria=example.createCriteria();
-        criteria.andEqualTo("isDel",false);
-        if(null!=sysUser.getId()) criteria.andNotEqualTo("id",sysUser.getId());
         if(StringUtil.isNotEmpty(sysUser.getUsername())){
+            example.clear();
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("isDel",false);
+            if(null!=sysUser.getId()) criteria.andNotEqualTo("id",sysUser.getId());
             criteria.andEqualTo("username",sysUser.getUsername());
             List<SysUser> list=sysUserService.selectByExample(example);
-            if(null!=list){return  fail(ApiExecStatus.INVALID_PARAM,"username已存在!");};
+            if(null!=list && list.size()>0) result=-1;
         }
         if(StringUtil.isNotEmpty(sysUser.getMobile())){
+            example.clear();
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("isDel",false);
+            if(null!=sysUser.getId()) criteria.andNotEqualTo("id",sysUser.getId());
             criteria.andEqualTo("mobile",sysUser.getMobile());
             List<SysUser> list=sysUserService.selectByExample(example);
-            if(null!=list){return  fail(ApiExecStatus.INVALID_PARAM,"手机号已存在!");};
+            if(null!=list && list.size()>0) result=-2;
         }
         if(StringUtil.isNotEmpty(sysUser.getEmail())){
+            example.clear();
+            Example.Criteria criteria=example.createCriteria();
+            criteria.andEqualTo("isDel",false);
+            if(null!=sysUser.getId()) criteria.andNotEqualTo("id",sysUser.getId());
             criteria.andEqualTo("email",sysUser.getEmail());
             List<SysUser> list=sysUserService.selectByExample(example);
-            if(null!=list){return  fail(ApiExecStatus.INVALID_PARAM,"Email已存在!");};
+            if(null!=list && list.size()>0) result=-3;
         }
-        return  success("");
+        return  result;
     }
 
     /**
