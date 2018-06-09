@@ -39,6 +39,6 @@ public class FormProblemVo {
     @ApiModelProperty(value = "描述照片数组", name = "descImgArr")
     private List<ProblemImg> descImgArr;
     @ApiModelProperty(value = "题项结果类型 1-绿，2-黄，3-红", name = "problemResultType", example = "2")
-    private Integer problemResultType;
+    private Integer resultType;
     private List<FormSubProblemUnitVo> subProblemUnitArray;
 }

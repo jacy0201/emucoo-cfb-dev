@@ -2,6 +2,8 @@ package com.emucoo.restApi.controller.form;
 
 import com.emucoo.common.Constant;
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGForm.RYGFormOut;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.dto.modules.form.FormIn;
@@ -120,6 +122,29 @@ public class FormController extends AppBaseController {
         return success(map);
     }
 
+    @ApiOperation(value = "获取红黄绿表单模板")
+    @PostMapping(value = "getRYGFormInfo")
+    public AppResult<RYGFormOut> getRYGFormInfo(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<RYGForm> params) {
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+        RYGForm formIn = params.getData();
+        checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(formIn.getChecklistID(), "表单id不能为空！");
+        checkParam(formIn.getShopID(), "店铺id不能为空！");
+        RYGFormOut form = formService.getRYGFormInfo(formIn, user);
+        return success(form);
+    }
 
+    @PostMapping(value = "saveRYGFormResult")
+    public AppResult<String> saveRYGFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<RYGForm> params) {
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+
+        RYGForm formIn = params.getData();
+        /*if (formService.checkinFormResult(user, formIn)) { // 如果有app创建的机会点，要把缓存里的form信息清除
+            String key = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formIn.getChecklistID()) + ":u" + Long.toString(user.getId());
+            redisClusterClient.delete(key);
+        }*/
+        formService.saveRYGFormResult(user, formIn);
+        return success("ok");
+    }
 
 }

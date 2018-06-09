@@ -3,6 +3,9 @@ package com.emucoo.service.form.impl;
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
 import com.emucoo.common.util.StringUtil;
+import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGForm.RYGFormKindVo;
+import com.emucoo.dto.modules.RYGForm.RYGFormOut;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
@@ -1281,5 +1284,102 @@ public class FormServiceImpl implements FormService {
         return report.getId();
     }
 
+    public RYGFormOut getRYGFormInfo(RYGForm formIn, SysUser user) {
+        RYGFormOut formOut = new RYGFormOut();
+        try {
+            TFormMain formParam = new TFormMain();
+            formParam.setFormType(FormType.RYG_TYPE.getCode());
 
+            formParam.setIsDel(false);
+            formParam.setIsUse(true);
+            TFormMain formMain = formMainMapper.selectOne(formParam);
+            if (formMain == null) {
+                return null;
+            }
+            if (!formMain.getIsUse() || formMain.getIsDel()) {
+                return null;
+            }
+
+            formOut.setFormId(formMain.getId());
+            formOut.setFormName(formMain.getName());
+            List<RYGFormKindVo> formKindVos = new ArrayList<>();
+            formOut.setKindArray(formKindVos);
+
+            // 循环里面查数据库是比较弱智的方法，现在先这样吧，有时间再改。
+            List<TFormType> modules = formTypeMapper.findFormTypesByFormMainId(formMain.getId());
+            for (TFormType module : modules) {
+                RYGFormKindVo formKindVo = new RYGFormKindVo();
+                formKindVo.setIsDone(false);
+                formKindVo.setKindID(module.getId());
+                formKindVo.setKindName(module.getTypeName());
+
+                List<FormProblemVo> problemVos = new ArrayList<>();
+
+                List<TFormPbm> pbms = formPbmMapper.findFormPbmsByFormTypeId(module.getId());
+                for (TFormPbm pbm : pbms) {
+                    FormProblemVo pbmVo = new FormProblemVo();
+                    pbmVo.setProblemID(pbm.getId());
+                    pbmVo.setProblemName(pbm.getName());
+                    pbmVo.setProblemDescription(pbm.getDescriptionHit());
+                    pbmVo.setIsImportant(pbm.getIsImportant());
+                    pbmVo.setIsNA(false);
+                    pbmVo.setIsScore(false);
+                    pbmVo.setProblemScore(pbm.getScore());
+                    pbmVo.setProblemTotal(pbm.getScore());
+                    pbmVo.setProblemType(pbm.getProblemSchemaType());
+
+                    List<TOpportunity> oppts = opportunityMapper.findOpptsByPbmId(pbm.getId());
+                    List<FormChanceVo> formChanceVos = new ArrayList<>();
+                    if (oppts != null && oppts.size() > 0) {
+                        for (TOpportunity oppt : oppts) {
+                            // 前端创建的机会点，只有在创建它的用户再次使用该表单打表的时候才会显示出来，其他用户，其他表单都需要过滤掉。
+                            if (oppt.getCreateType() == 2 && oppt.getCreateUserId() != user.getId()) {
+                                continue;
+                            }
+                            FormChanceVo formChanceVo = new FormChanceVo();
+                            formChanceVo.setChanceID(oppt.getId());
+                            formChanceVo.setChanceName(oppt.getName());
+                            formChanceVo.setIsPick(false);
+                            formChanceVos.add(formChanceVo);
+                        }
+                    }
+                    pbmVo.setChanceArray(formChanceVos);
+                    pbmVo.setOtherChanceArray(new ArrayList<>());
+
+                    problemVos.add(pbmVo);
+                }
+
+                formKindVo.setProblemNum(problemVos.size());
+                formKindVo.setProblemArray(problemVos);
+                formKindVo.setScoreRate(0.0f);
+                formKindVo.setWrongNum(0);
+                TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
+                formOut.setShopName(shopInfo.getShopName());
+
+                TBrandInfo brandInfo = brandInfoMapper.selectByPrimaryKey(shopInfo.getBrandId());;
+                formOut.setBrandName(brandInfo == null ? "" : brandInfo.getBrandName());
+                formOut.setGradeDate(DateUtil.dateToString1(DateUtil.currentDate()));
+                formKindVos.add(formKindVo);
+            }
+            return formOut;
+        } catch (Exception e) {
+            logger.error("查询表单模板错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("查询表单模板错误！");
+        }
+    }
+
+    public void saveRYGFormResult(SysUser user, RYGForm formIn) {
+        try {
+
+        } catch (Exception e) {
+            logger.error("保存红绿黄打表结果错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("保存红绿黄打表结果错误！");
+        }
+    }
 }

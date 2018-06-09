@@ -1,5 +1,7 @@
 package com.emucoo.service.form;
 
+import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGForm.RYGFormOut;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
@@ -27,4 +29,8 @@ public interface FormService {
     TBrandInfo findShopBrand(Long brandId);
 
     Long saveAbilityFormResult(AbilityFormMain formIn, SysUser user);
+
+    RYGFormOut getRYGFormInfo(RYGForm formIn, SysUser user);
+
+    void saveRYGFormResult(SysUser user, RYGForm formIn);
 }
