@@ -32,5 +32,5 @@ public interface FormService {
 
     RYGFormOut getRYGFormInfo(RYGForm formIn, SysUser user);
 
-    void saveRYGFormResult(SysUser user, RYGForm formIn);
+    boolean saveRYGFormResult(SysUser user, RYGForm formIn);
 }

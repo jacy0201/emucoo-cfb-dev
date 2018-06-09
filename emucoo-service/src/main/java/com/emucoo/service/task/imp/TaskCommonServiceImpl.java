@@ -602,6 +602,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 taskOption.setFeedbackNumName(option.getFeedbackNumName());
                 taskOption.setFeedbackNumType(option.getFeedbackNumType());
                 taskOption.setNeedFeedbackImg(option.getFeedbackImgType() == 0 ? false : true);
+                taskOption.setFeedbackImgName(option.getFeedbackImgName());
                 taskOption.setFeedbackImgType(option.getFeedbackImgFromAlbum() ? 1 : 0);
                 taskOption.setFeedbackImgCount(option.getFeedbackImgMaxCount());
                 if (option.getFeedbackImgExampleId() != null) {

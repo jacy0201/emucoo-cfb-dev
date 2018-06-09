@@ -136,9 +136,11 @@ public class FormController extends AppBaseController {
 
     @PostMapping(value = "saveRYGFormResult")
     public AppResult<String> saveRYGFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<RYGForm> params) {
-        SysUser user = UserTokenManager.getInstance().currUser(userToken);
-
         RYGForm formIn = params.getData();
+        SysUser user = UserTokenManager.getInstance().currUser(userToken);
+        checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(formIn.getChecklistID(), "表单id不能为空！");
+        checkParam(formIn.getShopID(), "店铺id不能为空！");
         /*if (formService.checkinFormResult(user, formIn)) { // 如果有app创建的机会点，要把缓存里的form信息清除
             String key = Constant.FORM_BUFFER_PREFIX + ":f" + Long.toString(formIn.getChecklistID()) + ":u" + Long.toString(user.getId());
             redisClusterClient.delete(key);
