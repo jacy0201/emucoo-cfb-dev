@@ -120,7 +120,14 @@
         oppt_name,
         form_result_id
         FROM t_form_oppt_value
-        WHERE oppt_id = #{opptId} AND is_pick = TRUE AND form_result_id IN
+        WHERE oppt_id = #{opptId}
+        <if test="problemId != null">
+            AND problem_id = #{problemId}
+        </if>
+        <if test="subProblemId != null">
+            AND sub_problem_id = #{subProblemId}
+        </if>
+        AND is_pick = TRUE AND form_result_id IN
         <foreach collection="resultIds" separator="," item="item" open="(" close=")">
             #{item}
         </foreach>

@@ -805,6 +805,7 @@ public class FormServiceImpl implements FormService {
                                         }
                                         subPbmVal.setProblemDescription(subProblemVo.getProblemDescription());
                                         descImgArr = subProblemVo.getDescImgArr();
+                                        imgIds = "";
                                         if (CollectionUtils.isNotEmpty(descImgArr)) {
                                             List<TFile> imgs = new ArrayList<>();
                                             for (ProblemImg problemImg : descImgArr) {
@@ -844,7 +845,7 @@ public class FormServiceImpl implements FormService {
                                                 if (tOpportunity != null) {
                                                     formOpptValue.setOpptDesc(tOpportunity.getDescription());
                                                 }
-
+                                                formOpptValue.setProblemId(problemVo.getProblemID());
                                                 formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                                 formOpptValue.setProblemType(problemType.byteValue());
                                                 formOpptValue.setSubProblemValueId(subPbmVal.getId());
@@ -1293,6 +1294,7 @@ public class FormServiceImpl implements FormService {
             TReportOppt tReportOppt = new TReportOppt();
             tReportOppt.setOpptId(tFormOpptValue.getOpptId());
             tReportOppt.setOpptName(tFormOpptValue.getOpptName());
+            tReportOppt.setFormOpptValueId(tFormOpptValue.getId());
             tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
             tReportOppts.add(tReportOppt);
         }
