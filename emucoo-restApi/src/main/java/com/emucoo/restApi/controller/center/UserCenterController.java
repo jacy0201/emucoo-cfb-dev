@@ -50,11 +50,9 @@ public class UserCenterController extends AppBaseController {
     public AppResult editUser(@RequestBody ParamVo<SysUser> params) {
         SysUser sysUser = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        if (null == sysUser.getId()) {
-            return fail(AppExecStatus.INVALID_PARAM, "id 不能为空!");
-        }
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
+        sysUser.setId(currUser.getId());
         sysUserService.updateSelective(sysUser);
         return success("success");
     }
