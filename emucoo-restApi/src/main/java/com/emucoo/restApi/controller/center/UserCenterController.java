@@ -52,6 +52,7 @@ public class UserCenterController extends AppBaseController {
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
+        sysUser.setId(currUser.getId());
         sysUserService.updateSelective(sysUser);
         return success("success");
     }
