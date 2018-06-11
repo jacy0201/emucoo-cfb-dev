@@ -93,7 +93,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
                 frontPlanVO.setSubID(frontPlan.getSubPlanId().toString());
                 frontPlanVO.setWorkType(4);
                 frontPlanVO.setShopId(frontPlan.getShopId());
-                frontPlanVO.setActualExecuteTime(frontPlan.getActualExecuteTime().getTime());
+                if(null!=frontPlan.getActualExecuteTime()) frontPlanVO.setActualExecuteTime(frontPlan.getActualExecuteTime().getTime());
                 TShopInfo shopInfo = tShopInfoMapper.selectByPrimaryKey(frontPlan.getShopId());
                 String shopName = shopInfo == null ? "" : shopInfo.getShopName();
                 frontPlanVO.setShopName(shopName);
