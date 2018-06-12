@@ -27,10 +27,12 @@ public class RYGFormKindVo {
     private Float scoreRate;
     @ApiModelProperty(value = "红色数量", name = "redNum")
     private Integer redNum;
+    @ApiModelProperty(value = "黄色数量", name = "yellowNum")
+    private Integer yellowNum;
     @ApiModelProperty(value = "绿色数量", name = "greenNum")
     private Integer greenNum;
-    @ApiModelProperty(value = "蓝色数量", name = "greenNum")
-    private Integer blueNum;
+    @ApiModelProperty(value = "N/A数量", name = "naNum")
+    private Integer naNum;
     @ApiModelProperty(value = "错题数", name = "wrongNum")
     private Integer wrongNum;
     @ApiModelProperty(value = "实际得分", name = "realScore")

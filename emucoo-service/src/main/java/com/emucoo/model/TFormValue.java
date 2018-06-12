@@ -51,6 +51,18 @@ public class TFormValue extends BaseEntity {
     @Column(name = "is_pass")
     private Boolean isPass;
 
+    @Column(name = "red_num")
+    private Integer redNum;
+
+    @Column(name = "yellow_num")
+    private Integer yellowNum;
+
+    @Column(name = "green_num")
+    private Integer greenNum;
+
+    @Column(name = "na_num")
+    private Integer naNum;
+
     @Transient
     private List<TFormPbmVal> formPbmValList;
 
@@ -202,5 +214,37 @@ public class TFormValue extends BaseEntity {
 
     public void setFormPbmValList(List<TFormPbmVal> formPbmValList) {
         this.formPbmValList = formPbmValList;
+    }
+
+    public Integer getRedNum() {
+        return redNum;
+    }
+
+    public void setRedNum(Integer redNum) {
+        this.redNum = redNum;
+    }
+
+    public Integer getYellowNum() {
+        return yellowNum;
+    }
+
+    public void setYellowNum(Integer yellowNum) {
+        this.yellowNum = yellowNum;
+    }
+
+    public Integer getGreenNum() {
+        return greenNum;
+    }
+
+    public void setGreenNum(Integer greenNum) {
+        this.greenNum = greenNum;
+    }
+
+    public Integer getNaNum() {
+        return naNum;
+    }
+
+    public void setNaNum(Integer naNum) {
+        this.naNum = naNum;
     }
 }

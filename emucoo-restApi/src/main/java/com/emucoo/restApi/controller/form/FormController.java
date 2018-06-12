@@ -8,6 +8,7 @@ import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.GetFormInfoIn;
 import com.emucoo.dto.modules.form.FormIn;
 import com.emucoo.dto.modules.form.FormOut;
+import com.emucoo.dto.modules.report.SaveReportOut;
 import com.emucoo.model.SysUser;
 import com.emucoo.model.TBrandInfo;
 import com.emucoo.model.TShopInfo;
@@ -110,16 +111,16 @@ public class FormController extends AppBaseController {
      */
     @ApiOperation(value = "保存能力模型打表结果并生成报告")
     @PostMapping(value = "saveAbilityFormResult")
-    public AppResult<Map> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
+    public AppResult<SaveReportOut> saveAbilityFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<AbilityFormMain> params) {
         AbilityFormMain formIn = params.getData();
         checkParam(formIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(formIn.getFormID(), "表单id不能为空！");
         checkParam(formIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
         Long reportId = formService.saveAbilityFormResult(formIn, user);
-        HashMap<String, Long> map = new HashMap<>();
-        map.put("reportID", reportId);
-        return success(map);
+        SaveReportOut reportOut = new SaveReportOut();
+        reportOut.setReportID(reportId);
+        return success(reportOut);
     }
 
     @ApiOperation(value = "获取红黄绿表单模板")
@@ -134,7 +135,8 @@ public class FormController extends AppBaseController {
         return success(form);
     }
 
-    @PostMapping(value = "saveRYGFormResult")
+    @ApiOperation(value = "保存红黄绿打表结果")
+    @PostMapping(value = "checkinRYGFormResult")
     public AppResult<String> saveRYGFormResult(@RequestHeader("userToken") String userToken, @RequestBody ParamVo<RYGForm> params) {
         RYGForm formIn = params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(userToken);
