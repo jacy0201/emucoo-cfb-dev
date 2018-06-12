@@ -1,6 +1,7 @@
 package com.emucoo.restApi.component;
 
 import cn.jpush.api.JPushClient;
+import com.emucoo.common.msg.JiGuangProxy;
 import com.emucoo.restApi.config.JiguangConfig;
 import com.emucoo.restApi.config.QiNiuConfig;
 import com.emucoo.restApi.config.RongcloudConfig;
@@ -57,5 +58,10 @@ public class BeanFactory {
     public Sender getXiaomiSend() {
     	Sender sender = new Sender(xiaomiConfig.getAppSecret());
     	return sender;
+    }
+
+    @Bean
+    public JiGuangProxy createJiGuangProxy() {
+        return JiGuangProxy.createJiGuangProxyInstance(jiguangConfig.getAppKey(), jiguangConfig.getMasterSecret(), jiguangConfig.isApnsProduction());
     }
 }
