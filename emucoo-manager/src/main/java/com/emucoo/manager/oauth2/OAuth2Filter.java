@@ -57,7 +57,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         try {
             //处理登录失败的异常
             Throwable throwable = e.getCause() == null ? e : e.getCause();
-            R r = R.error(500, throwable.getMessage());
+            R r = R.error(403, "授权失败:"+throwable.getMessage());
 
             String json = new Gson().toJson(r);
             httpResponse.getWriter().print(json);
