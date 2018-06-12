@@ -103,7 +103,7 @@ sms:
 jiguangPush:
   appKey: efdca87fd8882c474cec5cdb
   masterSecret: 92223496c1411b0406ed056a
-  apnsProduction: false
+  apnsProduction: true
 
 rongcloud:
   appKey: vnroth0kvdlho
