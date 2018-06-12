@@ -1,11 +1,14 @@
 package com.emucoo.restApi.controller.form;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGReport.RYGReportVo;
 import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
 import com.emucoo.dto.modules.report.GetOpptIn;
 import com.emucoo.dto.modules.report.GetOpptOut;
 import com.emucoo.dto.modules.report.GetReportIn;
 import com.emucoo.dto.modules.report.ReportVo;
+import com.emucoo.dto.modules.report.SaveReportOut;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -56,16 +59,16 @@ public class ReportController extends AppBaseController {
      * @return
      */
     @PostMapping(value = "saveReport")
-    public AppResult<Map> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
+    public AppResult<SaveReportOut> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
         ReportVo reportIn = params.getData();
         checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
         checkParam(reportIn.getChecklistID(), "表单id不能为空！");
         checkParam(reportIn.getShopID(), "店铺id不能为空！");
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long reportId = reportService.saveReport(user, reportIn);
-        HashMap<String, Long> map = new HashMap<>();
-        map.put("reportID", reportId);
-        return success(map);
+        SaveReportOut reportOut = new SaveReportOut();
+        reportOut.setReportID(reportId);
+        return success(reportOut);
     }
 
     /**
@@ -102,6 +105,42 @@ public class ReportController extends AppBaseController {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         AbilityReportVo report = reportService.findAbilityReportInfo(user, reportIn);
         return success(report);
+    }
+
+    @ApiOperation(value = "红黄绿表单预览")
+    @PostMapping(value = "getRYGReportPreview")
+    public AppResult<RYGReportVo> getRYGReportPreview(@RequestBody ParamVo<RYGForm> params, HttpServletRequest request) {
+        RYGForm reportIn = params.getData();
+        checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(reportIn.getChecklistID(), "表单id不能为空！");
+        checkParam(reportIn.getShopID(), "店铺id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        RYGReportVo reportOut = reportService.getRYGReportPreview(user, reportIn);
+        return success(reportOut);
+    }
+
+    @ApiOperation(value = "保存红黄绿报告")
+    @PostMapping(value = "saveRYGReport")
+    public AppResult<SaveReportOut> saveRYGReport(@RequestBody ParamVo<RYGReportVo> params, HttpServletRequest request) {
+        RYGReportVo reportIn = params.getData();
+        checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
+        checkParam(reportIn.getChecklistID(), "表单id不能为空！");
+        checkParam(reportIn.getShopID(), "店铺id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        Long reportId = reportService.saveRYGReport(user, reportIn);
+        SaveReportOut reportOut = new SaveReportOut();
+        reportOut.setReportID(reportId);
+        return success(reportOut);
+    }
+
+    @ApiOperation(value = "读取红黄绿报告")
+    @PostMapping(value = "findRYGReportInfoById")
+    public AppResult<RYGReportVo> findRYGReportInfoById(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
+        GetReportIn reportIn = params.getData();
+        checkParam(reportIn.getReportID(), "表单id不能为空！");
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        RYGReportVo reportOut = reportService.findRYGReportInfoById(user, reportIn);
+        return success(reportOut);
     }
 
 }
