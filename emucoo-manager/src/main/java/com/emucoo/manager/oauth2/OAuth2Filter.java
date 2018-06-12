@@ -41,7 +41,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         String token = getRequestToken((HttpServletRequest) request);
         if(StringUtils.isBlank(token)){
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            String json = new Gson().toJson(R.error(401, "invalid token!!!"));
+            String json = new Gson().toJson(R.error(403, "无效的token!!!"));
             httpResponse.getWriter().print(json);
 
             return false;
