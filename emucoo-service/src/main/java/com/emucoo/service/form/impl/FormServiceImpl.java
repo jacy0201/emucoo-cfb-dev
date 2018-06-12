@@ -19,6 +19,7 @@ import com.emucoo.enums.Constant;
 import com.emucoo.enums.DeleteStatus;
 import com.emucoo.enums.FormType;
 import com.emucoo.enums.ImgSourceType;
+import com.emucoo.enums.ProblemType;
 import com.emucoo.enums.ShopArrangeStatus;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -1517,7 +1518,7 @@ public class FormServiceImpl implements FormService {
                             }
 
                             formOpptValue.setProblemId(problemVo.getProblemID());
-                            formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                            formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                             formOpptValue.setProblemValueId(formPbmVal.getId());
 
                             opptVals.add(formOpptValue);
@@ -1548,14 +1549,14 @@ public class FormServiceImpl implements FormService {
                             TFormOppt formOppt = new TFormOppt();
                             formOppt.setOpptId(opportunity.getId());
                             formOppt.setProblemId(problemVo.getProblemID());
-                            formOppt.setProblemType(problemVo.getProblemType());
+                            formOppt.setProblemType(ProblemType.NOT_SAMPLE.getCode());
                             formOppt.setCreateTime(DateUtil.currentDate());
                             formOppt.setModifyTime(DateUtil.currentDate());
                             formOpptMapper.insert(formOppt);
 
                             TFormOpptValue formOpptValue = new TFormOpptValue();
                             formOpptValue.setProblemValueId(formPbmVal.getId());
-                            formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                            formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                             formOpptValue.setProblemId(problemVo.getProblemID());
                             formOpptValue.setOpptName(fcv.getChanceName());
                             formOpptValue.setOpptDesc(opptDescription);
@@ -1595,7 +1596,7 @@ public class FormServiceImpl implements FormService {
                                     formOpptValue.setOpptId(subChanceVo.getChanceID());
                                     formOpptValue.setOpptName(subChanceVo.getChanceName());
                                     formOpptValue.setProblemId(problemVo.getProblemID());
-                                    formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
+                                    formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                                     formOpptValue.setSubHeaderId(subProblemUnitVo.getSubProblemUnitID());
                                     formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                     formOpptValue.setSubProblemUnitScore(subProblemVo.getSubProblemScore());
