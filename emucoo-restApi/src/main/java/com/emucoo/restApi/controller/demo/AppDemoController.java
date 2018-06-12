@@ -95,7 +95,7 @@ public class AppDemoController extends AppBaseController {
     public AppResult<String> testJiguang(@RequestBody ParamVo<String> base) {
         String deviceId = base.getData();
         try {
-            int code = jiGuangProxy.sendNotification("测试", "这是一个测试111", deviceId, null, JiGuangProxy.DeviceOS.OS_ALL);
+            int code = jiGuangProxy.sendNotification("测试", "这是一个测试222", deviceId, null, JiGuangProxy.DeviceOS.OS_ALL);
         } catch (MsgPushException e) {
             e.printStackTrace();
         }
