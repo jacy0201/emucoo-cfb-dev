@@ -41,6 +41,7 @@ public class ReportController extends AppBaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "RVR类报告预览")
     @PostMapping(value = "reportPreview")
     public AppResult<ReportVo> reportPreview(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
         GetReportIn reportIn = params.getData();
@@ -58,6 +59,7 @@ public class ReportController extends AppBaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "保存RVR类报告")
     @PostMapping(value = "saveReport")
     public AppResult<SaveReportOut> saveReport(@RequestBody ParamVo<ReportVo> params, HttpServletRequest request) {
         ReportVo reportIn = params.getData();
@@ -77,6 +79,7 @@ public class ReportController extends AppBaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "读取RVR类报告详情")
     @PostMapping(value = "findReportInfoById")
     public AppResult<ReportVo> findReportInfoById(@RequestBody ParamVo<GetReportIn> params, HttpServletRequest request) {
         GetReportIn reportIn = params.getData();
@@ -86,6 +89,7 @@ public class ReportController extends AppBaseController {
         return success(reportOut);
     }
 
+    @ApiOperation(value = "读取RVR类报告机会点详情")
     @PostMapping(value = "findOpptInfoById")
     public AppResult<GetOpptOut> findOpptInfoById(@RequestBody ParamVo<GetOpptIn> params, HttpServletRequest request) {
         GetOpptIn getOpptIn = params.getData();
@@ -108,7 +112,7 @@ public class ReportController extends AppBaseController {
     }
 
     @ApiOperation(value = "红黄绿表单预览")
-    @PostMapping(value = "getRYGReportPreview")
+    @PostMapping(value = "RYGReportPreview")
     public AppResult<RYGReportVo> getRYGReportPreview(@RequestBody ParamVo<RYGForm> params, HttpServletRequest request) {
         RYGForm reportIn = params.getData();
         checkParam(reportIn.getPatrolShopArrangeID(), "巡店安排id不能为空！");
