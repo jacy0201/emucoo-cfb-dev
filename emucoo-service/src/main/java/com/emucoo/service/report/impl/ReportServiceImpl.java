@@ -1468,7 +1468,7 @@ public class ReportServiceImpl implements ReportService {
             report.setReporterPositionId(postIdStr);
             report.setReporterPosition(postStr);
             report.setFormResultId(result.getId());
-            report.setFormType(FormType.RVR_TYPE.getCode().byteValue());
+            report.setFormType(FormType.RYG_TYPE.getCode().byteValue());
             tReportMapper.saveReport(report);
 
             // 查询报告抄送部门
