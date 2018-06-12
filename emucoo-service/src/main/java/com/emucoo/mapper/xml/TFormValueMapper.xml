@@ -89,7 +89,11 @@
         formValue.from_type_id,
         formValue.score,
         formValue.score_rate,
-        formValue.total
+        formValue.total,
+        formValue.red_num,
+        formValue.yellow_num,
+        formValue.green_num,
+        formValue.na_num
         FROM t_form_value formValue
         INNER JOIN t_form_check_result formResult ON formResult.id = formValue.form_result_id
         AND formResult.front_plan_id = #{arrangeId} AND formResult.form_main_id = #{formId}

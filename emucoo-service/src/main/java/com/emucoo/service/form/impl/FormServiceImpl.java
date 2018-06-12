@@ -1405,6 +1405,13 @@ public class FormServiceImpl implements FormService {
 
     public boolean saveRYGFormResult(SysUser user, RYGForm formIn) {
         try {
+            Example planFormExp = new Example(TFrontPlanForm.class);
+            planFormExp.createCriteria().andEqualTo("frontPlanId", formIn.getPatrolShopArrangeID()).andEqualTo("formMainId", formIn.getChecklistID())
+                    .andEqualTo("reportStatus", 1).andEqualTo("isDel", false);
+            List<TFrontPlanForm> planForms = frontPlanFormMapper.selectByExample(planFormExp);
+            if (CollectionUtils.isNotEmpty(planForms)) {
+                throw new BaseException("报告请勿重复保存！");
+            }
             boolean checkinWithAppCreatedOppts = false;
             // 每次存之前把旧数据删掉
             cleanOldRYGResult(user, formIn);
@@ -1430,7 +1437,7 @@ public class FormServiceImpl implements FormService {
             formCheckResult.setShopName(shopInfo.getShopName());
 
             formCheckResultMapper.insert(formCheckResult);
-
+            int naNum = 0;
             List<RYGFormKindVo> modules = formIn.getKindArray();
             for (RYGFormKindVo module : modules) {
                 TFormValue formValue = new TFormValue();
@@ -1440,9 +1447,14 @@ public class FormServiceImpl implements FormService {
                 formValue.setFromTypeId(module.getKindID());
                 formValue.setIsDone(module.getIsDone());
                 formValue.setModifyTime(DateUtil.currentDate());
-                formValue.setScore(module.getRealScore());
-                formValue.setTotal(module.getRealTotal());
-                formValue.setScoreRate(module.getScoreRate());
+                formValue.setRedNum(module.getRedNum());
+                formValue.setYellowNum(module.getYellowNum());
+                formValue.setGreenNum(module.getGreenNum());
+                if (module.getNaNum() != null) {
+                    formValue.setNaNum(module.getNaNum());
+                    naNum += module.getNaNum();
+                }
+
                 formValueMapper.insert(formValue);
 
                 List<FormProblemVo> problemVos = module.getProblemArray();
@@ -1455,11 +1467,11 @@ public class FormServiceImpl implements FormService {
                     formPbmVal.setFormValueId(formValue.getId());
                     formPbmVal.setIsNa(problemVo.getIsNA());
                     formPbmVal.setIsScore(problemVo.getIsScore());
-                    formPbmVal.setIsImportant(problemVo.getIsImportant());
                     formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                     formPbmVal.setProblemName(problemVo.getProblemName());
+                    formPbmVal.setNotes(problemVo.getNotes());
                     formPbmVal.setProblemSchemaType(problemVo.getProblemType());
-                    formPbmVal.setScore(problemVo.getProblemScore());
+                    formPbmVal.setResultType(problemVo.getResultType());
                     // 保存题项照片数据
                     String imgIds = "";
                     List<ProblemImg> descImgArr = problemVo.getDescImgArr();
@@ -1542,10 +1554,6 @@ public class FormServiceImpl implements FormService {
                             formOpptMapper.insert(formOppt);
 
                             TFormOpptValue formOpptValue = new TFormOpptValue();
-//                    formOpptValue.setSubProblemValueId();
-//                    formOpptValue.setSubProblemUnitScore();
-//                    formOpptValue.setSubProblemId();
-//                    formOpptValue.setSubHeaderId();
                             formOpptValue.setProblemValueId(formPbmVal.getId());
                             formOpptValue.setProblemType(problemVo.getProblemType().byteValue());
                             formOpptValue.setProblemId(problemVo.getProblemID());
@@ -1602,6 +1610,11 @@ public class FormServiceImpl implements FormService {
                     }
                 }
             }
+            // 保存总na数量
+            TFormCheckResult resultParam = new TFormCheckResult();
+            resultParam.setNaNum(naNum);
+            resultParam.setId(formCheckResult.getId());
+            formCheckResultMapper.updateByPrimaryKeySelective(resultParam);
 
             return checkinWithAppCreatedOppts;
         } catch (Exception e) {

@@ -2,6 +2,9 @@ package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
+import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGForm.RYGFormKindVo;
+import com.emucoo.dto.modules.RYGReport.RYGReportVo;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
 import com.emucoo.dto.modules.abilityForm.ProblemImg;
@@ -1256,4 +1259,363 @@ public class ReportServiceImpl implements ReportService {
         return subForm;
     }
 
+    public RYGReportVo getRYGReportPreview(SysUser user, RYGForm reportIn) {
+        try{
+            RYGReportVo reportOut = new RYGReportVo();
+            // 查询店铺名
+            TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(reportIn.getShopID());
+            if (shop == null) {
+                return null;
+            }
+            reportOut.setShopName(shop.getShopName());
+            // 查询店长
+            SysUser shopOwer = sysUserMapper.selectByPrimaryKey(shop.getShopManagerId());
+            reportOut.setShopownerName(shopOwer.getRealName());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String date = sdf.format(new Date());
+            reportOut.setCheckDate(date);
+            // 查询打表人所属部门
+            SysDept department = sysDeptMapper.selectByPrimaryKey(user.getDptId());
+            reportOut.setCheckDepartmentName(department.getDptName());
+            reportOut.setInspectorName(user.getRealName());
+            List<SysPost> postions = sysPostMapper.findPositionByUserId(user.getId());
+            String postStr = "";
+            for (SysPost post : postions) {
+                postStr += post.getPostName() + ",";
+            }
+            if (StringUtils.isNotBlank(postStr)) {
+                postStr = postStr.substring(0, postStr.length() - 1);
+            }
+            reportOut.setInspectorPosition(postStr);
+
+            // 获取额外项
+            List<AdditionItemVo> additionItemVos = new ArrayList<>();
+            Example formAddTimeExp = new Example(TFormAddItem.class);
+            formAddTimeExp.createCriteria().andEqualTo("formMainId", reportIn.getChecklistID());
+            List<TFormAddItem> tFormAddItems = tFormAddItemMapper.selectByExample(formAddTimeExp);
+            for (TFormAddItem tFormAddItem : tFormAddItems) {
+                AdditionItemVo additionItemVo = new AdditionItemVo();
+                additionItemVo.setItemID(tFormAddItem.getId());
+                additionItemVo.setName(tFormAddItem.getName());
+                additionItemVo.setValue("");
+                additionItemVos.add(additionItemVo);
+            }
+            reportOut.setAdditionArray(additionItemVos);
+
+            List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),
+                    reportIn.getPatrolShopArrangeID());
+            List<Long> formAllPbmValueIds = new ArrayList<>();
+
+            for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
+                formAllPbmValueIds.add(tFormPbmVal.getId());
+            }
+            // 统计触发的机会点
+            if (formAllPbmValueIds.size() > 0) {
+                Example subPbmValExp = new Example(TFormSubPbmVal.class);
+                subPbmValExp.createCriteria().andIn("problemValueId", formAllPbmValueIds);
+                List<TFormSubPbmVal> tFormSubPbmVals = tFormSubPbmValMapper.selectByExample(subPbmValExp);
+                List<Long> formAllSubPbmValueIds = new ArrayList<>();
+                for (TFormSubPbmVal tFormSubPbmVal : tFormSubPbmVals) {
+                    formAllSubPbmValueIds.add(tFormSubPbmVal.getId());
+                }
+
+                // 根据题项id或子题项id查询关联的机会点信息
+                List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.selectUnionFormOpptsByPbmIds(formAllPbmValueIds, formAllSubPbmValueIds.size() > 0 ? formAllSubPbmValueIds : null);
+                reportOut.setChancePointNum(tFormOpptValues.size() != 0 ? String.valueOf(tFormOpptValues.size()) : "0");
+                List<ChancePointVo> chancePointVos = new ArrayList<>();
+                for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
+                    ChancePointVo chancePointVo = new ChancePointVo();
+                    chancePointVo.setChancePointID(tFormOpptValue.getOpptId());
+                    chancePointVo.setChancePointTitle(tFormOpptValue.getOpptName());
+                    // 计算该机会点使用情况
+                    List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId(),
+                            tFormOpptValue.getProblemId(), tFormOpptValue.getSubProblemId());
+                    chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
+                    // 查询该机会点关联的题项信息
+                    TFormPbmVal pbmValForThisOppt = null;
+
+                    pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                    if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
+                        List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
+                        List<ProblemImg> problemImgs = new ArrayList<>();
+                        for (TFile file : descImgs) {
+                            ProblemImg problemImg = new ProblemImg();
+                            problemImg.setImgUrl(file.getImgUrl());
+                            problemImgs.add(problemImg);
+                        }
+                        chancePointVo.setDescImgArr(problemImgs);
+                    }
+
+                    // 查询所属题项类型
+                    TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                    StringBuilder pbmCascadingRelation = new StringBuilder();
+
+                    pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
+                    chancePointVo.setChanceContent(pbmCascadingRelation.toString());
+                    chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
+                    chancePointVos.add(chancePointVo);
+                }
+                reportOut.setChancePointArr(chancePointVos);
+            }
+
+            // 统计模块情况
+            List<TFormValue> formTypeValues = tFormValueMapper.findTypeValueListByFormAndArrange(reportIn.getChecklistID(), reportIn.getPatrolShopArrangeID());
+            List<RYGFormKindVo> checklistKindScoreVos = new ArrayList<>();
+            for (TFormValue tFormValue : formTypeValues) {
+                RYGFormKindVo checklistKindVo = new RYGFormKindVo();
+                checklistKindVo.setKindID(tFormValue.getFromTypeId());
+                checklistKindVo.setKindName(tFormValue.getFormTypeName());
+                checklistKindVo.setRedNum(tFormValue.getRedNum());
+                checklistKindVo.setYellowNum(tFormValue.getYellowNum());
+                checklistKindVo.setGreenNum(tFormValue.getGreenNum());
+                checklistKindVo.setNaNum(tFormValue.getNaNum());
+                checklistKindScoreVos.add(checklistKindVo);
+            }
+            reportOut.setKindArray(checklistKindScoreVos);
+
+            return reportOut;
+        } catch (Exception e) {
+            logger.error("红黄绿表单报告预览错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("红黄绿表单报告预览错误！");
+        }
+    }
+
+    public Long saveRYGReport(SysUser user, RYGReportVo reportIn) {
+        try{
+            Example planFormExp = new Example(TFrontPlanForm.class);
+            planFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("formMainId", reportIn.getChecklistID())
+                    .andEqualTo("reportStatus", 1).andEqualTo("isDel", false);
+            List<TFrontPlanForm> planForms = tFrontPlanFormMapper.selectByExample(planFormExp);
+            if (CollectionUtils.isNotEmpty(planForms)) {
+                throw new BaseException("报告请勿重复保存！");
+            }
+            List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),
+                    reportIn.getPatrolShopArrangeID());
+            List<Long> formAllPbmValueIds = new ArrayList<>();
+            for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
+                formAllPbmValueIds.add(tFormPbmVal.getId());
+            }
+
+            TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
+            if (result == null) {
+                throw new BaseException("打表结果不存在！");
+            }
+            TFormCheckResult resultParam = new TFormCheckResult();
+            resultParam.setId(result.getId());
+            resultParam.setSummary(reportIn.getSummary());
+            resultParam.setFrontPlanId(reportIn.getPatrolShopArrangeID());
+            resultParam.setFormMainId(reportIn.getChecklistID());
+            resultParam.setModifyTime(new Date());
+            // 更新结果
+            tFormCheckResultMapper.updateByPrimaryKeySelective(resultParam);
+
+            List<TFormAddItemValue> tFormAddItemValues = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(reportIn.getAdditionArray())) {
+                for (AdditionItemVo additionItemVo : reportIn.getAdditionArray()) {
+                    TFormAddItemValue formAddItemValue = new TFormAddItemValue();
+                    formAddItemValue.setId(additionItemVo.getItemID());
+                    formAddItemValue.setValue(additionItemVo.getValue());
+                    formAddItemValue.setFormAdditionItemName(additionItemVo.getName());
+                    tFormAddItemValues.add(formAddItemValue);
+                }
+                // 添加额外项值
+                tFormAddItemValueMapper.addAdditionItemList(tFormAddItemValues, new Date(), result.getId());
+            }
+
+            // 保存报告
+            TReport report = new TReport();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            report.setCheckFormTime(sdf.parse(reportIn.getCheckDate()));
+            Date now = new Date();
+            report.setCreateTime(now);
+            report.setCreateUserId(user.getId());
+            report.setOrgId(Constant.orgId);
+
+            // 查询店铺名
+            TShopInfo shop = tShopInfoMapper.selectByPrimaryKey(reportIn.getShopID());
+            report.setShopId(shop.getId());
+            report.setShopName(shop.getShopName());
+            // 查询店长
+            SysUser shopOwer = sysUserMapper.selectByPrimaryKey(shop.getShopManagerId());
+            report.setShopkeeperId(shopOwer.getId());
+            report.setShopkeeperName(shopOwer.getRealName());
+            // 查询打表人所属部门
+            SysDept department = sysDeptMapper.selectByPrimaryKey(user.getDptId());
+            report.setReporterDptId(department.getId());
+            report.setReporterDptName(department.getDptName());
+            // 打表人信息
+            report.setReporterId(user.getId());
+            report.setReporterName(user.getRealName());
+            // 打表人职位
+            List<SysPost> postions = sysPostMapper.findPositionByUserId(user.getId());
+            String postStr = "";
+            String postIdStr = "";
+            for (SysPost post : postions) {
+                postStr += post.getPostName() + ",";
+                postIdStr += post.getId() + ",";
+            }
+            if (StringUtils.isNotBlank(postStr)) {
+                postStr = postStr.substring(0, postStr.length() - 1);
+            }
+            if (StringUtils.isNotBlank(postIdStr)) {
+                postIdStr = postIdStr.substring(0, postIdStr.length() - 1);
+            }
+            report.setReporterPositionId(postIdStr);
+            report.setReporterPosition(postStr);
+            report.setFormResultId(result.getId());
+            report.setFormType(FormType.RVR_TYPE.getCode().byteValue());
+            tReportMapper.saveReport(report);
+
+            // 查询报告抄送部门
+            TFormMain form = tFormMainMapper.selectByPrimaryKey(reportIn.getChecklistID());
+            if (StringUtils.isNotBlank(form.getCcDptIds())) {
+                String[] ccDptId = form.getCcDptIds().split(",");
+                Example dptUserExp = new Example(SysUser.class);
+                dptUserExp.createCriteria().andIn("dptId", Arrays.asList(ccDptId)).andEqualTo("status", 0).andEqualTo("isDel", false);
+                List<SysUser> ccUsers = sysUserMapper.selectByExample(dptUserExp);
+                tReportUserMapper.addReportToUser(ccUsers, report.getId());
+            }
+
+            // 整理关联的机会点，并存入报告与机会点关联表
+            List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptsByResultId(result.getId());
+            List<TReportOppt> tReportOppts = new ArrayList<>();
+            for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
+                TReportOppt tReportOppt = new TReportOppt();
+                tReportOppt.setOpptId(tFormOpptValue.getOpptId());
+                tReportOppt.setOpptName(tFormOpptValue.getOpptName());
+                tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
+                tReportOppts.add(tReportOppt);
+            }
+            if (CollectionUtils.isNotEmpty(tReportOppts)) {
+                tReportOpptMapper.addReportOpptRelation(tReportOppts, report.getId(), new Date());
+            }
+
+            // 更新安排与表单完成状态
+            tFrontPlanFormMapper.updateStatusByFormAndArrange(1, reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID(), report.getId());
+
+            //更新巡店安排状态
+            Example tPlanFormExp = new Example(TFrontPlanForm.class);
+            tPlanFormExp.createCriteria().andEqualTo("frontPlanId", reportIn.getPatrolShopArrangeID()).andEqualTo("isDel", false)
+                    .andEqualTo("reportStatus", 2);
+            List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(tPlanFormExp);
+            if (CollectionUtils.isEmpty(tFrontPlanForms)) {
+                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID());
+
+            }
+            return report.getId();
+        } catch (Exception e) {
+            logger.error("保存红黄绿表单报告错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("保存红黄绿表单报告错误！");
+        }
+    }
+
+    public RYGReportVo findRYGReportInfoById(SysUser user, GetReportIn reportIn) {
+        try{
+            RYGReportVo reportVo = new RYGReportVo();
+
+            Long reportId = reportIn.getReportID();
+            TReport report = tReportMapper.selectByPrimaryKey(reportId);
+            if (report == null) {
+                throw new BaseException("报告不存在！");
+            }
+            reportVo.setReportID(reportId);
+            reportVo.setShopID(report.getShopId());
+            reportVo.setShopName(report.getShopName());
+            reportVo.setShopownerName(report.getShopkeeperName());
+            reportVo.setInspectorName(report.getReporterName());
+            reportVo.setInspectorPosition(report.getReporterPosition());
+            reportVo.setCheckDepartmentName(report.getReporterDptName());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            reportVo.setCheckDate(sdf.format(report.getCheckFormTime()));
+            TFormCheckResult result = tFormCheckResultMapper.selectByPrimaryKey(report.getFormResultId());
+            reportVo.setPatrolShopArrangeID(result.getFrontPlanId());
+            reportVo.setSummary(result.getSummary());
+            // 获取额外项
+            List<AdditionItemVo> additionItemVos = new ArrayList<>();
+            Example formAddItemValExp = new Example(TFormAddItemValue.class);
+            formAddItemValExp.createCriteria().andEqualTo("formResultId", report.getFormResultId());
+            List<TFormAddItemValue> tFormAddItemValues = tFormAddItemValueMapper.selectByExample(formAddItemValExp);
+            for (TFormAddItemValue tFormAddItemValue : tFormAddItemValues) {
+                AdditionItemVo additionItemVo = new AdditionItemVo();
+                additionItemVo.setItemID(tFormAddItemValue.getFormAdditionItemId());
+                additionItemVo.setName(tFormAddItemValue.getFormAdditionItemName());
+                additionItemVo.setValue(tFormAddItemValue.getValue());
+                additionItemVos.add(additionItemVo);
+            }
+            reportVo.setAdditionArray(additionItemVos);
+            // 统计触发的机会点
+            Example reportOpptExp = new Example(TReportOppt.class);
+            reportOpptExp.createCriteria().andEqualTo("reportId", reportId);
+            List<TReportOppt> tReportOppts = tReportOpptMapper.selectByExample(reportOpptExp);
+            reportVo.setChancePointNum(tReportOppts.size() != 0 ? String.valueOf(tReportOppts.size()) : "0");
+            List<ChancePointVo> chancePointVos = new ArrayList<>();
+            for (TReportOppt tReportOppt : tReportOppts) {
+                ChancePointVo chancePointVo = new ChancePointVo();
+                chancePointVo.setChancePointID(tReportOppt.getOpptId());
+                chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
+                TFormOpptValue tFormOpptValue = tFormOpptValueMapper.selectByPrimaryKey(tReportOppt.getFormOpptValueId());
+                // 计算该机会点使用情况
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId(),
+                        tFormOpptValue.getProblemId(), tFormOpptValue.getSubProblemId());
+                chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
+                // 查询该机会点关联的题项信息
+                TFormPbmVal pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
+                if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
+                    List<TFile> descImgs = tFileMapper.selectByIds(pbmValForThisOppt.getDescImgIds());
+                    List<ProblemImg> problemImgs = new ArrayList<>();
+                    for (TFile file : descImgs) {
+                        ProblemImg problemImg = new ProblemImg();
+                        problemImg.setImgUrl(file.getImgUrl());
+                        problemImgs.add(problemImg);
+                    }
+                    chancePointVo.setDescImgArr(problemImgs);
+                }
+
+                // 查询所属题项类型
+                TFormValue formValue = tFormValueMapper.selectByPrimaryKey(pbmValForThisOppt.getFormValueId());
+                StringBuilder pbmCascadingRelation = new StringBuilder();
+                pbmCascadingRelation.append(formValue.getFormTypeName()).append("#").append(pbmValForThisOppt.getProblemName());
+                chancePointVo.setChanceContent(pbmCascadingRelation.toString());
+                chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
+                List<ReportWorkVo> workArr = findImproveByOppt(tReportOppt.getOpptId(), report.getId());
+                chancePointVo.setWorkArr(workArr);
+                chancePointVos.add(chancePointVo);
+            }
+            reportVo.setChancePointArr(chancePointVos);
+            // 统计模块情况
+            Example formTypeValueExp = new Example(TFormValue.class);
+            formTypeValueExp.createCriteria().andEqualTo("formResultId", result.getId());
+            List<TFormValue> formTypeValues = tFormValueMapper.selectByExample(formTypeValueExp);
+            List<RYGFormKindVo> checklistKindVos = new ArrayList<>();
+            for (TFormValue tFormValue : formTypeValues) {
+                RYGFormKindVo checklistKindVo = new RYGFormKindVo();
+                checklistKindVo.setRedNum(tFormValue.getRedNum());
+                checklistKindVo.setYellowNum(tFormValue.getYellowNum());
+                checklistKindVo.setGreenNum(tFormValue.getGreenNum());
+                checklistKindVo.setNaNum(tFormValue.getNaNum());
+                checklistKindVo.setKindID(tFormValue.getFromTypeId());
+                checklistKindVo.setKindName(tFormValue.getFormTypeName());
+                checklistKindVos.add(checklistKindVo);
+            }
+            reportVo.setKindArray(checklistKindVos);
+            // 更新报告已读状态
+            tReportUserMapper.updateReadStatus(user.getId(), report.getId());
+
+            return reportVo;
+        }catch (Exception e) {
+            logger.error("读取红黄绿报告错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("读取红黄绿报告错误！");
+        }
+    }
 }

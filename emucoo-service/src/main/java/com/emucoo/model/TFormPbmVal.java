@@ -85,6 +85,9 @@ public class TFormPbmVal extends BaseEntity {
     @Column(name = "desc_img_ids")
     private String descImgIds;
 
+    @Column(name = "result_type")
+    private Integer resultType;
+
     @Transient
     private List<TFormSubPbmVal> formSubPbmValList;
 
@@ -347,5 +350,13 @@ public class TFormPbmVal extends BaseEntity {
 
     public void setDescImgIds(String descImgIds) {
         this.descImgIds = descImgIds;
+    }
+
+    public Integer getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Integer resultType) {
+        this.resultType = resultType;
     }
 }
