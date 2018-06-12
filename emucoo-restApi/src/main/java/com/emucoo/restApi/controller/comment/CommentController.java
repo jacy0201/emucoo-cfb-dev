@@ -23,7 +23,7 @@ import java.util.List;
 @Api(description = "评论模块接口")
 @RestController
 @RequestMapping(value = "/api/comment")
-public class CommentControlller extends AppBaseController {
+public class CommentController extends AppBaseController {
 
 	@Resource
 	private CommentService commentService;
