@@ -263,7 +263,8 @@ public class ReportServiceImpl implements ReportService {
                 formOpptValExp.createCriteria().andEqualTo("opptId", tFormOpptValue.getOpptId()).andEqualTo("isPick", true);
                 List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);*/
                 // 计算该机会点使用情况
-                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId());
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(reportIn.getShopID(), reportIn.getChecklistID(), tFormOpptValue.getOpptId(),
+                        tFormOpptValue.getProblemId(), tFormOpptValue.getSubProblemId());
                 chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
                 // 查询该机会点关联的题项信息
                 TFormPbmVal pbmValForThisOppt = null;
@@ -376,9 +377,10 @@ public class ReportServiceImpl implements ReportService {
      * @param shopId
      * @param formId
      * @param opptId
-     * @return
+     * @param problemId
+     *@param subProblemId @return
      */
-    private List<TFormOpptValue> opptListInShopAndForm(Long shopId, Long formId, Long opptId) {
+    private List<TFormOpptValue> opptListInShopAndForm(Long shopId, Long formId, Long opptId, Long problemId, Long subProblemId) {
         // 根据店铺查询巡店安排
         /*Example arrangeExp = new Example(TFrontPlan.class);
         arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
@@ -432,13 +434,17 @@ public class ReportServiceImpl implements ReportService {
         for(TFormCheckResult result : results) {
             resultIds.add(result.getId());
         }
-        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId);
+
+        if (subProblemId != null) {
+            problemId = null;
+        }
+        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId, problemId, subProblemId);
 
         return tFormOpptValues;
 
     }
 
-    private List<TFormOpptValue> abilityOpptListInShopAndForm(Long shopId, Long formId, Long opptId) {
+    private List<TFormOpptValue> abilityOpptListInShopAndForm(Long shopId, Long formId, Long opptId, Long problemId, Long subProblemId) {
         // 根据店铺查询巡店安排
         Example arrangeExp = new Example(TFrontPlan.class);
         arrangeExp.createCriteria().andEqualTo("shopId", shopId).andEqualTo("status", ShopArrangeStatus.FINISH_CHECK.getCode()).andEqualTo("isDel", false);
@@ -483,7 +489,11 @@ public class ReportServiceImpl implements ReportService {
             }
         }
 
-        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId);
+        if (subProblemId != null) {
+            problemId = null;
+        }
+
+        List<TFormOpptValue> tFormOpptValues = tFormOpptValueMapper.findOpptValuesByOpptIdAndResult(resultIds, opptId, problemId, subProblemId);
 
         return tFormOpptValues;
 
@@ -645,6 +655,7 @@ public class ReportServiceImpl implements ReportService {
                 TReportOppt tReportOppt = new TReportOppt();
                 tReportOppt.setOpptId(tFormOpptValue.getOpptId());
                 tReportOppt.setOpptName(tFormOpptValue.getOpptName());
+                tReportOppt.setFormOpptValueId(tFormOpptValue.getId());
                 tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
                 tReportOppts.add(tReportOppt);
             }
@@ -744,17 +755,14 @@ public class ReportServiceImpl implements ReportService {
             ChancePointVo chancePointVo = new ChancePointVo();
             chancePointVo.setChancePointID(tReportOppt.getOpptId());
             chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
+            TFormOpptValue tFormOpptValue = tFormOpptValueMapper.selectByPrimaryKey(tReportOppt.getFormOpptValueId());
             // 计算该机会点使用情况
-            List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
+            List<TFormOpptValue> opptListUseInCertainShopAndForm = opptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId(),
+                    tFormOpptValue.getProblemId(), tFormOpptValue.getSubProblemId());
             chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
             // 查询该机会点关联的题项信息
             TFormPbmVal pbmValForThisOppt = null;
             TFormSubPbmVal subPbmValForThisOppt = null;
-            Example formOpptValExp = new Example(TFormOpptValue.class);
-            formOpptValExp.createCriteria().andEqualTo("opptId", tReportOppt.getOpptId()).andEqualTo("isPick", true)
-                .andEqualTo("formResultId", result.getId());
-            List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);
-            TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
             if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                 pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
                 if (StringUtils.isNotBlank(pbmValForThisOppt.getDescImgIds())) {
@@ -1054,20 +1062,14 @@ public class ReportServiceImpl implements ReportService {
                 ChancePointVo chancePointVo = new ChancePointVo();
                 chancePointVo.setChancePointID(tReportOppt.getOpptId());
                 chancePointVo.setChancePointTitle(tReportOppt.getOpptName());
+                TFormOpptValue tFormOpptValue = tFormOpptValueMapper.selectByPrimaryKey(tReportOppt.getFormOpptValueId());
                 // 计算该机会点使用情况
-                List<TFormOpptValue> opptListUseInCertainShopAndForm = abilityOpptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId());
+                List<TFormOpptValue> opptListUseInCertainShopAndForm = abilityOpptListInShopAndForm(result.getShopId(), result.getFormMainId(), tReportOppt.getOpptId(),
+                        tFormOpptValue.getProblemId(), tFormOpptValue.getSubProblemId());
                 chancePointVo.setChancePointFrequency(opptListUseInCertainShopAndForm == null ? 0 : opptListUseInCertainShopAndForm.size());
                 // 查询该机会点关联的题项信息
                 TFormPbmVal pbmValForThisOppt = null;
                 TFormSubPbmVal subPbmValForThisOppt = null;
-                Example formOpptValExp = new Example(TFormOpptValue.class);
-                formOpptValExp.createCriteria().andEqualTo("opptId", tReportOppt.getOpptId()).andEqualTo("isPick", true)
-                        .andIn("formResultId", subResultIds);
-                List<TFormOpptValue> certainFormOpptValues = tFormOpptValueMapper.selectByExample(formOpptValExp);
-                if(CollectionUtils.isEmpty(certainFormOpptValues)) {
-                    continue;
-                }
-                TFormOpptValue tFormOpptValue = certainFormOpptValues.get(0);
                 if (ProblemType.NOT_SAMPLE.getCode().equals(tFormOpptValue.getProblemType().intValue())) {
                     pbmValForThisOppt = tFormPbmValMapper.selectByPrimaryKey(tFormOpptValue.getProblemValueId());
                     chancePointVo.setChanceDescription(pbmValForThisOppt.getProblemDescription());
@@ -1148,7 +1150,6 @@ public class ReportServiceImpl implements ReportService {
      * 读取子表结果
      * @param subFormId
      * @param parentResultId
-     * @param subResultIds
      * @return
      */
     private AbilitySubForm findSubAbilityReportInfo(Long subFormId, Long parentResultId) {

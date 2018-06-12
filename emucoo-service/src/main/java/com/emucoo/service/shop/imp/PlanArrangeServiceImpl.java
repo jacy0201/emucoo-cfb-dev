@@ -112,16 +112,17 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
                 // 根据店铺id查询负责人
                 TLoopSubPlan tLoopSubPlan = tLoopSubPlanMapper.selectByPrimaryKey(planArrangeAddIn.getPlanID());
                 List<SysUserShop> sysUserShops = sysUserShopMapper.findResponsiblePersonOfShop(shop.getShopID(), tLoopSubPlan.getDptId());
-                if(sysUserShops != null && sysUserShops.size() > 1) {
-                    throw new BaseException("一个店铺不能被同一个部门内的多个用户管理！");
-                } else if(sysUserShops != null && sysUserShops.size() > 0) {
+                if(CollectionUtils.isEmpty(sysUserShops)) {
+                    throw new BaseException("无人负责该店铺！");
+                }
+                if(sysUserShops != null && sysUserShops.size() > 0) {
                     tFrontPlan.setArrangeeId(sysUserShops.get(0).getUserId());
                 }
-                Example example = new Example(SysUserShop.class);
+                /*Example example = new Example(SysUserShop.class);
                 example.createCriteria().andEqualTo("shopId", shop.getShopID()).andEqualTo("isDel", false);
-                List<SysUserShop> userShops = sysUserShopMapper.selectByExample(example);
+                List<SysUserShop> userShops = sysUserShopMapper.selectByExample(example);*/
                 String userIds = "";
-                for (SysUserShop userShop : userShops) {
+                for (SysUserShop userShop : sysUserShops) {
                     userIds += userShop.getUserId() + ",";
                 }
                 if(StringUtils.isNotBlank(userIds)) {

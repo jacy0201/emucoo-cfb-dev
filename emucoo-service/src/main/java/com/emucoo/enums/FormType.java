@@ -6,7 +6,9 @@ package com.emucoo.enums;
 public enum FormType {
     RVR_TYPE(1, "类RVR表"),
 
-    ABILITY_TYPE(2, "能力模型表");
+    ABILITY_TYPE(2, "能力模型表"),
+
+    RYG_TYPE(3,"红黄绿表");
 
     private final Integer code;
     private final String msg;

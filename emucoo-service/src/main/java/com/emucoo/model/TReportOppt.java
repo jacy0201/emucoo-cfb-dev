@@ -19,6 +19,9 @@ public class TReportOppt extends BaseEntity {
     @Column(name = "oppt_name")
     private String opptName;
 
+    @Column(name = "form_oppt_value_id")
+    private Long formOpptValueId;
+
     @Column(name = "oppt_desc")
     private String opptDesc;
 
@@ -112,5 +115,13 @@ public class TReportOppt extends BaseEntity {
      */
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public Long getFormOpptValueId() {
+        return formOpptValueId;
+    }
+
+    public void setFormOpptValueId(Long formOpptValueId) {
+        this.formOpptValueId = formOpptValueId;
     }
 }
