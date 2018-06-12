@@ -6,6 +6,7 @@ import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.RYGForm.RYGForm;
 import com.emucoo.dto.modules.RYGForm.RYGFormKindVo;
 import com.emucoo.dto.modules.RYGForm.RYGFormOut;
+import com.emucoo.dto.modules.RYGForm.RYGFormProblemVo;
 import com.emucoo.dto.modules.abilityForm.AbilityFormMain;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
@@ -1346,19 +1347,16 @@ public class FormServiceImpl implements FormService {
                 formKindVo.setKindID(module.getId());
                 formKindVo.setKindName(module.getTypeName());
 
-                List<FormProblemVo> problemVos = new ArrayList<>();
+                List<RYGFormProblemVo> problemVos = new ArrayList<>();
 
                 List<TFormPbm> pbms = formPbmMapper.findFormPbmsByFormTypeId(module.getId());
                 for (TFormPbm pbm : pbms) {
-                    FormProblemVo pbmVo = new FormProblemVo();
+                    RYGFormProblemVo pbmVo = new RYGFormProblemVo();
                     pbmVo.setProblemID(pbm.getId());
                     pbmVo.setProblemName(pbm.getName());
                     pbmVo.setProblemDescription(pbm.getDescriptionHit());
                     pbmVo.setIsImportant(pbm.getIsImportant());
                     pbmVo.setIsNA(false);
-                    pbmVo.setIsScore(false);
-                    pbmVo.setProblemScore(pbm.getScore());
-                    pbmVo.setProblemTotal(pbm.getScore());
                     pbmVo.setProblemType(pbm.getProblemSchemaType());
 
                     List<TOpportunity> oppts = opportunityMapper.findOpptsByPbmId(pbm.getId());
@@ -1384,7 +1382,6 @@ public class FormServiceImpl implements FormService {
 
                 formKindVo.setProblemNum(problemVos.size());
                 formKindVo.setProblemArray(problemVos);
-                formKindVo.setScoreRate(0.0f);
                 formKindVo.setWrongNum(0);
                 TShopInfo shopInfo = shopInfoMapper.selectByPrimaryKey(formIn.getShopID());
                 formOut.setShopName(shopInfo.getShopName());
@@ -1458,8 +1455,8 @@ public class FormServiceImpl implements FormService {
 
                 formValueMapper.insert(formValue);
 
-                List<FormProblemVo> problemVos = module.getProblemArray();
-                for (FormProblemVo problemVo : problemVos) {
+                List<RYGFormProblemVo> problemVos = module.getProblemArray();
+                for (RYGFormProblemVo problemVo : problemVos) {
                     TFormPbmVal formPbmVal = new TFormPbmVal();
                     formPbmVal.setCreateTime(DateUtil.currentDate());
                     formPbmVal.setModifyTime(DateUtil.currentDate());
@@ -1467,7 +1464,7 @@ public class FormServiceImpl implements FormService {
                     formPbmVal.setFormResultId(formCheckResult.getId());
                     formPbmVal.setFormValueId(formValue.getId());
                     formPbmVal.setIsNa(problemVo.getIsNA());
-                    formPbmVal.setIsScore(problemVo.getIsScore());
+                    formPbmVal.setIsScore(problemVo.getIsDone());
                     formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                     formPbmVal.setProblemName(problemVo.getProblemName());
                     formPbmVal.setNotes(problemVo.getNotes());
@@ -1567,46 +1564,6 @@ public class FormServiceImpl implements FormService {
                             formOpptValue.setModifyTime(DateUtil.currentDate());
 
                             formOpptValueMapper.insert(formOpptValue);
-                        }
-                    }
-
-                    List<FormSubProblemVo> subProblemVos = problemVo.getSubProblemArray();
-                    if (subProblemVos != null && subProblemVos.size() > 0) {
-                        for (FormSubProblemVo subProblemVo : subProblemVos) {
-                            TFormSubPbmVal subPbmVal = new TFormSubPbmVal();
-                            subPbmVal.setCreateTime(DateUtil.currentDate());
-                            subPbmVal.setModifyTime(DateUtil.currentDate());
-                            subPbmVal.setFormResultId(formCheckResult.getId());
-                            subPbmVal.setProblemValueId(formPbmVal.getId());
-                            subPbmVal.setSubProblemId(subProblemVo.getSubProblemID());
-                            subPbmVal.setSubProblemName(subProblemVo.getSubProblemName());
-                            subPbmVal.setSubProblemScore(subProblemVo.getSubProblemScore());
-                            formSubPbmValMapper.insert(subPbmVal);
-
-                            List<FormChanceVo> subChanceVos = subProblemVo.getSubProblemChanceArray();
-                            List<FormSubProblemUnitVo> subProblemUnitVos = problemVo.getSubProblemUnitArray();
-                            List<TFormOpptValue> subOppts = new ArrayList<>();
-                            for (FormChanceVo subChanceVo : subChanceVos) {
-                                for (FormSubProblemUnitVo subProblemUnitVo : subProblemUnitVos) {
-                                    TFormOpptValue formOpptValue = new TFormOpptValue();
-                                    formOpptValue.setCreateTime(DateUtil.currentDate());
-                                    formOpptValue.setModifyTime(DateUtil.currentDate());
-                                    formOpptValue.setFormResultId(formCheckResult.getId());
-                                    formOpptValue.setIsPick(subChanceVo.getIsPick());
-                                    formOpptValue.setOpptId(subChanceVo.getChanceID());
-                                    formOpptValue.setOpptName(subChanceVo.getChanceName());
-                                    formOpptValue.setProblemId(problemVo.getProblemID());
-                                    formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
-                                    formOpptValue.setSubHeaderId(subProblemUnitVo.getSubProblemUnitID());
-                                    formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
-                                    formOpptValue.setSubProblemUnitScore(subProblemVo.getSubProblemScore());
-                                    formOpptValue.setSubProblemValueId(subPbmVal.getId());
-                                    formOpptValue.setProblemValueId(formPbmVal.getId());
-
-                                    subOppts.add(formOpptValue);
-                                }
-                            }
-                            formOpptValueMapper.insertList(subOppts);
                         }
                     }
                 }

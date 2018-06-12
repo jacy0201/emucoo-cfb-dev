@@ -1306,10 +1306,14 @@ public class ReportServiceImpl implements ReportService {
             List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),
                     reportIn.getPatrolShopArrangeID());
             List<Long> formAllPbmValueIds = new ArrayList<>();
-
+            int naNum = 0;
             for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
                 formAllPbmValueIds.add(tFormPbmVal.getId());
+                if (tFormPbmVal.getIsNa().equals(Boolean.TRUE)) {
+                    naNum++;
+                }
             }
+            reportOut.setAllNaNum(naNum);
             // 统计触发的机会点
             if (formAllPbmValueIds.size() > 0) {
                 Example subPbmValExp = new Example(TFormSubPbmVal.class);
@@ -1362,18 +1366,26 @@ public class ReportServiceImpl implements ReportService {
             // 统计模块情况
             List<TFormValue> formTypeValues = tFormValueMapper.findTypeValueListByFormAndArrange(reportIn.getChecklistID(), reportIn.getPatrolShopArrangeID());
             List<RYGFormKindVo> checklistKindScoreVos = new ArrayList<>();
+            int allRedNum = 0;
+            int allYellowNum = 0;
+            int allGreenNum = 0;
             for (TFormValue tFormValue : formTypeValues) {
                 RYGFormKindVo checklistKindVo = new RYGFormKindVo();
                 checklistKindVo.setKindID(tFormValue.getFromTypeId());
                 checklistKindVo.setKindName(tFormValue.getFormTypeName());
                 checklistKindVo.setRedNum(tFormValue.getRedNum());
+                allRedNum += tFormValue.getRedNum();
                 checklistKindVo.setYellowNum(tFormValue.getYellowNum());
+                allYellowNum += tFormValue.getYellowNum();
                 checklistKindVo.setGreenNum(tFormValue.getGreenNum());
+                allGreenNum += tFormValue.getGreenNum();
                 checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindScoreVos.add(checklistKindVo);
             }
             reportOut.setKindArray(checklistKindScoreVos);
-
+            reportOut.setAllRedNum(allRedNum);
+            reportOut.setAllYellowNum(allYellowNum);
+            reportOut.setAllGreenNum(allGreenNum);
             return reportOut;
         } catch (Exception e) {
             logger.error("红黄绿表单报告预览错误！", e);
@@ -1395,9 +1407,11 @@ public class ReportServiceImpl implements ReportService {
             }
             List<TFormPbmVal> tFormPbmVals = tFormPbmValMapper.findFormPbmValsByFormAndArrange(reportIn.getChecklistID(),
                     reportIn.getPatrolShopArrangeID());
-            List<Long> formAllPbmValueIds = new ArrayList<>();
+            int naNum = 0;
             for (TFormPbmVal tFormPbmVal : tFormPbmVals) {
-                formAllPbmValueIds.add(tFormPbmVal.getId());
+                if (tFormPbmVal.getIsNa().equals(Boolean.TRUE)) {
+                    naNum++;
+                }
             }
 
             TFormCheckResult result = findFormResult(reportIn.getPatrolShopArrangeID(), reportIn.getChecklistID());
@@ -1407,6 +1421,7 @@ public class ReportServiceImpl implements ReportService {
             TFormCheckResult resultParam = new TFormCheckResult();
             resultParam.setId(result.getId());
             resultParam.setSummary(reportIn.getSummary());
+            resultParam.setNaNum(naNum);
             resultParam.setFrontPlanId(reportIn.getPatrolShopArrangeID());
             resultParam.setFormMainId(reportIn.getChecklistID());
             resultParam.setModifyTime(new Date());
@@ -1537,6 +1552,7 @@ public class ReportServiceImpl implements ReportService {
             reportVo.setCheckDate(sdf.format(report.getCheckFormTime()));
             TFormCheckResult result = tFormCheckResultMapper.selectByPrimaryKey(report.getFormResultId());
             reportVo.setPatrolShopArrangeID(result.getFrontPlanId());
+            reportVo.setAllNaNum(result.getNaNum());
             reportVo.setSummary(result.getSummary());
             // 获取额外项
             List<AdditionItemVo> additionItemVos = new ArrayList<>();
@@ -1595,17 +1611,26 @@ public class ReportServiceImpl implements ReportService {
             formTypeValueExp.createCriteria().andEqualTo("formResultId", result.getId());
             List<TFormValue> formTypeValues = tFormValueMapper.selectByExample(formTypeValueExp);
             List<RYGFormKindVo> checklistKindVos = new ArrayList<>();
+            int allRedNum = 0;
+            int allYellowNum = 0;
+            int allGreenNum = 0;
             for (TFormValue tFormValue : formTypeValues) {
                 RYGFormKindVo checklistKindVo = new RYGFormKindVo();
-                checklistKindVo.setRedNum(tFormValue.getRedNum());
-                checklistKindVo.setYellowNum(tFormValue.getYellowNum());
-                checklistKindVo.setGreenNum(tFormValue.getGreenNum());
-                checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindVo.setKindID(tFormValue.getFromTypeId());
                 checklistKindVo.setKindName(tFormValue.getFormTypeName());
+                checklistKindVo.setRedNum(tFormValue.getRedNum());
+                allRedNum += tFormValue.getRedNum();
+                checklistKindVo.setYellowNum(tFormValue.getYellowNum());
+                allYellowNum += tFormValue.getYellowNum();
+                checklistKindVo.setGreenNum(tFormValue.getGreenNum());
+                allGreenNum += tFormValue.getGreenNum();
+                checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindVos.add(checklistKindVo);
             }
             reportVo.setKindArray(checklistKindVos);
+            reportVo.setAllRedNum(allRedNum);
+            reportVo.setAllYellowNum(allYellowNum);
+            reportVo.setAllGreenNum(allGreenNum);
             // 更新报告已读状态
             tReportUserMapper.updateReadStatus(user.getId(), report.getId());
 
