@@ -1,11 +1,8 @@
 package com.emucoo.restApi.controller.demo;
 
 
-import com.emucoo.common.msg.JiGuangProxy;
-import com.emucoo.common.msg.MsgPushException;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.demo.demoVo_I;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,19 +84,5 @@ public class AppDemoController extends AppBaseController {
 //		Content content = apiDemoService.findById(id);
 //		return success(content);
 //    }
-
-    @Autowired
-    private JiGuangProxy jiGuangProxy;
-
-	/*@PostMapping("/testJiguang")
-    public AppResult<String> testJiguang(@RequestBody ParamVo<String> base) {
-        String deviceId = base.getData();
-        try {
-            int code = jiGuangProxy.sendNotification("测试", "这是一个测试222", deviceId, null, JiGuangProxy.DeviceOS.OS_ALL);
-        } catch (MsgPushException e) {
-            e.printStackTrace();
-        }
-        return AppResult.successRes("ok");
-    }*/
 
 }

@@ -53,8 +53,7 @@ public class CommentServiceImpl implements CommentService {
         businessMsg.setFunctionType(FunctionType.COMMENT_REMIND.getCode().byteValue());
         businessMsg.setIsRead(false);
         businessMsg.setIsSend(false);
-        businessMsg.setTitle(user.getRealName()+"发表“"+vo.getContent()+"”");
-        //businessMsg.setReceiverId();
+        businessMsg.setTitle(user.getRealName()+" 发表评论:“"+vo.getContent()+"”");
         businessMsg.setSendTime(new Date());
         //如果workType 为 常规、指派、改善 、备忘 任务类型，则根据 workID 和 subID 获取任务主键ID
         if (workType == 1 || workType == 2 || workType == 3 || workType==5){
@@ -72,6 +71,7 @@ public class CommentServiceImpl implements CommentService {
             receiverIdList.add(tReport.getReporterId());
         }else if(workType == 6){//workType==6 评论， 针对评论的 回复
             unionId=vo.getCommentID();
+            businessMsg.setTitle(user.getRealName()+" 发表回复:“"+vo.getContent()+"”");
             //根据评论id,查询评论人id，和任务的执行人id
             TTaskComment ttc=taskCommentMapper.selectByPrimaryKey(vo.getCommentID());
             //添加被回复人id
@@ -89,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
                 TReport tr=tReportMapper.selectByPrimaryKey(uid);
                 receiverIdList.add(tr.getReporterId());
             }else if(unionType==7){
-                TRepairWork trw=repairWorkMapper.selectByPrimaryKey(unionId);
+                TRepairWork trw=repairWorkMapper.selectByPrimaryKey(uid);
                 //维修人员id
                 receiverIdList.add(trw.getRepairManId());
             }
@@ -157,7 +157,7 @@ public class CommentServiceImpl implements CommentService {
         String  subId=vo.getSubID();
         Long  reportId=vo.getReportID();
         Long commentId=vo.getCommentID();
-        List<CommentSelectOut> list=null;
+        List<CommentSelectOut> list=new ArrayList<>();
         Long unionId=null;
         //workType=6 评论，查询类型为评论的评论 ，即查询回复
         if(6==workType){//查询回复

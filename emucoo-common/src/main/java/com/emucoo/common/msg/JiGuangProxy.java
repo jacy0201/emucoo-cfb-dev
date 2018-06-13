@@ -103,7 +103,7 @@ public class JiGuangProxy {
         }
     }
 
-    private PushPayload buildPushPayLoad(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS, MsgType msgType) throws MsgPushException {
+    private PushPayload buildPushPayLoad(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS, MsgType msgType) throws IllegalArgumentException {
         if (StringUtils.isBlank(title) || StringUtils.isBlank(content)) {
             throw new IllegalArgumentException("Title and content must not be blank!");
         }
@@ -135,7 +135,6 @@ public class JiGuangProxy {
      * @param extra
      * @param deviceOS
      * @return
-     * @throws MsgPushException
      */
     public int sendNotification(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
@@ -166,7 +165,6 @@ public class JiGuangProxy {
      * @param extra
      * @param deviceOS
      * @return
-     * @throws MsgPushException
      */
     public int sendMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
@@ -197,7 +195,6 @@ public class JiGuangProxy {
      * @param extra
      * @param deviceOS
      * @return
-     * @throws MsgPushException
      */
     public int sendNotificationAndMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
