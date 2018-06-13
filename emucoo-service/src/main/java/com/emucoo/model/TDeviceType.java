@@ -36,10 +36,10 @@ public class TDeviceType {
     private Date modifyTime;
 
     @Column(name = "is_use")
-    private boolean isUse;
+    private Boolean isUse;
 
     @Column(name = "is_del")
-    private boolean isDel;
+    private Boolean isDel;
 
     @Transient
     private long brandId;
@@ -138,19 +138,19 @@ public class TDeviceType {
         this.tier = tier;
     }
 
-    public void setIsUse(boolean isUse) {
+    public void setIsUse(Boolean isUse) {
         this.isUse = isUse;
     }
 
-    public boolean getIsUse(){
+    public Boolean getIsUse(){
         return isUse;
     }
 
-    public void setIsDel(boolean isDel) {
+    public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
     }
 
-    public boolean getIsDel(){
+    public Boolean getIsDel(){
         return isDel;
     }
 
