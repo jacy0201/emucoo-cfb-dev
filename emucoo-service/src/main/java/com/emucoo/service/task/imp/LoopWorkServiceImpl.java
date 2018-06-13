@@ -57,6 +57,13 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     @Autowired
     private SysDeptMapper sysDeptMapper;
 
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
+
+    @Autowired
+    private MessageBuilder messageBuilder;
+
+    @Override
     public int fetchPendingExecuteWorkNum(Long submitUserId, Date today) {
         return loopWorkMapper.countPendingExecuteWorkNum(submitUserId, today);
     }
@@ -157,7 +164,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         }
 
         AssignTaskStateVo stateVo = new AssignTaskStateVo();
-        stateVo.setBackTime(new Date().getTime());
+        stateVo.setBackTime(System.currentTimeMillis());
         stateVo.setTaskStatus(loopWork.getWorkStatus() == null ? 0 : loopWork.getWorkStatus());
         TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
         stateVo.setTaskTitle(task.getName() == null ? "" : task.getName());
@@ -269,7 +276,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                     if (user != null) {
                         rv.setAnswerHeadUrl(user.getHeadImgUrl());
                     }
-                    if (loginUser.getId() == wn.getUserId()) {
+                    if (loginUser.getId().longValue() == wn.getUserId().longValue()) {
                         rv.setReplyAction(2);
                     } else {
                         rv.setReplyAction(1);
@@ -516,8 +523,12 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
             loopWorkMapper.insert(lw);
 
+            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, lw, eUser, 1);
+            businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
+            businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
+
 
     private Date getRemindTime(Integer type, Date dt) {
         Date date = null;
@@ -609,14 +620,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + "23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
             lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getEndTime()));
-            Date RemindTime = null;
+            Date remindTime = null;
             //type=1 ，提醒时间为 日程开始时间
             if (null != voi.getRemindType() && voi.getRemindType().equals(1)) {
-                RemindTime = lw.getExecuteBeginDate();
+                remindTime = lw.getExecuteBeginDate();
             } else {
-                RemindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
+                remindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
             }
-            lw.setExecuteRemindTime(RemindTime);
+            lw.setExecuteRemindTime(remindTime);
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
             lw.setExcuteUserId(userId);
@@ -706,14 +717,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteEndDate(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + "23:59"));
             lw.setExecuteRemindType(voi.getRemindType());
             lw.setExecuteDeadline(DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getEndTime()));
-            Date RemindTime = null;
+            Date remindTime = null;
             //type=1 ，提醒时间为 日程开始时间
             if (null != voi.getRemindType() && voi.getRemindType().equals(1)) {
-                RemindTime = lw.getExecuteBeginDate();
+                remindTime = lw.getExecuteBeginDate();
             } else {
-                RemindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
+                remindTime = getRemindTime(voi.getRemindType(), DateUtil.toDateYYYYMMDDHHMM(DateUtil.dateToString1(dt) + " " + voi.getStartTime()));
             }
-            lw.setExecuteRemindTime(RemindTime);
+            lw.setExecuteRemindTime(remindTime);
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
             lw.setExcuteUserId(userId);
@@ -777,11 +788,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    public void finishMemo(MemoFinishVo_I memoFinishVo_I, Long userId) {
+    public void finishMemo(MemoFinishVo_I memoFinishVoI, Long userId) {
         Example example = new Example(TLoopWork.class);
-        example.createCriteria().andEqualTo("workId", memoFinishVo_I.getWorkID()).andEqualTo("subWorkId", memoFinishVo_I.getSubWorkID());
+        example.createCriteria().andEqualTo("workId", memoFinishVoI.getWorkID()).andEqualTo("subWorkId", memoFinishVoI.getSubWorkID());
         TLoopWork tLoopWork = new TLoopWork();
-        tLoopWork.setWorkStatus(memoFinishVo_I.getMemoStatus());
+        tLoopWork.setWorkStatus(memoFinishVoI.getMemoStatus());
         tLoopWork.setModifyTime(new Date());
         loopWorkMapper.updateByExampleSelective(tLoopWork, example);
     }
@@ -905,11 +916,11 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
         }).collect(Collectors.toList());
         works.addAll(inspections);
-        WorkVo_O workVo_o = new WorkVo_O();
-        workVo_o.setBackTime(DateUtil.currentDate().getTime());
-        workVo_o.setDate(DateUtil.YYYYMMDD.format(needDate));
-        workVo_o.setWorkArr(works);
-        return workVo_o;
+        WorkVo_O workvoo = new WorkVo_O();
+        workvoo.setBackTime(DateUtil.currentDate().getTime());
+        workvoo.setDate(DateUtil.YYYYMMDD.format(needDate));
+        workvoo.setWorkArr(works);
+        return workvoo;
     }
 
     @Override
@@ -951,10 +962,10 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 //                return work;
 //            }
         }).collect(Collectors.toList());
-        WorkVo_O workVo_o = new WorkVo_O();
-        workVo_o.setBackTime(DateUtil.currentDate().getTime());
-        workVo_o.setWorkArr(works);
-        workVo_o.setDate(DateUtil.YYYYMMDD.format(new Date()));
-        return workVo_o;
+        WorkVo_O workvoo = new WorkVo_O();
+        workvoo.setBackTime(DateUtil.currentDate().getTime());
+        workvoo.setWorkArr(works);
+        workvoo.setDate(DateUtil.YYYYMMDD.format(new Date()));
+        return workvoo;
     }
 }
