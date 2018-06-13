@@ -129,6 +129,8 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Transactional(rollbackFor = {Exception.class})
     public void saveDeviceType(TDeviceType dvc) {
         dvc.setTier(2);
+        dvc.setIsUse(true);
+        dvc.setIsDel(false);
         dvc.setCreateTime(DateUtil.currentDate());
         dvc.setModifyTime(DateUtil.currentDate());
         if (dvc.getId() == 0) {
@@ -165,6 +167,10 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         for (TDeviceType tdt : children) {
             tdt.setParentTypeId(dvc.getId());
             tdt.setTier(dvc.getTier() + 1);
+            tdt.setIsUse(true);
+            tdt.setIsDel(false);
+            tdt.setCreateTime(DateUtil.currentDate());
+            tdt.setModifyTime(DateUtil.currentDate());
             if (tdt.getId() == 0) {
                 deviceTypeMapper.insertUseGeneratedKeys(tdt);
             } else {
