@@ -352,7 +352,6 @@ public class FormManageServiceImpl implements FormManageService {
         if(formType != null && formType > FormType.RVR_TYPE.getCode()) {
             TFormMain formParam = new TFormMain();
             formParam.setIsDel(false);
-            formParam.setIsUse(true);
             formParam.setFormType(formType);
             formMain = formMainMapper.selectOne(formParam);
         } else {
