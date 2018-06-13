@@ -473,16 +473,16 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
         if (StringUtils.isNotBlank(task.getExecuteRemindTime())) {
             String[] remTm = task.getExecuteRemindTime().split(":");
-            vo.setAuditCloseHour(Integer.parseInt(remTm[0] == null ? "0" : remTm[0]));
+            vo.setExeRemindHour(Integer.parseInt(remTm[0] == null ? "0" : remTm[0]));
             if (remTm.length == 2) {
-                vo.setAuditCloseMinute(Integer.parseInt(remTm[1] == null ? "0" : remTm[1]));
+                vo.setExeRemindMinute(Integer.parseInt(remTm[1] == null ? "0" : remTm[1]));
             }
         }
         if (StringUtils.isNotBlank(task.getAuditDeadline())) {
             String[] audTm = task.getAuditDeadline().split(":");
-            vo.setExeRemindHour(Integer.parseInt(audTm[0] == null ? "0" : audTm[0]));
+            vo.setAuditCloseHour(Integer.parseInt(audTm[0] == null ? "0" : audTm[0]));
             if (audTm.length == 2) {
-                vo.setExeRemindMinute(Integer.parseInt(audTm[1] == null ? "0" : audTm[1]));
+                vo.setAuditCloseMinute(Integer.parseInt(audTm[1] == null ? "0" : audTm[1]));
             }
         }
 
@@ -495,7 +495,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         for (TTaskPerson taskPerson : ccPersons) {
             TaskParameterVo.DeptPosition dept = null;
             for (TaskParameterVo.DeptPosition ccDpt : ccDpts) {
-                if (ccDpt.getDept().getId() == taskPerson.getDptId()) {
+                if (ccDpt.getDept().getId().longValue() == taskPerson.getDptId().longValue()) {
                     dept = ccDpt;
                     break;
                 }
