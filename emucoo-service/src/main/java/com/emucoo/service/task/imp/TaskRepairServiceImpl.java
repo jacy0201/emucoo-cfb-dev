@@ -129,7 +129,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Transactional(rollbackFor = {Exception.class})
     public void saveDeviceType(TDeviceType dvc) {
         dvc.setTier(2);
-        dvc.setIsUse(true);
+        dvc.setIsUse(false);
         dvc.setIsDel(false);
         dvc.setCreateTime(DateUtil.currentDate());
         dvc.setModifyTime(DateUtil.currentDate());
