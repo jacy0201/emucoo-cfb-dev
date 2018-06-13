@@ -89,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
                 TReport tr=tReportMapper.selectByPrimaryKey(uid);
                 receiverIdList.add(tr.getReporterId());
             }else if(unionType==7){
-                TRepairWork trw=repairWorkMapper.selectByPrimaryKey(unionId);
+                TRepairWork trw=repairWorkMapper.selectByPrimaryKey(uid);
                 //维修人员id
                 receiverIdList.add(trw.getRepairManId());
             }
@@ -157,7 +157,7 @@ public class CommentServiceImpl implements CommentService {
         String  subId=vo.getSubID();
         Long  reportId=vo.getReportID();
         Long commentId=vo.getCommentID();
-        List<CommentSelectOut> list=null;
+        List<CommentSelectOut> list=new ArrayList<>();
         Long unionId=null;
         //workType=6 评论，查询类型为评论的评论 ，即查询回复
         if(6==workType){//查询回复
