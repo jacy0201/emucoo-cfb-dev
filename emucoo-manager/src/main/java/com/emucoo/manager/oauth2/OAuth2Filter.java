@@ -42,8 +42,8 @@ public class OAuth2Filter extends AuthenticatingFilter {
         if(StringUtils.isBlank(token)){
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setContentType("application/json;charset=utf-8");
-            String json = new Gson().toJson(R.error(403, "无效的token!"));
-            httpResponse.sendError(403,"无效的token!");
+            String json = new Gson().toJson(R.error(401, "无效的token!"));
+            httpResponse.sendError(401,"无效的token!");
             httpResponse.getWriter().print(json);
             return false;
         }
@@ -58,10 +58,10 @@ public class OAuth2Filter extends AuthenticatingFilter {
         try {
             //处理登录失败的异常
             Throwable throwable = e.getCause() == null ? e : e.getCause();
-            R r = R.error(403, "授权失败:"+throwable.getMessage());
+            R r = R.error(401, "授权失败:"+throwable.getMessage());
 
             String json = new Gson().toJson(r);
-            httpResponse.sendError(403,"授权失败:"+throwable.getMessage());
+            httpResponse.sendError(401,"授权失败:"+throwable.getMessage());
             httpResponse.getWriter().print(json);
         } catch (IOException e1) {
 
