@@ -37,6 +37,14 @@ public class RYGReportVo {
     private String summary;
     @ApiModelProperty(value = "机会点数", name = "chancePointNum", example = "1")
     private String chancePointNum;
+    @ApiModelProperty(value = "总红色数量", name = "allRedNum", example = "1")
+    private Integer allRedNum;
+    @ApiModelProperty(value = "总黄色数量", name = "allYellowNum", example = "1")
+    private Integer allYellowNum;
+    @ApiModelProperty(value = "总绿色数量", name = "allGreenNum", example = "1")
+    private Integer allGreenNum;
+    @ApiModelProperty(value = "na数量", name = "allNaNum", example = "1")
+    private Integer allNaNum;
     @ApiModelProperty(value = "额外项数组", name = "additionArray")
     private List<AdditionItemVo> additionArray;
     @ApiModelProperty(value = "机会点数组", name = "chancePointArr")

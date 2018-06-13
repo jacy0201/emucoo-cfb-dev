@@ -52,19 +52,19 @@ public class OAuth2Realm extends AuthorizingRealm {
         SysUserToken tokenEntity = shiroService.queryByToken(accessToken);
         //token失效
         if(tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()){
-            throw new IncorrectCredentialsException("token失效，请重新登录");
+            throw new IncorrectCredentialsException("无效的token!");
         }
 
         //查询用户信息
         SysUser user = shiroService.queryUser(tokenEntity.getId());
 
         if(user == null) {
-            throw new UnknownAccountException("账号或密码不正确");
+            throw new UnknownAccountException("账号或密码不正确!");
         }
 
         //账号锁定
         if(null==user.getStatus() || user.getStatus()!=0){
-            throw new LockedAccountException("账号未启用,请联系管理员");
+            throw new LockedAccountException("账号未启用,请联系管理员!");
         }
 
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accessToken, getName());

@@ -14,7 +14,9 @@ public enum FunctionType {
 
     AUDIT_FINISH_REMIND(5, "审核完成提醒"),
 
-    COMMENT_REMIND(6, "评论提醒");
+    CC_REMIND(6, "抄送提醒"),
+
+    COMMENT_REMIND(7, "评论提醒");
 
     private final Integer code;
     private final String msg;

@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 @ApiModel
-public class RYGForm extends RYGFormOut {
+public class RYGForm {
     @ApiModelProperty(value = "巡店id", name = "patrolShopArrangeID", required = true, example = "1")
     private Long patrolShopArrangeID;
     @ApiModelProperty(value = "店铺id", name = "shopID", required = true, example = "1")
