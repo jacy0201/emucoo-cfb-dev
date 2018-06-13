@@ -2,6 +2,7 @@ package com.emucoo.manager.config;
 
 
 import cn.jpush.api.JPushClient;
+import com.emucoo.common.msg.JiGuangProxy;
 import com.emucoo.manager.component.rong.RongCloud;
 import com.qiniu.util.Auth;
 import com.xiaomi.xmpush.server.Sender;
@@ -55,5 +56,10 @@ public class BeanFactory {
     public Sender getXiaomiSend() {
     	Sender sender = new Sender(xiaomiConfig.getAppSecret());
     	return sender;
+    }
+
+    @Bean
+    public JiGuangProxy createJiGuangProxy() {
+        return JiGuangProxy.createJiGuangProxyInstance(jiguangConfig.getAppKey(), jiguangConfig.getMasterSecret(), jiguangConfig.isApnsProduction());
     }
 }

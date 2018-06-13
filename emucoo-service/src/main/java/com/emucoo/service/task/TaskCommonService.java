@@ -6,6 +6,9 @@ import com.emucoo.model.SysUser;
 
 import java.util.List;
 
+/**
+ * @author Shayne
+ */
 public interface TaskCommonService {
 
     TaskCommonDetailOut detail(TaskCommonDetailIn vo);
