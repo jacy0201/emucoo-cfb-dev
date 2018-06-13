@@ -98,6 +98,7 @@ logging:
 sms:
   send: true #是否发送短信
 
+#jiguangPush:
 #  appKey: b248954a569bdce27832e88b
 #  masterSecret: a769f455149fcfa03e665b29
 jiguangPush:
