@@ -347,8 +347,18 @@ public class FormManageServiceImpl implements FormManageService {
     }
 
     @Override
-    public TFormMain fetchFormReportSettings(Long id) {
-        TFormMain formMain = formMainMapper.fetchOneById(id);
+    public TFormMain fetchFormReportSettings(Long id, Integer formType) {
+        TFormMain formMain = null;
+        if(formType != null && formType > FormType.RVR_TYPE.getCode()) {
+            TFormMain formParam = new TFormMain();
+            formParam.setIsDel(false);
+            formParam.setIsUse(true);
+            formParam.setFormType(formType);
+            formMain = formMainMapper.selectOne(formParam);
+        } else {
+            formMain = formMainMapper.fetchOneById(id);
+        }
+
         List<TFormAddItem> formAddItems = formAddItemMapper.findFormAddItemsByFormMainId(formMain.getId());
         formMain.setAddItems(formAddItems);
         return formMain;

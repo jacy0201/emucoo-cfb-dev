@@ -172,7 +172,7 @@ public class FormManageController extends BaseResource {
     @ApiOperation(value = "获取报告配置信息")
     @PostMapping(value = "/getReport")
     public ApiResult<TFormMain> getReport(@RequestBody ParamVo<TFormMain> paramVo) {
-        TFormMain formMain = formManageService.fetchFormReportSettings(paramVo.getData().getId());
+        TFormMain formMain = formManageService.fetchFormReportSettings(paramVo.getData().getId(), paramVo.getData().getFormType());
         return success(formMain);
     }
 
