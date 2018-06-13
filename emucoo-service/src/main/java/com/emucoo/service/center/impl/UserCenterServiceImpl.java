@@ -83,9 +83,8 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
         example.setOrderByClause("modify_time desc");
         example.and(criteria2);
         List<TFrontPlan> frontPlanList = tFrontPlanMapper.selectByExample(example);
-        List<FrontPlanVO> list=null;
+        List<FrontPlanVO> list=new ArrayList<>();
         if(null!=frontPlanList && frontPlanList.size()>0) {
-            list=new ArrayList<>();
             FrontPlanVO frontPlanVO=null;
             for (TFrontPlan frontPlan : frontPlanList) {
                 frontPlanVO= new FrontPlanVO();
@@ -119,10 +118,9 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
     @Override
     public List<ReportVO> getReportList(String month, Long userId){
         List<TReport> list =tReportMapper.fetchReceiveReport(userId,month);
-        List<ReportVO> reportList=null;
+        List<ReportVO> reportList=new ArrayList<>();
         if(null!=list && list.size()>0){
             ReportVO reportVO=null;
-            reportList=new ArrayList<>();
             for(TReport report:list){
                 reportVO=new ReportVO();
                 reportVO.setReportId(report.getId());
@@ -152,9 +150,8 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
 
     private List<TaskVO> getTaskVOS(List<TLoopWork> loopWorkList) {
         TaskVO taskVO=null;
-        List<TaskVO> list=null;
+        List<TaskVO> list= new ArrayList<>();
         if (null != loopWorkList && loopWorkList.size() > 0) {
-            list = new ArrayList<>();
             for (TLoopWork loopWork : loopWorkList) {
                 taskVO=new TaskVO();
                 taskVO.setID(loopWork.getId());
