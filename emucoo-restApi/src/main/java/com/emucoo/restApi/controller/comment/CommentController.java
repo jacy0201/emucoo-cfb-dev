@@ -52,6 +52,7 @@ public class CommentController extends AppBaseController {
 	@PostMapping("getCommentList")
 	public AppResult<List<CommentSelectOut>> getCommentList(@RequestBody ParamVo<CommentSelectIn> base) {
 		CommentSelectIn vo = base.getData();
+		checkParam(vo.getWorkType(),"workType不能为空!");
 		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
 		List<CommentSelectOut> outList = commentService.select(vo, user);
 		return success(outList);
