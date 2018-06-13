@@ -4,11 +4,10 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.TaskCommonService;
-import com.emucoo.utils.ConstantsUtil;
-import com.emucoo.utils.DateUtil;
-import com.emucoo.utils.TaskUniqueIdUtils;
-import com.emucoo.utils.WaterMarkUtils;
+import com.emucoo.utils.*;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskCommonServiceImpl implements TaskCommonService {
+
+    private final static Logger logger = LoggerFactory.getLogger(TaskCommonServiceImpl.class);
 
     @Autowired
     private TTaskMapper taskMapper;
@@ -58,6 +59,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Autowired
     private SysUserShopMapper userShopMapper;
 
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
+
+    @Autowired
+    private MessageBuilder messageBuilder;
 
     private List<ImageUrl> convertImgIds2Urls(String ids) {
         if (ids == null) {
@@ -856,8 +862,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
             createCommonLoopWorkOperateOptions(commonTask, loopWork, options);
 
+            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(commonTask, loopWork, executor, 1);
+            businessMsg = messageBuilder.pushMessage(businessMsg, executor, 1);
+            businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
+
+
 
     private List<SysUser> determineSendersByExecutorType(SysUser executor, TTask commonTask) {
         // 任务执行者选择店铺时，抄送人选择部门及岗位，只有符合条件且品牌和分区同时包含任务执行者所在店铺的品牌及分区的人员才可收到任务的抄送信息

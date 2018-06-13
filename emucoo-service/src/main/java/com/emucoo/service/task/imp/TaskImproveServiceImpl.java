@@ -40,6 +40,12 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     @Autowired
     private TTaskCommentMapper commentMapper;
 
+    @Autowired
+    private MessageBuilder messageBuilder;
+
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
+
 	/*@Autowired
 	private WaterMarkUtils waterMarkUtils;*/
 
@@ -165,6 +171,10 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             loopWork.setModifyTime(DateUtil.currentDate());
 
             loopWorkMapper.insert(loopWork);
+
+            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, loopWork, eUser, 1);
+            businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
+            businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
 
@@ -295,7 +305,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         TaskImproveDetailOut out = new TaskImproveDetailOut();
         // taskStatement
         TaskImproveStatement statement = loopWorkMapper.getTaskImproveStatement(loopWork.getId());
-        statement.setBackTime(new Date().getTime());
+        statement.setBackTime(System.currentTimeMillis());
         statement.setStartDate(statement.getStartDate().replace("-", ""));
         statement.setEndDate(statement.getEndDate().replace("-", ""));
         statement.setSubmitDeadline(statement.getSubmitDeadlineDate().getTime());

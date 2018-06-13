@@ -105,7 +105,7 @@ public class JiGuangProxy {
 
     private PushPayload buildPushPayLoad(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS, MsgType msgType) throws MsgPushException {
         if (StringUtils.isBlank(title) || StringUtils.isBlank(content)) {
-            throw new MsgPushException("title and content must not be blank.");
+            throw new IllegalArgumentException("Title and content must not be blank!");
         }
         PushPayload.Builder builder = PushPayload.newBuilder();
         builder.setOptions(buildPushOptions());
@@ -137,20 +137,23 @@ public class JiGuangProxy {
      * @return
      * @throws MsgPushException
      */
-    public int sendNotification(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) throws MsgPushException {
-        PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_NOTIFICATION);
+    public int sendNotification(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
+            PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_NOTIFICATION);
             PushResult result = jPushClient.sendPush(payload);
-            if (!result.isResultOK()) {
-                throw new MsgPushException("push notification fail, msg id = " + result.msg_id + ";error code = " + result.statusCode);
-            }
             return result.statusCode;
         } catch (APIConnectionException e) {
-            logger.error("push notification fail", e);
-            throw new MsgPushException("push notification fail.", e);
+            logger.error(e.getMessage(), e);
+            return -1;
         } catch (APIRequestException e) {
-            logger.error("push notification fail", e);
-            throw new MsgPushException("push notification fail.", e);
+            logger.error(e.getMessage(), e);
+            return -2;
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage(), e);
+            return -3;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return -4;
         }
     }
 
@@ -165,20 +168,23 @@ public class JiGuangProxy {
      * @return
      * @throws MsgPushException
      */
-    public int sendMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) throws MsgPushException {
-        PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_MESSAGE);
+    public int sendMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
+            PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_MESSAGE);
             PushResult result = jPushClient.sendPush(payload);
-            if (!result.isResultOK()) {
-                throw new MsgPushException("push message fail, msg id = " + result.msg_id + ";error code = " + result.statusCode);
-            }
             return result.statusCode;
         } catch (APIConnectionException e) {
-            logger.error("push message fail", e);
-            throw new MsgPushException("push message fail.", e);
+            logger.error(e.getMessage(), e);
+            return -1;
         } catch (APIRequestException e) {
-            logger.error("push message fail", e);
-            throw new MsgPushException("push message fail.", e);
+            logger.error(e.getMessage(), e);
+            return -2;
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage(), e);
+            return -3;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return -4;
         }
     }
 
@@ -193,20 +199,69 @@ public class JiGuangProxy {
      * @return
      * @throws MsgPushException
      */
-    public int sendNotificationAndMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) throws MsgPushException {
-        PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_ALL);
+    public int sendNotificationAndMessage(String title, String content, String deviceId, Map<String, String> extra, DeviceOS deviceOS) {
         try {
+            PushPayload payload = buildPushPayLoad(title, content, deviceId, extra, deviceOS, MSG_ALL);
             PushResult result = jPushClient.sendPush(payload);
-            if (!result.isResultOK()) {
-                throw new MsgPushException("push notification and message fail, msg id = " + result.msg_id + ";error code = " + result.statusCode);
-            }
             return result.statusCode;
         } catch (APIConnectionException e) {
-            logger.error("push notification and message fail", e);
-            throw new MsgPushException("push notification and message fail.", e);
+            logger.error(e.getMessage(), e);
+            return -1;
         } catch (APIRequestException e) {
-            logger.error("push notification and message fail", e);
-            throw new MsgPushException("push notification and message fail.", e);
+            logger.error(e.getMessage(), e);
+            return -2;
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage(), e);
+            return -3;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return -4;
+        }
+    }
+
+    public String judgeFailReason(int code) {
+        switch(code) {
+            case 0:
+                return "推送成功";
+            case 1000:
+                return "服务器端内部逻辑错误，请稍后重试。";
+            case 1001:
+                return "只支持 HTTP Post 方法";
+            case 1002:
+                return "缺少了必须的参数";
+            case 1003:
+                return "参数值不合法";
+            case 1004:
+                return "验证失败";
+            case 1005:
+                return "消息体太大";
+            case 1008:
+                return "app_key参数非法";
+            case 1009:
+                return "推送对象中有不支持的key";
+            case 1011:
+                return "没有满足条件的推送目标";
+            case 1020:
+                return "只支持 HTTPS 请求";
+            case 1030:
+                return "内部服务超时";
+            case 2002:
+                return "API调用频率超出该应用的限制";
+            case 2003:
+                return "该应用appkey已被限制调用 API";
+            case 2004:
+                return "无权限执行当前操作";
+            case 2005:
+                return "信息发送量超出合理范围";
+            case -1:
+                return "无法连接推送服务器或连接超时";
+            case -2:
+                return "请求出错";
+            case -3:
+                return "非空参数出现空值";
+            case -4:
+            default:
+                return "其它错误, 请查看错误日志";
         }
     }
 
