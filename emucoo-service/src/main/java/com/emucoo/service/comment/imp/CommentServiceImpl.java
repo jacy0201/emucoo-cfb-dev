@@ -177,7 +177,7 @@ public class CommentServiceImpl implements CommentService {
         }
         Example example=new Example(TTaskComment.class);
         example.createCriteria().andEqualTo("unionId",unionId).andEqualTo("unionType",workType)
-                .andEqualTo("isDel",true).andEqualTo("isShow",true);
+                .andEqualTo("isDel",false).andEqualTo("isShow",true);
         example.setOrderByClause("create_time desc");
         List<TTaskComment> commentList=taskCommentMapper.selectByExample(example);
         if(null!=commentList && commentList.size()>0){
