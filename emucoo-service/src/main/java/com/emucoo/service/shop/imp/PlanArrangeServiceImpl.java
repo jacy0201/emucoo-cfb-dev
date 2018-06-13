@@ -147,6 +147,7 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
     }
 
     @Override
+    @Transactional
     public void edit(PlanArrangeEditIn planArrangeEditIn, SysUser user) {
         try {
             List<Shop> shopList = planArrangeEditIn.getShopArr();
@@ -223,6 +224,7 @@ public class PlanArrangeServiceImpl implements PlanArrangeService {
     }
 
     @Override
+    @Transactional
     public void delete(PlanArrangeDeleteIn planArrangeDeleteIn, SysUser user) {
         try {
             TFrontPlan plan = tFrontPlanMapper.selectByPrimaryKey(planArrangeDeleteIn.getPatrolShopArrangeID());

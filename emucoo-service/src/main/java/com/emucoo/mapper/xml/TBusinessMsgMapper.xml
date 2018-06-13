@@ -24,7 +24,7 @@
     SELECT
     msgCount,
     send_time AS msgSendTime,
-    content AS msgContent,
+    title AS msgTitle,
     function_type
     FROM
     (

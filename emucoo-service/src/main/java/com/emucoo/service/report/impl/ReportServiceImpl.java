@@ -2,8 +2,9 @@ package com.emucoo.service.report.impl;
 
 import com.emucoo.common.exception.ApiException;
 import com.emucoo.common.exception.BaseException;
-import com.emucoo.dto.modules.RYGForm.RYGForm;
 import com.emucoo.dto.modules.RYGForm.RYGFormKindVo;
+import com.emucoo.dto.modules.RYGReport.RYGGetReportIn;
+import com.emucoo.dto.modules.RYGReport.RYGReportPreviewIn;
 import com.emucoo.dto.modules.RYGReport.RYGReportVo;
 import com.emucoo.dto.modules.abilityForm.AbilitySubForm;
 import com.emucoo.dto.modules.abilityForm.AbilitySubFormKind;
@@ -1259,7 +1260,7 @@ public class ReportServiceImpl implements ReportService {
         return subForm;
     }
 
-    public RYGReportVo getRYGReportPreview(SysUser user, RYGForm reportIn) {
+    public RYGReportVo getRYGReportPreview(SysUser user, RYGReportPreviewIn reportIn) {
         try{
             RYGReportVo reportOut = new RYGReportVo();
             // 查询店铺名
@@ -1396,6 +1397,7 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    @Transactional
     public Long saveRYGReport(SysUser user, RYGReportVo reportIn) {
         try{
             Example planFormExp = new Example(TFrontPlanForm.class);
@@ -1532,7 +1534,7 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    public RYGReportVo findRYGReportInfoById(SysUser user, GetReportIn reportIn) {
+    public RYGReportVo findRYGReportInfoById(SysUser user, RYGGetReportIn reportIn) {
         try{
             RYGReportVo reportVo = new RYGReportVo();
 

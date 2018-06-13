@@ -1,6 +1,8 @@
 package com.emucoo.service.report;
 
 import com.emucoo.dto.modules.RYGForm.RYGForm;
+import com.emucoo.dto.modules.RYGReport.RYGGetReportIn;
+import com.emucoo.dto.modules.RYGReport.RYGReportPreviewIn;
 import com.emucoo.dto.modules.RYGReport.RYGReportVo;
 import com.emucoo.dto.modules.abilityReport.AbilityReportVo;
 import com.emucoo.dto.modules.report.GetOpptIn;
@@ -24,9 +26,9 @@ public interface ReportService {
 
     AbilityReportVo findAbilityReportInfo(SysUser user, GetReportIn reportIn);
 
-    RYGReportVo getRYGReportPreview(SysUser user, RYGForm reportIn);
+    RYGReportVo getRYGReportPreview(SysUser user, RYGReportPreviewIn reportIn);
 
     Long saveRYGReport(SysUser user, RYGReportVo reportIn);
 
-    RYGReportVo findRYGReportInfoById(SysUser user, GetReportIn reportIn);
+    RYGReportVo findRYGReportInfoById(SysUser user, RYGGetReportIn reportIn);
 }

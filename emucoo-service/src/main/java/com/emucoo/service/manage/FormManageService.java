@@ -34,7 +34,7 @@ public interface FormManageService {
 
     void saveFormReportSettings(TFormMain formMain);
 
-    TFormMain fetchFormReportSettings(Long id);
+    TFormMain fetchFormReportSettings(Long id, Integer formType);
 
     List<String> fetchAllBufferedFormTemplate(String keyPrefix);
 
