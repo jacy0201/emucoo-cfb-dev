@@ -24,7 +24,7 @@
         <if test="parentTypeId != null and parentTypeId != 0">
             and parent_type_id = #{parentTypeId}
         </if>
-        <if test="brandIds != null and brandIds.trim() != '' ">
+        <if test="brandId != null and brandId.trim() != '' ">
             and FIND_IN_SET(#{brandId}, brand_ids)
         </if>
         <if test="isUse != null" >
@@ -41,7 +41,7 @@
         <if test="deviceType.parentTypeId != null and deviceType.parentTypeId != 0">
             and parent_type_id = #{deviceType.parentTypeId}
         </if>
-        <if test="deviceType.brandIds != null and deviceType.brandIds.trim() != '' ">
+        <if test="deviceType.brandId != null and deviceType.brandId.trim() != '' ">
             and FIND_IN_SET(#{deviceType.brandId}, brand_ids)
         </if>
         <if test="deviceType.isUse != null" >
