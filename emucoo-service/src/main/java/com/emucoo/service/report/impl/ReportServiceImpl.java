@@ -1504,6 +1504,7 @@ public class ReportServiceImpl implements ReportService {
             for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
                 TReportOppt tReportOppt = new TReportOppt();
                 tReportOppt.setOpptId(tFormOpptValue.getOpptId());
+                tReportOppt.setFormOpptValueId(tFormOpptValue.getId());
                 tReportOppt.setOpptName(tFormOpptValue.getOpptName());
                 tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
                 tReportOppts.add(tReportOppt);
