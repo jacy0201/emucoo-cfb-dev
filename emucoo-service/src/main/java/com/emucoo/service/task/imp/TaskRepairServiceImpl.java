@@ -5,7 +5,7 @@ import com.emucoo.model.*;
 import com.emucoo.service.task.TaskRepairService;
 import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
-import com.emucoo.utils.MessageBuilder;
+import com.emucoo.service.task.MessageBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * author: Shayne
- * at: 2018-06-07
+ * @author Shayne.Wang
+ * @date 2018-06-07
  */
 
 @Service
@@ -59,6 +59,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_1);
         repairWorkMapper.insert(work);
 
+        // 推送并保存消息
         SysUser user = userMapper.selectByPrimaryKey(work.getRepairManId());
         TBusinessMsg businessMsg = messageBuilder.buildRepairWorkCreationBusinessMessage(work, user, 1);
         messageBuilder.pushMessage(businessMsg, user, 1);

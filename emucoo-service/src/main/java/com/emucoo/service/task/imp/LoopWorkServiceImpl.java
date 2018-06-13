@@ -7,6 +7,7 @@ import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
 import com.emucoo.service.task.LoopWorkService;
+import com.emucoo.service.task.MessageBuilder;
 import com.emucoo.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void submitAssignTask(AssignTaskSubmitVo_I voi) {
         TLoopWork lw = loopWorkMapper.fetchOneTaskByWorkIds(voi.getWorkID(), voi.getSubID());
         lw.setType(voi.getWorkType());
@@ -116,7 +117,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void auditAssignTask(SysUser user, AssignTaskAuditVo_I atai) {
         TLoopWork loopWork = loopWorkMapper.fetchOneTaskByWorkIds(atai.getWorkID(), atai.getSubID());
         if (loopWork == null) {
@@ -385,7 +386,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void createAssignTask(AssignTaskCreationVo_I voi, long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         TTask task = new TTask();
@@ -402,25 +403,15 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         task.setIsDel(false);
         task.setIsUse(true);
         task.setPreinstallScore(Integer.toString(voi.getTaskRank()));
-
         task.setTaskEndDate(DateUtil.strToSimpleYYMMDDDate(voi.getEndDate()));
         task.setTaskStartDate(DateUtil.strToSimpleYYMMDDDate(voi.getStartDate()));
         task.setLoopCycleType(voi.getTaskRepeatType());
         task.setLoopCycleValue(voi.getTaskRepeatValue());
-
-//        task.setAuditDeadline();
-//        task.setAuditDptId();
         task.setAuditType(0);
         task.setAuditUserId(voi.getAuditorID());
-
         task.setExecuteDeadline(voi.getSubmitDeadlineRule());
-//        task.setExecuteRemindTime();
-//        task.setExecutorDptIds();
-//        task.setExecutorPositionIds();
         task.setExecuteUserIds(StringUtils.join(voi.getExecutorArray().stream().map(executorIdVo -> Long.toString(executorIdVo.getExecutorID())).collect(Collectors.toList()), ","));
-//        task.setExecutorShopIds();
 
-//        task.setCcPositionIds();
         if (voi.getCcPersonArray() != null && voi.getCcPersonArray().size() > 0) {
             task.setCcUserIds(String.join(",", voi.getCcPersonArray().stream().map(ccPersonIdVo -> Long.toString(ccPersonIdVo.getCcPersonID())).collect(Collectors.toList())));
         }
@@ -432,7 +423,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             timg.setCreateTime(DateUtil.currentDate());
             timg.setModifyTime(DateUtil.currentDate());
             timg.setCreateUserId(userId);
-//            timg.setContentType(); TODO: data structure may be changed in the future.
             fileMapper.insert(timg);
             timgids.add(Long.toString(timg.getId()));
         });
@@ -450,7 +440,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         too.setTaskId(taskId);
         operateOptionMapper.insert(too);
 
-//         根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
+        // 根据执行时间生产任务实例,先生成当天的任务实例，其他的任务实例由定时任务产生。
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<Date> dts = genDatesByRepeatType(task);
         if (isContainsDate(dts, today)) {
@@ -480,49 +470,34 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             TLoopWork lw = new TLoopWork();
             lw.setTaskId(task.getId());
             lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
-
             lw.setWorkId(task.getWorkId());
             lw.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             lw.setType(2);
-
             lw.setExecuteBeginDate(dt);
             lw.setExecuteEndDate(dt);
             lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + task.getExecuteDeadline()));
-
             lw.setCreateUserId(task.getCreateUserId());
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
-
             // 存储关联的Executor Ids
             lw.setExcuteUserId(executorId);
             SysUser eUser = userMapper.selectByPrimaryKey(executorId);
             if (eUser != null) {
                 lw.setExcuteUserName(eUser.getRealName());
             }
-
             // 存储关联的Auditor
             lw.setAuditUserId(task.getAuditUserId());
             SysUser aUser = userMapper.selectByPrimaryKey(lw.getAuditUserId());
             if (aUser != null) {
                 lw.setAuditUserName(aUser.getRealName());
             }
-
             // 存储关联的ccPerson Ids
             if (StringUtils.isNotBlank(task.getCcUserIds())) {
                 lw.setSendUserIds(task.getCcUserIds());
-//                        List<String> ccpids = Arrays.asList(task.getCcUserIds().split(","));
-//                        if (ccpids != null && ccpids.size() > 0) {
-//                            List<String> ccpnms = ccpids.stream().map(ccPersonId -> {
-//                                SysUser u = userMapper.selectByPrimaryKey(Long.parseLong(ccPersonId));
-//                                return u == null ? null : u.getRealName();
-//                            }).filter(s -> {
-//                                return s == null ? false : true;
-//                            }).collect(Collectors.toList());
-//                            lw.setSenderUserNames(task.getCcUserIds());
-//                        }
             }
             loopWorkMapper.insert(lw);
 
+            // 推送并保存消息
             TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, lw, eUser, 1);
             businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
             businessMsgMapper.insertUseGeneratedKeys(businessMsg);
@@ -549,7 +524,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 date = DateUtil.getDateMinusMinutes(dt, 60 * 24);
                 break;
             case 7:
+            default:
                 break;
+
         }
         return date;
     }
@@ -561,7 +538,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
      * @param userId
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void createMemo(MemoCreationVo_I voi, Long userId) {
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         TTask task = new TTask();
@@ -654,7 +631,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
      * @param userId
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void editMemo(MemoEditVo_I voi, Long userId) {
         //更新工作备忘主表 t_task
         TTask t = new TTask();
@@ -751,7 +728,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
      * @param userId
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteMemo(MemoDeleteVo_I voi, Long userId) {
         //删除工作备忘主表 t_task
         Example example = new Example(TTask.class);
@@ -819,7 +796,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     // begin：以下方法是给定时任务使用的
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void markExpiredWorks() {
         Date dt = DateUtil.currentDate();
         // 注意顺序，expired option的必须放在前面，不然work状态改了，option的过滤条件就不起效果了。
@@ -852,7 +829,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void buildAssingTaskInstance() {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(today);
@@ -879,11 +856,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             work.getInspection().setInspStartTime(frontPlan.getPlanDate().getTime());
             work.getInspection().setInspStatus(frontPlan.getStatus() == 1 ? 1 : 0);
             work.getInspection().setInspTitle(frontPlan.getTitle());
-//            TLoopPlan loopPlan = loopPlanMapper.selectByPrimaryKey(frontPlan.getLoopPlanId());
-//            if (loopPlan != null) {
-//                SysDept dept = sysDeptMapper.selectByPrimaryKey(loopPlan.getDptId());
-//                work.getInspection().setInspTitle(dept == null ? dept.getDptName() : "" + "巡检安排");
-//            }
             return work;
         }).collect(Collectors.toList());
 
@@ -895,7 +867,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             work.setWorkType(t.getType());
             work.setSubID(t.getSubWorkId());
             if (t.getType() == ITask.MEMO) {
-//                TTask tt = taskMapper.selectByPrimaryKey(t.getTaskId());
                 work.getMemo().setMemoStartTime(t.getExecuteBeginDate().getTime());
                 work.getMemo().setMemoEndTime(t.getExecuteEndDate().getTime());
                 work.getMemo().setMemoTitle(t.getTaskTitle());
@@ -909,7 +880,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 work.getTask().setTaskSourceType(0);
                 work.getTask().setTaskSourceName("");
                 work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
-//                SysUser u = userMapper.selectByPrimaryKey(t.getExcuteUserId());
                 work.getTask().setTaskSubHeadUrl(t.getAvatar());
                 work.getTask().setTaskSubName(t.getUserName());
                 return work;
@@ -954,13 +924,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
                 work.getTask().setTaskSubName(u.getRealName());
                 return work;
             }
-//            if (ITask.INSPECTION == t.getType()) {
-//                work.getInspection().setInspEndTime(t.getExecuteBeginDate().getTime());
-//                work.getInspection().setInspStartTime(t.getExecuteEndDate().getTime());
-//                work.getInspection().setInspStatus(t.getWorkStatus());
-//                work.getInspection().setInspTitle(tt.getName());
-//                return work;
-//            }
         }).collect(Collectors.toList());
         WorkVo_O workvoo = new WorkVo_O();
         workvoo.setBackTime(DateUtil.currentDate().getTime());
