@@ -50,6 +50,6 @@ public class RYGReportVo {
     @ApiModelProperty(value = "机会点数组", name = "chancePointArr")
     private List<ChancePointVo> chancePointArr;
     @ApiModelProperty(value = "题项类别数组", name = "kindArray")
-    private List<RYGFormKindVo> kindArray;
+    private List<RYGFormKindVo> checklistKindScoreArr;
 
 }
