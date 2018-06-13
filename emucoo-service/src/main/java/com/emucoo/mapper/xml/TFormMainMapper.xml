@@ -84,6 +84,6 @@
        FROM t_form_main formMain
        INNER JOIN t_plan_form_relation planForm ON planForm.form_main_id = formMain.id
        AND planForm.plan_id = #{planId} AND planForm.is_del = FALSE AND planForm.is_use = TRUE
-       WHERE formMain.is_del = false AND formMain.is_use = TRUE
+       WHERE formMain.is_del = FALSE AND formMain.is_use = TRUE
     </select>
 </mapper>
