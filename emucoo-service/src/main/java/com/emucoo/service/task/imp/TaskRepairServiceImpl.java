@@ -1,14 +1,11 @@
 package com.emucoo.service.task.imp;
 
-import com.emucoo.mapper.TDeviceProblemMapper;
-import com.emucoo.mapper.TDeviceTypeMapper;
-import com.emucoo.mapper.TRepairWorkMapper;
-import com.emucoo.model.TDeviceProblem;
-import com.emucoo.model.TDeviceType;
-import com.emucoo.model.TRepairWork;
+import com.emucoo.mapper.*;
+import com.emucoo.model.*;
 import com.emucoo.service.task.TaskRepairService;
 import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
+import com.emucoo.service.task.MessageBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * author: Shayne
- * at: 2018-06-07
+ * @author Shayne.Wang
+ * @date 2018-06-07
  */
 
 @Service
@@ -33,6 +30,15 @@ public class TaskRepairServiceImpl implements TaskRepairService {
 
     @Autowired
     private TDeviceProblemMapper deviceProblemMapper;
+
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
+
+    @Autowired
+    private MessageBuilder messageBuilder;
+
+    @Autowired
+    private SysUserMapper userMapper;
 
     @Override
     public TRepairWork detail(long workId) {
@@ -48,29 +54,39 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void createRepairWork(TRepairWork work) {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_1);
         repairWorkMapper.insert(work);
+
+        // 推送并保存消息
+        SysUser user = userMapper.selectByPrimaryKey(work.getRepairManId());
+        TBusinessMsg businessMsg = messageBuilder.buildRepairWorkCreationBusinessMessage(work, user, 1);
+        messageBuilder.pushMessage(businessMsg, user, 1);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void modifyRepairWork(TRepairWork work) {
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void finishRepairWork(TRepairWork work) {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_4);
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void expectRepairDate(TRepairWork work) {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_2);
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public void auditRepairWork(TRepairWork work) {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_5);
         repairWorkMapper.updateByPrimaryKeySelective(work);

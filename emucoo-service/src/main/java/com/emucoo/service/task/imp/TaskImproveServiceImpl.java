@@ -5,6 +5,7 @@ import com.emucoo.dto.modules.task.TaskImproveSubmitIn.ImgUrl;
 import com.emucoo.dto.modules.task.TaskImproveVo.CCPerson;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
+import com.emucoo.service.task.MessageBuilder;
 import com.emucoo.service.task.TaskImproveService;
 import com.emucoo.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Transactional
+/**
+ * @author Shayne.Wang
+ * @date 2018-06-12
+ *
+ */
+
 @Service
 public class TaskImproveServiceImpl implements TaskImproveService {
 
@@ -40,11 +46,14 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     @Autowired
     private TTaskCommentMapper commentMapper;
 
-	/*@Autowired
-	private WaterMarkUtils waterMarkUtils;*/
+    @Autowired
+    private MessageBuilder messageBuilder;
+
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void createImproveTask(TaskImproveVo vo, SysUser user) {
         List<String> timgids = new ArrayList<>();
         vo.getTaskImgArr().forEach(imageUrl -> {
@@ -126,7 +135,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             loopWork.setWorkId(task.getWorkId());
             loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
             loopWork.setTaskId(task.getId());
-
             loopWork.setExecuteBeginDate(today);
             loopWork.setExecuteEndDate(today);
             if (StringUtils.isNotBlank(task.getExecuteDeadline())) {
@@ -140,10 +148,8 @@ public class TaskImproveServiceImpl implements TaskImproveService {
                 loopWork.setExecuteDeadline(DateUtil.timeForward(today, 21, 0, 0));
             }
             loopWork.setExecuteRemindTime(DateUtil.timeBackward(loopWork.getExecuteDeadline(), 1, 0, 0));
-
             loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
             loopWork.setType(ConstantsUtil.LoopWork.TYPE_THREE);
-
             loopWork.setExcuteUserId(executorId);
             SysUser eUser = userMapper.selectByPrimaryKey(executorId);
             if (eUser != null) {
@@ -155,7 +161,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
                 loopWork.setAuditUserName(aUser.getRealName());
             }
             loopWork.setSendUserIds(task.getCcUserIds());
-
             loopWork.setCreateUserId(task.getCreateUserId());
             SysUser cUser = userMapper.selectByPrimaryKey(task.getCreateUserId());
             if(cUser != null) {
@@ -163,8 +168,12 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             }
             loopWork.setCreateTime(DateUtil.currentDate());
             loopWork.setModifyTime(DateUtil.currentDate());
-
             loopWorkMapper.insert(loopWork);
+
+            // 推送并保存消息
+            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, loopWork, eUser, 1);
+            businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
+            businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
 
@@ -181,12 +190,12 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         long time1 = cal.getTimeInMillis();
         cal.setTime(date2);
         long time2 = cal.getTimeInMillis();
-        long between_days = (time2 - time1) / (1000 * 3600 * 24);
-        return Integer.parseInt(String.valueOf(between_days));
+        long betweenDays = (time2 - time1) / (1000 * 3600 * 24);
+        return Integer.parseInt(String.valueOf(betweenDays));
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void submitImproveTask(TaskImproveSubmitIn submitIn, SysUser user) {
         // LoopWork
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(submitIn.getWorkID(), submitIn.getSubID(), submitIn.getWorkType());
@@ -230,16 +239,13 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             odw.setNumOptionValue(Double.toString(submitIn.getDigitalItemValue()));
         }
         odw.setWorkTxt(submitIn.getWorkText());
-//        odw.setCreateUserId(user.getId());
         odw.setCreateTime(DateUtil.currentDate());
         odw.setModifyTime(DateUtil.currentDate());
-//        odw.setModifyUserId(user.getId());
         operateDataForWorkMapper.insert(odw);
-
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void auditImproveTask(TaskImproveAuditIn auditIn, SysUser user) {
         // LoopWork
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(auditIn.getWorkID(), auditIn.getSubID(), auditIn.getWorkType());
@@ -266,7 +272,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         if (imgs.size() > 0) {
             odw.setAuditImgIds(StringUtils.join(imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList()), ","));
         }
-        ;
         operateDataForWorkMapper.updateByPrimaryKey(odw);
 
         loopWork.setWorkId(auditIn.getWorkID());
@@ -295,7 +300,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         TaskImproveDetailOut out = new TaskImproveDetailOut();
         // taskStatement
         TaskImproveStatement statement = loopWorkMapper.getTaskImproveStatement(loopWork.getId());
-        statement.setBackTime(new Date().getTime());
+        statement.setBackTime(System.currentTimeMillis());
         statement.setStartDate(statement.getStartDate().replace("-", ""));
         statement.setEndDate(statement.getEndDate().replace("-", ""));
         statement.setSubmitDeadline(statement.getSubmitDeadlineDate().getTime());
@@ -383,7 +388,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
     // scheduler useing:
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void buildImproveTaskInstance() {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<TTask> tasks = taskMapper.filterAvailableImproveTask(today);

@@ -331,6 +331,7 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
+    @Transactional
     public boolean checkinFormResult(SysUser user, FormIn formIn) {
         boolean checkinWithAppCreatedOppts = false;
         // 每次存之前把旧数据删掉
@@ -1401,6 +1402,7 @@ public class FormServiceImpl implements FormService {
         }
     }
 
+    @Transactional
     public boolean saveRYGFormResult(SysUser user, RYGForm formIn) {
         try {
             Example planFormExp = new Example(TFrontPlanForm.class);

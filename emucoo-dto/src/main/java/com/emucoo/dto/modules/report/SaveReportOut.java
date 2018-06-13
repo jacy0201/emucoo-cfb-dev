@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 @ApiModel
 public class SaveReportOut {
-    @ApiModelProperty(value = "±¨¸æid", name = "reportID", example = "1")
+    @ApiModelProperty(value = "æŠ¥å‘ŠId", name = "reportID", example = "1")
     private Long reportID;
 }

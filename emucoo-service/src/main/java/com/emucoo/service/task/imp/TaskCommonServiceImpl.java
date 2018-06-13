@@ -3,12 +3,12 @@ package com.emucoo.service.task.imp;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
+import com.emucoo.service.task.MessageBuilder;
 import com.emucoo.service.task.TaskCommonService;
-import com.emucoo.utils.ConstantsUtil;
-import com.emucoo.utils.DateUtil;
-import com.emucoo.utils.TaskUniqueIdUtils;
-import com.emucoo.utils.WaterMarkUtils;
+import com.emucoo.utils.*;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Shayne.Wang
+ * @date 2018-06-12
+ *
+ */
+
 @Service
 public class TaskCommonServiceImpl implements TaskCommonService {
+
+    private final static Logger logger = LoggerFactory.getLogger(TaskCommonServiceImpl.class);
 
     @Autowired
     private TTaskMapper taskMapper;
@@ -58,6 +66,11 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     @Autowired
     private SysUserShopMapper userShopMapper;
 
+    @Autowired
+    private TBusinessMsgMapper businessMsgMapper;
+
+    @Autowired
+    private MessageBuilder messageBuilder;
 
     private List<ImageUrl> convertImgIds2Urls(String ids) {
         if (ids == null) {
@@ -76,6 +89,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     // used for app interface
+
     @Override
     public TaskCommonDetailOut detail(TaskCommonDetailIn voi) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(voi.getWorkID(), voi.getSubID(), voi.getWorkType());
@@ -104,7 +118,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 item.setDigitalItemName(vo.getDigitalItemName());
                 item.setDigitalItemType(vo.getDigitalItemType());
                 item.setTaskItemImgArr(convertImgIds2Urls(vo.getItemImgUrls()));
-
                 // TaskSubmit
                 TaskCommonItem.TaskSubmit submit = new TaskCommonItem().new TaskSubmit();
                 submit.setTaskSubID(vo.getTaskSubID());
@@ -129,9 +142,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
         }
 
-//        WorkAudit workAudit = workAuditMapper.getWorkAudit(voi.getWorkID(), voi.getSubID());
         Review review = new Review();
-
         review.setReviewID(loopWork.getId());
         review.setReviewResult(loopWork.getWorkResult());
         review.setReviewTime(loopWork.getAuditTime() == null ? 0 : loopWork.getAuditTime().getTime());
@@ -143,9 +154,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 review.setAuditorHeadUrl(auditUser.getHeadImgUrl());
             }
         }
-//        review.setReviewOpinion(workAudit.getContent());
-//        review.setReviewImgArr(convertToList(workAudit.getImgUrls()));
-
 
         List<TTaskComment> comments = commentMapper.fetchByLoopWorkId(loopWork.getId());
         List<Answer> answerList = new ArrayList<Answer>();
@@ -168,20 +176,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 answerList.add(answer);
             }
         }
-//        List<WorkAnswer> workAnswerList = workAnswerMapper.fetchAssignWorkAnswers(voi.getWorkID(), voi.getSubID());
-//        if (workAnswerList != null && workAnswerList.size() > 0) {
-//            for (WorkAnswer workAnswer : workAnswerList) {
-//                answer.setReplyID(Integer.parseInt(String.valueOf(workAnswer.getId())));
-//                answer.setReplyContent(workAnswer.getContent());
-//                answer.setReplyTime(workAnswer.getCreateTime().getTime());
-//                answer.setAnswerID(Integer.parseInt(String.valueOf(workAnswer.getUserId())));
-//                answer.setAnswerName(workAnswer.getUserName());
-//                answer.setAnswerHeadUrl(workAnswer.getUserheadurl());
-//                answer.setReplyAction(workAnswer.getAnsweropt());
-//                answer.setReplyImgArr(convertToList(workAnswer.getImgurls()));
-//                answerList.add(answer);
-//            }
-//        }
 
         out.setTaskStatement(taskStatement);
         out.setTaskItemArr(itemList);
@@ -191,7 +185,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void submitTask(TaskCommonSubmitIn taskCommonSubmitIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonSubmitIn.getWorkID(), taskCommonSubmitIn.getSubID(), taskCommonSubmitIn.getWorkType());
         TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
@@ -274,7 +268,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void auditTask(TaskCommonAuditIn taskCommonAuditIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonAuditIn.getWorkID(), taskCommonAuditIn.getSubID(), taskCommonAuditIn.getWorkType());
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
@@ -373,7 +367,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void createCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setName(data.getName());
@@ -402,7 +396,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void saveCommonTask(TaskParameterVo data) {
         TTask task = new TTask();
         task.setId(data.getId());
@@ -425,13 +419,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void removeCommonTask(List<Long> ids) {
         taskMapper.removeCommonTaskByIds(ids);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void switchCommonTask(List<Long> data, boolean state) {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         for (Long id : data) {
@@ -444,6 +438,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     // used for admin backend
+
     @Override
     public TaskParameterVo detailCommonTask(Long taskId) {
         TaskParameterVo vo = new TaskParameterVo();
@@ -524,13 +519,14 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
         vo.setCcUserPositions(ccDpts);
         if (vo.getExeUserType() != null) {
-            if (vo.getExeUserType() == 1) { // 1: 按部门
+            if (vo.getExeUserType() == 1) {
+                // 1: 按部门
                 List<TaskParameterVo.DeptPosition> exeDpts = new ArrayList<>();
                 for (TTaskPerson taskPerson : exePersons) {
                     // 这段代码是把list里的，按照dept id分组了。
                     TaskParameterVo.DeptPosition dpt = null;
                     for (TaskParameterVo.DeptPosition exeDpt : exeDpts) {
-                        if (exeDpt.getDept().getId() == taskPerson.getDptId()) {
+                        if (exeDpt.getDept().getId().longValue() == taskPerson.getDptId().longValue()) {
                             dpt = exeDpt;
                             break;
                         }
@@ -559,7 +555,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 }
                 vo.setExeDeptPositions(exeDpts);
 
-            } else { // 2: 按店铺
+            } else {
+                // 2: 按店铺
                 List<TaskParameterVo.IdNamePair> exeShps = new ArrayList<>();
                 for (TTaskPerson taskPerson : exePersons) {
                     TaskParameterVo.IdNamePair exeShp = new TaskParameterVo.IdNamePair();
@@ -633,7 +630,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void configCommonTask(TaskParameterVo data) {
         TTask task = taskMapper.selectByPrimaryKey(data.getId());
         if (task == null) {
@@ -672,7 +669,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
 
         // 执行人信息
         task.setExecuteUserType(data.getExeUserType());
-        if (data.getExeUserType() == 1) { // 1: 按部门
+        if (data.getExeUserType() == 1) {
+            // 1: 按部门
             data.getExeDeptPositions().forEach(deptPosition -> {
                 deptPosition.getPositions().forEach(position -> {
                     TTaskPerson taskPerson = new TTaskPerson();
@@ -681,11 +679,13 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                     taskPerson.setDptName(deptPosition.getDept().getName());
                     taskPerson.setPositionId(position.getId());
                     taskPerson.setPositionName(position.getName());
-                    taskPerson.setPersonType(1); // 1: 执行人 2：抄送人
+                    // 1: 执行人 2：抄送人
+                    taskPerson.setPersonType(1);
                     taskPersonMapper.insert(taskPerson);
                 });
             });
-        } else { // 2:按店铺
+        } else {
+            // 2:按店铺
             data.getExeUserShops().forEach(shop -> {
                 TTaskPerson taskPerson = new TTaskPerson();
                 taskPerson.setTaskId(data.getId());
@@ -765,7 +765,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
      * 3：根据执行截止时间定义，计算出提醒截止时间，审核截止时间
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void buildCommonTaskInstance() {
         // list all common task: filter by the duration time
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
@@ -807,8 +807,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
         }
 
-        List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(commonTask.getId());
-
         String uniWorkId = TaskUniqueIdUtils.genUniqueId();
         for (SysUser executor : executors) {
             // 判断数据库里是否已经有这条数据了
@@ -818,8 +816,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
 
             TLoopWork loopWork = new TLoopWork();
-//            loopWork.setAuditDeadline();
-//            loopWork.setAuditTime();
             SysUser auditor = determinAuditorByExecutorType(executor, commonTask);
             if (auditor == null) {
                 auditor = executor;
@@ -827,8 +823,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             loopWork.setAuditUserId(auditor.getId());
             loopWork.setAuditUserName(auditor.getRealName());
             loopWork.setCreateTime(DateUtil.currentDate());
-//            loopWork.setCreateUserId();
-//            loopWork.setCreateUserName();
             loopWork.setExcuteUserId(executor.getId());
             loopWork.setExcuteUserName(executor.getRealName());
             loopWork.setExecuteBeginDate(exeBeginDt);
@@ -836,28 +830,29 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             loopWork.setExecuteEndDate(exeEndDt);
             loopWork.setExecuteRemindTime(exeRemindTime);
             loopWork.setExecuteUserHeadImgUrl(executor.getHeadImgUrl());
-//            loopWork.setId();
             loopWork.setModifyTime(DateUtil.currentDate());
-//            loopWork.setScore();
             List<SysUser> ccPersons = determineSendersByExecutorType(executor, commonTask);
             if (ccPersons != null && ccPersons.size() > 0) {
                 loopWork.setSendUserIds(StringUtils.join(ccPersons.stream().map(person -> Long.toString(person.getId())).collect(Collectors.toList()), ","));
             }
             loopWork.setSubWorkId(TaskUniqueIdUtils.genUniqueId());
-//            loopWork.setTask();
             loopWork.setTaskId(commonTask.getId());
             loopWork.setType(1);
-//            loopWork.setVersion();
             loopWork.setWorkId(uniWorkId);
-//            loopWork.setWorkResult();
             loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
-
             loopWorkMapper.insert(loopWork);
 
+            List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(commonTask.getId());
             createCommonLoopWorkOperateOptions(commonTask, loopWork, options);
 
+            // 推送并保存消息
+            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(commonTask, loopWork, executor, 1);
+            businessMsg = messageBuilder.pushMessage(businessMsg, executor, 1);
+            businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
+
+
 
     private List<SysUser> determineSendersByExecutorType(SysUser executor, TTask commonTask) {
         // 任务执行者选择店铺时，抄送人选择部门及岗位，只有符合条件且品牌和分区同时包含任务执行者所在店铺的品牌及分区的人员才可收到任务的抄送信息
@@ -907,12 +902,14 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                     flag = true;
                 }
                 break;
+            default:
         }
         return flag;
     }
 
     private SysUser determinAuditorByExecutorType(SysUser executor, TTask commonTask) {
-        if (commonTask.getExecuteUserType() == 2) { // 执行人按店铺：审核人是指定审核部门里对执行人店铺有数据权限的人。
+        if (commonTask.getExecuteUserType() == 2) {
+            // 执行人按店铺：审核人是指定审核部门里对执行人店铺有数据权限的人。
             Long auditDeptId = commonTask.getAuditDptId();
             List<SysUser> supervisors = taskPersonMapper.fetchSupervisorsOfShop(auditDeptId, executor.getCurrentShopId());
             if (supervisors != null && supervisors.size() > 0) {
@@ -921,7 +918,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             } else {
                 return null;
             }
-        } else { // 执行人按部门: 审核人是执行人的直接上级
+        } else {
+            // 执行人按部门: 审核人是执行人的直接上级
             return taskPersonMapper.fetchImmediateSuperiorOfUser(executor.getId(), executor.getDptId(), executor.getCurrentPosId());
         }
     }
