@@ -1383,7 +1383,7 @@ public class ReportServiceImpl implements ReportService {
                 checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindScoreVos.add(checklistKindVo);
             }
-            reportOut.setKindArray(checklistKindScoreVos);
+            reportOut.setChecklistKindScoreArr(checklistKindScoreVos);
             reportOut.setAllRedNum(allRedNum);
             reportOut.setAllYellowNum(allYellowNum);
             reportOut.setAllGreenNum(allGreenNum);
@@ -1504,6 +1504,7 @@ public class ReportServiceImpl implements ReportService {
             for (TFormOpptValue tFormOpptValue : tFormOpptValues) {
                 TReportOppt tReportOppt = new TReportOppt();
                 tReportOppt.setOpptId(tFormOpptValue.getOpptId());
+                tReportOppt.setFormOpptValueId(tFormOpptValue.getId());
                 tReportOppt.setOpptName(tFormOpptValue.getOpptName());
                 tReportOppt.setOpptDesc(tFormOpptValue.getOpptDesc());
                 tReportOppts.add(tReportOppt);
@@ -1629,7 +1630,7 @@ public class ReportServiceImpl implements ReportService {
                 checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindVos.add(checklistKindVo);
             }
-            reportVo.setKindArray(checklistKindVos);
+            reportVo.setChecklistKindScoreArr(checklistKindVos);
             reportVo.setAllRedNum(allRedNum);
             reportVo.setAllYellowNum(allYellowNum);
             reportVo.setAllGreenNum(allGreenNum);
