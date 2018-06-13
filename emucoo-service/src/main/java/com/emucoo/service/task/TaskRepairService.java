@@ -24,9 +24,9 @@ public interface TaskRepairService {
 
     void auditRepairWork(TRepairWork work);
 
-    List<TDeviceType> listDeviceTypes(String keyword, long typeId, int pageNm, int pageSz);
+    List<TDeviceType> listDeviceTypes(TDeviceType deviceType, int pageNm, int pageSz);
 
-    int countDeviceTypes(String keyword, long typeId);
+    int countDeviceTypes(TDeviceType deviceType);
 
     void saveDeviceType(TDeviceType dvc);
 

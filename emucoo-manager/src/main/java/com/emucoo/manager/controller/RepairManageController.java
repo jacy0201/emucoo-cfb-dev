@@ -29,13 +29,10 @@ public class RepairManageController extends BaseResource {
     public ApiResult<PageInfo> list(@RequestBody ParamVo<TDeviceType> paramVo) {
         int pageNm = paramVo.getPageNumber();
         int pageSz = paramVo.getPageSize();
-
         TDeviceType dvc = paramVo.getData();
-        String keyword = dvc.getName();
-        long typeId = dvc.getParentTypeId();
 
-        int total = taskRepairService.countDeviceTypes(keyword, typeId);
-        List<TDeviceType> dts = taskRepairService.listDeviceTypes(keyword, typeId, pageNm, pageSz);
+        int total = taskRepairService.countDeviceTypes(dvc);
+        List<TDeviceType> dts = taskRepairService.listDeviceTypes(dvc, pageNm, pageSz);
 
         PageInfo pageInfo = new PageInfo(dts);
         pageInfo.setTotal(total);

@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface TDeviceTypeMapper extends MyMapper<TDeviceType> {
 
-    List<TDeviceType> filterDeviceTypesByKeyword(@Param("keyword") String keyword, @Param("typeId") long typeId, @Param("pageStart") int pageStart, @Param("pageSz") int pageSz);
+    List<TDeviceType> filterDeviceTypesByKeyword(@Param("deviceType") TDeviceType deviceType, @Param("pageStart") int pageStart, @Param("pageSz") int pageSz);
 
-    int countDeviceTypesByKeyword(@Param("keyword") String keyword, @Param("typeId") long typeId);
+    int countDeviceTypesByKeyword(TDeviceType deviceType);
 
     void switchDeviceTypeUsage(@Param("dvcId") long deviceTypeId, @Param("usage") boolean b);
 

@@ -31,7 +31,7 @@
     </resultMap>
 
     <select id="fetchWorksListByDate" resultType="com.emucoo.model.TRepairWork">
-        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userid} and report_time between #{beginDt} and #{endDt}
+        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userId} and report_time between #{beginDt} and #{endDt}
     </select>
 
     <select id="getRepairWorkList" resultType="com.emucoo.model.TRepairWork">
