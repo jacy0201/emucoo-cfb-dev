@@ -91,7 +91,7 @@ public class AppDemoController extends AppBaseController {
     @Autowired
     private JiGuangProxy jiGuangProxy;
 
-	@PostMapping("/testJiguang")
+	/*@PostMapping("/testJiguang")
     public AppResult<String> testJiguang(@RequestBody ParamVo<String> base) {
         String deviceId = base.getData();
         try {
@@ -100,6 +100,6 @@ public class AppDemoController extends AppBaseController {
             e.printStackTrace();
         }
         return AppResult.successRes("ok");
-    }
+    }*/
 
 }
