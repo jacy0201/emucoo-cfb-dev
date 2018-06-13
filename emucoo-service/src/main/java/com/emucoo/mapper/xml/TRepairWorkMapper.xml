@@ -4,40 +4,39 @@
     <resultMap id="BaseResultMap" type="com.emucoo.model.TRepairWork">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
-        <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
-        <result column="reporter_id" property="reporterId" jdbcType="BIGINT" />
-        <result column="reporter_name" property="reporterName" jdbcType="VARCHAR" />
-        <result column="report_date" property="reportDate" jdbcType="TIMESTAMP" />
-        <result column="device_id" property="deviceId" jdbcType="BIGINT" />
-        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
-        <result column="device_idstr" property="deviceIdstr" jdbcType="VARCHAR" />
-        <result column="device_title" property="deviceTitle" jdbcType="VARCHAR" />
-        <result column="problem_id" property="problemId" jdbcType="BIGINT" />
-        <result column="problem_name" property="problemName" jdbcType="VARCHAR" />
-        <result column="urgent_level" property="urgentLevel" jdbcType="INTEGER" />
-        <result column="problem_imgs" property="problemImgs" jdbcType="VARCHAR" />
-        <result column="repair_man_id" property="repairManId" jdbcType="BIGINT" />
-        <result column="repair_man_name" property="repairManName" jdbcType="VARCHAR" />
-        <result column="expect_date" property="expectDate" jdbcType="TIMESTAMP" />
-        <result column="finish_date" property="finishDate" jdbcType="TIMESTAMP" />
-        <result column="repair_notes" property="repairNotes" jdbcType="VARCHAR" />
-        <result column="repair_imgs" property="repair_imgs" jdbcType="VARCHAR" />
-        <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR" />
-        <result column="review_result" property="reviewResult" jdbcType="INTEGER" />
-        <result column="work_status" property="workStatus" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="reporter_id" property="reporterId" jdbcType="BIGINT"/>
+        <result column="reporter_name" property="reporterName" jdbcType="VARCHAR"/>
+        <result column="report_date" property="reportDate" jdbcType="TIMESTAMP"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="device_idstr" property="deviceIdstr" jdbcType="VARCHAR"/>
+        <result column="device_title" property="deviceTitle" jdbcType="VARCHAR"/>
+        <result column="problem_id" property="problemId" jdbcType="BIGINT"/>
+        <result column="problem_name" property="problemName" jdbcType="VARCHAR"/>
+        <result column="urgent_level" property="urgentLevel" jdbcType="INTEGER"/>
+        <result column="problem_imgs" property="problemImgs" jdbcType="VARCHAR"/>
+        <result column="repair_man_id" property="repairManId" jdbcType="BIGINT"/>
+        <result column="repair_man_name" property="repairManName" jdbcType="VARCHAR"/>
+        <result column="expect_date" property="expectDate" jdbcType="TIMESTAMP"/>
+        <result column="finish_date" property="finishDate" jdbcType="TIMESTAMP"/>
+        <result column="repair_notes" property="repairNotes" jdbcType="VARCHAR"/>
+        <result column="repair_imgs" property="repair_imgs" jdbcType="VARCHAR"/>
+        <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR"/>
+        <result column="review_result" property="reviewResult" jdbcType="INTEGER"/>
+        <result column="work_status" property="workStatus" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
 
     </resultMap>
 
     <select id="fetchWorksListByDate" resultType="com.emucoo.model.TRepairWork">
-        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userid} and report_time between #{beginDt} and #{endDt}
+        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userId} and report_date between
+        #{beginDt} and #{endDt}
     </select>
 
     <select id="getRepairWorkList" resultType="com.emucoo.model.TRepairWork">
-        select * from t_repair_work t where
-         (t.reporter_id =#{userId} or t.repair_man_id=#{userId})
-         and
-         str_to_date(t.create_time,'%Y-%m') =str_to_date(#{month},'%Y-%m')
+        select * from t_repair_work t where (t.reporter_id =#{userId} or t.repair_man_id=#{userId})
+        and str_to_date(t.create_time,'%Y-%m') =str_to_date(#{month},'%Y-%m')
     </select>
 </mapper>

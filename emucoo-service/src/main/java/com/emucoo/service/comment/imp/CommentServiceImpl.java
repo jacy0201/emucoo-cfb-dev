@@ -54,6 +54,8 @@ public class CommentServiceImpl implements CommentService {
             unionId=vo.getReportID();
         }else if(workType == 6){//workType==6 评论， 针对评论的 回复
             unionId=vo.getCommentID();
+        }else if(workType ==7){//workType==7 维修任务
+            unionId=vo.getRepairID();
         }
         comment.setUnionId(unionId);
         comment.setUserId(user.getId());
@@ -112,6 +114,8 @@ public class CommentServiceImpl implements CommentService {
                 unionId=loopWork.getId();
             }else if(workType==4){
                 unionId=reportId;
+            }else if(workType==7){
+                unionId=vo.getRepairID();
             }
         }
         Example example=new Example(TTaskComment.class);

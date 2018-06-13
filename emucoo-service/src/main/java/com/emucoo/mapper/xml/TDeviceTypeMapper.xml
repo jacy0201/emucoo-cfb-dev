@@ -15,25 +15,37 @@
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
-    <select id="countDeviceTypesByKeyword" resultType="java.lang.Integer">
+    <select id="countDeviceTypesByKeyword" resultType="java.lang.Integer" parameterType="com.emucoo.model.TDeviceType">
         select count(id) from t_device_type
         where is_del = 0 and tier = 2
-        <if test="keyword != null and keyword.trim() != '' ">
-            and name like concat('%', #{keyword}, '%')
+        <if test="name != null and name.trim() != '' ">
+            and name like concat('%', #{name}, '%')
         </if>
-        <if test="typeId != null and typeId != 0">
-            and parent_type_id = #{typeId}
+        <if test="parentTypeId != null and parentTypeId != 0">
+            and parent_type_id = #{parentTypeId}
+        </if>
+        <if test="brandIds != null and brandIds.trim() != '' ">
+            and FIND_IN_SET(#{brandIds}, brand_ids)
+        </if>
+        <if test="isUse != null" >
+            and is_use = #{isUse}
         </if>
     </select>
 
     <select id="filterDeviceTypesByKeyword" resultType="com.emucoo.model.TDeviceType">
         select * from t_device_type
         where is_del = 0 and tier = 2
-        <if test="keyword != null and keyword.trim() != '' ">
-            and name like concat('%', #{keyword}, '%')
+        <if test="deviceType.name != null and deviceType.name.trim() != '' ">
+            and name like concat('%', #{deviceType.name}, '%')
         </if>
-        <if test="typeId != null and typeId != 0">
-            and parent_type_id = #{typeId}
+        <if test="deviceType.parentTypeId != null and deviceType.parentTypeId != 0">
+            and parent_type_id = #{deviceType.parentTypeId}
+        </if>
+        <if test="deviceType.brandIds != null and deviceType.brandIds.trim() != '' ">
+            and FIND_IN_SET(#{deviceType.brandIds}, brand_ids)
+        </if>
+        <if test="deviceType.isUse != null" >
+            and is_use = #{deviceType.isUse}
         </if>
         limit #{pageStart}, #{pageSz}
     </select>
