@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_business_msg")
 public class TBusinessMsg extends BaseEntity {
@@ -17,13 +18,13 @@ public class TBusinessMsg extends BaseEntity {
     private Long unionId;
 
     /**
-     * 消息主体模块类型(1：常规任务，2：指派任务：3：改善任务，4：巡店安排，5：评论，6：工作备忘)
+     * 消息主体模块类型(1：常规任务，2：指派任务：3：改善任务，4：巡店安排，5：评论，6：工作备忘, 7: 维修任务)
      */
     @Column(name = "union_type")
     private Byte unionType;
 
     /**
-     * 功能类型（1:创建提醒，2：执行提醒，3：待审提醒，4：超时提醒，5：审核完成提醒，6：评论提醒）
+     * 功能类型（1:创建提醒，2：执行提醒，3：待审提醒，4：超时提醒，5：审核完成提醒，6：评论提醒， 7：抄送）
      */
     @Column(name = "function_type")
     private Byte functionType;
