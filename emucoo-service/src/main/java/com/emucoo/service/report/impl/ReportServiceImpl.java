@@ -1383,7 +1383,7 @@ public class ReportServiceImpl implements ReportService {
                 checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindScoreVos.add(checklistKindVo);
             }
-            reportOut.setKindArray(checklistKindScoreVos);
+            reportOut.setChecklistKindScoreArr(checklistKindScoreVos);
             reportOut.setAllRedNum(allRedNum);
             reportOut.setAllYellowNum(allYellowNum);
             reportOut.setAllGreenNum(allGreenNum);
@@ -1629,7 +1629,7 @@ public class ReportServiceImpl implements ReportService {
                 checklistKindVo.setNaNum(tFormValue.getNaNum());
                 checklistKindVos.add(checklistKindVo);
             }
-            reportVo.setKindArray(checklistKindVos);
+            reportVo.setChecklistKindScoreArr(checklistKindVos);
             reportVo.setAllRedNum(allRedNum);
             reportVo.setAllYellowNum(allYellowNum);
             reportVo.setAllGreenNum(allGreenNum);
