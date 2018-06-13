@@ -114,6 +114,8 @@ public class CommentServiceImpl implements CommentService {
                 unionId=loopWork.getId();
             }else if(workType==4){
                 unionId=reportId;
+            }else if(workType==7){
+                unionId=vo.getRepairID();
             }
         }
         Example example=new Example(TTaskComment.class);
