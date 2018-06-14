@@ -22,3 +22,7 @@ jiguangPush:
 
 xiaomiPush:
   isDebug: true
+
+  #swagger api 文档 开关
+swagger:
+  enable: true

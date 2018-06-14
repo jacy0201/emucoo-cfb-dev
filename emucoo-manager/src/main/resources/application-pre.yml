@@ -18,3 +18,7 @@ logging:
 
 xiaomiPush:
   isDebug: false
+
+ #swagger api 文档 开关
+swagger:
+  enable: false

@@ -40,7 +40,7 @@ public class CalendarController extends AppBaseController {
      */
     @ApiOperation(value = "查询用户某月行事历")
     @PostMapping(value = "/listMonth")
-    public AppResult listMonth(@RequestBody ParamVo<CalendarListMonthIn> params) {
+    public AppResult<CalendarListMonthOut> listMonth(@RequestBody ParamVo<CalendarListMonthIn> params) {
         CalendarListMonthIn calendarListIn = params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long currentUserId = user.getId();
@@ -62,7 +62,7 @@ public class CalendarController extends AppBaseController {
      */
     @ApiOperation(value = "查询用户某天行事历")
     @PostMapping(value = "/listDate")
-    public AppResult listDate(@RequestBody ParamVo<CalendarListDateIn> params) {
+    public AppResult<CalendarListDateOut> listDate(@RequestBody ParamVo<CalendarListDateIn> params) {
         CalendarListDateIn calendarListDateIn = params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long currentUserId = user.getId();
@@ -84,7 +84,7 @@ public class CalendarController extends AppBaseController {
      */
     @ApiOperation(value = "查询最近联系人")
     @PostMapping(value = "/listRecentUser")
-    public AppResult listRecentUser() {
+    public AppResult<List<SysUser>> listRecentUser() {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<SysUser> list = calendarService.listLowerUser(user.getId());
         //返回按姓名首字母排序的集合;

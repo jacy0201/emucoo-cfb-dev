@@ -1,5 +1,6 @@
 package com.emucoo.restApi.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -22,6 +23,7 @@ import java.util.List;
  * Swagger2配置类
  */
 @Configuration
+@ConditionalOnProperty(prefix = "swagger",value = {"enable"},havingValue = "true")
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
     /**

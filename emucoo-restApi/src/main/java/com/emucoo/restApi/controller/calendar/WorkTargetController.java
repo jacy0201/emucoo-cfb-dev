@@ -48,7 +48,7 @@ public class WorkTargetController extends AppBaseController {
      */
     @ApiOperation(value = "获取用户月工作目标")
     @PostMapping(value = "/getWorkTarget")
-    public AppResult getWorkTarget(@RequestBody ParamVo<WorkTargetQueryVO> params) {
+    public AppResult<WorkTargetVO> getWorkTarget(@RequestBody ParamVo<WorkTargetQueryVO> params) {
         WorkTargetQueryVO workTargetQueryVO= params.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         Long currentUserId = user.getId();
@@ -106,7 +106,7 @@ public class WorkTargetController extends AppBaseController {
      */
     @ApiOperation(value = "选择店面")
     @PostMapping(value = "/selectShop")
-    public AppResult selectShop() {
+    public AppResult<List<TShopInfo>> selectShop() {
         Example example=new Example(TShopInfo.class);
         example.createCriteria().andEqualTo("isDel",false).andEqualTo("isUse",true);
         List<TShopInfo> list=sysShopService.selectByExample(example);
