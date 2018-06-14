@@ -149,6 +149,7 @@ public class SysShopController extends BaseResource {
 		shopInfo.setCreateTime(new Date());
 		shopInfo.setCreateUserId(ShiroUtils.getUserId());
 		shopInfo.setIsDel(false);
+		shopInfo.setIsUse(false);
 		sysShopService.saveSelective(shopInfo);
 		return success("success");
 	}
