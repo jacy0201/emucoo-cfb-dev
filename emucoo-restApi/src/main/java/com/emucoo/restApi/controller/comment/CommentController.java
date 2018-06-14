@@ -80,7 +80,7 @@ public class CommentController extends AppBaseController {
 	 */
 	@ApiOperation(value = "删除评论")
 	@PostMapping("delete")
-	public AppResult<String> delete(@RequestBody ParamVo<CommentDeleteIn> base) {
+	public AppResult delete(@RequestBody ParamVo<CommentDeleteIn> base) {
 		CommentDeleteIn vo = base.getData();
 		commentService.delete(vo);
 		return success("success");
