@@ -100,7 +100,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "我执行的任务")
     @PostMapping("/executeTaskList")
-    public AppResult executeTaskList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<TaskVO>> executeTaskList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TaskVO> list = userCenterService.executeTaskList(taskQuery.getMonth(), currUser.getId());
@@ -112,7 +112,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "我审核的任务")
     @PostMapping("/auditTaskList")
-    public AppResult auditTaskList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<TaskVO>> auditTaskList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TaskVO> list = userCenterService.auditTaskList(taskQuery.getMonth(), currUser.getId());
@@ -124,7 +124,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "我创建的任务")
     @PostMapping("/createTaskList")
-    public AppResult createTaskList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<TaskVO>> createTaskList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TaskVO> list = userCenterService.createTaskList(taskQuery.getMonth(), currUser.getId());
@@ -136,7 +136,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "我接收的报告")
     @PostMapping("/getReportList")
-    public AppResult getReportList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<ReportVO>> getReportList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<ReportVO> list = userCenterService.getReportList(taskQuery.getMonth(), currUser.getId());
@@ -149,7 +149,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "巡店任务")
     @PostMapping("/frontPlanList")
-    public AppResult frontPlanList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<FrontPlanVO>> frontPlanList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<FrontPlanVO> list = userCenterService.frontPlanList(taskQuery.getMonth(), currUser.getId());
@@ -161,7 +161,7 @@ public class UserCenterController extends AppBaseController {
      */
     @ApiOperation(value = "维修任务")
     @PostMapping("/repairWorkList")
-    public AppResult repairWorkList(@RequestBody ParamVo<TaskQuery> params) {
+    public AppResult<List<TRepairWork>> repairWorkList(@RequestBody ParamVo<TaskQuery> params) {
         TaskQuery taskQuery = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TRepairWork> list = userCenterService.repairWorkList(taskQuery.getMonth(), currUser.getId());

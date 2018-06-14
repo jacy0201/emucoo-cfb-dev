@@ -14,3 +14,7 @@ password: E99fsFZBw3yyDKsRGE7NU1cFGYzz6mcSBthBFbB5XFGKrxH0BkX+p7Ek+/QhmRdfZ/dpsU
 logging:
   config: classpath:logback-base.xml
   path: logs
+
+#swagger api 文档 开关
+swagger:
+  enable: false
