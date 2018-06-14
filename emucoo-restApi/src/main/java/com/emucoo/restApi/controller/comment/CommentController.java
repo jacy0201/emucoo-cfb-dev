@@ -18,7 +18,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
+ * @author Jacy
  * 评论
+ *
  */
 @Api(description = "评论模块接口")
 @RestController
@@ -80,7 +82,7 @@ public class CommentController extends AppBaseController {
 	 */
 	@ApiOperation(value = "删除评论")
 	@PostMapping("delete")
-	public AppResult<String> delete(@RequestBody ParamVo<CommentDeleteIn> base) {
+	public AppResult delete(@RequestBody ParamVo<CommentDeleteIn> base) {
 		CommentDeleteIn vo = base.getData();
 		commentService.delete(vo);
 		return success("success");

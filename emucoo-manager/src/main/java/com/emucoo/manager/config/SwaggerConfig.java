@@ -1,5 +1,6 @@
 package com.emucoo.manager.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,6 +22,7 @@ import java.util.List;
  * Created by fujg on 2017/3/9.
  */
 @Configuration
+@ConditionalOnProperty(prefix = "swagger",value = {"enable"},havingValue = "true")
 @EnableSwagger2
 public class SwaggerConfig {
     /**

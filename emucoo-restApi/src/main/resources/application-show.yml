@@ -16,4 +16,6 @@ logging:
   config: classpath:logback-base.xml
   path: logs
 
-
+#swagger api 文档 开关
+swagger:
+  enable: false

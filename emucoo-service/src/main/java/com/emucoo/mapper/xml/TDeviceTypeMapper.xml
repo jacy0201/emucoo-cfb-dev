@@ -21,11 +21,11 @@
         <if test="name != null and name.trim() != '' ">
             and name like concat('%', #{name}, '%')
         </if>
-        <if test="parentTypeId != null and parentTypeId != 0">
+        <if test="parentTypeId != 0">
             and parent_type_id = #{parentTypeId}
         </if>
-        <if test="brandIds != null and brandIds.trim() != '' ">
-            and FIND_IN_SET(#{brandIds}, brand_ids)
+        <if test="brandId != 0">
+            and FIND_IN_SET(#{brandId}, brand_ids)
         </if>
         <if test="isUse != null" >
             and is_use = #{isUse}
@@ -38,11 +38,11 @@
         <if test="deviceType.name != null and deviceType.name.trim() != '' ">
             and name like concat('%', #{deviceType.name}, '%')
         </if>
-        <if test="deviceType.parentTypeId != null and deviceType.parentTypeId != 0">
+        <if test="deviceType.parentTypeId != 0">
             and parent_type_id = #{deviceType.parentTypeId}
         </if>
-        <if test="deviceType.brandIds != null and deviceType.brandIds.trim() != '' ">
-            and FIND_IN_SET(#{deviceType.brandIds}, brand_ids)
+        <if test="deviceType.brandId != 0 ">
+            and FIND_IN_SET(#{deviceType.brandId}, brand_ids)
         </if>
         <if test="deviceType.isUse != null" >
             and is_use = #{deviceType.isUse}

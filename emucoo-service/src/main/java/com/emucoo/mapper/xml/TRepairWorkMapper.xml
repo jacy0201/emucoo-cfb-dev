@@ -14,6 +14,7 @@
         <result column="device_title" property="deviceTitle" jdbcType="VARCHAR"/>
         <result column="problem_id" property="problemId" jdbcType="BIGINT"/>
         <result column="problem_name" property="problemName" jdbcType="VARCHAR"/>
+        <result column="problem_notes" property="problemNotes" jdbcType="VARCHAR"/>
         <result column="urgent_level" property="urgentLevel" jdbcType="INTEGER"/>
         <result column="problem_imgs" property="problemImgs" jdbcType="VARCHAR"/>
         <result column="repair_man_id" property="repairManId" jdbcType="BIGINT"/>
@@ -31,8 +32,23 @@
     </resultMap>
 
     <select id="fetchWorksListByDate" resultType="com.emucoo.model.TRepairWork">
-        select * from t_repair_work where shop_id = #{shopId} and reporter_id = #{userId} and report_date between
-        #{beginDt} and #{endDt}
+        select a.*,
+        UNIX_TIMESTAMP(a.report_date) * 1000 as reportTime,
+        UNIX_TIMESTAMP(a.expect_date) * 1000 as expectTime,
+        UNIX_TIMESTAMP(a.finish_date) * 1000 as finishTime,
+        b.head_img_url as repairManAvatar
+        from t_repair_work a left join sys_user b on a.repair_man_id = b.id
+        where a.shop_id = #{shopId} and a.report_date between #{beginDt} and #{endDt}
+    </select>
+
+    <select id="fetchOneById" resultType="com.emucoo.model.TRepairWork">
+        select a.*,
+        UNIX_TIMESTAMP(a.report_date) * 1000 as reportTime,
+        UNIX_TIMESTAMP(a.expect_date) * 1000 as expectTime,
+        UNIX_TIMESTAMP(a.finish_date) * 1000 as finishTime,
+        b.head_img_url as repairManAvatar
+        from t_repair_work a left join sys_user b on a.repair_man_id = b.id
+        where a.id = #{workId}
     </select>
 
     <select id="getRepairWorkList" resultType="com.emucoo.model.TRepairWork">

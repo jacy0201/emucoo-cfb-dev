@@ -1,5 +1,6 @@
 package com.emucoo.job.config;
 
+import com.emucoo.common.msg.JiGuangProxy;
 import com.emucoo.common.util.MsgPushing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,5 +16,10 @@ public class BeanFactory {
     @Bean
     public MsgPushing msgPushing() {
         return new MsgPushing(env);
+    }
+
+    @Bean
+    public JiGuangProxy createJiGuangProxy() {
+        return JiGuangProxy.createJiGuangProxyInstance(env.getProperty("jiguangPush.appKey"), env.getProperty("jiguangPush.masterSecret"), env.getProperty("jiguangPush.apnsProduction", Boolean.class));
     }
 }

@@ -2,10 +2,10 @@ package com.emucoo.service.task.imp;
 
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
+import com.emucoo.service.task.MessageBuilder;
 import com.emucoo.service.task.TaskRepairService;
 import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
-import com.emucoo.service.task.MessageBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,21 +42,25 @@ public class TaskRepairServiceImpl implements TaskRepairService {
 
     @Override
     public TRepairWork detail(long workId) {
-        return repairWorkMapper.selectByPrimaryKey(workId);
+        return repairWorkMapper.fetchOneById(workId);
     }
 
     @Override
     public List<TRepairWork> listRepairWorksByShopId(long shopId, String date, long userId) {
         Date beginDt = DateUtil.strToSimpleYYMMDDDate(date + "01");
         Date endDt = DateUtil.timeBackward(DateUtil.dateAddMonth(beginDt, 1), 0, 0, 1);
-        List<TRepairWork> works = repairWorkMapper.fetchWorksListByDate(shopId, userId, beginDt, endDt);
-        return works;
+        return repairWorkMapper.fetchWorksListByDate(shopId, beginDt, endDt);
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void createRepairWork(TRepairWork work) {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_1);
+        work.setCreateTime(DateUtil.currentDate());
+        work.setModifyTime(DateUtil.currentDate());
+        work.setReportDate(work.getReportTime() == 0 ? DateUtil.currentDate() : new Date(work.getReportTime()));
+        work.setExpectDate(new Date(0));
+        work.setFinishDate(new Date(0));
         repairWorkMapper.insert(work);
 
         // 推送并保存消息
@@ -68,12 +72,15 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void modifyRepairWork(TRepairWork work) {
+        work.setExpectDate(work.getExpectTime() == 0 ? work.getExpectDate() : new Date(work.getExpectTime()));
+        work.setFinishDate(work.getFinishTime() == 0 ? work.getFinishDate() : new Date(work.getFinishTime()));
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void finishRepairWork(TRepairWork work) {
+        work.setFinishDate(new Date(work.getFinishTime()));
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_4);
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
@@ -81,6 +88,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void expectRepairDate(TRepairWork work) {
+        work.setExpectDate(new Date(work.getExpectTime()));
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_2);
         repairWorkMapper.updateByPrimaryKeySelective(work);
     }
@@ -129,6 +137,8 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     @Transactional(rollbackFor = {Exception.class})
     public void saveDeviceType(TDeviceType dvc) {
         dvc.setTier(2);
+        dvc.setIsUse(dvc.getIsUse() == null ? false : dvc.getIsUse());
+        dvc.setIsDel(dvc.getIsDel() == null ? false : dvc.getIsDel());
         dvc.setCreateTime(DateUtil.currentDate());
         dvc.setModifyTime(DateUtil.currentDate());
         if (dvc.getId() == 0) {
@@ -165,6 +175,10 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         for (TDeviceType tdt : children) {
             tdt.setParentTypeId(dvc.getId());
             tdt.setTier(dvc.getTier() + 1);
+            tdt.setIsUse(true);
+            tdt.setIsDel(false);
+            tdt.setCreateTime(DateUtil.currentDate());
+            tdt.setModifyTime(DateUtil.currentDate());
             if (tdt.getId() == 0) {
                 deviceTypeMapper.insertUseGeneratedKeys(tdt);
             } else {
