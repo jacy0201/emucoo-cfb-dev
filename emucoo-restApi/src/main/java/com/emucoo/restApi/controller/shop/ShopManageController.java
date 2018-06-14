@@ -47,7 +47,7 @@ public class ShopManageController extends AppBaseController {
      */
     @PostMapping(value = "getAreaList")
     @ApiOperation(value="获取用户的分区资源")
-    public AppResult getAreaList() {
+    public AppResult<List<SysArea>> getAreaList() {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<SysArea> list=shopManageService.getAreaList(user.getId());
         return success(list);
@@ -59,7 +59,7 @@ public class ShopManageController extends AppBaseController {
      */
     @PostMapping(value = "getShopList")
     @ApiOperation(value="根据分区获取店面资源")
-    public AppResult getShopList(@RequestBody ParamVo<ShopListQuery> base) {
+    public AppResult<List<ShopVO>> getShopList(@RequestBody ParamVo<ShopListQuery> base) {
         ShopListQuery shopListQuery= base.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<ShopVO> list=shopManageService.getShopList(shopListQuery.getAreaId(),user.getId());
@@ -71,7 +71,7 @@ public class ShopManageController extends AppBaseController {
      */
     @PostMapping(value = "selectFormList")
     @ApiOperation(value="选择检查表")
-    public AppResult selectFormList() {
+    public AppResult<List<TFormMain>> selectFormList() {
         List<TFormMain> list=shopManageService.selectFormList();
         return success(list);
     }
@@ -82,7 +82,7 @@ public class ShopManageController extends AppBaseController {
      */
     @PostMapping(value = "getResultList")
     @ApiOperation(value="稽核结果")
-    public AppResult getResultList(@RequestBody ParamVo<ResultQuery> base) {
+    public AppResult<List<FormResultVO>> getResultList(@RequestBody ParamVo<ResultQuery> base) {
         ResultQuery resultQuery= base.getData();
         List<FormResultVO> list =shopManageService.getResultList(resultQuery);
         return success(list);
@@ -93,7 +93,7 @@ public class ShopManageController extends AppBaseController {
      */
     @PostMapping(value = "getRepairList")
     @ApiOperation(value="维修单")
-    public AppResult getRepairList(@RequestBody ParamVo<TaskQuery> base) {
+    public AppResult<List<TRepairWork>> getRepairList(@RequestBody ParamVo<TaskQuery> base) {
         TaskQuery taskQuery= base.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
