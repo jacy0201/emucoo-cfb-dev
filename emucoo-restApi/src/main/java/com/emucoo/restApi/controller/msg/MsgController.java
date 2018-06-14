@@ -1,9 +1,11 @@
 package com.emucoo.restApi.controller.msg;
 
 import com.emucoo.dto.base.ParamVo;
+import com.emucoo.dto.modules.msg.MsgDetailIn;
 import com.emucoo.dto.modules.msg.MsgListIn;
 import com.emucoo.dto.modules.msg.MsgListOut;
 import com.emucoo.dto.modules.msg.MsgSummaryOut;
+import com.emucoo.dto.modules.msg.UpdateMsgReadedIn;
 import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -51,5 +54,24 @@ public class MsgController extends AppBaseController {
         MsgListOut msgList = msgService.getMsgList(user, msgListIn);
         return success(msgList);
     }
+
+    @ApiOperation(value = "更新消息列表未读状态")
+    @PostMapping("/updateMsgListReaded")
+    public AppResult<String> updateMsgListReaded(HttpServletRequest request, @RequestBody ParamVo<UpdateMsgReadedIn> params) {
+        UpdateMsgReadedIn updateMsgIn = params.getData();
+        checkParam(updateMsgIn.getMsgIDs(), "消息不能为空！");
+        msgService.updateMsgListReaded(updateMsgIn);
+        return success("ok");
+    }
+
+    /*@ApiOperation(value = "查看消息详情")
+    @PostMapping("/msgDetail")
+    public String msgDetail(HttpServletRequest request, @RequestBody ParamVo<MsgDetailIn> params) {
+        MsgDetailIn msgDetailIn = params.getData();
+        checkParam(msgDetailIn.getMsgID(), "消息id不能为空！");
+        String forwardUrl = msgService.msgDetail(msgDetailIn);
+
+        return forwardUrl;
+    }*/
 
 }
