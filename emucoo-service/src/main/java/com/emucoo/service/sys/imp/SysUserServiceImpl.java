@@ -85,10 +85,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			}
 			if(StringUtil.isNotEmpty(userQuery.getUsername())){
 			    username=userQuery.getUsername();
-                criteria.andEqualTo("username",username);
+                criteria.andLike("username","%"+username+"%");
 			}
 			if(StringUtil.isNotEmpty(userQuery.getMobile())){ mobile=userQuery.getMobile(); criteria.andEqualTo("mobile",mobile); }
-			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); criteria.andEqualTo("email",email); }
+			if(StringUtil.isNotEmpty(userQuery.getEmail())){ email=userQuery.getEmail(); criteria.andLike("email","%"+email+"%"); }
 			if(null!=userQuery.getDptId()){ dptId=userQuery.getDptId(); criteria.andEqualTo("dptId",dptId);}
 			if(null!=userQuery.getIsShopManager()){ isShopManager=userQuery.getIsShopManager();criteria.andEqualTo("isShopManager",isShopManager);}
 			if(null!=userQuery.getStatus()){ status=userQuery.getStatus(); criteria.andEqualTo("status",status);}
