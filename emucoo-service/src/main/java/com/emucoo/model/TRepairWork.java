@@ -52,6 +52,9 @@ public class TRepairWork {
     @Column(name = "problem_imgs")
     private String problemImgs;
 
+    @Column(name = "problem_notes")
+    private String problemNotes;
+
     @Column(name = "repair_man_id")
     private Long repairManId;
 
@@ -89,6 +92,18 @@ public class TRepairWork {
     ////////////////////////////
     //      辅助字段
     ////////////////////////////
+    @Transient
+    private String repairManAvatar;
+
+    @Transient
+    private long reportTime = 0;
+
+    @Transient
+    private long expectTime = 0;
+
+    @Transient
+    private long finishTime = 0;
+
     @Transient
     private List<ImageUrl> troubleImages;
 
@@ -345,5 +360,45 @@ public class TRepairWork {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getProblemNotes() {
+        return problemNotes;
+    }
+
+    public void setProblemNotes(String problemNotes) {
+        this.problemNotes = problemNotes;
+    }
+
+    public String getRepairManAvatar() {
+        return repairManAvatar;
+    }
+
+    public void setRepairManAvatar(String repairManAvatar) {
+        this.repairManAvatar = repairManAvatar;
+    }
+
+    public long getReportTime() {
+        return reportTime;
+    }
+
+    public void setReportTime(long reportTime) {
+        this.reportTime = reportTime;
+    }
+
+    public long getExpectTime() {
+        return expectTime;
+    }
+
+    public void setExpectTime(long expectTime) {
+        this.expectTime = expectTime;
+    }
+
+    public long getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(long finishTime) {
+        this.finishTime = finishTime;
     }
 }
