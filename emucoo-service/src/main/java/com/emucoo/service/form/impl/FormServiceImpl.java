@@ -666,14 +666,6 @@ public class FormServiceImpl implements FormService {
                                 formPbmVal.setFormValueId(formValue.getId());
                                 formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                                 formPbmVal.setProblemName(problemVo.getProblemName());
-                                Integer problemType = 0;
-                                if(CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
-                                    problemType = 2;
-                                    formPbmVal.setProblemSchemaType(problemType);
-                                } else {
-                                    problemType = 1;
-                                    formPbmVal.setProblemSchemaType(problemType);
-                                }
                                 // 保存题项照片数据
                                 String imgIds = "";
                                 List<ProblemImg> descImgArr = problemVo.getDescImgArr();
@@ -725,7 +717,7 @@ public class FormServiceImpl implements FormService {
                                         }
 
                                         formOpptValue.setProblemId(problemVo.getProblemID());
-                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                                         formOpptValue.setProblemValueId(formPbmVal.getId());
 
                                         opptVals.add(formOpptValue);
@@ -756,14 +748,14 @@ public class FormServiceImpl implements FormService {
                                         TFormOppt formOppt = new TFormOppt();
                                         formOppt.setOpptId(opportunity.getId());
                                         formOppt.setProblemId(problemVo.getProblemID());
-                                        formOppt.setProblemType(problemType);
+                                        formOppt.setProblemType(ProblemType.NOT_SAMPLE.getCode());
                                         formOppt.setCreateTime(now);
                                         formOppt.setModifyTime(now);
                                         formOpptMapper.insert(formOppt);
 
                                         TFormOpptValue formOpptValue = new TFormOpptValue();
                                         formOpptValue.setProblemValueId(formPbmVal.getId());
-                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                                         formOpptValue.setProblemId(problemVo.getProblemID());
                                         formOpptValue.setOpptName(fcv.getChanceName());
                                         formOpptValue.setOpptDesc(opptDescription);
@@ -848,10 +840,11 @@ public class FormServiceImpl implements FormService {
                                                 if (tOpportunity != null) {
                                                     formOpptValue.setOpptDesc(tOpportunity.getDescription());
                                                 }
+                                                formOpptValue.setProblemValueId(formPbmVal.getId());
+                                                formOpptValue.setSubProblemValueId(subPbmVal.getId());
                                                 formOpptValue.setProblemId(problemVo.getProblemID());
                                                 formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
-                                                formOpptValue.setProblemType(problemType.byteValue());
-                                                formOpptValue.setSubProblemValueId(subPbmVal.getId());
+                                                formOpptValue.setProblemType(ProblemType.SAMPLING.getCode().byteValue());
 
                                                 opptVals.add(formOpptValue);
                                             }
@@ -860,7 +853,7 @@ public class FormServiceImpl implements FormService {
                                         List<ProblemChanceVo> subOtherChanceVos = subProblemVo.getSubOtherChanceArray();
                                         if (CollectionUtils.isNotEmpty(subOtherChanceVos)) {
                                             checkinWithAppCreatedOppts = true;
-                                            for (ProblemChanceVo fcv : otherChanceVos) {
+                                            for (ProblemChanceVo fcv : subOtherChanceVos) {
                                                 // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
                                                 TOpportunity opportunity = new TOpportunity();
                                                 opportunity.setName(fcv.getChanceName());
@@ -880,15 +873,18 @@ public class FormServiceImpl implements FormService {
                                                 TFormOppt formOppt = new TFormOppt();
                                                 formOppt.setOpptId(opportunity.getId());
                                                 formOppt.setProblemId(problemVo.getProblemID());
-                                                formOppt.setProblemType(problemType);
+                                                formOppt.setSubProblemId(subProblemVo.getSubProblemID());
+                                                formOppt.setProblemType(ProblemType.SAMPLING.getCode());
                                                 formOppt.setCreateTime(now);
                                                 formOppt.setModifyTime(now);
                                                 formOpptMapper.insert(formOppt);
 
                                                 TFormOpptValue formOpptValue = new TFormOpptValue();
+                                                formOpptValue.setSubProblemValueId(subPbmVal.getId());
                                                 formOpptValue.setProblemValueId(formPbmVal.getId());
-                                                formOpptValue.setProblemType(problemType.byteValue());
+                                                formOpptValue.setProblemType(ProblemType.SAMPLING.getCode().byteValue());
                                                 formOpptValue.setProblemId(problemVo.getProblemID());
+                                                formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                                 formOpptValue.setOpptName(fcv.getChanceName());
                                                 formOpptValue.setOpptDesc(opptDescription);
                                                 formOpptValue.setOpptId(opportunity.getId());
@@ -1000,14 +996,6 @@ public class FormServiceImpl implements FormService {
                         formPbmVal.setFormValueId(formValue.getId());
                         formPbmVal.setProblemDescription(problemVo.getProblemDescription());
                         formPbmVal.setProblemName(problemVo.getProblemName());
-                        Integer problemType = 0;
-                        if (CollectionUtils.isNotEmpty(problemVo.getSubProblemArray())) {
-                            problemType = 2;
-                            formPbmVal.setProblemSchemaType(problemType);
-                        } else {
-                            problemType = 1;
-                            formPbmVal.setProblemSchemaType(problemType);
-                        }
                         String imgIds = "";
                         List<ProblemImg> descImgArr = problemVo.getDescImgArr();
                         if (CollectionUtils.isNotEmpty(descImgArr)) {
@@ -1058,7 +1046,7 @@ public class FormServiceImpl implements FormService {
                                 }
 
                                 formOpptValue.setProblemId(problemVo.getProblemID());
-                                formOpptValue.setProblemType(problemType.byteValue());
+                                formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                                 formOpptValue.setProblemValueId(formPbmVal.getId());
 
                                 opptVals.add(formOpptValue);
@@ -1089,14 +1077,14 @@ public class FormServiceImpl implements FormService {
                                 TFormOppt formOppt = new TFormOppt();
                                 formOppt.setOpptId(opportunity.getId());
                                 formOppt.setProblemId(problemVo.getProblemID());
-                                formOppt.setProblemType(problemType);
+                                formOppt.setProblemType(ProblemType.NOT_SAMPLE.getCode());
                                 formOppt.setCreateTime(now);
                                 formOppt.setModifyTime(now);
                                 formOpptMapper.insert(formOppt);
 
                                 TFormOpptValue formOpptValue = new TFormOpptValue();
                                 formOpptValue.setProblemValueId(formPbmVal.getId());
-                                formOpptValue.setProblemType(problemType.byteValue());
+                                formOpptValue.setProblemType(ProblemType.NOT_SAMPLE.getCode().byteValue());
                                 formOpptValue.setProblemId(problemVo.getProblemID());
                                 formOpptValue.setOpptName(fcv.getChanceName());
                                 formOpptValue.setOpptDesc(opptDescription);
@@ -1171,9 +1159,10 @@ public class FormServiceImpl implements FormService {
                                         if (tOpportunity != null) {
                                             formOpptValue.setOpptDesc(tOpportunity.getDescription());
                                         }
-
+                                        formOpptValue.setProblemValueId(formPbmVal.getId());
+                                        formOpptValue.setProblemId(problemVo.getProblemID());
                                         formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
-                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemType(ProblemType.SAMPLING.getCode().byteValue());
                                         formOpptValue.setSubProblemValueId(subPbmVal.getId());
 
                                         opptVals.add(formOpptValue);
@@ -1183,7 +1172,7 @@ public class FormServiceImpl implements FormService {
                                 List<ProblemChanceVo> subOtherChanceVos = subProblemVo.getSubOtherChanceArray();
                                 if (CollectionUtils.isNotEmpty(subOtherChanceVos)) {
                                     checkinWithAppCreatedOppts = true;
-                                    for (ProblemChanceVo fcv : otherChanceVos) {
+                                    for (ProblemChanceVo fcv : subOtherChanceVos) {
                                         // 这里的机会点都是前端创建的，所以要先把机会点创建进数据库。为了机会点id
                                         TOpportunity opportunity = new TOpportunity();
                                         opportunity.setName(fcv.getChanceName());
@@ -1202,16 +1191,18 @@ public class FormServiceImpl implements FormService {
                                         // 把机会点和题目的关系保存起来
                                         TFormOppt formOppt = new TFormOppt();
                                         formOppt.setOpptId(opportunity.getId());
-                                        formOppt.setProblemId(problemVo.getProblemID());
-                                        formOppt.setProblemType(problemType);
+                                        formOppt.setSubProblemId(subProblemVo.getSubProblemID());
+                                        formOppt.setProblemType(ProblemType.SAMPLING.getCode());
                                         formOppt.setCreateTime(now);
                                         formOppt.setModifyTime(now);
                                         formOpptMapper.insert(formOppt);
 
                                         TFormOpptValue formOpptValue = new TFormOpptValue();
+                                        formOpptValue.setSubProblemValueId(subPbmVal.getId());
                                         formOpptValue.setProblemValueId(formPbmVal.getId());
-                                        formOpptValue.setProblemType(problemType.byteValue());
+                                        formOpptValue.setProblemType(ProblemType.SAMPLING.getCode().byteValue());
                                         formOpptValue.setProblemId(problemVo.getProblemID());
+                                        formOpptValue.setSubProblemId(subProblemVo.getSubProblemID());
                                         formOpptValue.setOpptName(fcv.getChanceName());
                                         formOpptValue.setOpptDesc(opptDescription);
                                         formOpptValue.setOpptId(opportunity.getId());

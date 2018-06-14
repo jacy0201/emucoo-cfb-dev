@@ -7,6 +7,7 @@ import com.emucoo.dto.modules.msg.MsgListOut;
 import com.emucoo.dto.modules.msg.MsgListVo;
 import com.emucoo.dto.modules.msg.MsgSummaryModuleVo;
 import com.emucoo.dto.modules.msg.MsgSummaryOut;
+import com.emucoo.dto.modules.msg.UpdateMsgReadedIn;
 import com.emucoo.mapper.TBusinessMsgMapper;
 import com.emucoo.model.MsgReceiveSummary;
 import com.emucoo.model.SysUser;
@@ -85,6 +86,19 @@ public class MsgServiceImpl implements MsgService {
                 throw new ApiException(((BaseException) e).getMsg());
             }
             throw new ApiException("查询消息列表错误！");
+        }
+    }
+
+    public void updateMsgListReaded(UpdateMsgReadedIn updateMsgIn) {
+        try{
+            List<Long> ids = updateMsgIn.getMsgIDs();
+            businessMsgMapper.updateReadStatusByIds(ids);
+        } catch (Exception e) {
+            logger.error("更新消息错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("更新消息错误！");
         }
     }
 

@@ -38,4 +38,13 @@
     left join t_business_msg as msg
     ON t.id = msg.id
   </select>
+  
+  <update id="updateReadStatusByIds" parameterType="ArrayList">
+     UPDATE t_business_msg
+     SET is_read = TRUE
+     WHERE id IN
+    <foreach collection="list" item="item" separator=",">
+      #{item}
+    </foreach>
+  </update>
 </mapper>
