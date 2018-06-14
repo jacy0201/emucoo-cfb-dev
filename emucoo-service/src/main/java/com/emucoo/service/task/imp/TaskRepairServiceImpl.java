@@ -2,10 +2,10 @@ package com.emucoo.service.task.imp;
 
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
+import com.emucoo.service.task.MessageBuilder;
 import com.emucoo.service.task.TaskRepairService;
 import com.emucoo.utils.ConstantsUtil;
 import com.emucoo.utils.DateUtil;
-import com.emucoo.service.task.MessageBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +49,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     public List<TRepairWork> listRepairWorksByShopId(long shopId, String date, long userId) {
         Date beginDt = DateUtil.strToSimpleYYMMDDDate(date + "01");
         Date endDt = DateUtil.timeBackward(DateUtil.dateAddMonth(beginDt, 1), 0, 0, 1);
-        List<TRepairWork> works = repairWorkMapper.fetchWorksListByDate(shopId, beginDt, endDt);
-        return works;
+        return repairWorkMapper.fetchWorksListByDate(shopId, beginDt, endDt);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_1);
         work.setCreateTime(DateUtil.currentDate());
         work.setModifyTime(DateUtil.currentDate());
-        work.setReportDate(new Date(work.getReportTime()));
+        work.setReportDate(work.getReportTime() == 0 ? DateUtil.currentDate() : new Date(work.getReportTime()));
         work.setExpectDate(new Date(0));
         work.setFinishDate(new Date(0));
         repairWorkMapper.insert(work);
