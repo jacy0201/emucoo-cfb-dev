@@ -88,6 +88,9 @@ public class TRepairWork {
     @Column(name = "modify_time")
     private Date modifyTime;
 
+    @Column(name = "review_imgs")
+    private String reviewImgs;
+
 
     ////////////////////////////
     //      辅助字段
@@ -108,16 +111,10 @@ public class TRepairWork {
     private List<ImageUrl> troubleImages;
 
     @Transient
-    private List<ImageUrl> repaireImages;
+    private List<ImageUrl> repairImages;
 
     @Transient
-    private String reportDateStr;
-
-    @Transient
-    private String expectRepairDateStr;
-
-    @Transient
-    private String finishRepairDateStr;
+    private List<ImageUrl> reviewImages;
 
 
     /////////////////////////////
@@ -314,36 +311,12 @@ public class TRepairWork {
         this.troubleImages = troubleImages;
     }
 
-    public List<ImageUrl> getRepaireImages() {
-        return repaireImages;
+    public List<ImageUrl> getRepairImages() {
+        return repairImages;
     }
 
-    public void setRepaireImages(List<ImageUrl> repaireImages) {
-        this.repaireImages = repaireImages;
-    }
-
-    public String getReportDateStr() {
-        return reportDateStr;
-    }
-
-    public void setReportDateStr(String reportDateStr) {
-        this.reportDateStr = reportDateStr;
-    }
-
-    public String getExpectRepairDateStr() {
-        return expectRepairDateStr;
-    }
-
-    public void setExpectRepairDateStr(String expectRepairDateStr) {
-        this.expectRepairDateStr = expectRepairDateStr;
-    }
-
-    public String getFinishRepairDateStr() {
-        return finishRepairDateStr;
-    }
-
-    public void setFinishRepairDateStr(String finishRepairDateStr) {
-        this.finishRepairDateStr = finishRepairDateStr;
+    public void setRepairImages(List<ImageUrl> repairImages) {
+        this.repairImages = repairImages;
     }
 
     public Date getCreateTime() {
@@ -400,5 +373,21 @@ public class TRepairWork {
 
     public void setFinishTime(long finishTime) {
         this.finishTime = finishTime;
+    }
+
+    public String getReviewImgs() {
+        return reviewImgs;
+    }
+
+    public void setReviewImgs(String reviewImgs) {
+        this.reviewImgs = reviewImgs;
+    }
+
+    public List<ImageUrl> getReviewImages() {
+        return reviewImages;
+    }
+
+    public void setReviewImages(List<ImageUrl> reviewImages) {
+        this.reviewImages = reviewImages;
     }
 }

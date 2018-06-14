@@ -24,6 +24,7 @@
         <result column="repair_notes" property="repairNotes" jdbcType="VARCHAR"/>
         <result column="repair_imgs" property="repair_imgs" jdbcType="VARCHAR"/>
         <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR"/>
+        <result column="review_imgs" property="reviewImgs" jdbcType="VARCHAR"/>
         <result column="review_result" property="reviewResult" jdbcType="INTEGER"/>
         <result column="work_status" property="workStatus" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>

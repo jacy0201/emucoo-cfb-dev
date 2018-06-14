@@ -32,14 +32,14 @@ public class TaskExecuteRemindHandler extends IJobHandler {
     @Override
     public ReturnT<String> execute(String json) throws Exception {
         JSONObject jsonArgs = JSON.parseObject(json);
-        int aheadMinutes = jsonArgs == null ? 30 : jsonArgs.getIntValue("aheadMinutes");
-        aheadMinutes = aheadMinutes == 0 ? 30 : aheadMinutes;
-        int cycleMinutes = jsonArgs == null ? 10 : jsonArgs.getIntValue("cycleMinutes");
-        cycleMinutes = cycleMinutes == 0 ? 10 : cycleMinutes;
+        int aheadMinutes = jsonArgs == null ? 60 : jsonArgs.getIntValue("aheadMinutes");
+        aheadMinutes = aheadMinutes == 0 ? 60 : aheadMinutes;
+        int cycleMinutes = jsonArgs == null ? 30 : jsonArgs.getIntValue("cycleMinutes");
+        cycleMinutes = cycleMinutes == 0 ? 30 : cycleMinutes;
         Date currentDate = DateUtil.currentDate();
         // 过滤规则：
-        // 如果有提醒时间，根据： 提醒时间 在 [当前任务执行时间，当前任务执行时间+任务调度周期] 区间来过滤，
-        // 如果没有提醒时间，根据：执行截止时间 在 [本次任务执行时间+提醒提前的时间量），（本次任务执行时间 + 提醒提前的时间量 + 任务调度周期] 来过滤
+        // 如果有提醒时间，根据： 提醒时间 在 [本次调度执行时间，本次调度执行时间+任务调度周期] 区间来过滤，
+        // 如果没有提醒时间，根据：执行截止时间 在 [本次调度执行时间+提醒提前的时间量），（本次调度执行时间 + 提醒提前的时间量 + 任务调度周期] 来过滤
         List<TLoopWork> exeWorks = loopWorkService.filterNeedExecuteRemindWorks(currentDate, aheadMinutes, cycleMinutes);
         List<String> pushTokens = new ArrayList<>();
         for (TLoopWork work : exeWorks) {
