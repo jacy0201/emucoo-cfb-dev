@@ -18,5 +18,5 @@ logging:
   path: logs
 
  #swagger api 文档 开关
-  swagger:
-    enable: true
+swagger:
+  enable: true
