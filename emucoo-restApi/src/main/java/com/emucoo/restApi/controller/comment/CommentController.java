@@ -84,6 +84,7 @@ public class CommentController extends AppBaseController {
 	@PostMapping("getReplyList")
 	public AppResult<ReplySelectOut> getReplyList(@RequestBody ParamVo<CommentSelectIn> base) {
 		CommentSelectIn vo = base.getData();
+		checkParam(vo.getCommentID(),"commentID不能为空!");
 		SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
 		vo.setWorkType(6);
 		ReplySelectOut outList = commentService.selectReplyList(vo, user);
