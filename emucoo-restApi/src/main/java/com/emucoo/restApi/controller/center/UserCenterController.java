@@ -83,12 +83,19 @@ public class UserCenterController extends AppBaseController {
         PasswordVO passwordVO = params.getData();
         SysUser currUser = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         if (null == passwordVO.getNewPassword()) {
-            return fail(AppExecStatus.INVALID_PARAM, "密码不能为空!");
+            return fail(AppExecStatus.INVALID_PARAM, "新密码不能为空!");
+        }
+        if (null == passwordVO.getOldPassword()) {
+            return fail(AppExecStatus.INVALID_PARAM, "原密码不能为空!");
+        }
+        if (!StringUtils.equalsIgnoreCase(currUser.getPassword(), new Sha256Hash(passwordVO.getOldPassword(), currUser.getSalt()).toHex())) {
+            return AppResult.busErrorRes("原密码错误！");
         }
         SysUser sysUser = new SysUser();
         sysUser.setId(currUser.getId());
         sysUser.setModifyTime(new Date());
         sysUser.setModifyUserId(currUser.getId());
+        sysUser.setPassword(new Sha256Hash(passwordVO.getNewPassword(), currUser.getSalt()).toHex());
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER + currUser.getId());

@@ -48,7 +48,7 @@ public class CalendarController extends AppBaseController {
             calendarListIn.setUserId(currentUserId);
         }
         if (null == calendarListIn.getMonth()) {
-            calendarListIn.setMonth(DateUtil.simple4(new Date()));
+            calendarListIn.setMonth(DateUtil.simple3(new Date()));
         }
         CalendarListMonthOut calendarListMonthOut = calendarService.listCalendarMonth(calendarListIn, currentUserId);
         return success(calendarListMonthOut);
