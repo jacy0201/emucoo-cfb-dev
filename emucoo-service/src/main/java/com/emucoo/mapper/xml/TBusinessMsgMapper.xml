@@ -43,7 +43,7 @@
      UPDATE t_business_msg
      SET is_read = TRUE
      WHERE id IN
-    <foreach collection="list" item="item" separator=",">
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
       #{item}
     </foreach>
   </update>
