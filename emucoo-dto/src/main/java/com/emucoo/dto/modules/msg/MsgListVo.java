@@ -8,8 +8,8 @@ import lombok.Data;
  */
 @Data
 public class MsgListVo {
-    @ApiModelProperty(value = "消息类别 1：常规任务，2：指派任务：3：改善任务，4：巡店安排，5：工作备忘，6：评论，7:维修任务", name = "unionType")
-    private Integer unionType;
+    @ApiModelProperty(value = "消息类别 1：常规任务，2：指派任务：3：改善任务，4：巡店安排，5：工作备忘，6：评论，7:维修任务", name = "workType")
+    private Integer workType;
     @ApiModelProperty(value = "消息标题", name = "msgTitle")
     private String msgTitle;
     @ApiModelProperty(value = "发送时间", name = "sendTime")
@@ -18,4 +18,6 @@ public class MsgListVo {
     private Long unionID;
     @ApiModelProperty(value = "消息id", name = "unionID")
     private Long msgID;
+    @ApiModelProperty(value = "是否已读（0：未读，1：已读）", name = "isRead")
+    private Boolean isRead;
 }
