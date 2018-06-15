@@ -1313,12 +1313,7 @@ public class FormServiceImpl implements FormService {
     public RYGFormOut getRYGFormInfo(RYGForm formIn, SysUser user) {
         RYGFormOut formOut = new RYGFormOut();
         try {
-            TFormMain formParam = new TFormMain();
-            formParam.setFormType(FormType.RYG_TYPE.getCode());
-
-            formParam.setIsDel(false);
-            formParam.setIsUse(true);
-            TFormMain formMain = formMainMapper.selectOne(formParam);
+            TFormMain formMain = formMainMapper.selectByPrimaryKey(formIn.getChecklistID());
             if (formMain == null) {
                 return null;
             }
