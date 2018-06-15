@@ -12,9 +12,11 @@ public enum ModuleType {
 
     SHOP_PLAN(4, "巡店安排"),
 
-    COMMENT(5, "评论"),
+    WORK_MEMORANDUM(5, "工作备忘"),
 
-    WORK_MEMORANDUM(6, "工作备忘");
+    COMMENT(6, "评论"),
+
+    REPAIR_TASK(7, "维修任务");
 
     private final Integer code;
     private final String msg;
