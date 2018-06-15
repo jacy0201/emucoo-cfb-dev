@@ -65,7 +65,7 @@ public class TaskRepairServiceImpl implements TaskRepairService {
             return null;
         }
         return Arrays.asList(ids.split(",")).stream().map(id -> {
-            TFile img = fileMapper.selectByPrimaryKey(id);
+            TFile img = fileMapper.selectByPrimaryKey(Long.parseLong(id));
             if (img == null){
                 return null;
             } else {
