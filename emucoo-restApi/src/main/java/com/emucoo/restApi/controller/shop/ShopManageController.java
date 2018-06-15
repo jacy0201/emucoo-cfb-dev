@@ -6,21 +6,20 @@ import com.emucoo.dto.modules.shop.FormResultVO;
 import com.emucoo.dto.modules.shop.ResultQuery;
 import com.emucoo.dto.modules.shop.ShopListQuery;
 import com.emucoo.dto.modules.shop.ShopVO;
-import com.emucoo.model.SysArea;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.TFormMain;
-import com.emucoo.model.TRepairWork;
+import com.emucoo.model.*;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.center.UserCenterService;
 import com.emucoo.service.shop.ShopManageService;
+import com.emucoo.service.sys.SysDeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,6 +39,8 @@ public class ShopManageController extends AppBaseController {
     @Resource
     private UserCenterService userCenterService;
 
+    @Resource
+    private SysDeptService sysDeptService;
 
     /**
      * 获取用户的分区资源
@@ -63,6 +64,19 @@ public class ShopManageController extends AppBaseController {
         ShopListQuery shopListQuery= base.getData();
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
         List<ShopVO> list=shopManageService.getShopList(shopListQuery.getAreaId(),user.getId());
+        return success(list);
+    }
+
+    /**
+     * 获取部门列表
+     * @return
+     */
+    @PostMapping(value = "getDeptList")
+    @ApiOperation(value="获取部门列表")
+    public AppResult<List<SysDept>> getDeptList() {
+        Example example=new Example(SysDept.class);
+        example.createCriteria().andEqualTo("isDel",false).andEqualTo("isUse",true);
+        List<SysDept> list=sysDeptService.selectByExample(example);
         return success(list);
     }
 
