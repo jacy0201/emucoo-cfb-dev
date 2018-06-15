@@ -104,10 +104,11 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         work.setFinishDate(new Date(0));
         repairWorkMapper.insert(work);
 
-        // 推送并保存消息
+        // 发送创建消息，并推送
         SysUser user = userMapper.selectByPrimaryKey(work.getRepairManId());
         TBusinessMsg businessMsg = messageBuilder.buildRepairWorkCreationBusinessMessage(work, user, 1);
-        messageBuilder.pushMessage(businessMsg, user, 1);
+        businessMsg = messageBuilder.pushMessage(businessMsg, user, 1);
+        businessMsgMapper.insertUseGeneratedKeys(businessMsg);
     }
 
     @Override
@@ -126,8 +127,15 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     public void finishRepairWork(TRepairWork work) {
         work.setRepairImgs(convertImageUrls2Ids(work.getRepairImages()));
         work.setFinishDate(new Date(work.getFinishTime()));
+        work.setReviewDeadline(DateUtil.timeForward(work.getFinishDate(), 12, 0, 0));
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_4);
         repairWorkMapper.updateByPrimaryKeySelective(work);
+
+        // 发送任务待审核消息, 并推送
+        TBusinessMsg msg = messageBuilder.buildRepairWorkAuditRemindBusinessMsg(work, 3);
+        SysUser aUser = userMapper.selectByPrimaryKey(work.getReporterId());
+        msg = messageBuilder.pushMessage(msg, aUser, 3);
+        businessMsgMapper.insertUseGeneratedKeys(msg);
     }
 
     @Override
@@ -136,14 +144,23 @@ public class TaskRepairServiceImpl implements TaskRepairService {
         work.setExpectDate(new Date(work.getExpectTime()));
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_2);
         repairWorkMapper.updateByPrimaryKeySelective(work);
+
+        // 发送确认维修日期消息
+        TBusinessMsg msg = messageBuilder.buildRepairWorkExpectDateBusinessMsg(work, 8);
+        businessMsgMapper.insertUseGeneratedKeys(msg);
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void auditRepairWork(TRepairWork work) {
+        work.setReviewDate(DateUtil.currentDate());
         work.setReviewImgs(convertImageUrls2Ids(work.getReviewImages()));
         work.setWorkStatus(ConstantsUtil.RepairWork.STATUS_5);
         repairWorkMapper.updateByPrimaryKeySelective(work);
+
+        // 发送审核消息
+        TBusinessMsg adtMsg = messageBuilder.buildRepairWorkAuditBusinessMsg(work, 5);
+        businessMsgMapper.insertUseGeneratedKeys(adtMsg);
     }
 
     @Override
@@ -292,4 +309,24 @@ public class TaskRepairServiceImpl implements TaskRepairService {
     public List<TDeviceProblem> listDeviceProblems(long deviceId) {
         return deviceProblemMapper.findDeviceTypeProblems(deviceId);
     }
+
+    // begin：using for scheduler job
+
+    @Override
+    public void dealWithExpiredWorks(Date dt) {
+        List<TRepairWork> exeWorks = repairWorkMapper.filterExeExpiredWorks(dt);
+        repairWorkMapper.markExeExpiredWorks(dt);
+        List<TRepairWork> adtWorks = repairWorkMapper.filterAuditExpiredWorks(dt);
+        repairWorkMapper.markAuditExpiredWorks(dt);
+        for (TRepairWork work : exeWorks) {
+            TBusinessMsg msg = messageBuilder.buildRepairWorkExpiredBusinessMsg(work, 4);
+            businessMsgMapper.insertUseGeneratedKeys(msg);
+        }
+        for (TRepairWork work : adtWorks) {
+            TBusinessMsg msg = messageBuilder.buildRepairWorkAuditBusinessMsg(work, 5);
+            businessMsgMapper.insertUseGeneratedKeys(msg);
+        }
+    }
+
+    // end: using for scheduler job
 }

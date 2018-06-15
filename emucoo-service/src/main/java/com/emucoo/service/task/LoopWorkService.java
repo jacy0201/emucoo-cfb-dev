@@ -145,18 +145,18 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
 
     /**
      * 定时任务标注过期任务，自动审核
+     * @param dt
      */
-    void markExpiredWorks();
+    void dealWithExpiredWorks(Date dt);
 
     /**
      * 过滤出需要执行提醒的任务
      *
      * @param currentDate
-     * @param aheadMinutes
      * @param cycleMinutes
      * @return
      */
-    List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
+    boolean notifyNeedExecuteRemindLoopWorks(Date currentDate, int cycleMinutes);
 
     /**
      * 过滤出需要审核提醒的任务
@@ -171,6 +171,6 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
     /**
      * 创建指派任务实例
      */
-    void buildAssingTaskInstance();
+    void buildAssignTaskInstance();
 
 }

@@ -14,4 +14,12 @@ public interface TRepairWorkMapper extends MyMapper<TRepairWork> {
     List<TRepairWork> getRepairWorkList(@Param("month") String month, @Param("userId") Long userId);
 
     TRepairWork fetchOneById(long workId);
+
+    List<TRepairWork> filterExeExpiredWorks(Date dt);
+
+    void markExeExpiredWorks(Date dt);
+
+    List<TRepairWork> filterAuditExpiredWorks(Date dt);
+
+    void markAuditExpiredWorks(Date dt);
 }

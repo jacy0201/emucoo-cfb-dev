@@ -265,6 +265,12 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         }
 
         loopWorkMapper.updateWorkStatus(loopWork);
+
+        // 发送任务待审核消息, 并推送
+        TBusinessMsg msg = messageBuilder.buildLoopWorkAuditRemindBusinessMsg(task, loopWork, 3);
+        SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
+        msg = messageBuilder.pushMessage(msg, auditUser, 3);
+        businessMsgMapper.insertUseGeneratedKeys(msg);
     }
 
     @Override
@@ -309,6 +315,15 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_4);
         loopWork.setWorkResult(auditResult);
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
+
+        // 发送审核消息
+        TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        TBusinessMsg adtMsg = messageBuilder.buildLoopWorkAuditBusinessMsg(task, loopWork, 5);
+        businessMsgMapper.insertUseGeneratedKeys(adtMsg);
+        // 发送抄送消息
+        List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, loopWork, 7);
+        businessMsgMapper.insertList(ccMsgs);
+
     }
 
     @Override
@@ -845,9 +860,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(commonTask.getId());
             createCommonLoopWorkOperateOptions(commonTask, loopWork, options);
 
-            // 推送并保存消息
-            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(commonTask, loopWork, executor, 1);
-            businessMsg = messageBuilder.pushMessage(businessMsg, executor, 1);
+            // 发送创建消息，常规任务不推送
+            TBusinessMsg businessMsg = messageBuilder.buildLoopWorkCreationBusinessMessage(commonTask, loopWork, executor, 1);
             businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }

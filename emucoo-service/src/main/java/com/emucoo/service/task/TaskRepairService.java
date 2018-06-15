@@ -4,6 +4,7 @@ import com.emucoo.model.TDeviceProblem;
 import com.emucoo.model.TDeviceType;
 import com.emucoo.model.TRepairWork;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -134,4 +135,10 @@ public interface TaskRepairService {
      * @return
      */
     List<TDeviceProblem> listDeviceProblems(long deviceId);
+
+    /**
+     * 处理超时未执行的维修任务
+     * @param dt
+     */
+    void dealWithExpiredWorks(Date dt);
 }
