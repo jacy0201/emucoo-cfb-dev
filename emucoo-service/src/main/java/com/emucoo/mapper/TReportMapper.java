@@ -22,5 +22,5 @@ public interface TReportMapper extends MyMapper<TReport> {
 
     List<TReport> fetchReceiveReport(@Param("userId") Long userId, @Param("month") String month);
 
-    List<FormResultVO> getResultList(@Param("shopId") Long shopId, @Param("dptId") Long dptId, @Param("formId") Long formId, String startMonth, String endMonth);
+    List<FormResultVO> getResultList(@Param("shopId") Long shopId, @Param("dptId") Long dptId, @Param("formId") Long formId, @Param("startMonth") String startMonth, @Param("endMonth") String endMonth);
 }
