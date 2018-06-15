@@ -1,9 +1,6 @@
 package com.emucoo.service.comment;
 
-import com.emucoo.dto.modules.comment.CommentAddIn;
-import com.emucoo.dto.modules.comment.CommentDeleteIn;
-import com.emucoo.dto.modules.comment.CommentSelectIn;
-import com.emucoo.dto.modules.comment.CommentSelectOut;
+import com.emucoo.dto.modules.comment.*;
 import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
 
@@ -14,5 +11,7 @@ public interface CommentService {
 
     void delete(CommentDeleteIn vo);
 
-    List<CommentSelectOut> select(CommentSelectIn vo, SysUser user);
+    CommentSelectOut selectCommentList(CommentSelectIn vo, SysUser user);
+
+    ReplySelectOut selectReplyList(CommentSelectIn vo, SysUser user);
 }
