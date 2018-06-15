@@ -124,7 +124,7 @@ public class UserCenterServiceImpl extends BaseServiceImpl<TLoopWork> implements
             for(TReport report:list){
                 reportVO=new ReportVO();
                 reportVO.setReportId(report.getId());
-                reportVO.setCheckFormTime(report.getCheckFormTime().getTime());
+                reportVO.setCheckFormTime(report.getCreateTime().getTime());
                 reportVO.setFormType(report.getFormType());
                 reportVO.setReporterName(report.getReporterName());
                 reportVO.setShopName(report.getShopName());
