@@ -70,6 +70,12 @@ public class DateUtil {
         return YYYYMMDDHHMMSS.format(date);
     }
 
+    /**
+     * format: YYYYMM
+     *
+     * @param date
+     * @return
+     */
     public static String simple3(Date date) {
         return YYYYMM.format(date);
     }
