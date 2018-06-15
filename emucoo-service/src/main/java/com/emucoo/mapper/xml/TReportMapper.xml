@@ -150,14 +150,19 @@
         count(t3.id) as opptNum
         from t_report t1 left join t_form_check_result t2 on t1.form_result_id=t2.id
         left join t_report_oppt t3 on t1.id=t3.report_id
-        where t1.shop_id=#{shopId} and t1.reporter_dpt_id=#{dptId}
+        where t1.shop_id=#{shopId}
+        <if test="dptId != null">
+            and t1.reporter_dpt_id=#{dptId}
+        </if>
         <if test="startMonth != null and  startMonth != ''">
             <![CDATA[ and   str_to_date(#{startMonth},'%Y-%m') <= str_to_date(t1.check_form_time,'%Y-%m')]]>
         </if>
         <if test="endMonth != null and  endMonth != ''">
             <![CDATA[ and   str_to_date(t1.check_form_time,'%Y-%m') <= str_to_date(#{endMonth},'%Y-%m')]]>
         </if>
+        <if test="formId != null">
         and  t2.form_main_id=#{formId}
+        </if>
         group by t1.id
         order by t1.check_form_time desc
     </select>
