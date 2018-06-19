@@ -6,7 +6,6 @@ import com.emucoo.model.SysUser;
 import com.emucoo.model.TLoopWork;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author river
@@ -14,38 +13,6 @@ import java.util.List;
  */
 public interface LoopWorkService extends BaseService<TLoopWork> {
 
-    /**
-     * 当前用户当天任务数量
-     *
-     * @param submitUserId
-     * @param today
-     * @return
-     */
-    int fetchPendingExecuteWorkNum(Long submitUserId, Date today);
-
-    /**
-     * 当天用户当天待审核任务数量
-     *
-     * @param submitUserId
-     * @param today
-     * @return
-     */
-    int fetchPendingReviewWorkNum(Long submitUserId, Date today);
-
-    /**
-     * 当前用户当天任务列表
-     * @param needDate
-     * @param submitUserId
-     * @return
-     */
-    WorkVo_O viewPendingExecuteWorks(Date needDate, Long submitUserId);
-
-    /**
-     * 当前用户当天待审核任务列表
-     * @param auditUserId
-     * @return
-     */
-    WorkVo_O viewPendingReviewWorks(Long auditUserId);
 
     /**
      * 提交任务执行结果
@@ -157,16 +124,6 @@ public interface LoopWorkService extends BaseService<TLoopWork> {
      * @return
      */
     boolean notifyNeedExecuteRemindLoopWorks(Date currentDate, int cycleMinutes);
-
-    /**
-     * 过滤出需要审核提醒的任务
-     *
-     * @param currentDate
-     * @param aheadMinutes
-     * @param cycleMinutes
-     * @return
-     */
-    List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes);
 
     /**
      * 创建指派任务实例

@@ -7,6 +7,7 @@ import com.emucoo.dto.modules.task.WorkVo_O;
 import com.emucoo.dto.modules.user.UserLoginInfo;
 import com.emucoo.dto.modules.user.UserVo_I;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
@@ -14,10 +15,8 @@ import com.emucoo.restApi.models.sms.SMSDao;
 import com.emucoo.restApi.models.sms.SMSService;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.index.IndexService;
-import com.emucoo.service.shop.LoopPlanService;
 import com.emucoo.service.sys.DeptService;
 import com.emucoo.service.sys.UserService;
-import com.emucoo.service.task.LoopWorkService;
 import com.emucoo.utils.CheckoutUtil;
 import com.emucoo.utils.DateUtil;
 import org.apache.commons.collections.map.HashedMap;
@@ -36,9 +35,6 @@ public class IndexController extends AppBaseController {
     private UserService userService;
 
     @Autowired
-    private LoopWorkService loopWorkService;
-
-    @Autowired
     private IndexService indexService;
 
     @Autowired
@@ -50,8 +46,6 @@ public class IndexController extends AppBaseController {
     @Autowired
     private DeptService deptService;
 
-    @Autowired
-    private LoopPlanService loopPlanService;
 
     @PostMapping("/login")
     public AppResult<UserLoginInfo> login(@RequestBody ParamVo<UserVo_I> data) {
@@ -138,20 +132,11 @@ public class IndexController extends AppBaseController {
      */
     @PostMapping("/pendingExecute")
     public AppResult<WorkVo_O> pendingExecute(@RequestHeader("userToken") String userToken, @RequestBody(required = false) ParamVo<pending_I> base) {
-
         Date needDate = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        if (base != null && base.getData() != null && base.getData().getDate() != null) {
-            String dateStr = (String) base.getData().getDate();
-            Date date = DateUtil.strToSimpleYYMMDDDate(dateStr);
-            if (date != null) {
-                needDate = date;
-            }
-        }
-        // 后面通过 userToken 获取
         Long submitUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
         checkParam(submitUserId, "没有此用户");
-        WorkVo_O workVo_o = loopWorkService.viewPendingExecuteWorks(needDate, submitUserId);
-        return success(workVo_o);
+        WorkVo_O works =  indexService.filterPendingExeWorks(needDate, submitUserId);
+        return success(works);
     }
 
 
@@ -164,9 +149,8 @@ public class IndexController extends AppBaseController {
     public AppResult<WorkVo_O> pendingReview(@RequestHeader("userToken") String userToken) {
         Long auditUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
         checkParam(auditUserId, "没有此用户");
-        WorkVo_O workVo_o = loopWorkService.viewPendingReviewWorks(auditUserId);
-        return success(workVo_o);
-
+        WorkVo_O works = indexService.filterPendingReviewWorks(auditUserId);
+        return success(works);
     }
 
 
@@ -174,11 +158,10 @@ public class IndexController extends AppBaseController {
     public AppResult<PendingWorkNumVo_O> pendingWorkNum(@RequestHeader("userToken") String userToken) {
         Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
         checkParam(loginUserId, "没有此用户。");
-//		long submitUserId = 1L;
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        int inswks = loopPlanService.countFrontPlan(loginUserId, today);
-        int exewks = loopWorkService.fetchPendingExecuteWorkNum(loginUserId, today);
-        int rvwwks = loopWorkService.fetchPendingReviewWorkNum(loginUserId, today);
+        int inswks = indexService.countFrontPlan(loginUserId);
+        int exewks = indexService.fetchPendingExeWorkNum(loginUserId);
+        int rvwwks = indexService.countPendingReviewWorks(loginUserId);
         PendingWorkNumVo_O pendingWorkNumVo = new PendingWorkNumVo_O();
         pendingWorkNumVo.setPendingExecuteNum(exewks + inswks);
         pendingWorkNumVo.setPendingReviewNum(rvwwks);
@@ -210,6 +193,22 @@ public class IndexController extends AppBaseController {
         ReportListVo_O voo = new ReportListVo_O();
         voo.setUnreadReportArr(vos);
         return success(voo);
+    }
+
+    @PostMapping("/pendingRepair")
+    public AppResult<List<TRepairWork>> pendingRepair(@RequestHeader("userToken") String userToken) {
+        Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
+        checkParam(loginUserId, "没有此用户。");
+        List<TRepairWork> works = indexService.fetchPendingRepairWorks(loginUserId);
+        return success(works);
+    }
+
+    @PostMapping("/pendingRepairNum")
+    public AppResult<Integer> pendingRepairNum(@RequestHeader("userToken") String userToken) {
+        Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
+        checkParam(loginUserId, "没有此用户");
+        Integer cnt = indexService.countPendingReviewWorks(loginUserId);
+        return success(cnt);
     }
 
 }

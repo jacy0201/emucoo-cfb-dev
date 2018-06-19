@@ -21,6 +21,8 @@ public class UserLoginInfo {
     private Long departmentID;
     private String departmentName;
     private Boolean usePlan;
+    private Boolean isShopManager;
+    private Boolean isRepairMan;
     private List<shop> shopNameArr = Lists.newArrayList();
     
     @Data

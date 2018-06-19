@@ -27,7 +27,7 @@ public class WorkVo_O {
         @ApiModelProperty(value="subID",name="subID",required = true )
         private String subID;
         //任务类型：1-常规任务 2-指派任务 3-改善任务  4-巡店安排；5-工作备忘
-        @ApiModelProperty(value="任务类型",name="workType",required = true ,notes = "1-常规任务 2-指派任务 3-改善任务  4-巡店安排；5-工作备忘")
+        @ApiModelProperty(value="任务类型",name="workType",required = true ,notes = "1-常规任务 2-指派任务 3-改善任务  4-巡店安排；5-工作备忘, 7-维修任务")
         private Integer workType = 0;
         private Task task = new Task();
         private Inspection inspection = new Inspection();
