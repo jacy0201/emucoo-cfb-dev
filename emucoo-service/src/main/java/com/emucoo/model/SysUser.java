@@ -174,6 +174,22 @@ public class SysUser extends BaseEntity {
     @Column(name = "is_shop_manager")
     private Boolean isShopManager;
 
+    public Boolean getRepairer() {
+        return isRepairer;
+    }
+
+    public void setRepairer(Boolean repairer) {
+        isRepairer = repairer;
+    }
+
+    /**
+     * 是否是维修专员：0-否；1-是
+     *
+     */
+    @Column(name = "is_repairer")
+    private Boolean isRepairer;
+
+
     /**
      * 部门名称
      */
