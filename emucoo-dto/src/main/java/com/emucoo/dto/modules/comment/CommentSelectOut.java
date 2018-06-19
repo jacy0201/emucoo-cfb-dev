@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value="评论对象字段")
+@ApiModel(value="评论对象")
 public class CommentSelectOut {
 
 	private List<Comment> commentList=new ArrayList<>();

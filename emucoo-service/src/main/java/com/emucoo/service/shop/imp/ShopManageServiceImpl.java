@@ -40,10 +40,9 @@ public class ShopManageServiceImpl extends BaseServiceImpl<TShopInfo> implements
 
     @Override
     public List<ShopVO> getShopList(Long areaId, Long userId){
-        List<ShopVO> list=null;
+        List<ShopVO> list=new ArrayList<>();
         List<TShopInfo> shopInfoList= shopInfoMapper.getShopListByUserIDAndAreaID(userId,areaId);
         if(null!=shopInfoList && shopInfoList.size()>0) {
-            list=new ArrayList<>();
             for(TShopInfo tShopInfo:shopInfoList){
                 ShopVO shopVO = new ShopVO();
                 shopVO.setShopId(tShopInfo.getId());
