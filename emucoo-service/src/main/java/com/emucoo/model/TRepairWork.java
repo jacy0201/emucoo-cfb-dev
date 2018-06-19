@@ -91,6 +91,12 @@ public class TRepairWork {
     @Column(name = "review_imgs")
     private String reviewImgs;
 
+    @Column(name = "review_date")
+    private Date reviewDate;
+
+    @Column(name = "review_deadline")
+    private Date reviewDeadline;
+
 
     ////////////////////////////
     //      辅助字段
@@ -389,5 +395,21 @@ public class TRepairWork {
 
     public void setReviewImages(List<ImageUrl> reviewImages) {
         this.reviewImages = reviewImages;
+    }
+
+    public Date getReviewDate() {
+        return reviewDate;
+    }
+
+    public void setReviewDate(Date reviewDate) {
+        this.reviewDate = reviewDate;
+    }
+
+    public Date getReviewDeadline() {
+        return reviewDeadline;
+    }
+
+    public void setReviewDeadline(Date reviewDeadline) {
+        this.reviewDeadline = reviewDeadline;
     }
 }

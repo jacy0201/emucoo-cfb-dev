@@ -145,7 +145,7 @@ public class TaskImproveServiceImpl implements TaskImproveService {
                 calendar.set(Calendar.SECOND, Integer.parseInt(task.getExecuteDeadline().substring(4, 6)));
                 loopWork.setExecuteDeadline(calendar.getTime());
             } else {
-                loopWork.setExecuteDeadline(DateUtil.timeForward(today, 21, 0, 0));
+                loopWork.setExecuteDeadline(DateUtil.timeForward(today, 23, 30, 0));
             }
             loopWork.setExecuteRemindTime(DateUtil.timeBackward(loopWork.getExecuteDeadline(), 1, 0, 0));
             loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_1);
@@ -170,9 +170,8 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             loopWork.setModifyTime(DateUtil.currentDate());
             loopWorkMapper.insert(loopWork);
 
-            // 推送并保存消息
-            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, loopWork, eUser, 1);
-            businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
+            // 发送创建消息，不推送
+            TBusinessMsg businessMsg = messageBuilder.buildLoopWorkCreationBusinessMessage(task, loopWork, eUser, 1);
             businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
@@ -204,7 +203,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setType(submitIn.getWorkType());
         loopWork.setExcuteUserId(user.getId());
         loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
-
         // 设置提交时间的12小时后
         loopWork.setModifyTime(new Date());
         loopWork.setAuditDeadline(DateUtil.timeForward(loopWork.getModifyTime(), 12, 0, 0));
@@ -224,9 +222,6 @@ public class TaskImproveServiceImpl implements TaskImproveService {
             imgs.add(img);
         });
         fileMapper.insertList(imgs);
-        loopWorkMapper.updateByPrimaryKey(loopWork);
-
-
         List<String> imgids = imgs.stream().map(img -> Long.toString(img.getId())).collect(Collectors.toList());
 
         TOperateOption oo = operateOptionMapper.fetchOneByTaskId(loopWork.getTaskId());
@@ -242,6 +237,15 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         odw.setCreateTime(DateUtil.currentDate());
         odw.setModifyTime(DateUtil.currentDate());
         operateDataForWorkMapper.insert(odw);
+
+        loopWorkMapper.updateByPrimaryKey(loopWork);
+
+        // 发送任务待审核消息, 并推送
+        TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        TBusinessMsg msg = messageBuilder.buildLoopWorkAuditRemindBusinessMsg(task, loopWork, 3);
+        SysUser auditUser = userMapper.selectByPrimaryKey(loopWork.getAuditUserId());
+        msg = messageBuilder.pushMessage(msg, auditUser, 3);
+        businessMsgMapper.insertUseGeneratedKeys(msg);
     }
 
     @Override
@@ -282,6 +286,14 @@ public class TaskImproveServiceImpl implements TaskImproveService {
         loopWork.setWorkResult(auditIn.getReviewResult());
         loopWork.setAuditTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
+
+        // 发送审核消息
+        TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        TBusinessMsg adtMsg = messageBuilder.buildLoopWorkAuditBusinessMsg(task, loopWork, 5);
+        businessMsgMapper.insertUseGeneratedKeys(adtMsg);
+        // 发送抄送消息
+        List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, loopWork, 7);
+        businessMsgMapper.insertList(ccMsgs);
     }
 
     private List<String> convertImgIds2ImgUrls(String ids) {

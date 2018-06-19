@@ -265,12 +265,23 @@
         WHERE twork.type=3 AND twork.work_id = #{workId} AND twork.excute_user_id = #{excuteUserId}
     </select>
 
+    <select id="filterExpiredExecutionWorks" resultType="com.emucoo.model.TLoopWork">
+        <![CDATA[
+        select * from t_loop_work where work_status=1 and execute_deadline < #{dt} and type in (1,2,3,5)
+        ]]>
+    </select>
 
     <update id="markExpiredExecutionWorks">
         <![CDATA[
         update t_loop_work set work_status=3, work_result=2 where work_status=1 and execute_deadline < #{dt} and type in (1,2,3,5)
         ]]>
     </update>
+
+    <select id="filterExpiredAuditWorks" resultType="com.emucoo.model.TLoopWork">
+        <![CDATA[
+        select * from t_loop_work where work_status=2 and audit_deadline < #{dt} and type in (1,2,3)
+        ]]>
+    </select>
 
     <update id="markExpiredAuditWorks">
         <![CDATA[
@@ -350,10 +361,9 @@
         where b.loop_work_id=#{loopWorkId}
     </select>
 
-    <select id="filterExecuteRemindWorks" resultType="com.emucoo.model.TLoopWork">
-        select * from t_loop_work where work_status = 1
-        and ( (execute_remind_time is null and execute_deadline between #{deadTimeLeft} and #{deadTimeRight})
-        or (execute_remind_time between #{remindTimeLeft} and #{remindTimeRight}) )
+    <select id="filterExecuteRemindLoopWorks" resultType="com.emucoo.model.TLoopWork">
+        select * from t_loop_work
+        where work_status = 1 and execute_remind_time between #{remindTimeLeft} and #{remindTimeRight}
     </select>
 
     <select id="filterAuditRemindWorks" resultType="com.emucoo.model.TLoopWork">

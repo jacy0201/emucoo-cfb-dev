@@ -84,7 +84,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         lw.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
         lw.setAuditDeadline(DateUtil.addDateHours(new Date(), 12));
         lw.setModifyTime(DateUtil.currentDate());
-        loopWorkMapper.updateByPrimaryKeySelective(lw);
 
         List<String> imgids = new ArrayList<>();
         if (voi.getExecuteImgArr() != null && voi.getExecuteImgArr().size() > 0) {
@@ -114,6 +113,15 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         toof.setNumOptionType(too.getFeedbackNumType());
         toof.setNumOptionValue(Double.toString(voi.getDigitalItemValue()));
         operateDataForWorkMapper.insert(toof);
+
+        loopWorkMapper.updateByPrimaryKeySelective(lw);
+
+        // 发送任务待审核消息, 并推送
+        TTask task = taskMapper.selectByPrimaryKey(lw.getTaskId());
+        TBusinessMsg msg = messageBuilder.buildLoopWorkAuditRemindBusinessMsg(task, lw, 3);
+        SysUser auditUser = userMapper.selectByPrimaryKey(lw.getAuditUserId());
+        msg = messageBuilder.pushMessage(msg, auditUser, 3);
+        businessMsgMapper.insertUseGeneratedKeys(msg);
     }
 
     @Override
@@ -153,6 +161,14 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         loopWork.setAuditUserName(user.getUsername());
         loopWork.setAuditTime(DateUtil.currentDate());
         loopWorkMapper.updateByPrimaryKeySelective(loopWork);
+
+        // 发送审核消息
+        TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
+        TBusinessMsg adtMsg = messageBuilder.buildLoopWorkAuditBusinessMsg(task, loopWork, 5);
+        businessMsgMapper.insertUseGeneratedKeys(adtMsg);
+        // 发送抄送消息
+        List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, loopWork, 7);
+        businessMsgMapper.insertList(ccMsgs);
     }
 
     @Override
@@ -476,6 +492,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             lw.setExecuteBeginDate(dt);
             lw.setExecuteEndDate(dt);
             lw.setExecuteDeadline(DateUtil.yyyyMMddHHmmssStrToDate(DateUtil.simple(dt) + task.getExecuteDeadline()));
+            lw.setExecuteRemindTime(DateUtil.timeBackward(lw.getExecuteDeadline(), 1, 0, 0));
             lw.setCreateUserId(task.getCreateUserId());
             lw.setCreateTime(new Date());
             lw.setModifyTime(new Date());
@@ -497,9 +514,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             }
             loopWorkMapper.insert(lw);
 
-            // 推送并保存消息
-            TBusinessMsg businessMsg = messageBuilder.buildTaskCreationBusinessMessage(task, lw, eUser, 1);
-            businessMsg = messageBuilder.pushMessage(businessMsg, eUser, 1);
+            // 发送创建消息，不推送
+            TBusinessMsg businessMsg = messageBuilder.buildLoopWorkCreationBusinessMessage(task, lw, eUser, 1);
             businessMsgMapper.insertUseGeneratedKeys(businessMsg);
         }
     }
@@ -797,22 +813,50 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
-    public void markExpiredWorks() {
-        Date dt = DateUtil.currentDate();
+    public void dealWithExpiredWorks(Date dt) {
         // 注意顺序，expired option的必须放在前面，不然work状态改了，option的过滤条件就不起效果了。
         loopWorkMapper.markExpiredExeOperateOptions(dt);
         loopWorkMapper.markExpiredAuditOperateOptions(dt);
+        List<TLoopWork> exeWorks = loopWorkMapper.filterExpiredExecutionWorks(dt);
         loopWorkMapper.markExpiredExecutionWorks(dt);
+        List<TLoopWork> adtWorks = loopWorkMapper.filterExpiredAuditWorks(dt);
         loopWorkMapper.markExpiredAuditWorks(dt);
+        for (TLoopWork work : exeWorks) {
+            TTask task = taskMapper.selectByPrimaryKey(work.getTaskId());
+            TBusinessMsg msg = messageBuilder.buildLoopWorkExpiredBusinessMsg(task, work, 4);
+            businessMsgMapper.insertUseGeneratedKeys(msg);
+        }
+        for (TLoopWork work : adtWorks) {
+            TTask task = taskMapper.selectByPrimaryKey(work.getTaskId());
+            TBusinessMsg msg = messageBuilder.buildLoopWorkAuditBusinessMsg(task, work, 5);
+            businessMsgMapper.insertUseGeneratedKeys(msg);
+            List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, work, 7);
+            businessMsgMapper.insertList(ccMsgs);
+        }
     }
 
+    /**
+     * 过滤规则：
+     *    如果有提醒时间，根据： 提醒时间 在 [本次调度执行时间，本次调度执行时间+任务调度周期] 区间来过滤，
+     *    如果没有提醒时间，不发送消息
+     *
+     * @param currentDate
+     * @param cycleMinutes
+     * @return
+     */
     @Override
-    public List<TLoopWork> filterNeedExecuteRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
-        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes, 0);
-        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes, 0);
+    public boolean notifyNeedExecuteRemindLoopWorks(Date currentDate, int cycleMinutes) {
         Date remindTimeLeft = currentDate;
         Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes, 0);
-        return loopWorkMapper.filterExecuteRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
+        List<TLoopWork> works = loopWorkMapper.filterExecuteRemindLoopWorks(remindTimeLeft, remindTimeRight);
+        for (TLoopWork work : works) {
+            TTask task = taskMapper.selectByPrimaryKey(work.getTaskId());
+            SysUser user = userMapper.selectByPrimaryKey(work.getExcuteUserId());
+            TBusinessMsg msg = messageBuilder.buildLoopWorkExeRemindBusinessMsg(task, work, 2);
+            msg = messageBuilder.pushMessage(msg, user, 2);
+            businessMsgMapper.insertUseGeneratedKeys(msg);
+        }
+        return true;
     }
 
     @Override
@@ -830,7 +874,7 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
-    public void buildAssingTaskInstance() {
+    public void buildAssignTaskInstance() {
         Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(DateUtil.currentDate()));
         List<TTask> assignTasks = taskMapper.filterAvailableAssignTask(today);
         for (TTask task : assignTasks) {

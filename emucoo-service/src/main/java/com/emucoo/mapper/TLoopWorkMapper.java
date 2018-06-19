@@ -44,7 +44,11 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
     List<TLoopWork> findImproveTaskListByUser(@Param("opptId") Long opptId, @Param("reportId") Long reportId,
                                               @Param("workId")String workId, @Param("excuteUserId") Long excuteUserId);
 
+    List<TLoopWork> filterExpiredAuditWorks(Date dt);
+
     void markExpiredAuditWorks(Date dt);
+
+    List<TLoopWork> filterExpiredExecutionWorks(Date dt);
 
     void markExpiredExecutionWorks(Date dt);
 
@@ -56,7 +60,7 @@ public interface TLoopWorkMapper extends MyMapper<TLoopWork> {
 
     List<TaskCommonItemVo> fetchTaskCommonItem(Long loopWorkId);
 
-    List<TLoopWork> filterExecuteRemindWorks(@Param("deadTimeLeft") Date exeDeadTimeLeft, @Param("deadTimeRight") Date exeDeadTimeRight, @Param("remindTimeLeft") Date exeRemindTimeLeft, @Param("remindTimeRight") Date exeRemindTimeRight);
+    List<TLoopWork> filterExecuteRemindLoopWorks(@Param("remindTimeLeft") Date exeRemindTimeLeft, @Param("remindTimeRight") Date exeRemindTimeRight);
 
     List<TLoopWork> filterAuditRemindWorks(@Param("deadTimeLeft") Date deadTimeLeft, @Param("deadTimeRight") Date deadTimeRight, @Param("remindTimeLeft") Date remindTimeLeft, @Param("remindTimeRight") Date remindTimeRight);
 

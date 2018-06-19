@@ -1,10 +1,7 @@
 package com.emucoo.service.comment.imp;
 
 import com.emucoo.common.util.StringUtil;
-import com.emucoo.dto.modules.comment.CommentAddIn;
-import com.emucoo.dto.modules.comment.CommentDeleteIn;
-import com.emucoo.dto.modules.comment.CommentSelectIn;
-import com.emucoo.dto.modules.comment.CommentSelectOut;
+import com.emucoo.dto.modules.comment.*;
 import com.emucoo.enums.FunctionType;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -145,35 +142,30 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * 查询评论/回复
+     * 查询评论
      * @param vo
      * @param user
      * @return
      */
     @Override
-    public List<CommentSelectOut> select(CommentSelectIn vo, SysUser user) {
+    public CommentSelectOut selectCommentList(CommentSelectIn vo, SysUser user) {
         String workId=vo.getWorkID();
         Integer workType=vo.getWorkType();
         String  subId=vo.getSubID();
         Long  reportId=vo.getReportID();
-        Long commentId=vo.getCommentID();
-        List<CommentSelectOut> list=new ArrayList<>();
+        CommentSelectOut commentSelectOut=new CommentSelectOut();
+        List<CommentSelectOut.Comment> list=null;
         Long unionId=null;
-        //workType=6 评论，查询类型为评论的评论 ，即查询回复
-        if(6==workType){//查询回复
-            unionId=commentId;
-        }else{//查询评论
-            if (workType == 1 || workType == 2 || workType == 3|| workType==5){
-                TLoopWork tLoopWork=new TLoopWork();
-                tLoopWork.setWorkId(workId);
-                tLoopWork.setSubWorkId(subId);
-                TLoopWork loopWork= tLoopWorkMapper.selectOne(tLoopWork);
-                unionId=loopWork.getId();
-            }else if(workType==4){
-                unionId=reportId;
-            }else if(workType==7){
-                unionId=vo.getRepairID();
-            }
+        if (workType == 1 || workType == 2 || workType == 3|| workType==5){
+            TLoopWork tLoopWork=new TLoopWork();
+            tLoopWork.setWorkId(workId);
+            tLoopWork.setSubWorkId(subId);
+            TLoopWork loopWork= tLoopWorkMapper.selectOne(tLoopWork);
+            unionId=loopWork.getId();
+        }else if(workType==4){
+            unionId=reportId;
+        }else if(workType==7){
+            unionId=vo.getRepairID();
         }
         Example example=new Example(TTaskComment.class);
         example.createCriteria().andEqualTo("unionId",unionId).andEqualTo("unionType",workType)
@@ -181,14 +173,15 @@ public class CommentServiceImpl implements CommentService {
         example.setOrderByClause("create_time desc");
         List<TTaskComment> commentList=taskCommentMapper.selectByExample(example);
         if(null!=commentList && commentList.size()>0){
+            list=commentSelectOut.getCommentList();
             for(TTaskComment tTaskComment:commentList){
-                CommentSelectOut commentSelectOut=new CommentSelectOut();
-                commentSelectOut.setCommentContent(tTaskComment.getContent());
-                commentSelectOut.setCommentID(tTaskComment.getId());
-                commentSelectOut.setCommentTime(tTaskComment.getCreateTime().getTime());
-                commentSelectOut.setCommentUserID(tTaskComment.getUserId());
-                commentSelectOut.setCommentUserName(tTaskComment.getUserName());
-                commentSelectOut.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tTaskComment.getUserId()).getHeadImgUrl());
+                CommentSelectOut.Comment out=new CommentSelectOut.Comment();
+                out.setCommentContent(tTaskComment.getContent());
+                out.setCommentID(tTaskComment.getId());
+                out.setCommentTime(tTaskComment.getCreateTime().getTime());
+                out.setCommentUserID(tTaskComment.getUserId());
+                out.setCommentUserName(tTaskComment.getUserName());
+                out.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tTaskComment.getUserId()).getHeadImgUrl());
                  //设置评论照片
                 if(StringUtil.isNotEmpty(tTaskComment.getImgIds())) {
                     List<CommentSelectOut.ImgUrl> ims = new ArrayList<>();
@@ -199,12 +192,84 @@ public class CommentServiceImpl implements CommentService {
                             im.setImgUrl(tFile.getImgUrl());
                             ims.add(im);
                         });
-                        commentSelectOut.setCommentImgArr(ims);
+                        out.setCommentImgArr(ims);
                     }
                 }
-                list.add(commentSelectOut);
+                list.add(out);
+            }
+            commentSelectOut.setCommentList(list);
+        }
+        return commentSelectOut;
+    }
+
+
+    /**
+     * 查询回复
+     * @param vo
+     * @param user
+     * @return
+     */
+    @Override
+    public ReplySelectOut selectReplyList(CommentSelectIn vo, SysUser user) {
+        Long commentId=vo.getCommentID();
+        ReplySelectOut replySelectOut=new ReplySelectOut();
+        CommentSelectOut.Comment comment=replySelectOut.getComment();
+        //查询评论对象
+        TTaskComment tComment=taskCommentMapper.selectByPrimaryKey(commentId);
+        comment.setCommentID(tComment.getId());
+        comment.setCommentContent(tComment.getContent());
+        comment.setCommentTime(tComment.getCreateTime().getTime());
+        comment.setCommentUserID(tComment.getUserId());
+        comment.setCommentUserName(tComment.getUserName());
+        comment.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tComment.getUserId()).getHeadImgUrl());
+        //设置评论照片
+        if(StringUtil.isNotEmpty(tComment.getImgIds())) {
+            List<CommentSelectOut.ImgUrl> ims = new ArrayList<>();
+            List<TFile> cimgs = fileMapper.selectByIds(tComment.getImgIds());
+            if(null!=cimgs && cimgs.size()>0) {
+                cimgs.forEach(tFile -> {
+                    CommentSelectOut.ImgUrl im = new CommentSelectOut.ImgUrl();
+                    im.setImgUrl(tFile.getImgUrl());
+                    ims.add(im);
+                });
+                comment.setCommentImgArr(ims);
             }
         }
-        return list;
+        replySelectOut.setComment(comment);
+        //查询回复集合
+        List<ReplySelectOut.ObjectComment> replyList=null;
+        Example example=new Example(TTaskComment.class);
+        example.createCriteria().andEqualTo("unionId",commentId).andEqualTo("unionType",6)
+                .andEqualTo("isDel",false).andEqualTo("isShow",true);
+        example.setOrderByClause("create_time desc");
+        List<TTaskComment> commentList=taskCommentMapper.selectByExample(example);
+        if(null!=commentList && commentList.size()>0){
+            replyList=replySelectOut.getReplyList();
+            for(TTaskComment tTaskComment:commentList){
+                ReplySelectOut.ObjectComment objectComment=new  ReplySelectOut.ObjectComment();
+                objectComment.setCommentContent(tTaskComment.getContent());
+                objectComment.setCommentID(tTaskComment.getId());
+                objectComment.setCommentTime(tTaskComment.getCreateTime().getTime());
+                objectComment.setCommentUserID(tTaskComment.getUserId());
+                objectComment.setCommentUserName(tTaskComment.getUserName());
+                objectComment.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tTaskComment.getUserId()).getHeadImgUrl());
+                //设置回复照片
+                if(StringUtil.isNotEmpty(tTaskComment.getImgIds())) {
+                    List<ReplySelectOut.ImgUrl> ims = new ArrayList<>();
+                    List<TFile> cimgs = fileMapper.selectByIds(tTaskComment.getImgIds());
+                    if(null!=cimgs && cimgs.size()>0) {
+                        cimgs.forEach(tFile -> {
+                            ReplySelectOut.ImgUrl im = new ReplySelectOut.ImgUrl();
+                            im.setImgUrl(tFile.getImgUrl());
+                            ims.add(im);
+                        });
+                        objectComment.setCommentImgArr(ims);
+                    }
+                }
+                replyList.add(objectComment);
+            }
+            replySelectOut.setReplyList(replyList);
+        }
+        return replySelectOut;
     }
 }

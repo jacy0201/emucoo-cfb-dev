@@ -16,7 +16,7 @@ public class AssignTaskBuildHandler extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
-        loopWorkService.buildAssingTaskInstance();
+        loopWorkService.buildAssignTaskInstance();
         return ReturnT.SUCCESS;
     }
 }

@@ -26,6 +26,8 @@
         <result column="review_notes" property="reviewNotes" jdbcType="VARCHAR"/>
         <result column="review_imgs" property="reviewImgs" jdbcType="VARCHAR"/>
         <result column="review_result" property="reviewResult" jdbcType="INTEGER"/>
+        <result column="review_date" property="reviewDate" jdbcType="TIMESTAMP"/>
+        <result column="review_deadline" property="reviewDeadline" jdbcType="TIMESTAMP"/>
         <result column="work_status" property="workStatus" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
@@ -56,4 +58,28 @@
         select * from t_repair_work t where (t.reporter_id =#{userId} or t.repair_man_id=#{userId})
         and str_to_date(t.create_time,'%Y-%m') =str_to_date(#{month},'%Y-%m')
     </select>
+
+    <select id="filterExeExpiredWorks" resultType="com.emucoo.model.TRepairWork">
+        <![CDATA[
+        select * from  t_repair_work where work_status=2 and expect_date < #{dt}
+        ]]>
+    </select>
+
+    <update id="markExeExpiredWorks" >
+        <![CDATA[
+        update t_repair_work set work_status = 3 where work_status=2 and expect_date < #{dt}
+        ]]>
+    </update>
+
+    <select id="filterAuditExpiredWorks" resultType="com.emucoo.model.TRepairWork">
+        <![CDATA[
+        select * from  t_repair_work where work_status=4 and review_deadline < #{dt}
+        ]]>
+    </select>
+
+    <update id="markAuditExpiredWorks">
+        <![CDATA[
+        update t_repair_work set work_status = 5, review_result = 1 where work_status = 4 and review_deadline < #{dt}
+        ]]>
+    </update>
 </mapper>
