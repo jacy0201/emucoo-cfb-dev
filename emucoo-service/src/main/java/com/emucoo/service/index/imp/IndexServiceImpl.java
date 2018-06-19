@@ -104,6 +104,8 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
         loginInfo.setHeadImgUrl(user.getHeadImgUrl());
         loginInfo.setUserName(user.getRealName());
         loginInfo.setUserId(user.getId());
+        loginInfo.setIsShopManager(user.getIsShopManager());
+//        loginInfo.setIsRepairMan(user.getIsRepairer());
 
         return loginInfo;
     }
