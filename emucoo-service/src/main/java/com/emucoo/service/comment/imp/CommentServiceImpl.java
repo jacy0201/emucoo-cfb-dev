@@ -213,23 +213,29 @@ public class CommentServiceImpl implements CommentService {
     public ReplySelectOut selectReplyList(CommentSelectIn vo, SysUser user) {
         Long commentId=vo.getCommentID();
         ReplySelectOut replySelectOut=new ReplySelectOut();
+        CommentSelectOut.Comment comment=replySelectOut.getComment();
         //查询评论对象
         TTaskComment tComment=taskCommentMapper.selectByPrimaryKey(commentId);
-        replySelectOut.setId(tComment.getId());
-        replySelectOut.setContent(tComment.getContent());
+        comment.setCommentID(tComment.getId());
+        comment.setCommentContent(tComment.getContent());
+        comment.setCommentTime(tComment.getCreateTime().getTime());
+        comment.setCommentUserID(tComment.getUserId());
+        comment.setCommentUserName(tComment.getUserName());
+        comment.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tComment.getUserId()).getHeadImgUrl());
         //设置评论照片
         if(StringUtil.isNotEmpty(tComment.getImgIds())) {
-            List<ReplySelectOut.ImgUrl> ims = new ArrayList<>();
+            List<CommentSelectOut.ImgUrl> ims = new ArrayList<>();
             List<TFile> cimgs = fileMapper.selectByIds(tComment.getImgIds());
             if(null!=cimgs && cimgs.size()>0) {
                 cimgs.forEach(tFile -> {
-                    ReplySelectOut.ImgUrl im = new ReplySelectOut.ImgUrl();
+                    CommentSelectOut.ImgUrl im = new CommentSelectOut.ImgUrl();
                     im.setImgUrl(tFile.getImgUrl());
                     ims.add(im);
                 });
-                replySelectOut.setObjectImgArr(ims);
+                comment.setCommentImgArr(ims);
             }
         }
+        replySelectOut.setComment(comment);
         //查询回复集合
         List<ReplySelectOut.ObjectComment> replyList=null;
         Example example=new Example(TTaskComment.class);
