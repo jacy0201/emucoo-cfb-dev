@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ApiModel(value="评论对象字段")
+@ApiModel(value="回复对象")
 public class ReplySelectOut {
     @ApiModelProperty(value="评论id",name="id")
     private Long id;
