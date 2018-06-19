@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Jacy
@@ -24,7 +23,7 @@ import java.util.List;
  */
 @Api(description = "评论模块接口")
 @RestController
-@RequestMapping(value = "/api/comment")
+@RequestMapping(value = "/api/comment/")
 public class CommentController extends AppBaseController {
 
 	@Resource

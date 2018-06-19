@@ -34,7 +34,7 @@
   </select>
 
     <select id="getShopListByUserIDAndAreaID" resultType="com.emucoo.model.TShopInfo">
-        SELECT t2.id,t2.shop_name,t2.address,t2.tel,t2.area_id
+        SELECT t2.id,t2.shop_name,t2.shop_manager_id,t2.address,t2.tel,t2.area_id
             FROM sys_user_shop t1
             INNER JOIN t_shop_info t2 ON t1.shop_id = t2.id
             WHERE
@@ -42,7 +42,7 @@
             AND t1.is_del != TRUE AND t2.is_del != TRUE
             AND t2.is_use = TRUE
             UNION
-            SELECT t4.id,t4.shop_name,t4.address,t4.tel,t4.area_id
+            SELECT t4.id,t4.shop_name,t4.shop_manager_id,t4.address,t4.tel,t4.area_id
             FROM t_shop_info t4
             WHERE
             t4.shop_manager_id =  #{userId} AND t4.area_id = #{areaId}
