@@ -1,6 +1,8 @@
 package com.emucoo.restApi.controller.msg;
 
 import com.alibaba.fastjson.JSON;
+import com.emucoo.common.exception.ApiException;
+import com.emucoo.common.exception.BaseException;
 import com.emucoo.dto.base.ParamVo;
 import com.emucoo.dto.modules.msg.MsgDetailIn;
 import com.emucoo.dto.modules.msg.MsgListIn;
@@ -16,6 +18,7 @@ import com.emucoo.restApi.sdk.http.HttpRequestRewriteManager;
 import com.emucoo.restApi.sdk.token.UserTokenManager;
 import com.emucoo.service.msg.MsgService;
 import com.github.pagehelper.PageHelper;
+import com.qiniu.util.Json;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,15 +88,20 @@ public class MsgController extends AppBaseController {
             checkParam(msgDetailIn.getWorkType(), "workType不能为空！");
             checkParam(msgDetailIn.getFunctionType(), "functionType不能为空！");
             Map<String, Object> forwardParam = msgService.msgDetail(msgDetailIn);
+            if(forwardParam == null){
+                log.warn("消息详情接口异常,Param:{}", JSON.toJSONString(params));
+                throw new ApiException("请求错误！");
+            }
             String forwardUrl = forwardParam.get("url").toString();
             ParamVo<Object> newParam = (ParamVo<Object>)forwardParam.get("param");
             HttpRequestRewriteManager wrappedRequest = new HttpRequestRewriteManager(request);
             wrappedRequest.resetInputStream(JSON.toJSONString(newParam).getBytes());
             request.getRequestDispatcher(forwardUrl).forward(wrappedRequest, response);
         } catch(Exception e) {
-            e.printStackTrace();
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("组装消息传递信息错误！");
         }
-
     }
-
 }

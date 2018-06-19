@@ -148,7 +148,7 @@ public class PlanStatisticsServiceImpl implements PlanStatisticsService {
                         }
 
                         statistics.setReportTime(DateUtil.dateToString(report.getCreateTime()));
-                        int realTotal = result.getActualTotal();
+                        int realTotal = result.getScore();
                         statistics.setActualTotalscore(String.valueOf(realTotal));
                         statistics.setActualTotalRate(String.valueOf(Math.floor(result.getScoreRate())));
 

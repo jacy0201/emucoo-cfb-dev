@@ -105,7 +105,7 @@ public class ShopManageController extends AppBaseController {
     /**
      * 维修单
      */
-    @PostMapping(value = "getRepairList")
+    /*@PostMapping(value = "getRepairList")
     @ApiOperation(value="维修单")
     public AppResult<List<TRepairWork>> getRepairList(@RequestBody ParamVo<TaskQuery> base) {
         TaskQuery taskQuery= base.getData();
@@ -113,5 +113,5 @@ public class ShopManageController extends AppBaseController {
         List<TRepairWork> list=userCenterService.repairWorkList(taskQuery.getMonth(),currUser.getId());
         return success(list);
     }
-
+*/
 }
