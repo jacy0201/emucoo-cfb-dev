@@ -88,6 +88,14 @@
     </select>
 
     <select id="countPendingRepairWorks" resultType="java.lang.Integer">
-        select count(1) from t_repair_work where repair_man_id = #{userId} or
+        select count(1) from t_repair_work where repair_man_id = #{userId} or reporter_id = #{userId}
+    </select>
+
+    <select id="filterReviewingRepairWorks" resultType="com.emucoo.model.TRepairWork">
+        select * from t_repair_work where reporter_id = #{userId}
+    </select>
+
+    <select id="countReviewingRepairWorks" resultType="java.lang.Integer">
+        select count(1) from t_repair_work where reporter_id = #{userId}
     </select>
 </mapper>
