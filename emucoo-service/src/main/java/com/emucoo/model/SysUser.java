@@ -174,12 +174,12 @@ public class SysUser extends BaseEntity {
     @Column(name = "is_shop_manager")
     private Boolean isShopManager;
 
-    public Boolean getRepairer() {
+    public Boolean getIsRepairer() {
         return isRepairer;
     }
 
-    public void setRepairer(Boolean repairer) {
-        isRepairer = repairer;
+    public void setIsRepairer(Boolean isRepairer) {
+        this.isRepairer = isRepairer;
     }
 
     /**
