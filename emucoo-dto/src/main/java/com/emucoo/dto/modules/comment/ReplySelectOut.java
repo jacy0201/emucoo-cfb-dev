@@ -10,12 +10,7 @@ import java.util.List;
 @Data
 @ApiModel(value="回复对象")
 public class ReplySelectOut {
-    @ApiModelProperty(value="评论id",name="id")
-    private Long id;
-    @ApiModelProperty(value="评论内容",name="content")
-    private String content;
-    @ApiModelProperty(value="评论图片",name="objectImgArr")
-    private List<ImgUrl> objectImgArr = new ArrayList<ImgUrl>();
+    private CommentSelectOut.Comment comment =new CommentSelectOut.Comment();
 	//回复列表
 	@ApiModelProperty(value="被回复的评论对象",name="objectComment")
 	private List<ObjectComment> replyList=new ArrayList<>();
