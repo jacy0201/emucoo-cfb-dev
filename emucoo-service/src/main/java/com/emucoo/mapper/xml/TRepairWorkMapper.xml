@@ -82,4 +82,12 @@
         update t_repair_work set work_status = 5, review_result = 1 where work_status = 4 and review_deadline < #{dt}
         ]]>
     </update>
+
+    <select id="filterPendingRepairWorks" resultType="com.emucoo.model.TRepairWork">
+        select * from t_repair_work where repair_man_id = #{userId} or reporter_id = #{userId}
+    </select>
+
+    <select id="countPendingRepairWorks" resultType="java.lang.Integer">
+        select count(1) from t_repair_work where repair_man_id = #{userId} or
+    </select>
 </mapper>

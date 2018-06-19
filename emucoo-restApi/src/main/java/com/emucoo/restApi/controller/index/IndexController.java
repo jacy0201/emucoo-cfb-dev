@@ -7,6 +7,7 @@ import com.emucoo.dto.modules.task.WorkVo_O;
 import com.emucoo.dto.modules.user.UserLoginInfo;
 import com.emucoo.dto.modules.user.UserVo_I;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TRepairWork;
 import com.emucoo.restApi.controller.demo.AppBaseController;
 import com.emucoo.restApi.controller.demo.AppResult;
 import com.emucoo.restApi.models.enums.AppExecStatus;
@@ -210,6 +211,14 @@ public class IndexController extends AppBaseController {
         ReportListVo_O voo = new ReportListVo_O();
         voo.setUnreadReportArr(vos);
         return success(voo);
+    }
+
+    @PostMapping("/pendingRepair")
+    public AppResult<List<TRepairWork>> pendingRepair(@RequestHeader("userToken") String userToken) {
+        Long loginUserId = UserTokenManager.getInstance().getUserIdFromToken(userToken);
+        checkParam(loginUserId, "没有此用户。");
+        List<TRepairWork> works = indexService.fetchPendingRepairWorks(loginUserId);
+        return success(works);
     }
 
 }

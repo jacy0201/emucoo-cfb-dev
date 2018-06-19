@@ -7,14 +7,8 @@ import com.emucoo.common.util.RegexMatcher;
 import com.emucoo.dto.modules.index.ReportItemVo;
 import com.emucoo.dto.modules.index.ResetPwdVo_I;
 import com.emucoo.dto.modules.user.UserLoginInfo;
-import com.emucoo.mapper.SysDeptMapper;
-import com.emucoo.mapper.SysUserMapper;
-import com.emucoo.mapper.TReportMapper;
-import com.emucoo.mapper.TShopInfoMapper;
-import com.emucoo.model.SysDept;
-import com.emucoo.model.SysUser;
-import com.emucoo.model.TReport;
-import com.emucoo.model.TShopInfo;
+import com.emucoo.mapper.*;
+import com.emucoo.model.*;
 import com.emucoo.service.index.IndexService;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -48,6 +42,9 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
 
     @Autowired
     private TReportMapper reportMapper;
+
+    @Autowired
+    private TRepairWorkMapper repairWorkMapper;
 
 
     @Override
@@ -105,7 +102,7 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
         loginInfo.setUserName(user.getRealName());
         loginInfo.setUserId(user.getId());
         loginInfo.setIsShopManager(user.getIsShopManager());
-//        loginInfo.setIsRepairMan(user.getIsRepairer());
+        loginInfo.setIsRepairMan(user.getRepairer());
 
         return loginInfo;
     }
@@ -164,5 +161,10 @@ public class IndexServiceImpl extends BaseServiceImpl<SysUser> implements IndexS
     @Override
     public Integer reportNum(Long userId, Boolean isRead) {
         return reportMapper.countUnReadReport(userId);
+    }
+
+    @Override
+    public List<TRepairWork> fetchPendingRepairWorks(Long loginUserId) {
+        return repairWorkMapper.filterPendingRepairWorks(loginUserId);
     }
 }
