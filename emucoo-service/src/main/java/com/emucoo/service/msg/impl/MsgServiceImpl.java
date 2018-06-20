@@ -120,7 +120,7 @@ public class MsgServiceImpl implements MsgService {
                 msg.setMsgTitle(businessMsg.getTitle());
                 msg.setUnionID(businessMsg.getUnionId());
                 msg.setWorkType(businessMsg.getUnionType().intValue());
-                msg.setSendTime(DateUtil.dateToString(businessMsg.getSendTime()));
+                msg.setSendTime(businessMsg.getSendTime().getTime());
                 msg.setIsRead(businessMsg.getIsRead());
                 msgArray.add(msg);
             }

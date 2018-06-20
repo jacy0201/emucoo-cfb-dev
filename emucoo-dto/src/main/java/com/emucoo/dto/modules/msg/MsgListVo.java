@@ -12,8 +12,8 @@ public class MsgListVo {
     private Integer workType;
     @ApiModelProperty(value = "消息标题", name = "msgTitle")
     private String msgTitle;
-    @ApiModelProperty(value = "发送时间", name = "sendTime")
-    private String sendTime;
+    @ApiModelProperty(value = "发送时间戳", name = "sendTime")
+    private Long sendTime;
     @ApiModelProperty(value = "关联的id", name = "unionID")
     private Long unionID;
     @ApiModelProperty(value = "消息id", name = "unionID")

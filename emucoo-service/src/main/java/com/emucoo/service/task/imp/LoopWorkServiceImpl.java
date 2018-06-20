@@ -157,7 +157,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         businessMsgMapper.insertUseGeneratedKeys(adtMsg);
         // 发送抄送消息
         List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, loopWork, 7);
-        businessMsgMapper.insertList(ccMsgs);
+        if (ccMsgs.size() > 0) {
+            businessMsgMapper.insertList(ccMsgs);
+        }
     }
 
     @Override
@@ -820,7 +822,9 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
             TBusinessMsg msg = messageBuilder.buildLoopWorkAuditBusinessMsg(task, work, 5);
             businessMsgMapper.insertUseGeneratedKeys(msg);
             List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, work, 7);
-            businessMsgMapper.insertList(ccMsgs);
+            if (ccMsgs.size() > 0) {
+                businessMsgMapper.insertList(ccMsgs);
+            }
         }
     }
 
