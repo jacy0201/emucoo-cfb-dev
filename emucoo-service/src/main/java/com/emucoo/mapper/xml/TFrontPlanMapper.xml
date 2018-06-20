@@ -33,13 +33,13 @@
     <select id="countTodayPlanOfUser" resultType="java.lang.Integer">
         select count(id)
         from t_front_plan
-        where arrangee_id=#{userId} and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
+        where FIND_IN_SET('#{userId}',arrangee_ids) > 0 and DATE_FORMAT(plan_date,'%Y-%m-%d') = #{today}
     </select>
 
     <select id="listTodayPlanOfUser" resultType="com.emucoo.model.TFrontPlan">
         select a.*, concat(b.shop_name, '巡检安排') as title from t_front_plan a
         left join t_shop_info b on a.shop_id = b.id
-        where a.arrangee_id=#{userId} and DATE_FORMAT(a.plan_date,'%Y-%m-%d') = #{today}
+        where FIND_IN_SET('#{userId}', a.arrangee_ids) > 0 and DATE_FORMAT(a.plan_date,'%Y-%m-%d') = #{today}
     </select>
 
     <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">

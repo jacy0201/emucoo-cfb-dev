@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.emucoo.mapper.TOperateDataForWorkMapper" >
-  <resultMap id="BaseResultMap" type="com.emucoo.model.TOperateDataForWork" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="task_item_id" property="taskItemId" jdbcType="BIGINT" />
-    <result column="work_txt" property="workTxt" jdbcType="VARCHAR" />
-    <result column="num_option_name" property="numOptionName" jdbcType="VARCHAR" />
-    <result column="num_option_value" property="numOptionValue" jdbcType="VARCHAR" />
-    <result column="num_option_type" property="numOptionType" jdbcType="INTEGER" />
-    <result column="loop_work_id" property="loopWorkId" jdbcType="BIGINT" />
-    <result column="img_option_name" property="imgOptionName" jdbcType="VARCHAR" />
-    <result column="img_ids" property="imgIds" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
-    <result column="audit_user_id" property="auditUserId" jdbcType="BIGINT" />
-    <result column="audit_result" property="auditResult" jdbcType="BIT" />
-    <result column="audit_img_ids" property="auditImgIds" jdbcType="VARCHAR" />
-    <result column="score" property="score" jdbcType="VARCHAR" />
-    <result column="audit_content" property="auditContent" jdbcType="LONGVARCHAR" />
-  </resultMap>
+<mapper namespace="com.emucoo.mapper.TOperateDataForWorkMapper">
+    <resultMap id="BaseResultMap" type="com.emucoo.model.TOperateDataForWork">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="task_item_id" property="taskItemId" jdbcType="BIGINT"/>
+        <result column="loop_work_id" property="loopWorkId" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="txt_need" property="txtNeed" jdbcType="BIT"/>
+        <result column="work_txt" property="workTxt" jdbcType="VARCHAR"/>
+        <result column="txt_option_name" property="txtOptionName" jdbcType="VARCHAR"/>
+        <result column="txt_option_description" property="txtOptionDescription" jdbcType="VARCHAR"/>
+        <result column="num_need" property="numNeed" jdbcType="BIT"/>
+        <result column="num_option_name" property="numOptionName" jdbcType="VARCHAR"/>
+        <result column="num_option_value" property="numOptionValue" jdbcType="VARCHAR"/>
+        <result column="num_option_type" property="numOptionType" jdbcType="INTEGER"/>
+        <result column="img_need" property="imgNeed" jdbcType="BIT"/>
+        <result column="img_option_max_count" property="imgOptionMaxCount" jdbcType="INTEGER"/>
+        <result column="img_option_from_album" property="imgOptionFromAlbum" jdbcType="BIT"/>
+        <result column="img_option_name" property="imgOptionName" jdbcType="VARCHAR"/>
+        <result column="img_example_id" property="imgExampleId" jdbcType="BIGINT"/>
+        <result column="img_ids" property="imgIds" jdbcType="VARCHAR"/>
+        <result column="audit_user_id" property="auditUserId" jdbcType="BIGINT"/>
+        <result column="audit_result" property="auditResult" jdbcType="BIT"/>
+        <result column="audit_img_ids" property="auditImgIds" jdbcType="VARCHAR"/>
+        <result column="audit_content" property="auditContent" jdbcType="LONGVARCHAR"/>
+        <result column="score" property="score" jdbcType="VARCHAR"/>
+        <result column="pre_score" property="preScore" jdbcType="VARCHAR"/>
+        <result column="pre_weight" property="preWeight" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
-  <select id="fetchOneByLoopWorkId" resultMap="BaseResultMap">
-    select * from t_operate_data_for_work where loop_work_id=#{loopWorkId} limit 1
-  </select>
+    <select id="fetchOneByLoopWorkId" resultMap="BaseResultMap">
+        select * from t_operate_data_for_work where loop_work_id=#{loopWorkId} limit 1
+    </select>
 
     <update id="auditOperateData" parameterType="com.emucoo.model.TOperateDataForWork">
         update t_operate_data_for_work

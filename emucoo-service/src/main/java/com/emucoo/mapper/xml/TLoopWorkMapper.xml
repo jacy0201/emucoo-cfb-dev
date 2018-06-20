@@ -329,15 +329,16 @@
 
     <select id="fetchTaskCommonItem" resultType="com.emucoo.dto.modules.task.TaskCommonItemVo">
         select
+
         b.task_item_id as taskItemID,
-        c.name as taskItemTitle,
-        c.feedback_img_example_id as itemImgUrls,
-        case when c.feedback_need_text = 0 then 1 else 2 end as feedbackText,
-        case when c.feedback_img_type = 0 then 1
-        when c.feedback_img_type = 1 and c.feedback_img_from_album = 1 then 2
+        b.name as taskItemTitle,
+        b.img_example_id as itemImgUrls,
+        case when b.txt_need = 0 then 1 else 2 end as feedbackText,
+        case when b.img_need = 0 then 1
+        when b.img_need = 1 and b.img_option_from_album = 1 then 2
         else 3 end as feedbackImg,
-        c.feedback_num_name as digitalItemName,
-        c.feedback_num_type as digitalItemType,
+        b.num_option_name as digitalItemName,
+        b.num_option_type as digitalItemType,
         d.id as taskSubID,
         d.head_img_url as taskSubHeadUrl,
         (UNIX_TIMESTAMP(a.modify_time) * 1000) as taskSubTime,
@@ -354,7 +355,6 @@
         b.audit_img_ids as imgUrls
 
         from t_operate_data_for_work b left join t_loop_work a on a.id = b.loop_work_id
-        left join t_operate_option c on c.id = b.task_item_id
         left join sys_user d on a.excute_user_id = d.id
         left join sys_user e on b.audit_user_id = e.id
 

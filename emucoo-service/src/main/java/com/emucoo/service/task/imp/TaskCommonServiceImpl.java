@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 /**
  * @author Shayne.Wang
  * @date 2018-06-12
- *
  */
 
 @Service
@@ -189,11 +188,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     public void submitTask(TaskCommonSubmitIn taskCommonSubmitIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonSubmitIn.getWorkID(), taskCommonSubmitIn.getSubID(), taskCommonSubmitIn.getWorkType());
         TTask task = taskMapper.selectByPrimaryKey(loopWork.getTaskId());
-        List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
-        HashMap<Long, TOperateOption> optMaps = new HashMap<>();
-        for (TOperateOption opt : options) {
-            optMaps.put(opt.getId(), opt);
-        }
         loopWork.setExcuteUserId(user.getId());
         loopWork.setExcuteUserName(user.getUsername());
         loopWork.setModifyTime(DateUtil.currentDate());
@@ -211,7 +205,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             }
         }
         loopWork.setWorkStatus(ConstantsUtil.LoopWork.WORK_STATUS_2);
-
 
         List<TOperateDataForWork> odfws1 = new ArrayList<>();
         List<TOperateDataForWork> odfws2 = new ArrayList<>();
@@ -237,21 +230,10 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             });
 
             TOperateDataForWork odfw = operateDataForWorkMapper.fetchOneByTaskItemIdAndLoopWorkId(loopWork.getId(), taskItem.getTaskItemID());
-            if (odfw == null) {
-                odfw = new TOperateDataForWork();
-                odfws1.add(odfw);
-            } else {
-                odfws2.add(odfw);
-            }
-
-            TOperateOption option = optMaps.get(taskItem.getTaskItemID());
-
             odfw.setTaskItemId(taskItem.getTaskItemID());
             odfw.setLoopWorkId(loopWork.getId());
             odfw.setWorkTxt(taskItem.getWorkText());
             odfw.setImgIds(StringUtils.join(imgids, ","));
-            odfw.setNumOptionType(option.getFeedbackNumType());
-            odfw.setNumOptionName(option.getFeedbackNumName());
             odfw.setNumOptionValue(String.valueOf(taskItem.getDigitalItemValue() == null ? 0.0 : taskItem.getDigitalItemValue()));
             odfw.setCreateTime(DateUtil.currentDate());
             odfw.setModifyTime(DateUtil.currentDate());
@@ -278,10 +260,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     public void auditTask(TaskCommonAuditIn taskCommonAuditIn, SysUser user) {
         TLoopWork loopWork = loopWorkMapper.fetchByWorkIdAndType(taskCommonAuditIn.getWorkID(), taskCommonAuditIn.getSubID(), taskCommonAuditIn.getWorkType());
         List<TOperateOption> options = operateOptionMapper.fetchOptionsByTaskId(loopWork.getTaskId());
-        HashMap<Long, TOperateOption> optMaps = new HashMap<>();
-        for (TOperateOption opt : options) {
-            optMaps.put(opt.getId(), opt);
-        }
 
         int auditResult = 1;
         List<TaskCommonAuditIn.AuditTaskItem> taskItemArr = taskCommonAuditIn.getReviewArr();
@@ -291,7 +269,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             odfw.setTaskItemId(taskItem.getTaskItemID());
             odfw.setLoopWorkId(loopWork.getId());
             int tmpi = taskItem.getReviewResult() == null ? 2 : taskItem.getReviewResult();
-            auditResult = (tmpi == 1 && auditResult == 1)? 1:2;
+            auditResult = (tmpi == 1 && auditResult == 1) ? 1 : 2;
             odfw.setAuditResult(tmpi);
             odfw.setAuditContent(taskItem.getReviewOpinion());
             odfw.setAuditUserId(user.getId());
@@ -361,8 +339,8 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
     @Override
-    public List<TaskParameterVo> listCommonTaskByName(String keyword, Boolean usage, int pageNm, int pageSz ) {
-        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, usage,(pageNm - 1) * pageSz, pageSz);
+    public List<TaskParameterVo> listCommonTaskByName(String keyword, Boolean usage, int pageNm, int pageSz) {
+        List<TTask> tasks = taskMapper.listCommonTaskByName(keyword, usage, (pageNm - 1) * pageSz, pageSz);
         List<TaskParameterVo> taskList = new ArrayList<>();
         for (TTask task : tasks) {
             TaskParameterVo vo = new TaskParameterVo();
@@ -869,7 +847,6 @@ public class TaskCommonServiceImpl implements TaskCommonService {
     }
 
 
-
     private List<SysUser> determineSendersByExecutorType(SysUser executor, TTask commonTask) {
         // 任务执行者选择店铺时，抄送人选择部门及岗位，只有符合条件且品牌和分区同时包含任务执行者所在店铺的品牌及分区的人员才可收到任务的抄送信息
         if (commonTask.getExecuteUserType() == 2) {
@@ -948,12 +925,23 @@ public class TaskCommonServiceImpl implements TaskCommonService {
             for (TOperateOption option : options) {
                 TOperateDataForWork opOpt = new TOperateDataForWork();
                 opOpt.setCreateTime(DateUtil.currentDate());
-                opOpt.setImgOptionName(option.getFeedbackImgName());
-                opOpt.setLoopWorkId(loopWork.getId());
                 opOpt.setModifyTime(DateUtil.currentDate());
+                opOpt.setLoopWorkId(loopWork.getId());
+                opOpt.setTaskItemId(option.getId());
+                opOpt.setName(option.getName());
+                opOpt.setImgOptionMaxCount(option.getFeedbackImgMaxCount());
+                opOpt.setImgOptionFromAlbum(option.getFeedbackImgFromAlbum());
+                opOpt.setImgExampleId(option.getFeedbackImgExampleId());
+                opOpt.setImgNeed(option.getFeedbackImgType() == 0 ? false : true);
+                opOpt.setImgOptionName(option.getFeedbackImgName());
+                opOpt.setNumNeed(option.getFeedbackNeedNum());
                 opOpt.setNumOptionName(option.getFeedbackNumName());
                 opOpt.setNumOptionType(option.getFeedbackNumType());
-                opOpt.setTaskItemId(option.getId());
+                opOpt.setTxtNeed(option.getFeedbackNeedText());
+                opOpt.setTxtOptionDescription(option.getFeedbackTextDescription());
+                opOpt.setTxtOptionName(option.getFeedbackTextName());
+                opOpt.setPreScore(option.getPreinstallScore());
+                opOpt.setPreWeight(option.getPreinstallWeight());
                 opOpts.add(opOpt);
             }
             operateDataForWorkMapper.insertList(opOpts);

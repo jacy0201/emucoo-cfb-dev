@@ -1,8 +1,9 @@
 package com.emucoo.model;
 
 import com.emucoo.common.base.model.BaseEntity;
-import java.util.Date;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "t_operate_data_for_work")
 public class TOperateDataForWork extends BaseEntity {
@@ -16,11 +17,24 @@ public class TOperateDataForWork extends BaseEntity {
     @Column(name = "task_item_id")
     private Long taskItemId;
 
+    @Column(name = "name")
+    private String name;
+
     /**
      * 工作文档
      */
     @Column(name = "work_txt")
     private String workTxt;
+
+    @Column(name = "txt_need")
+    private Boolean txtNeed;
+
+    @Column(name = "txt_option_name")
+    private String txtOptionName;
+
+    @Column(name = "txt_option_description")
+    private String txtOptionDescription;
+
 
     /**
      * 数字项名称
@@ -40,6 +54,9 @@ public class TOperateDataForWork extends BaseEntity {
     @Column(name = "num_option_type")
     private Integer numOptionType;
 
+    @Column(name = "num_need")
+    private Boolean numNeed;
+
     /**
      * 任务事务id
      */
@@ -57,6 +74,18 @@ public class TOperateDataForWork extends BaseEntity {
      */
     @Column(name = "img_ids")
     private String imgIds;
+
+    @Column(name = "img_need")
+    private Boolean imgNeed;
+
+    @Column(name = "img_option_max_count")
+    private Integer imgOptionMaxCount;
+
+    @Column(name = "img_option_from_album")
+    private Boolean imgOptionFromAlbum;
+
+    @Column(name = "img_example_id")
+    private Long imgExampleId;
 
     /**
      * 创建时间
@@ -92,6 +121,12 @@ public class TOperateDataForWork extends BaseEntity {
      * 实际分数
      */
     private String score;
+
+    @Column(name = "pre_score")
+    private String preScore;
+
+    @Column(name = "pre_weight")
+    private String preWeight;
 
     /**
      * 审核内容
@@ -381,5 +416,93 @@ public class TOperateDataForWork extends BaseEntity {
      */
     public void setAuditContent(String auditContent) {
         this.auditContent = auditContent;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getTxtNeed() {
+        return txtNeed;
+    }
+
+    public void setTxtNeed(Boolean txtNeed) {
+        this.txtNeed = txtNeed;
+    }
+
+    public String getTxtOptionName() {
+        return txtOptionName;
+    }
+
+    public void setTxtOptionName(String txtOptionName) {
+        this.txtOptionName = txtOptionName;
+    }
+
+    public String getTxtOptionDescription() {
+        return txtOptionDescription;
+    }
+
+    public void setTxtOptionDescription(String txtOptionDescription) {
+        this.txtOptionDescription = txtOptionDescription;
+    }
+
+    public Boolean getNumNeed() {
+        return numNeed;
+    }
+
+    public void setNumNeed(Boolean numNeed) {
+        this.numNeed = numNeed;
+    }
+
+    public Boolean getImgNeed() {
+        return imgNeed;
+    }
+
+    public void setImgNeed(Boolean imgNeed) {
+        this.imgNeed = imgNeed;
+    }
+
+    public Integer getImgOptionMaxCount() {
+        return imgOptionMaxCount;
+    }
+
+    public void setImgOptionMaxCount(Integer imgOptionMaxCount) {
+        this.imgOptionMaxCount = imgOptionMaxCount;
+    }
+
+    public Boolean getImgOptionFromAlbum() {
+        return imgOptionFromAlbum;
+    }
+
+    public void setImgOptionFromAlbum(Boolean imgOptionFromAlbum) {
+        this.imgOptionFromAlbum = imgOptionFromAlbum;
+    }
+
+    public Long getImgExampleId() {
+        return imgExampleId;
+    }
+
+    public void setImgExampleId(Long imgExampleId) {
+        this.imgExampleId = imgExampleId;
+    }
+
+    public String getPreScore() {
+        return preScore;
+    }
+
+    public void setPreScore(String preScore) {
+        this.preScore = preScore;
+    }
+
+    public String getPreWeight() {
+        return preWeight;
+    }
+
+    public void setPreWeight(String preWeight) {
+        this.preWeight = preWeight;
     }
 }
