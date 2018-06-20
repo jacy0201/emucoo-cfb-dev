@@ -4,6 +4,7 @@ import com.emucoo.dto.modules.msg.MsgDetailIn;
 import com.emucoo.dto.modules.msg.MsgListIn;
 import com.emucoo.dto.modules.msg.MsgListOut;
 import com.emucoo.dto.modules.msg.MsgSummaryOut;
+import com.emucoo.dto.modules.msg.UnreadMsgCountOut;
 import com.emucoo.dto.modules.msg.UpdateMsgReadedIn;
 import com.emucoo.model.SysUser;
 
@@ -22,5 +23,5 @@ public interface MsgService {
 
     Map<String,Object> msgDetail(MsgDetailIn msgDetailIn);
 
-    boolean hasUnreadMsg(SysUser user);
+    UnreadMsgCountOut hasUnreadMsg(SysUser user);
 }
