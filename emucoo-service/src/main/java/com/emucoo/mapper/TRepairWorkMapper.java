@@ -22,4 +22,12 @@ public interface TRepairWorkMapper extends MyMapper<TRepairWork> {
     List<TRepairWork> filterAuditExpiredWorks(Date dt);
 
     void markAuditExpiredWorks(Date dt);
+
+    List<TRepairWork> filterPendingRepairWorks(Long userId);
+
+    int countPendingRepairWorks(Long userId);
+
+    List<TRepairWork> filterReviewingRepairWorks(Long userId);
+
+    int countReviewingRepairWorks(Long userId);
 }

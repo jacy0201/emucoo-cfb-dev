@@ -2,7 +2,6 @@ package com.emucoo.service.task.imp;
 
 import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.common.util.StringUtil;
-import com.emucoo.dto.base.ITask;
 import com.emucoo.dto.modules.task.*;
 import com.emucoo.mapper.*;
 import com.emucoo.model.*;
@@ -63,16 +62,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     @Autowired
     private MessageBuilder messageBuilder;
-
-    @Override
-    public int fetchPendingExecuteWorkNum(Long submitUserId, Date today) {
-        return loopWorkMapper.countPendingExecuteWorkNum(submitUserId, today);
-    }
-
-    @Override
-    public int fetchPendingReviewWorkNum(Long submitUserId, Date today) {
-        return loopWorkMapper.countPendingReviewWorkNum(submitUserId, today);
-    }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
@@ -837,8 +826,8 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
 
     /**
      * 过滤规则：
-     *    如果有提醒时间，根据： 提醒时间 在 [本次调度执行时间，本次调度执行时间+任务调度周期] 区间来过滤，
-     *    如果没有提醒时间，不发送消息
+     * 如果有提醒时间，根据： 提醒时间 在 [本次调度执行时间，本次调度执行时间+任务调度周期] 区间来过滤，
+     * 如果没有提醒时间，不发送消息
      *
      * @param currentDate
      * @param cycleMinutes
@@ -859,15 +848,6 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
         return true;
     }
 
-    @Override
-    public List<TLoopWork> filterNeedAuditRemindWorks(Date currentDate, int aheadMinutes, int cycleMinutes) {
-        Date deadTimeLeft = DateUtil.timeForward(currentDate, 0, aheadMinutes, 0);
-        Date deadTimeRight = DateUtil.timeForward(currentDate, 0, aheadMinutes + cycleMinutes, 0);
-        Date remindTimeLeft = currentDate;
-        Date remindTimeRight = DateUtil.timeForward(currentDate, 0, cycleMinutes, 0);
-        return loopWorkMapper.filterAuditRemindWorks(deadTimeLeft, deadTimeRight, remindTimeLeft, remindTimeRight);
-    }
-
     private boolean isContainsDate(List<Date> dates, Date dt) {
         return TaskExeDateGenerator.isContainsDate(dates, dt);
     }
@@ -886,93 +866,4 @@ public class LoopWorkServiceImpl extends BaseServiceImpl<TLoopWork> implements L
     }
     // end：定时任务方法完
 
-    @Override
-    public WorkVo_O viewPendingExecuteWorks(Date needDate, Long submitUserId) {
-        List<TLoopWork> loopWorks = loopWorkMapper.listPendingExecute(submitUserId, needDate);
-        List<TFrontPlan> frontPlans = frontPlanMapper.listTodayPlanOfUser(submitUserId, needDate);
-        List<WorkVo_O.Work> inspections = frontPlans.stream().map(frontPlan -> {
-            WorkVo_O.Work work = new WorkVo_O.Work();
-            work.setId(frontPlan.getId());
-            work.setWorkID(Long.toString(frontPlan.getId()));
-            work.setWorkType(ITask.INSPECTION);
-            work.setSubID("");
-            work.getInspection().setInspEndTime(frontPlan.getPlanDate().getTime());
-            work.getInspection().setInspStartTime(frontPlan.getPlanDate().getTime());
-            work.getInspection().setInspStatus(frontPlan.getStatus() == 1 ? 1 : 0);
-            work.getInspection().setInspTitle(frontPlan.getTitle());
-            return work;
-        }).collect(Collectors.toList());
-
-
-        List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
-            WorkVo_O.Work work = new WorkVo_O.Work();
-            work.setId(t.getId());
-            work.setWorkID(t.getWorkId());
-            work.setWorkType(t.getType());
-            work.setSubID(t.getSubWorkId());
-            if (t.getType() == ITask.MEMO) {
-                work.getMemo().setMemoStartTime(t.getExecuteBeginDate().getTime());
-                work.getMemo().setMemoEndTime(t.getExecuteEndDate().getTime());
-                work.getMemo().setMemoTitle(t.getTaskTitle());
-                work.getMemo().setMemoContent(t.getDescription());
-                work.getMemo().setIsSign(t.getIsSign());
-                return work;
-            } else {
-                work.getTask().setTaskTitle(t.getTaskTitle());
-                work.getTask().setTaskStatus(t.getWorkStatus());
-                work.getTask().setTaskResult(t.getWorkResult());
-                work.getTask().setTaskSourceType(0);
-                work.getTask().setTaskSourceName("");
-                work.getTask().setTaskDeadline(t.getExecuteDeadline().getTime());
-                work.getTask().setTaskSubHeadUrl(t.getAvatar());
-                work.getTask().setTaskSubName(t.getUserName());
-                return work;
-            }
-        }).collect(Collectors.toList());
-        works.addAll(inspections);
-        WorkVo_O workvoo = new WorkVo_O();
-        workvoo.setBackTime(DateUtil.currentDate().getTime());
-        workvoo.setDate(DateUtil.YYYYMMDD.format(needDate));
-        workvoo.setWorkArr(works);
-        return workvoo;
-    }
-
-    @Override
-    public WorkVo_O viewPendingReviewWorks(Long auditUserId) {
-        Date today = DateUtil.strToSimpleYYMMDDDate(DateUtil.simple(new Date()));
-        List<TLoopWork> loopWorks = loopWorkMapper.listPendingReview(auditUserId, today);
-        List<WorkVo_O.Work> works = loopWorks.stream().filter(t -> t.getType() != null).map((TLoopWork t) -> {
-            WorkVo_O.Work work = new WorkVo_O.Work();
-            work.setId(t.getId());
-            work.setWorkID(t.getWorkId());
-            work.setSubID(t.getSubWorkId());
-            work.setWorkType(t.getType());
-            TTask tt = taskMapper.selectByPrimaryKey(t.getTaskId());
-            if (t.getType() == ITask.MEMO) {
-                work.getMemo().setMemoTitle(tt.getName());
-                work.getMemo().setMemoContent(tt.getDescription());
-                work.getMemo().setMemoEndTime(t.getExecuteBeginDate().getTime());
-                work.getMemo().setMemoStartTime(t.getExecuteEndDate().getTime());
-                work.getMemo().setIsSign(t.getIsSign());
-                return work;
-
-            } else {
-                work.getTask().setTaskTitle(tt.getName());
-                work.getTask().setTaskStatus(t.getWorkStatus());
-                work.getTask().setTaskResult(t.getWorkResult());
-                work.getTask().setTaskSourceType(0);
-                work.getTask().setTaskSourceName("");
-                work.getTask().setTaskDeadline(t.getAuditDeadline() == null ? 0L : t.getAuditDeadline().getTime());
-                SysUser u = userMapper.selectByPrimaryKey(t.getAuditUserId());
-                work.getTask().setTaskSubHeadUrl(u.getHeadImgUrl());
-                work.getTask().setTaskSubName(u.getRealName());
-                return work;
-            }
-        }).collect(Collectors.toList());
-        WorkVo_O workvoo = new WorkVo_O();
-        workvoo.setBackTime(DateUtil.currentDate().getTime());
-        workvoo.setWorkArr(works);
-        workvoo.setDate(DateUtil.YYYYMMDD.format(new Date()));
-        return workvoo;
-    }
 }

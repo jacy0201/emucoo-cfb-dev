@@ -58,15 +58,42 @@ public class MsgServiceImpl implements MsgService {
             List<MsgReceiveSummary> msgReceiveSummaryList = businessMsgMapper.findMsgSummaryByUserId(user.getId());
             if (CollectionUtils.isNotEmpty(msgReceiveSummaryList)) {
                 List<MsgSummaryModuleVo> msgSummaryModuleVos = new ArrayList<>();
-                for (MsgReceiveSummary msgReceiveSummary : msgReceiveSummaryList) {
-                    MsgSummaryModuleVo msgSummaryModuleVo = new MsgSummaryModuleVo();
-                    msgSummaryModuleVo.setFunctionType(msgReceiveSummary.getFunctionType());
-                    msgSummaryModuleVo.setMsgTitle(msgReceiveSummary.getMsgTitle());
-                    msgSummaryModuleVo.setMsgCount(msgReceiveSummary.getMsgCount());
-                    msgSummaryModuleVo.setMsgSendTimeStamp(msgReceiveSummary.getMsgSendTime().getTime());
-                    msgSummaryModuleVos.add(msgSummaryModuleVo);
+                for (FunctionType functionTypeEnum : FunctionType.values()) {
+                    boolean hasMsg = false;
+                    for (MsgReceiveSummary msgReceiveSummary : msgReceiveSummaryList) {
+                        if (functionTypeEnum.getCode().equals(msgReceiveSummary.getFunctionType())) {
+                            hasMsg = true;
+                            MsgSummaryModuleVo msgSummaryModuleVo = new MsgSummaryModuleVo();
+                            msgSummaryModuleVo.setFunctionType(msgReceiveSummary.getFunctionType());
+                            msgSummaryModuleVo.setMsgTitle(msgReceiveSummary.getMsgTitle());
+                            msgSummaryModuleVo.setMsgCount(msgReceiveSummary.getMsgCount());
+                            msgSummaryModuleVo.setMsgSendTimeStamp(msgReceiveSummary.getMsgSendTime().getTime());
+                            msgSummaryModuleVo.setMsgTitle(FunctionType.getName(msgReceiveSummary.getFunctionType()));
+                            msgSummaryModuleVos.add(msgSummaryModuleVo);
+                            break;
+                        }
+                    }
+                    if(!hasMsg) {
+                        MsgSummaryModuleVo msgSummaryModuleVo = new MsgSummaryModuleVo();
+                        msgSummaryModuleVo.setFunctionType(functionTypeEnum.getCode());
+                        msgSummaryModuleVo.setFunctionTitle(FunctionType.getName(functionTypeEnum.getCode()));
+                        MsgReceiveSummary msgReceiveSummary = businessMsgMapper.findNewestReadedMsgByFunctionType(functionTypeEnum.getCode());
+                        if(msgReceiveSummary == null) {
+                            msgSummaryModuleVo.setMsgCount(0);
+                            msgSummaryModuleVo.setMsgTitle("");
+                        } else {
+                            msgSummaryModuleVo.setMsgCount(0);
+                            msgSummaryModuleVo.setMsgTitle(msgReceiveSummary.getMsgTitle());
+                            msgSummaryModuleVo.setMsgSendTimeStamp(msgReceiveSummary.getMsgSendTime().getTime());
+                        }
+
+                        msgSummaryModuleVos.add(msgSummaryModuleVo);
+                    }
+                    msgSummaryOut.setMsgModuleList(msgSummaryModuleVos);
+
+
                 }
-                msgSummaryOut.setMsgModuleList(msgSummaryModuleVos);
+
             }
 
             return msgSummaryOut;

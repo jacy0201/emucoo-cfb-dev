@@ -11,4 +11,6 @@ public interface TBusinessMsgMapper extends MyMapper<TBusinessMsg> {
     List<MsgReceiveSummary> findMsgSummaryByUserId(Long userId);
 
     void updateReadStatusByIds(List<Long> ids);
+
+    MsgReceiveSummary findNewestReadedMsgByFunctionType(Integer functionType);
 }

@@ -338,7 +338,7 @@
         else 3 end as feedbackImg,
         c.feedback_num_name as digitalItemName,
         c.feedback_num_type as digitalItemType,
-        b.id as taskSubID,
+        d.id as taskSubID,
         d.head_img_url as taskSubHeadUrl,
         (UNIX_TIMESTAMP(a.modify_time) * 1000) as taskSubTime,
         b.work_txt as workText,

@@ -16,7 +16,9 @@ public enum FunctionType {
 
     CC_REMIND(6, "抄送提醒"),
 
-    COMMENT_REMIND(7, "评论提醒");
+    COMMENT_REMIND(7, "评论提醒"),
+
+    DATE_CONFIRM(8, "维修日期确认");
 
     private final Integer code;
     private final String msg;
@@ -26,6 +28,15 @@ public enum FunctionType {
         this.code = val;
         this.msg = info;
 
+    }
+
+    public static String getName(int index) {
+        for (FunctionType c : FunctionType.values()) {
+            if (c.getCode() == index) {
+                return c.msg;
+            }
+        }
+        return null;
     }
 
     public Integer getCode() {
