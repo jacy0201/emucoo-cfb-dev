@@ -12,4 +12,7 @@ import lombok.Data;
 public class UnreadMsgCountOut {
     @ApiModelProperty(value = "是否有未读消息", name = "hasUnreadMsg", example = "false")
     private Boolean hasUnreadMsg = false;
+
+    @ApiModelProperty(value = "未读消息数量", name = "msgCount", example = "0")
+    private int msgCount = 0;
 }

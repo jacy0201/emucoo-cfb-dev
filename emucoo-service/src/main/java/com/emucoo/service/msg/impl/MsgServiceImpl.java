@@ -10,6 +10,7 @@ import com.emucoo.dto.modules.msg.MsgListOut;
 import com.emucoo.dto.modules.msg.MsgListVo;
 import com.emucoo.dto.modules.msg.MsgSummaryModuleVo;
 import com.emucoo.dto.modules.msg.MsgSummaryOut;
+import com.emucoo.dto.modules.msg.UnreadMsgCountOut;
 import com.emucoo.dto.modules.msg.UpdateMsgReadedIn;
 import com.emucoo.dto.modules.shop.PatrolShopArrangeDetailIn;
 import com.emucoo.dto.modules.task.AssignTaskDetailVo_I;
@@ -26,7 +27,6 @@ import com.emucoo.model.SysUser;
 import com.emucoo.model.TBusinessMsg;
 import com.emucoo.model.TLoopWork;
 import com.emucoo.service.msg.MsgService;
-import com.emucoo.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,16 +257,19 @@ public class MsgServiceImpl implements MsgService {
         }
     }
 
-    public boolean hasUnreadMsg(SysUser user) {
+    public UnreadMsgCountOut hasUnreadMsg(SysUser user) {
         try {
             Example msgExp = new Example(TBusinessMsg.class);
             msgExp.createCriteria().andEqualTo("receiverId", user.getId()).andEqualTo("isRead", false);
             int count = businessMsgMapper.selectCountByExample(msgExp);
+            UnreadMsgCountOut unreadMsgCountOut = new UnreadMsgCountOut();
             if(count > 0) {
-                return true;
+                unreadMsgCountOut.setHasUnreadMsg(true);
             } else {
-                return false;
+                unreadMsgCountOut.setHasUnreadMsg(false);
             }
+            unreadMsgCountOut.setMsgCount(count);
+            return unreadMsgCountOut;
         } catch (Exception e) {
             logger.error("查询是否有未读消息错误！", e);
             if (e instanceof BaseException) {
