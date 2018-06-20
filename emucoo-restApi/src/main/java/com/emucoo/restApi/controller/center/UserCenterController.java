@@ -99,6 +99,7 @@ public class UserCenterController extends AppBaseController {
         sysUserService.updateSelective(sysUser);
         //删除redis 缓存
         redisClient.delete(ISystem.IUSER.USER + currUser.getId());
+        redisClient.delete(ISystem.IUSER.USER_TOKEN + currUser.getId());
         return success("success");
     }
 
