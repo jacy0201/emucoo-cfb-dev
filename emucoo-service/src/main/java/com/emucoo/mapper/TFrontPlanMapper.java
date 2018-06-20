@@ -16,6 +16,12 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
 
     void addUnArrangeToPlan(TFrontPlan tFrontPlan);
 
+    List<TFrontPlan> getArrangeeListByUserId(
+                                             @Param(value = "arrangeeId") Long arrangeeId,
+                                             @Param(value = "yearStr") String yearStr,
+                                             @Param(value = "monthStr") String monthStr,
+                                             @Param(value = "planDate") String planDate);
+
     List<TFrontPlan> findArrangeListByAreaId(@Param(value = "areaId") Long areaId, @Param(value = "year") String year,
                                              @Param(value = "month") String month, @Param(value = "subPlanId") Long subPlanId,
                                              @Param(value = "userIds")List<String> userIds);
@@ -29,7 +35,7 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
 
     int uploadArrangeProcess(TFrontPlan tFrontPlan);
 
-    void updateFrontPlanStatus(@Param("status")Integer status, @Param("arrangeId")Long arrangeId);
+    void updateFrontPlanStatus(@Param("status") Integer status, @Param("arrangeId") Long arrangeId, @Param("userId")Long userId);
 
     List<TFrontPlan> filterExecuteRemindArrange(@Param("remindTimeLeft")Date remindTimeLeft, @Param("remindTimeRight")Date remindTimeRight);
 }

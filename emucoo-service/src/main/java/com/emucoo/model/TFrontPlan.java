@@ -109,6 +109,9 @@ public class TFrontPlan extends BaseEntity {
     @Column(name = "arrangee_id")
     private Long arrangeeId;
 
+    @Column(name = "arrangee_ids")
+    private String arrangeeIds;
+
     @Column(name = "notice_user_id")
     private String noticeUserId;
 
@@ -419,6 +422,14 @@ public class TFrontPlan extends BaseEntity {
      */
     public void setArrangeeId(Long arrangeeId) {
         this.arrangeeId = arrangeeId;
+    }
+
+    public String getArrangeeIds() {
+        return arrangeeIds;
+    }
+
+    public void setArrangeeIds(String arrangeeIds) {
+        this.arrangeeIds = arrangeeIds;
     }
 
     /**

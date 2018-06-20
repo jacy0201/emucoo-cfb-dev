@@ -35,7 +35,6 @@ public class ApiInterceptor implements HandlerInterceptor {
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception 
 	{
-		Boolean b=true;
     	String userAgent = request.getHeader("user-agent");
     	String ip = this.getIpAddr(request);
     	if(null!=userAgent)
@@ -61,23 +60,25 @@ public class ApiInterceptor implements HandlerInterceptor {
 			if(StringUtils.isBlank(userToken)) {
 				r.setRespCode("401");
 				r.setRespMsg("invalid token");
-				b=false;
+				response.getWriter().write(JSON.toJSONString(r));
+				return false;
 			}
 			Long userID =Long.parseLong(DESUtil.decryptStr(userToken, KEY));
 			SysUser sysUser = redisClient.getObject(ISystem.IUSER.USER + userID, SysUser.class);
 			if(null==sysUser){
 				r.setRespCode("401");
 				r.setRespMsg("invalid token");
-				b=false;
+				response.getWriter().write(JSON.toJSONString(r));
+				return false;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			r.setRespCode("401");
 			r.setRespMsg("invalid token");
-			b=false;
-			e.printStackTrace();
+			response.getWriter().write(JSON.toJSONString(r));
+			return false;
 		}
-		response.getWriter().write(JSON.toJSONString(r));
-        return b;
+        return true;
     }
 
     @Override

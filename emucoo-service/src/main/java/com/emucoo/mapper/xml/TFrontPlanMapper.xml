@@ -42,6 +42,23 @@
         where FIND_IN_SET('#{userId}', a.arrangee_ids) > 0 and DATE_FORMAT(a.plan_date,'%Y-%m-%d') = #{today}
     </select>
 
+    <select id="getArrangeeListByUserId" resultType="com.emucoo.model.TFrontPlan">
+        select t.* from t_front_plan t
+        where t.is_del=false
+        and find_in_set(#{arrangeeId}, t.arrangee_ids)
+        <if test="yearStr != null and yearStr != ''">
+        and t.arrange_year = #{yearStr}
+        </if>
+        <if test="monthStr != null and monthStr != ''">
+        and t.arrange_month= #{monthStr}
+        </if>
+        <if test="planDate != null and planDate != ''">
+        and t.plan_date=#{planDate}
+        </if>
+
+        order by plan_precise_time asc
+    </select>
+
     <insert id="addUnArrangeToPlan" parameterType="com.emucoo.model.TFrontPlan">
         INSERT INTO t_front_plan
         (
@@ -161,7 +178,8 @@
 
     <update id="updateFrontPlanStatus">
         UPDATE t_front_plan
-        SET status = #{status}
+        SET status = #{status},
+        arrangee_id = #{userId}
         WHERE id = #{arrangeId}
     </update>
 

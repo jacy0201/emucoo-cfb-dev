@@ -1305,7 +1305,7 @@ public class FormServiceImpl implements FormService {
                 .andEqualTo("reportStatus", 2);
         List<TFrontPlanForm> tFrontPlanForms = frontPlanFormMapper.selectByExample(tPlanFormExp);
         if (CollectionUtils.isEmpty(tFrontPlanForms)) {
-            frontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), frontPlanId);
+            frontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), frontPlanId, user.getId());
         }
         return report.getId();
     }

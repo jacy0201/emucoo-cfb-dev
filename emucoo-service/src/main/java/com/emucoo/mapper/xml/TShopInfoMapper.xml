@@ -50,7 +50,7 @@
             AND t4.is_use = TRUE
     </select>
 
-  <select id="selectShopListByUserAndAreaBrand" resultType="com.emucoo.model.TShopInfo">
+  <select id="selectShopListByUserAndArea" resultType="com.emucoo.model.TShopInfo">
       SELECT
       shop.id,
       shop.shop_name,

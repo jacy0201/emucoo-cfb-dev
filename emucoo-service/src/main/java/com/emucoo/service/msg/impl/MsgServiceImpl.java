@@ -160,16 +160,16 @@ public class MsgServiceImpl implements MsgService {
                 if(!msgDetailIn.getWorkType().equals(ModuleType.COMMENT.getCode())) {
                     if (msgDetailIn.getWorkType().equals(ModuleType.COMMON_TASK.getCode()) || msgDetailIn.getWorkType().equals(ModuleType.ARRANGE_TASK.getCode())
                             || msgDetailIn.getWorkType().equals(ModuleType.IMPROVE_TASK.getCode()) || msgDetailIn.getWorkType().equals(ModuleType.WORK_MEMORANDUM.getCode())) {//任务和工作备忘
-                        TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getMsgID());
+                        TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getUnionID());
                         detailParam.setSubID(loopWork.getSubWorkId());
                         detailParam.setWorkID(loopWork.getWorkId());
                         detailParam.setWorkType(loopWork.getType());
                         paramVo.setData(detailParam);
                     } else if (msgDetailIn.getWorkType().equals(ModuleType.SHOP_PLAN.getCode())) {//巡店安排
-                        detailParam.setReportID(msgDetailIn.getMsgID());
+                        detailParam.setReportID(msgDetailIn.getUnionID());
                         detailParam.setWorkType(ModuleType.SHOP_PLAN.getCode());
                     } else if (msgDetailIn.getWorkType().equals(ModuleType.REPAIR_TASK.getCode())) {//维修任务
-                        detailParam.setRepairID(msgDetailIn.getMsgID());
+                        detailParam.setRepairID(msgDetailIn.getUnionID());
                         detailParam.setWorkType(ModuleType.REPAIR_TASK.getCode());
                     } else {
                         throw new BaseException("消息内容不存在！");
@@ -178,7 +178,7 @@ public class MsgServiceImpl implements MsgService {
                     forwardParam.put("param", paramVo);
                     forwardParam.put("url", "/api/task/assign/getCommentList");
                 } else {
-                    detailParam.setCommentID(msgDetailIn.getMsgID());
+                    detailParam.setCommentID(msgDetailIn.getUnionID());
                     detailParam.setWorkType(ModuleType.COMMENT.getCode());
                     paramVo.setData(detailParam);
                     forwardParam.put("param", paramVo);
@@ -189,7 +189,7 @@ public class MsgServiceImpl implements MsgService {
                 if (msgDetailIn.getWorkType().equals(ModuleType.COMMON_TASK.getCode())) {//常规任务
                     ParamVo<TaskCommonDetailIn> paramVo = new ParamVo<TaskCommonDetailIn>();
                     TaskCommonDetailIn taskDetailParam = new TaskCommonDetailIn();
-                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getMsgID());
+                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getUnionID());
                     taskDetailParam.setSubID(loopWork.getSubWorkId());
                     taskDetailParam.setWorkID(loopWork.getWorkId());
                     taskDetailParam.setWorkType(loopWork.getType());
@@ -199,7 +199,7 @@ public class MsgServiceImpl implements MsgService {
                 } else if (msgDetailIn.getWorkType().equals(ModuleType.ARRANGE_TASK.getCode())) {//指派任务
                     ParamVo<AssignTaskDetailVo_I> paramVo = new ParamVo<AssignTaskDetailVo_I>();
                     AssignTaskDetailVo_I taskDetailParam = new AssignTaskDetailVo_I();
-                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getMsgID());
+                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getUnionID());
                     taskDetailParam.setSubID(loopWork.getSubWorkId());
                     taskDetailParam.setWorkID(loopWork.getWorkId());
                     taskDetailParam.setWorkType(loopWork.getType());
@@ -209,7 +209,7 @@ public class MsgServiceImpl implements MsgService {
                 } else if (msgDetailIn.getWorkType().equals(ModuleType.IMPROVE_TASK.getCode())) {//改善任务
                     ParamVo<TaskImproveDetailIn> paramVo = new ParamVo<TaskImproveDetailIn>();
                     TaskImproveDetailIn taskDetailParam = new TaskImproveDetailIn();
-                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getMsgID());
+                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getUnionID());
                     taskDetailParam.setSubID(loopWork.getSubWorkId());
                     taskDetailParam.setWorkID(loopWork.getWorkId());
                     taskDetailParam.setWorkType(loopWork.getType());
@@ -219,14 +219,14 @@ public class MsgServiceImpl implements MsgService {
                 } else if (msgDetailIn.getWorkType().equals(ModuleType.SHOP_PLAN.getCode())) {//巡店安排
                     ParamVo<PatrolShopArrangeDetailIn> paramVo = new ParamVo<PatrolShopArrangeDetailIn>();
                     PatrolShopArrangeDetailIn detailParam = new PatrolShopArrangeDetailIn();
-                    detailParam.setPatrolShopArrangeID(msgDetailIn.getMsgID());
+                    detailParam.setPatrolShopArrangeID(msgDetailIn.getUnionID());
                     paramVo.setData(detailParam);
                     forwardParam.put("param", paramVo);
                     forwardParam.put("url", "/api/shop/arrange/detail");
                 } else if (msgDetailIn.getWorkType().equals(ModuleType.WORK_MEMORANDUM.getCode())) {//工作备忘
                     ParamVo<MemoDetailVo_I> paramVo = new ParamVo<MemoDetailVo_I>();
                     MemoDetailVo_I detailParam = new MemoDetailVo_I();
-                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getMsgID());
+                    TLoopWork loopWork = loopWorkMapper.selectByPrimaryKey(msgDetailIn.getUnionID());
                     detailParam.setSubID(loopWork.getSubWorkId());
                     detailParam.setWorkID(loopWork.getWorkId());
                     detailParam.setWorkType(loopWork.getType());
@@ -238,7 +238,7 @@ public class MsgServiceImpl implements MsgService {
                 } else if (msgDetailIn.getWorkType().equals(ModuleType.REPAIR_TASK.getCode())) {//维修任务
                     ParamVo<IdVo> paramVo = new ParamVo<IdVo>();
                     IdVo detailParam = new IdVo();
-                    detailParam.setId(msgDetailIn.getMsgID());
+                    detailParam.setId(msgDetailIn.getUnionID());
                     paramVo.setData(detailParam);
                     forwardParam.put("param", paramVo);
                     forwardParam.put("url", "/api/task/repair/detail");
@@ -254,6 +254,25 @@ public class MsgServiceImpl implements MsgService {
                 throw new ApiException(((BaseException) e).getMsg());
             }
             throw new ApiException("组装消息传递信息错误！");
+        }
+    }
+
+    public boolean hasUnreadMsg(SysUser user) {
+        try {
+            Example msgExp = new Example(TBusinessMsg.class);
+            msgExp.createCriteria().andEqualTo("receiverId", user.getId()).andEqualTo("isRead", false);
+            int count = businessMsgMapper.selectCountByExample(msgExp);
+            if(count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("查询是否有未读消息错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("查询是否有未读消息错误！");
         }
     }
 
