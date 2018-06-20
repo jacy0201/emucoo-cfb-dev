@@ -6,10 +6,10 @@ import java.util.Date;
  * Created by sj on 2018/5/30.
  */
 public class MsgReceiveSummary {
-    String msgTitle;
-    Integer msgCount;
-    Date msgSendTime;
-    Integer functionType;
+    private String msgTitle;
+    private Integer msgCount;
+    private Date msgSendTime;
+    private Integer functionType;
 
     public String getMsgTitle() {
         return msgTitle;

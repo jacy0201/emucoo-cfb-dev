@@ -1,7 +1,13 @@
 package com.emucoo.restApi.config.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.emucoo.dto.base.ISystem;
+import com.emucoo.model.SysUser;
 import com.emucoo.restApi.controller.demo.AppResult;
+import com.emucoo.restApi.sdk.token.UserTokenManager;
+import com.emucoo.restApi.utils.RedisClusterClient;
+import com.emucoo.restApi.utils.SpringContextUtil;
+import com.emucoo.utils.DESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -11,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
+import static com.emucoo.restApi.sdk.token.UserTokenManager.KEY;
+
 /**
  * @author fujg
  */
@@ -18,13 +26,16 @@ import java.util.Enumeration;
 @Slf4j
 public class ApiInterceptor implements HandlerInterceptor {
 
-    /**
+	private RedisClusterClient redisClient = SpringContextUtil.getApplicationContext().getBean(RedisClusterClient.class);
+
+	/**
      * (non-Javadoc)
      * @see HandlerInterceptor#preHandle(HttpServletRequest, HttpServletResponse, Object)
      */
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception 
 	{
+		Boolean b=true;
     	String userAgent = request.getHeader("user-agent");
     	String ip = this.getIpAddr(request);
     	if(null!=userAgent)
@@ -44,26 +55,29 @@ public class ApiInterceptor implements HandlerInterceptor {
         	}
 			   log.info("<<<<<<<<<<userToken:"+request.getHeader("userToken")+"");
     	}
-
+		     AppResult r = new AppResult();
 		try {
-			/*InputStream is = request.getInputStream();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			IOUtils.copy(is, os);
-			String encoding = request.getCharacterEncoding() != null ? "utf-8" : request.getCharacterEncoding();
-			System.out.println(os.toString(encoding));*/
 			String userToken = request.getHeader("userToken");
 			if(StringUtils.isBlank(userToken)) {
-				AppResult r = new AppResult();
-				r.setRespCode("500");
-				r.setRespMsg("param error");
-				response.getWriter().write(JSON.toJSONString(r));
-				return false;
+				r.setRespCode("401");
+				r.setRespMsg("invalid token");
+				b=false;
+			}
+			Long userID =Long.parseLong(DESUtil.decryptStr(userToken, KEY));
+			SysUser sysUser = redisClient.getObject(ISystem.IUSER.USER + userID, SysUser.class);
+			if(null==sysUser){
+				r.setRespCode("401");
+				r.setRespMsg("invalid token");
+				b=false;
 			}
 		} catch (Exception e) {
-			return false;
+			r.setRespCode("401");
+			r.setRespMsg("invalid token");
+			b=false;
+			e.printStackTrace();
 		}
-
-        return true;
+		response.getWriter().write(JSON.toJSONString(r));
+        return b;
     }
 
     @Override

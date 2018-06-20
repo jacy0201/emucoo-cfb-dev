@@ -77,8 +77,16 @@ public class MsgServiceImpl implements MsgService {
                         MsgSummaryModuleVo msgSummaryModuleVo = new MsgSummaryModuleVo();
                         msgSummaryModuleVo.setFunctionType(functionTypeEnum.getCode());
                         msgSummaryModuleVo.setFunctionTitle(FunctionType.getName(functionTypeEnum.getCode()));
-                        msgSummaryModuleVo.setMsgCount(0);
-                        msgSummaryModuleVo.setMsgTitle("");
+                        MsgReceiveSummary msgReceiveSummary = businessMsgMapper.findNewestReadedMsgByFunctionType(functionTypeEnum.getCode());
+                        if(msgReceiveSummary == null) {
+                            msgSummaryModuleVo.setMsgCount(0);
+                            msgSummaryModuleVo.setMsgTitle("");
+                        } else {
+                            msgSummaryModuleVo.setMsgCount(0);
+                            msgSummaryModuleVo.setMsgTitle(msgReceiveSummary.getMsgTitle());
+                            msgSummaryModuleVo.setMsgSendTimeStamp(msgReceiveSummary.getMsgSendTime().getTime());
+                        }
+
                         msgSummaryModuleVos.add(msgSummaryModuleVo);
                     }
                     msgSummaryOut.setMsgModuleList(msgSummaryModuleVos);
@@ -112,7 +120,7 @@ public class MsgServiceImpl implements MsgService {
                 msg.setMsgTitle(businessMsg.getTitle());
                 msg.setUnionID(businessMsg.getUnionId());
                 msg.setWorkType(businessMsg.getUnionType().intValue());
-                msg.setSendTime(DateUtil.dateToString(businessMsg.getSendTime()));
+                msg.setSendTime(businessMsg.getSendTime().getTime());
                 msg.setIsRead(businessMsg.getIsRead());
                 msgArray.add(msg);
             }

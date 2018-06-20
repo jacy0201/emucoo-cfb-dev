@@ -33,10 +33,20 @@
         max(id) as id
         FROM t_business_msg
         WHERE receiver_id = #{userId} AND is_read = FALSE
-      GROUP BY function_type
+        GROUP BY function_type
     ) AS t
     left join t_business_msg as msg
     ON t.id = msg.id
+  </select>
+
+  <select id="findNewestReadedMsgByFunctionType" parameterType="Integer" resultType="com.emucoo.model.MsgReceiveSummary">
+      SELECT
+      max(id),
+      send_time AS msgSendTime,
+      title AS msgTitle,
+      function_type
+      FROM t_business_msg
+      WHERE function_type = #{functionType}
   </select>
   
   <update id="updateReadStatusByIds" parameterType="ArrayList">
