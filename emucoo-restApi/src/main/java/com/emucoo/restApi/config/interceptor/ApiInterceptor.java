@@ -64,7 +64,7 @@ public class ApiInterceptor implements HandlerInterceptor {
 				return false;
 			}
 			Long userID =Long.parseLong(DESUtil.decryptStr(userToken, KEY));
-			if(redisClient.existsKey(ISystem.IUSER.USER_TOKEN + userID)){
+			if(!redisClient.existsKey(ISystem.IUSER.USER_TOKEN + userID)){
 				r.setRespCode("401");
 				r.setRespMsg("invalid token");
 				response.getWriter().write(JSON.toJSONString(r));
