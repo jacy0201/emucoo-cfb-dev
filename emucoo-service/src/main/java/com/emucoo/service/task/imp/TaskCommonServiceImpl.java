@@ -593,7 +593,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 taskOption.setNeedFeedbackNum(option.getFeedbackNeedNum());
                 taskOption.setFeedbackNumName(option.getFeedbackNumName());
                 taskOption.setFeedbackNumType(option.getFeedbackNumType());
-                taskOption.setNeedFeedbackImg(option.getFeedbackImgType() == 0 ? false : true);
+                taskOption.setNeedFeedbackImg((option.getFeedbackImgType() != null && option.getFeedbackImgType().intValue() > 1) ? true : false);
                 taskOption.setFeedbackImgName(option.getFeedbackImgName());
                 taskOption.setFeedbackImgType(option.getFeedbackImgFromAlbum() ? 1 : 0);
                 taskOption.setFeedbackImgCount(option.getFeedbackImgMaxCount());
@@ -736,7 +736,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 option.setFeedbackNumName(taskOption.getFeedbackNumName());
                 option.setFeedbackNumType(taskOption.getFeedbackNumType());
                 option.setFeedbackImgType(taskOption.getNeedFeedbackImg() ? 1 : 0);
-                option.setFeedbackImgFromAlbum(taskOption.getFeedbackImgType() == 1 ? true : false);
+                option.setFeedbackImgFromAlbum(Integer.valueOf(1).equals(taskOption.getFeedbackImgType()) ? true : false);
                 option.setFeedbackImgName(taskOption.getFeedbackImgName());
                 option.setFeedbackImgMaxCount(taskOption.getFeedbackImgCount());
                 if (StringUtils.isNotBlank(taskOption.getFeedbackImgSampleUrl())) {
@@ -932,7 +932,7 @@ public class TaskCommonServiceImpl implements TaskCommonService {
                 opOpt.setImgOptionMaxCount(option.getFeedbackImgMaxCount());
                 opOpt.setImgOptionFromAlbum(option.getFeedbackImgFromAlbum());
                 opOpt.setImgExampleId(option.getFeedbackImgExampleId());
-                opOpt.setImgNeed(option.getFeedbackImgType() == 0 ? false : true);
+                opOpt.setImgNeed(Integer.valueOf(0).equals(option.getFeedbackImgType()) ? false : true);
                 opOpt.setImgOptionName(option.getFeedbackImgName());
                 opOpt.setNumNeed(option.getFeedbackNeedNum());
                 opOpt.setNumOptionName(option.getFeedbackNumName());

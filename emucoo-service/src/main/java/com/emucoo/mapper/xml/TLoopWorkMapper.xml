@@ -335,7 +335,7 @@
         b.img_example_id as itemImgUrls,
         case when b.txt_need = 0 then 1 else 2 end as feedbackText,
         case when b.img_need = 0 then 1
-        when b.img_need = 1 and b.img_option_from_album = 1 then 2
+        when b.img_need = 1 and b.img_option_from_album = 0 then 2
         else 3 end as feedbackImg,
         b.num_option_name as digitalItemName,
         b.num_option_type as digitalItemType,

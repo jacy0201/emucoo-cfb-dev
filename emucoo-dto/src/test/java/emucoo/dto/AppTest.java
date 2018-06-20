@@ -4,8 +4,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.Date;
-
 /**
  * Unit test for simple App.
  */
@@ -35,7 +33,10 @@ public class AppTest
     }
 
     public static void main(String[] args) {
-        System.out.println(System.currentTimeMillis());
-        System.out.println(new Date().getTime());
+        if (Integer.valueOf(0).equals(0)) {
+            System.out.println("yyy");
+        } else {
+            System.out.println("nnn");
+        }
     }
 }
