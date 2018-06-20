@@ -178,7 +178,8 @@
 
     <update id="updateFrontPlanStatus">
         UPDATE t_front_plan
-        SET status = #{status}
+        SET status = #{status},
+        arrangee_id = #{userId}
         WHERE id = #{arrangeId}
     </update>
 
