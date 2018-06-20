@@ -676,7 +676,7 @@ public class ReportServiceImpl implements ReportService {
                 .andEqualTo("reportStatus", 2);
             List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(tPlanFormExp);
             if(CollectionUtils.isEmpty(tFrontPlanForms)) {
-                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID());
+                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID(), user.getId());
 
             }
             return report.getId();
@@ -1522,7 +1522,7 @@ public class ReportServiceImpl implements ReportService {
                     .andEqualTo("reportStatus", 2);
             List<TFrontPlanForm> tFrontPlanForms = tFrontPlanFormMapper.selectByExample(tPlanFormExp);
             if (CollectionUtils.isEmpty(tFrontPlanForms)) {
-                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID());
+                tFrontPlanMapper.updateFrontPlanStatus(ShopArrangeStatus.FINISH_CHECK.getCode(), reportIn.getPatrolShopArrangeID(), user.getId());
 
             }
             return report.getId();

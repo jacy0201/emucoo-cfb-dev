@@ -29,7 +29,7 @@ public interface TFrontPlanMapper extends MyMapper<TFrontPlan> {
 
     int uploadArrangeProcess(TFrontPlan tFrontPlan);
 
-    void updateFrontPlanStatus(@Param("status")Integer status, @Param("arrangeId")Long arrangeId);
+    void updateFrontPlanStatus(@Param("status") Integer status, @Param("arrangeId") Long arrangeId, @Param("arrangeId")Long userId);
 
     List<TFrontPlan> filterExecuteRemindArrange(@Param("remindTimeLeft")Date remindTimeLeft, @Param("remindTimeRight")Date remindTimeRight);
 }
