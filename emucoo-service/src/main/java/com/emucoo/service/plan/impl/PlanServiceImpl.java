@@ -86,7 +86,7 @@ public class PlanServiceImpl implements PlanService {
         // 查询当前用户的下级用户
         String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
         List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
-        List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndAreaBrand(userIdList, findShopListIn.getPrecinctID(), brandInfos);
+        List<TShopInfo> shopList = tShopInfoMapper.selectShopListByUserAndArea(userIdList, findShopListIn.getPrecinctID());
 
         List<ShopVo> shopVos = new ArrayList<ShopVo>();
         if (CollectionUtils.isNotEmpty(shopList)) {
@@ -267,6 +267,7 @@ public class PlanServiceImpl implements PlanService {
             // 查询当前用户的下级用户
             String userIds = sysUserMapper.findAllChildListByParentId(user.getId());
             List<String> userIdList = new ArrayList<>(Arrays.asList(userIds.split(",")));
+            userIdList.remove(0);
             // 获取分区
             List<SysArea> areaList = sysAreaMapper.findDistinctAreaListByUserIds(userIdList);
             //查询品牌
