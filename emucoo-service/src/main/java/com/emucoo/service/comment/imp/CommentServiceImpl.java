@@ -183,6 +183,13 @@ public class CommentServiceImpl extends BaseServiceImpl<TTaskComment> implements
                 out.setCommentUserID(tTaskComment.getUserId());
                 out.setCommentUserName(tTaskComment.getUserName());
                 out.setCommentHeadUrl(sysUserMapper.selectByPrimaryKey(tTaskComment.getUserId()).getHeadImgUrl());
+                //查询回复数量
+                Example exampleReply=new Example(TTaskComment.class);
+                exampleReply.createCriteria().andEqualTo("unionId",tTaskComment.getId()).andEqualTo("isDel",false);
+                List<TTaskComment> listReply=taskCommentMapper.selectByExample(exampleReply);
+                int replyNum=0;
+                if(null!=listReply && listReply.size()>0) replyNum=listReply.size();
+                out.setReplyNum(replyNum);
                  //设置评论照片
                 if(StringUtil.isNotEmpty(tTaskComment.getImgIds())) {
                     List<CommentSelectOut.ImgUrl> ims = new ArrayList<>();

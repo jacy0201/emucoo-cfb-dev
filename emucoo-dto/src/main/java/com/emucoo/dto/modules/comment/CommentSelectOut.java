@@ -34,6 +34,9 @@ public class CommentSelectOut {
 		//评论照片
 		@ApiModelProperty(value="评论图片",name="commentImgArr")
 		private List<ImgUrl> commentImgArr = new ArrayList<ImgUrl>();
+		//回复数量
+		@ApiModelProperty(value="回复数量",name="replyNum")
+		private int replyNum;
 	}
 	@Data
 	public static class ImgUrl {
