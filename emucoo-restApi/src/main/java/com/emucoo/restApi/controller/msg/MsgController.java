@@ -111,9 +111,7 @@ public class MsgController extends AppBaseController {
     @PostMapping("/hasUnreadMsg")
     public AppResult<UnreadMsgCountOut> hasUnreadMsg(HttpServletRequest request) {
         SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
-        boolean hasMsg = msgService.hasUnreadMsg(user);
-        UnreadMsgCountOut unreadMsgCountOut = new UnreadMsgCountOut();
-        unreadMsgCountOut.setHasUnreadMsg(hasMsg);
+        UnreadMsgCountOut unreadMsgCountOut = msgService.hasUnreadMsg(user);
         return success(unreadMsgCountOut);
     }
 }
