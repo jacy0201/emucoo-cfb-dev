@@ -8,6 +8,7 @@ import com.emucoo.dto.modules.msg.MsgDetailIn;
 import com.emucoo.dto.modules.msg.MsgListIn;
 import com.emucoo.dto.modules.msg.MsgListOut;
 import com.emucoo.dto.modules.msg.MsgSummaryOut;
+import com.emucoo.dto.modules.msg.UnreadMsgCountOut;
 import com.emucoo.dto.modules.msg.UpdateMsgReadedIn;
 import com.emucoo.dto.modules.shop.PatrolShopArrangeDetailIn;
 import com.emucoo.dto.modules.shop.PlanArrangeEditIn;
@@ -103,5 +104,16 @@ public class MsgController extends AppBaseController {
             }
             throw new ApiException("组装消息传递信息错误！");
         }
+    }
+
+    @ApiOperation(value = "是否有未读的消息")
+    @ResponseBody
+    @PostMapping("/hasUnreadMsg")
+    public AppResult<UnreadMsgCountOut> hasUnreadMsg(HttpServletRequest request) {
+        SysUser user = UserTokenManager.getInstance().currUser(request.getHeader("userToken"));
+        boolean hasMsg = msgService.hasUnreadMsg(user);
+        UnreadMsgCountOut unreadMsgCountOut = new UnreadMsgCountOut();
+        unreadMsgCountOut.setHasUnreadMsg(hasMsg);
+        return success(unreadMsgCountOut);
     }
 }

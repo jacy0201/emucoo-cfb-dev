@@ -257,4 +257,23 @@ public class MsgServiceImpl implements MsgService {
         }
     }
 
+    public boolean hasUnreadMsg(SysUser user) {
+        try {
+            Example msgExp = new Example(TBusinessMsg.class);
+            msgExp.createCriteria().andEqualTo("receiverId", user.getId()).andEqualTo("isRead", false);
+            int count = businessMsgMapper.selectCountByExample(msgExp);
+            if(count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("查询是否有未读消息错误！", e);
+            if (e instanceof BaseException) {
+                throw new ApiException(((BaseException) e).getMsg());
+            }
+            throw new ApiException("查询是否有未读消息错误！");
+        }
+    }
+
 }

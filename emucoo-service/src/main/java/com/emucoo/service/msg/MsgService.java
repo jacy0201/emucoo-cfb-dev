@@ -21,4 +21,6 @@ public interface MsgService {
     void updateMsgListReaded(UpdateMsgReadedIn updateMsgIn);
 
     Map<String,Object> msgDetail(MsgDetailIn msgDetailIn);
+
+    boolean hasUnreadMsg(SysUser user);
 }
