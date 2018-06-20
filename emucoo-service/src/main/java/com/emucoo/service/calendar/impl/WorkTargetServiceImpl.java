@@ -44,14 +44,13 @@ public class WorkTargetServiceImpl extends BaseServiceImpl<TWorkTarget> implemen
      */
     @Override
    public WorkTargetVO getWorkTarget(WorkTargetQueryVO workTargetQueryVO){
-        WorkTargetVO workTargetVO=null;
+        WorkTargetVO workTargetVO=new WorkTargetVO();
         TWorkTarget t=new TWorkTarget();
         t.setIsDel(false);
         t.setCreateUserId(workTargetQueryVO.getUserID());
         t.setMonth(workTargetQueryVO.getMonth());
         TWorkTarget tWorkTarget=tWorkTargetMapper.selectOne(t);
         if(null!=tWorkTarget){
-            workTargetVO=new WorkTargetVO();
             workTargetVO.setWorkTargetID(tWorkTarget.getId());
             workTargetVO.setKpi(tWorkTarget.getKpi());
             workTargetVO.setMonth(tWorkTarget.getMonth());
