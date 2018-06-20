@@ -1,12 +1,11 @@
 package com.emucoo.service.comment;
 
+import com.emucoo.common.base.service.BaseService;
 import com.emucoo.dto.modules.comment.*;
-import com.emucoo.model.SysDept;
 import com.emucoo.model.SysUser;
+import com.emucoo.model.TTaskComment;
 
-import java.util.List;
-
-public interface CommentService {
+public interface CommentService  extends BaseService<TTaskComment>{
     void add(CommentAddIn vo, SysUser user);
 
     void delete(CommentDeleteIn vo);

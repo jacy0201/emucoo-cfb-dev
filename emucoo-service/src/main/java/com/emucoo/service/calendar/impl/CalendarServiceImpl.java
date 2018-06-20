@@ -74,12 +74,13 @@ public class CalendarServiceImpl implements CalendarService {
             calendarVO = new CalendarVO();
             calendarVO.setDate(yearStr + "-" + monthStr + "-" + dt);
             List<CalendarVO.Inspection> inspectionList = null;
-            example.clear();
+           /* example.clear();
             example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                     .andEqualTo("arrangeYear", yearStr).andEqualTo("arrangeMonth", monthStr)
                     .andEqualTo("isDel", 0).andEqualTo("planDate", calendarVO.getDate());
             example.setOrderByClause("plan_precise_time asc");
-            List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
+            List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);*/
+            List<TFrontPlan> list=tFrontPlanMapper.getArrangeeListByUserId(calendarListIn.getUserId(),yearStr,monthStr,calendarVO.getDate());
             //设置巡店安排
             if (null != list && list.size() > 0) {
                 inspectionList = calendarVO.getInspectionList();
@@ -143,12 +144,13 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarVO calendarVO = new CalendarVO();
         calendarListDateOut.setExecuteDate(calendarListIn.getExecuteDate());
         calendarListDateOut.setUserId(calendarListIn.getUserId());
-        Example example = new Example(TFrontPlan.class);
+        /*Example example = new Example(TFrontPlan.class);
         example.createCriteria().andEqualTo("arrangeeId", calendarListIn.getUserId())
                 .andEqualTo("planDate", calendarListIn.getExecuteDate())
                 .andEqualTo("isDel", false);
         example.setOrderByClause("plan_precise_time asc");
-        List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);
+        List<TFrontPlan> list = tFrontPlanMapper.selectByExample(example);*/
+        List<TFrontPlan> list=tFrontPlanMapper.getArrangeeListByUserId(calendarListIn.getUserId(),null,null,calendarListIn.getExecuteDate());
         List<CalendarVO.Inspection> inspectionList = null;
         calendarVO.setDate(calendarListIn.getExecuteDate());
         //设置巡店安排

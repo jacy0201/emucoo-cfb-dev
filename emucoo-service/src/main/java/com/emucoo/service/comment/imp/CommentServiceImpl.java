@@ -1,5 +1,6 @@
 package com.emucoo.service.comment.imp;
 
+import com.emucoo.common.base.service.impl.BaseServiceImpl;
 import com.emucoo.common.util.StringUtil;
 import com.emucoo.dto.modules.comment.*;
 import com.emucoo.enums.FunctionType;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl extends BaseServiceImpl<TTaskComment> implements CommentService {
     @Resource
     private TTaskCommentMapper taskCommentMapper;
     @Resource
