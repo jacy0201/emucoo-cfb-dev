@@ -322,7 +322,9 @@ public class TaskCommonServiceImpl implements TaskCommonService {
         businessMsgMapper.insertUseGeneratedKeys(adtMsg);
         // 发送抄送消息
         List<TBusinessMsg> ccMsgs = messageBuilder.buildLoopWorkCCBusinessMsg(task, loopWork, 7);
-        businessMsgMapper.insertList(ccMsgs);
+        if (ccMsgs.size() > 0) {
+            businessMsgMapper.insertList(ccMsgs);
+        }
 
     }
 

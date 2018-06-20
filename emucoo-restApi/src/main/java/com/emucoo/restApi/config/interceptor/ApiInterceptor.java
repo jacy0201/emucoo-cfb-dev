@@ -62,6 +62,7 @@ public class ApiInterceptor implements HandlerInterceptor {
 				r.setRespCode("401");
 				r.setRespMsg("invalid token");
 				b=false;
+				response.getWriter().write(JSON.toJSONString(r));
 			}
 			Long userID =Long.parseLong(DESUtil.decryptStr(userToken, KEY));
 			SysUser sysUser = redisClient.getObject(ISystem.IUSER.USER + userID, SysUser.class);
@@ -69,14 +70,15 @@ public class ApiInterceptor implements HandlerInterceptor {
 				r.setRespCode("401");
 				r.setRespMsg("invalid token");
 				b=false;
+				response.getWriter().write(JSON.toJSONString(r));
 			}
 		} catch (Exception e) {
 			r.setRespCode("401");
 			r.setRespMsg("invalid token");
 			b=false;
+			response.getWriter().write(JSON.toJSONString(r));
 			e.printStackTrace();
 		}
-		response.getWriter().write(JSON.toJSONString(r));
         return b;
     }
 
